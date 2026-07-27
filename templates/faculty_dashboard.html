@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block header_title %}Faculty Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+    <!-- Left Column: Calendar and Quick Actions -->
+    <div class="xl:col-span-2 space-y-8">
+        <!-- Notifications Section -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h3 class="text-2xl font-bold text-slate-800">Recent Notifications</h3>
+                    <p class="text-slate-500">Latest updates from the HOD and personal reminders.</p>
+                </div>
+                <a href="{{ url_for('faculty.calendar') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 flex items-center gap-2">
+                    <i class="fas fa-calendar-alt"></i>
+                    Academic Calendar
+                </a>
+            </div>
+            <div class="space-y-4">
+                {% if notifications %}
+                    {% for note in notifications %}
+                    <div class="flex items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-100 transition-all">
+                        <div class="w-10 h-10 rounded-full {% if note.target_role == 'personal' %}bg-emerald-100 text-emerald-600{% else %}bg-blue-100 text-blue-600{% endif %} flex items-center justify-center mr-4">
+                            <i class="fas {% if note.target_role == 'personal' %}fa-clock{% else %}fa-bell{% endif %}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h4 class="font-bold text-slate-800">{{ note.title }}</h4>
+                            <p class="text-xs text-slate-500">{{ note.description[:100] }}{{ '...' if note.description|length > 100 }}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] font-bold text-slate-400 uppercase">{{ note.date.strftime('%d %b') }}</p>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p class="text-slate-400 italic text-center py-8">No recent notifications.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- My Detailed Subjects & Students Section -->
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="mb-8">
+                <h3 class="text-2xl font-bold text-slate-800">My Subjects & Students</h3>
+                <p class="text-slate-500">List of subjects you teach and their enrolled students.</p>
+            </div>
+            
+            <div class="space-y-6">
+                {% for detail in subject_details %}
+                <div class="border border-slate-100 rounded-2xl overflow-hidden">
+                    <div class="bg-slate-50 px-6 py-4 flex items-center justify-between border-b border-slate-100">
+                        <div>
+                            <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">{{ detail.subject.course.name }}</span>
+                            <h4 class="text-lg font-bold text-slate-800">{{ detail.subject.name }}</h4>
+                        </div>
+                        <span class="px-3 py-1 bg-white border border-slate-200 rounded-full text-xs font-bold text-slate-500">
+                            {{ detail.students | length }} Students
+                        </span>
+                    </div>
+                    <div class="p-6">
+                        {% if detail.students %}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {% for student in detail.students %}
+                            <div class="flex items-center gap-4 p-3 bg-white border border-slate-50 rounded-xl hover:border-blue-100 transition-colors">
+                                <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 font-bold">
+                                    {{ student.name[0] }}
+                                </div>
+                                <div>
+                                    <p class="font-bold text-slate-800">{{ student.name }}</p>
+                                    <p class="text-xs text-slate-500">{{ student.email }}</p>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <p class="text-slate-400 italic text-center py-4">No students enrolled yet.</p>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Stats & Summary -->
+    <div class="space-y-8">
+        <div class="bg-gradient-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-xl shadow-blue-100">
+            <h3 class="text-xl font-bold mb-4">Quick Stats</h3>
+            <div class="space-y-6">
+                <div class="flex items-center justify-between">
+                    <span class="text-blue-100">Total Subjects</span>
+                    <span class="text-2xl font-bold">{{ subject_details | length }}</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-blue-100">Total Students</span>
+                    <span class="text-2xl font-bold">
+                        {% set total_students = 0 %}
+                        {% for detail in subject_details %}
+                            {% set total_students = total_students + (detail.students | length) %}
+                        {% endfor %}
+                        {{ total_students }}
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <h3 class="text-xl font-bold text-slate-800 mb-6">Subject Cards</h3>
+            <div class="space-y-4">
+                {% for subject in subjects %}
+                <a href="{{ url_for('faculty.manage_subject', subject_id=subject.id) }}" class="flex items-center justify-between p-4 border border-slate-100 rounded-2xl hover:border-blue-200 hover:bg-blue-50 transition-all group">
+                    <div class="flex items-center gap-4">
+                        <div class="w-10 h-10 rounded-xl bg-slate-100 group-hover:bg-white flex items-center justify-center text-slate-500 group-hover:text-blue-600 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                        <div>
+                            <p class="font-bold text-slate-800">{{ subject.name }}</p>
+                            <p class="text-xs text-slate-400">{{ subject.course.name }}</p>
+                        </div>
+                    </div>
+                    <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

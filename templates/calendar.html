@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block header_title %}Academic Calendar{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <!-- Event List -->
+    <div class="lg:col-span-3">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800">Class Schedule & Deadlines</h3>
+                <div class="flex items-center space-x-2">
+                    <span class="w-3 h-3 bg-blue-500 rounded-full"></span>
+                    <span class="text-xs font-bold text-slate-400">Global Events</span>
+                </div>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                {% for event in events %}
+                <div class="flex items-start space-x-6 group">
+                    <div class="text-center w-16 pt-1">
+                        <span class="block text-xs font-black text-slate-300 uppercase leading-none mb-1">{{ event.date.strftime('%b') }}</span>
+                        <span class="block text-3xl font-black text-slate-800 leading-none group-hover:text-blue-600 transition-colors">{{ event.date.strftime('%d') }}</span>
+                    </div>
+                    <div class="flex-1 bg-slate-50 p-6 rounded-3xl border border-transparent hover:border-blue-100 transition-all">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="px-2 py-0.5 bg-blue-600 text-white text-[10px] font-bold rounded uppercase">
+                                {{ event.subject.name }}
+                            </span>
+                        </div>
+                        <h4 class="text-lg font-bold text-slate-800 mb-1">{{ event.title }}</h4>
+                        <p class="text-sm text-slate-500">{{ event.description }}</p>
+                        <div class="mt-4 flex items-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                            <i class="far fa-user-circle mr-2"></i> {{ event.creator.name }}
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-20">
+                    <img src="https://cdni.iconscout.com/illustration/premium/thumb/empty-calendar-schedule-management-illustration-download-in-svg-png-gif-file-formats--appointment-event-no-tasks-user-interface-pack-business-illustrations-4790288.png" alt="No data" class="w-48 mx-auto opacity-20 mb-6 grayscale">
+                    <p class="text-slate-400 font-bold">Your schedule looks clear for now!</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block header_title %}HOD Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 bg-blue-100 rounded-2xl flex items-center justify-center text-blue-600">
+            <i class="fas fa-user-graduate text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Students</p>
+            <h3 class="text-2xl font-bold text-slate-800">{{ stats.students }}</h3>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 bg-purple-100 rounded-2xl flex items-center justify-center text-purple-600">
+            <i class="fas fa-chalkboard-teacher text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Faculty</p>
+            <h3 class="text-2xl font-bold text-slate-800">{{ stats.faculty }}</h3>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-amber-600">
+            <i class="fas fa-book-open text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Courses</p>
+            <h3 class="text-2xl font-bold text-slate-800">{{ stats.courses }}</h3>
+        </div>
+    </div>
+    
+    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 flex items-center space-x-4">
+        <div class="w-12 h-12 bg-emerald-100 rounded-2xl flex items-center justify-center text-emerald-600">
+            <i class="fas fa-tags text-xl"></i>
+        </div>
+        <div>
+            <p class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Subjects</p>
+            <h3 class="text-2xl font-bold text-slate-800">{{ stats.subjects }}</h3>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications Section -->
+<div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-8">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h3 class="text-2xl font-bold text-slate-800">Recent Notifications</h3>
+            <p class="text-slate-500">Latest updates and announcements from the department.</p>
+        </div>
+        <a href="{{ url_for('hod.calendar') }}" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-200 flex items-center gap-2">
+            <i class="fas fa-calendar-alt"></i>
+            Full Calendar
+        </a>
+    </div>
+    
+    <div class="space-y-4">
+        {% if notifications %}
+            {% for note in notifications %}
+            <div class="flex items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-100 transition-all">
+                <div class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 mr-4">
+                    <i class="fas fa-bell"></i>
+                </div>
+                <div class="flex-1">
+                    <h4 class="font-bold text-slate-800">{{ note.title }}</h4>
+                    <p class="text-sm text-slate-500">{{ note.description[:100] }}{{ '...' if note.description|length > 100 }}</p>
+                </div>
+                <div class="text-right">
+                                <p class="text-[10px] font-bold text-slate-400 uppercase">{{ note.date.strftime('%d %b') }}</p>
+                    <span class="text-[10px] px-2 py-1 bg-white border border-slate-200 rounded-full font-bold text-slate-400">{{ note.target_role | upper }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-slate-400 italic text-center py-8">No recent notifications.</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <!-- Recent Faculty -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-800">Recent Faculty</h3>
+            <a href="{{ url_for('hod.manage_users') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Faculty Name</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Department</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for user in recent_faculty %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs uppercase">
+                                    {{ user.name[0] }}
+                                </div>
+                                <span class="font-semibold text-slate-700">{{ user.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 text-sm">{{ user.department }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Students -->
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
+            <h3 class="text-lg font-bold text-slate-800">Recent Students</h3>
+            <a href="{{ url_for('hod.manage_users') }}" class="text-sm font-semibold text-blue-600 hover:text-blue-700">View All</a>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead class="bg-slate-50 border-b border-slate-100">
+                    <tr>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Student Name</th>
+                        <th class="px-6 py-4 text-xs font-bold text-slate-400 uppercase">Department</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-50">
+                    {% for user in recent_students %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-xs uppercase">
+                                    {{ user.name[0] }}
+                                </div>
+                                <span class="font-semibold text-slate-700">{{ user.name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-slate-500 text-sm">{{ user.department }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

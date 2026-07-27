@@ -1,0 +1,1 @@
+SDLC defines the process of software development.

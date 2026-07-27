@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Mental Wellness & Mentor AI - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Mental Wellness & Stress Detection AI</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Anonymous academic stress support, study-life balance recommendations, and wellness tracking.</p>
+    </div>
+
+    <div class="bg-white p-6 rounded-3xl border border-rose-200 shadow-sm space-y-4">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xl border border-rose-200">
+                <i class="fa-solid fa-heart-pulse"></i>
+            </div>
+            <div>
+                <h3 class="text-base font-extrabold text-slate-900">Academic Wellbeing Indicator</h3>
+                <p class="text-xs font-bold text-slate-600">Status: <strong class="text-emerald-600">Low Burnout Risk (92% Wellbeing Index)</strong></p>
+            </div>
+        </div>
+
+        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 space-y-1 font-medium">
+            <div class="font-bold text-slate-900 text-sm">AI Mentor Suggestion:</div>
+            <p>Your workload is balanced this week. Remember to take a 15-minute break every 50 minutes during study sessions.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

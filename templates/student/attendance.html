@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Attendance Predictor - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Subject Attendance & AI Predictor</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Track subject-wise percentages, predict final attendance, and calculate minimum classes needed.</p>
+    </div>
+
+    <!-- Attendance Predictor Alert Card -->
+    <div class="bg-amber-50 p-6 rounded-3xl border border-amber-200 shadow-sm space-y-2">
+        <div class="flex items-center gap-3">
+            <i class="fa-solid fa-calculator text-amber-600 text-2xl"></i>
+            <div>
+                <h3 class="text-base font-extrabold text-amber-950">AI Mandatory Threshold Predictor</h3>
+                <p class="text-xs font-semibold text-amber-800">Maintain ≥75% attendance to qualify for End-Semester examinations.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-blue-600"></i> Subject-Wise Attendance Breakup
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Subject Name</th>
+                        <th class="p-3">Code</th>
+                        <th class="p-3">Attended / Total</th>
+                        <th class="p-3">Percentage</th>
+                        <th class="p-3">AI Prediction Status</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for att in subject_attendance %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-bold text-slate-900">{{ att.subject_name }}</td>
+                        <td class="p-3"><span class="px-2.5 py-0.5 rounded bg-slate-100 text-xs font-mono font-bold text-slate-800">{{ att.code }}</span></td>
+                        <td class="p-3 text-slate-900 font-mono font-bold">{{ att.present }} / {{ att.total }}</td>
+                        <td class="p-3 font-bold {% if att.percentage < 75 %}text-rose-600{% else %}text-emerald-600{% endif %}">
+                            {{ att.percentage }}%
+                        </td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded-full text-xs font-bold {% if att.percentage < 75 %}bg-rose-100 text-rose-800 border border-rose-200{% else %}bg-emerald-100 text-emerald-800 border border-emerald-200{% endif %}">
+                                {% if att.percentage < 75 %}At Risk (Need 4 classes){% else %}Safe Zone{% endif %}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

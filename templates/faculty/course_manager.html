@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Course Materials & Quiz AI - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Course Materials & Teaching AI Copilot</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Generate quizzes, summarize notes, and auto-classify Bloom's taxonomy levels.</p>
+    </div>
+
+    <!-- AI Quiz Generator Tool Card -->
+    <div class="bg-white p-6 rounded-3xl border border-purple-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> AI Quiz & Assignment Generator
+        </h3>
+        <p class="text-xs font-medium text-slate-500">Instant generation of multiple-choice and conceptual questions mapped to Bloom's Taxonomy.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Subject</label>
+                <input type="text" id="quizSubject" value="Data Structures & Algorithms" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500">
+            </div>
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Topic / Unit</label>
+                <input type="text" id="quizTopic" value="Binary Search Trees & Balancing" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500">
+            </div>
+            <div class="flex items-end">
+                <button onclick="generateQuizAI()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition">
+                    Generate Quiz
+                </button>
+            </div>
+        </div>
+
+        <div id="quizResultsOutput" class="hidden mt-4 space-y-3">
+        </div>
+    </div>
+</div>
+
+<script>
+async function generateQuizAI() {
+    const subj = document.getElementById('quizSubject').value;
+    const topic = document.getElementById('quizTopic').value;
+    const out = document.getElementById('quizResultsOutput');
+    out.classList.remove('hidden');
+    out.innerHTML = `<div class="text-purple-600 text-xs font-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> AI Teaching Copilot generating Bloom's taxonomy quiz...</div>`;
+
+    const formData = new FormData();
+    formData.append('action', 'generate_quiz');
+    formData.append('subject_name', subj);
+    formData.append('topic', topic);
+
+    const res = await fetch('/faculty/courses', { method: 'POST', body: formData });
+    const data = await res.json();
+    
+    if(data.quiz) {
+        let html = `<div class="font-bold text-sm text-slate-900 mb-2">Generated Quiz Questions:</div><div class="space-y-2">`;
+        data.quiz.forEach((q, idx) => {
+            html += `<div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-1">
+                <div class="font-bold text-slate-900 text-sm">${idx+1}. ${q.question} <span class="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-xs font-bold ml-2">${q.bloom_level}</span></div>
+                <div class="text-slate-600 font-medium">Options: ${q.options.join(' | ')}</div>
+                <div class="text-emerald-700 font-bold">Answer: ${q.answer}</div>
+            </div>`;
+        });
+        html += `</div>`;
+        out.innerHTML = html;
+    }
+}
+</script>
+{% endblock %}

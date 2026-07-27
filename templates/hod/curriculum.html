@@ -1,0 +1,358 @@
+{% extends "base.html" %}
+{% block title %}Curriculum & Syllabus Governance - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Curriculum & Syllabus Governance</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Bifurcated view by Semester, Assigned Faculty, and Syllabus Completion Status.</p>
+        </div>
+        <button onclick="document.getElementById('addSubjectModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
+            <i class="fa-solid fa-plus"></i> Add New Subject
+        </button>
+    </div>
+
+    <!-- Curriculum Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Curriculum Subjects</div>
+            <div class="text-3xl font-black text-slate-900">{{ subjects|length }}</div>
+            <div class="mt-2 text-xs text-blue-600 font-bold">Active in Department</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Approved Syllabi</div>
+            <div class="text-3xl font-black text-emerald-600">
+                {{ subjects|selectattr('syllabus_status', 'equalto', 'Approved')|list|length }}
+            </div>
+            <div class="mt-2 text-xs text-emerald-600 font-bold">Compliant with Standards</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pending / Revision Needed</div>
+            <div class="text-3xl font-black text-amber-600">
+                {{ subjects|rejectattr('syllabus_status', 'equalto', 'Approved')|list|length }}
+            </div>
+            <div class="mt-2 text-xs text-amber-700 font-bold">Requires HOD Sign-off</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Avg Syllabus Completion</div>
+            <div class="text-3xl font-black text-purple-600">76.5%</div>
+            <div class="mt-2 text-xs text-purple-700 font-bold">Faculty Teaching Progress</div>
+        </div>
+    </div>
+
+    <!-- BIFURCATION FILTERS BAR -->
+    <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-2">
+                <i class="fa-solid fa-filter text-blue-600"></i>
+                <span class="text-sm font-extrabold text-slate-900">Curriculum Bifurcation & Filters</span>
+            </div>
+
+            <!-- Faculty / Teacher Filter -->
+            <div class="flex items-center gap-3">
+                <label class="text-xs font-bold text-slate-600 whitespace-nowrap">Filter by Teacher:</label>
+                <select id="facultyFilter" onchange="applyCurriculumFilters()" class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500">
+                    <option value="all">All Faculty Members</option>
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}">{{ f.name }} ({{ f.designation or 'Faculty' }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- Semester Tabs Bifurcation -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-1">
+            <button onclick="setSemFilter('all')" id="semTab-all" class="sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-md shadow-blue-200 transition">
+                All Semesters
+            </button>
+            {% for sem_num in range(1, 9) %}
+            <button onclick="setSemFilter('{{ sem_num }}')" id="semTab-{{ sem_num }}" class="sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
+                Semester {{ sem_num }}
+            </button>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Subjects & Syllabus Cards Grid -->
+    <div id="subjectsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for s in subjects %}
+        <div class="subject-card bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
+             data-sem="{{ s.semester }}"
+             data-faculty="{{ s.faculty_id or 0 }}"
+             data-status="{{ s.syllabus_status or 'Approved' }}">
+            <div class="space-y-3">
+                <div class="flex items-start justify-between gap-3">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-mono font-bold">{{ s.code }}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Sem {{ s.semester }}</span>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold">{{ s.credits or 4 }} Credits</span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-slate-900 mt-2">{{ s.name }}</h3>
+                        <p class="text-xs text-slate-500 font-medium mt-0.5">Assigned Teacher: <strong class="text-slate-800">{{ s.faculty.name if s.faculty else 'Unassigned' }}</strong></p>
+                    </div>
+
+                    <!-- Syllabus Review Status Badge -->
+                    <span class="px-3 py-1.5 rounded-2xl text-xs font-bold shrink-0 
+                        {% if s.syllabus_status == 'Approved' %} bg-emerald-100 text-emerald-800 border border-emerald-200
+                        {% elif s.syllabus_status == 'Revision Requested' %} bg-rose-100 text-rose-800 border border-rose-200
+                        {% else %} bg-amber-100 text-amber-800 border border-amber-200 {% endif %}">
+                        <i class="fa-solid {% if s.syllabus_status == 'Approved' %}fa-circle-check{% elif s.syllabus_status == 'Revision Requested' %}fa-triangle-exclamation{% else %}fa-clock{% endif %} mr-1"></i>
+                        {{ s.syllabus_status or 'Approved' }}
+                    </span>
+                </div>
+
+                <!-- Teaching Progress Bar -->
+                <div class="space-y-1">
+                    <div class="flex items-center justify-between text-xs font-bold">
+                        <span class="text-slate-600">Syllabus Covered by Teacher:</span>
+                        <span class="text-blue-600">{{ s.completion_percentage or 75.0 }}%</span>
+                    </div>
+                    <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                        <div class="h-full bg-blue-600 rounded-full" style="width: {{ s.completion_percentage or 75.0 }}%"></div>
+                    </div>
+                </div>
+
+                <!-- Executive Summary / Notes -->
+                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium space-y-1">
+                    <div class="font-bold text-slate-900 flex items-center justify-between">
+                        <span>HOD Review Notes & Scope:</span>
+                    </div>
+                    <p>{{ s.syllabus_summary or 'Covers fundamental concepts, practical lab assignments, and continuous assessments.' }}</p>
+                </div>
+
+                <!-- Modules & Units Accordion -->
+                <div class="space-y-2 pt-1">
+                    <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center justify-between">
+                        <span>Syllabus Modules ({{ s.modules|length }})</span>
+                        <button onclick="openAddModuleModal({{ s.id }}, '{{ s.name|escape }}')" class="text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1">
+                            <i class="fa-solid fa-plus-circle"></i> Add Unit
+                        </button>
+                    </div>
+                    <div class="space-y-1.5 max-h-36 overflow-y-auto">
+                        {% for mod in s.modules %}
+                        <div class="p-2.5 rounded-xl bg-slate-100 text-xs font-semibold text-slate-800 flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                                <i class="fa-solid fa-book-open text-blue-600 text-xs"></i>
+                                <span>{{ mod.title }}</span>
+                            </div>
+                            <span class="text-[10px] px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 font-bold">Active</span>
+                        </div>
+                        {% else %}
+                        <div class="p-3 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                            No modules added yet. Click "+ Add Unit" to define syllabus.
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Footer Action Controls -->
+            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+                <button onclick="openReviewModal({{ s.id }}, '{{ s.name|escape }}', '{{ s.syllabus_status }}', '{{ s.syllabus_summary|escape }}')" class="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white text-xs font-bold border border-blue-200 transition shadow-sm flex items-center gap-1.5">
+                    <i class="fa-solid fa-clipboard-check"></i> Review & Audit Syllabus
+                </button>
+
+                <form action="{{ url_for('hod.curriculum') }}" method="POST" class="inline" onsubmit="return confirm('Remove subject {{ s.name }} ({{ s.code }}) from curriculum?');">
+                    <input type="hidden" name="subject_id" value="{{ s.id }}">
+                    <input type="hidden" name="action" value="delete_subject">
+                    <button type="submit" title="Delete Subject" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white flex items-center justify-center border border-rose-200 transition shadow-sm">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-2 p-8 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 font-medium">
+            No subjects configured in curriculum. Click "+ Add New Subject" to begin.
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal 1: Add New Subject -->
+<div id="addSubjectModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-white rounded-3xl border border-slate-200 p-6 md:p-8 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-xl font-extrabold text-slate-900">Add New Curriculum Subject</h3>
+                <p class="text-xs text-slate-500 font-medium">Define subject name, course allocation, semester, and assigned teacher.</p>
+            </div>
+            <button onclick="document.getElementById('addSubjectModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
+            <input type="hidden" name="action" value="add_subject">
+
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Subject Name *</label>
+                    <input type="text" name="name" placeholder="e.g. Advanced Artificial Intelligence" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Subject Code *</label>
+                    <input type="text" name="code" placeholder="e.g. CS401" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 uppercase focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Degree Course *</label>
+                    <select name="course_id" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                        {% for c in courses %}
+                        <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Semester *</label>
+                    <select name="semester" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                        {% for sem_num in range(1, 9) %}
+                        <option value="{{ sem_num }}">Semester {{ sem_num }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Credits *</label>
+                    <input type="number" name="credits" min="1" max="6" value="4" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Assigned Faculty / Teacher *</label>
+                <select name="faculty_id" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}">{{ f.name }} ({{ f.designation or 'Faculty' }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Executive Syllabus Scope & Description</label>
+                <textarea name="syllabus_summary" rows="2" placeholder="Brief outline of syllabus modules and learning outcomes..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('addSubjectModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Add Subject to Curriculum</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 2: Review Syllabus -->
+<div id="reviewSyllabusModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-xl font-extrabold text-slate-900">Syllabus Review & Audit</h3>
+                <p id="reviewSubjName" class="text-xs text-blue-600 font-bold mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('reviewSyllabusModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
+            <input type="hidden" name="action" value="review_syllabus">
+            <input type="hidden" id="reviewSubjId" name="subject_id">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Approval Status *</label>
+                <select id="reviewStatus" name="syllabus_status" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                    <option value="Approved">Approved (Syllabus Compliant)</option>
+                    <option value="Revision Requested">Revision Requested (Needs Changes)</option>
+                    <option value="Pending Review">Pending Review</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">HOD Review Comments & Feedback Notes</label>
+                <textarea id="reviewFeedback" name="feedback" rows="3" placeholder="Enter review feedback or compliance instructions..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('reviewSyllabusModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Save Syllabus Review</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal 3: Add Module Unit -->
+<div id="addModuleModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Add Syllabus Module / Unit</h3>
+                <p id="modSubjName" class="text-xs text-blue-600 font-bold mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('addModuleModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
+            <input type="hidden" name="action" value="add_module">
+            <input type="hidden" id="modSubjId" name="subject_id">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Module / Unit Title *</label>
+                <input type="text" name="title" placeholder="e.g. Unit 2: Trees, Graphs & Dynamic Programming" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('addModuleModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Save Module</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+let currentSemFilter = 'all';
+
+function setSemFilter(sem) {
+    currentSemFilter = sem;
+    document.querySelectorAll('.sem-tab').forEach(tab => {
+        tab.className = 'sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+    });
+    const activeTab = document.getElementById(`semTab-${sem}`);
+    if (activeTab) {
+        activeTab.className = 'sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-md shadow-blue-200 transition';
+    }
+    applyCurriculumFilters();
+}
+
+function applyCurriculumFilters() {
+    const selectedTeacher = document.getElementById('facultyFilter').value;
+    const cards = document.querySelectorAll('.subject-card');
+
+    cards.forEach(card => {
+        const cardSem = card.getAttribute('data-sem');
+        const cardTeacher = card.getAttribute('data-faculty');
+
+        const matchesSem = (currentSemFilter === 'all' || cardSem === currentSemFilter);
+        const matchesTeacher = (selectedTeacher === 'all' || cardTeacher === selectedTeacher);
+
+        if (matchesSem && matchesTeacher) {
+            card.style.display = 'flex';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
+function openReviewModal(id, name, status, summary) {
+    document.getElementById('reviewSubjId').value = id;
+    document.getElementById('reviewSubjName').innerText = name;
+    document.getElementById('reviewStatus').value = status || 'Approved';
+    document.getElementById('reviewFeedback').value = summary || '';
+    document.getElementById('reviewSyllabusModal').classList.remove('hidden');
+    document.getElementById('reviewSyllabusModal').classList.add('flex');
+}
+
+function openAddModuleModal(id, name) {
+    document.getElementById('modSubjId').value = id;
+    document.getElementById('modSubjName').innerText = name;
+    document.getElementById('addModuleModal').classList.remove('hidden');
+    document.getElementById('addModuleModal').classList.add('flex');
+}
+</script>
+{% endblock %}

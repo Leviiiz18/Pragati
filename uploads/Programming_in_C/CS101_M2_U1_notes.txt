@@ -1,0 +1,1 @@
+C is a structured programming language used for system programming.

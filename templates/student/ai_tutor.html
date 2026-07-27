@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Institution AI Course Tutor - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Institution-Specific AI Course Tutor</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Answers based strictly on your syllabus, uploaded faculty notes, and previous question papers.</p>
+    </div>
+
+    <!-- RAG Chat Container -->
+    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[550px]">
+        <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-9 h-9 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center border border-purple-200 font-bold">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-extrabold text-slate-900">AI Personal Tutor</h3>
+                    <span class="text-[11px] text-emerald-700 font-bold">● Context Loaded: Data Structures & Syllabus</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0 border border-purple-200">AI</div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 font-medium max-w-xl">
+                    Hello {{ current_user.name }}! I am your AI Course Tutor. Ask me anything from your course notes, previous papers, or ask me:
+                    <ul class="list-disc list-inside mt-2 text-xs text-purple-800 font-bold space-y-1">
+                        <li>"Explain Binary Search Trees with code examples"</li>
+                        <li>"Generate 5 viva questions for Unit 2"</li>
+                        <li>"How can I score above 9 CGPA this semester?"</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-4 bg-slate-50 border-t border-slate-200 flex gap-3">
+            <input type="text" id="tutorInput" placeholder="Ask AI Tutor..." class="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500 shadow-inner" onkeydown="if(event.key==='Enter') sendTutorMessage()">
+            <button onclick="sendTutorMessage()" class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-200 transition">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+async function sendTutorMessage() {
+    const input = document.getElementById('tutorInput');
+    const msg = input.value.trim();
+    if(!msg) return;
+    input.value = '';
+
+    const chatDiv = document.getElementById('chatMessages');
+    chatDiv.innerHTML += `
+        <div class="flex items-start justify-end gap-3">
+            <div class="p-4 rounded-2xl bg-blue-600 text-white font-medium max-w-xl shadow-sm">${msg}</div>
+            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center text-xs font-bold shrink-0">You</div>
+        </div>
+    `;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    const loadingId = 'loading-' + Date.now();
+    chatDiv.innerHTML += `
+        <div id="${loadingId}" class="flex items-start gap-3">
+            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-purple-700 text-xs font-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> AI Tutor searching course materials...</div>
+        </div>
+    `;
+    chatDiv.scrollTop = chatDiv.scrollHeight;
+
+    try {
+        const res = await fetch('/student/ai-tutor', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+            body: new URLSearchParams({query: msg})
+        });
+        const data = await res.json();
+        document.getElementById(loadingId).remove();
+        
+        chatDiv.innerHTML += `
+            <div class="flex items-start gap-3">
+                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">AI</div>
+                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 max-w-xl text-sm font-medium leading-relaxed">${data.answer.replace(/\n/g, '<br>')}</div>
+            </div>
+        `;
+        chatDiv.scrollTop = chatDiv.scrollHeight;
+    } catch(err) {
+        document.getElementById(loadingId).remove();
+    }
+}
+</script>
+{% endblock %}

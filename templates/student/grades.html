@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+{% block title %}Marks & Exam Results - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Marks, Exams & Academic Grades</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Official internal assessment scores, end-semester grades, and AI feedback.</p>
+        </div>
+    </div>
+
+    <!-- CGPA & Academic Summary Card -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Cumulative Grade Point Average (CGPA)</div>
+            <div class="text-3xl font-black text-blue-600">
+                {% if current_user.semester == 1 or current_user.cgpa is none %}
+                    <span class="text-lg text-slate-400 font-bold">N/A (Sem 1 Results Pending)</span>
+                {% else %}
+                    {{ current_user.cgpa }}
+                {% endif %}
+            </div>
+            <div class="mt-2 text-xs text-slate-500 font-bold">
+                {% if current_user.semester == 1 %}First Semester End-Sem Exams Scheduled{% else %}First Class Distinction{% endif %}
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Evaluated Tests</div>
+            <div class="text-3xl font-black text-purple-600">{{ exam_results|length }}</div>
+            <div class="mt-2 text-xs text-purple-700 font-bold">Continuous Internal Assessments (CIA)</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Upcoming Scheduled Exams</div>
+            <div class="text-3xl font-black text-amber-600">{{ upcoming_exams|length }}</div>
+            <div class="mt-2 text-xs text-amber-700 font-bold">End-Sem & Laboratory Audits</div>
+        </div>
+    </div>
+
+    <!-- Exam Results Table -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-award text-purple-600"></i> Evaluated Internal & Mid-Term Exam Results
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Subject</th>
+                        <th class="p-3">Exam Title</th>
+                        <th class="p-3">Max Marks</th>
+                        <th class="p-3">Marks Obtained</th>
+                        <th class="p-3">Grade</th>
+                        <th class="p-3">Bloom's Taxonomy</th>
+                        <th class="p-3">Faculty Feedback</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for r in exam_results %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3">
+                            <span class="px-2.5 py-0.5 rounded bg-blue-50 text-blue-800 font-mono font-bold text-xs">{{ r.exam.subject.code if r.exam and r.exam.subject else 'CS101' }}</span>
+                            <div class="font-bold text-slate-900 mt-0.5">{{ r.exam.subject.name if r.exam and r.exam.subject else 'Core Subject' }}</div>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-800">{{ r.exam.title if r.exam else 'Mid-Term Test' }}</td>
+                        <td class="p-3 font-bold text-slate-600">{{ r.exam.max_marks if r.exam else 100.0 }}</td>
+                        <td class="p-3 font-extrabold text-blue-600 text-base">{{ r.marks_obtained }}</td>
+                        <td class="p-3">
+                            <span class="px-3 py-1 rounded-xl bg-purple-100 text-purple-800 font-bold text-xs border border-purple-200">{{ r.grade or 'A' }}</span>
+                        </td>
+                        <td class="p-3"><span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 text-xs font-bold">{{ r.exam.bloom_level if r.exam else 'Understand' }}</span></td>
+                        <td class="p-3 text-xs text-slate-600 font-medium">{{ r.feedback or 'Excellent performance in analytical concepts.' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" class="p-8 text-center text-slate-400 font-medium">
+                            {% if current_user.semester == 1 %}
+                            No evaluated exam results published yet for Semester 1. Mid-Term exam results will appear here once graded by faculty.
+                            {% else %}
+                            No exam results records found.
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

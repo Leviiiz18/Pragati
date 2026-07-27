@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}Fee Status & Receipts - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Tuition Fee Ledger & Receipts</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Institutional semester fee breakdown, payment receipts, and financial status.</p>
+        </div>
+    </div>
+
+    <!-- Fee Summary Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Semester Tuition Fee</div>
+            <div class="text-3xl font-black text-slate-900">₹{{ "{:,.2f}".format(fee_rec.total_amount if fee_rec else 75000.0) }}</div>
+            <div class="mt-2 text-xs text-blue-600 font-bold">Semester {{ current_user.semester }} Approved Tariff</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Amount Paid</div>
+            <div class="text-3xl font-black text-emerald-600">₹{{ "{:,.2f}".format(fee_rec.paid_amount if fee_rec else 75000.0) }}</div>
+            <div class="mt-2 text-xs text-emerald-600 font-bold">Verified via Bank Transfer</div>
+        </div>
+
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Financial Clearance Status</div>
+            <div class="text-3xl font-black {% if fee_rec and fee_rec.status == 'Paid' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                {{ fee_rec.status if fee_rec else 'Paid' }}
+            </div>
+            <div class="mt-2 text-xs font-bold {% if fee_rec and fee_rec.status == 'Paid' %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                {% if fee_rec and fee_rec.status == 'Paid' %}Cleared for Exam Hall Ticket{% else %}Outstanding Dues Pending{% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Official ERP Fee Receipt Card -->
+    <div class="bg-white rounded-3xl p-6 md:p-8 border border-slate-200 shadow-sm space-y-6">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-teal-100 text-teal-800 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-receipt text-lg"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900">Official Semester Fee Receipt</h3>
+                    <p class="text-xs text-slate-500 font-medium">Receipt No: <span class="font-mono font-bold text-slate-800">REC-2026-{{ current_user.id }}09</span></p>
+                </div>
+            </div>
+
+            {% if fee_rec and fee_rec.status != 'Paid' %}
+            <form action="{{ url_for('student.fees') }}" method="POST">
+                <input type="hidden" name="action" value="pay_fee">
+                <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-200 transition flex items-center gap-2">
+                    <i class="fa-solid fa-credit-card"></i> Pay Fee via Payment Gateway
+                </button>
+            </form>
+            {% else %}
+            <button onclick="window.print()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition flex items-center gap-2 border border-slate-200">
+                <i class="fa-solid fa-print"></i> Print Official Receipt
+            </button>
+            {% endif %}
+        </div>
+
+        <div class="space-y-4 text-xs font-medium">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
+                <div>
+                    <span class="text-slate-500">Student Name:</span>
+                    <div class="font-bold text-slate-900 text-sm">{{ current_user.name }}</div>
+                </div>
+                <div>
+                    <span class="text-slate-500">Registration ID:</span>
+                    <div class="font-mono font-bold text-blue-700 text-sm">{{ current_user.registration_id or 'NU23UCA054' }}</div>
+                </div>
+                <div>
+                    <span class="text-slate-500">Course & Dept:</span>
+                    <div class="font-bold text-slate-900 text-sm">{{ current_user.course_code or 'UCA' }} ({{ current_user.department or 'CSE' }})</div>
+                </div>
+                <div>
+                    <span class="text-slate-500">Semester:</span>
+                    <div class="font-bold text-slate-900 text-sm">Semester {{ current_user.semester }}</div>
+                </div>
+            </div>
+
+            <!-- Fee Line Items Breakdown -->
+            <table class="w-full text-left">
+                <thead class="text-[11px] uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Fee Component</th>
+                        <th class="p-3 text-right">Amount (₹)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-800">Academic Tuition Fee</td>
+                        <td class="p-3 text-right font-bold text-slate-900">₹60,000.00</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-800">Laboratory & Computer Network Usage Fee</td>
+                        <td class="p-3 text-right font-bold text-slate-900">₹10,000.00</td>
+                    </tr>
+                    <tr>
+                        <td class="p-3 font-semibold text-slate-800">Library & Digital Learning Resources</td>
+                        <td class="p-3 text-right font-bold text-slate-900">₹5,000.00</td>
+                    </tr>
+                </tbody>
+                <tfoot class="border-t-2 border-slate-300 font-extrabold text-sm text-slate-900 bg-slate-50">
+                    <tr>
+                        <td class="p-3">Total Payable Amount</td>
+                        <td class="p-3 text-right text-blue-700">₹75,000.00</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

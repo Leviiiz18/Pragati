@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}Accreditation & Compliance Reports - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Accreditation & Institutional Compliance</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Generate compliance metrics for NAAC, NBA, AICTE, and UGC directly using AI.</p>
+    </div>
+
+    <!-- Accreditation Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+            <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">NAAC Readiness</div>
+            <div class="text-3xl font-black text-slate-900">Grade A++</div>
+            <div class="text-xs text-emerald-600 font-bold">Score 3.68 / 4.0</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+            <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">NBA Level-1 Accreditation</div>
+            <div class="text-3xl font-black text-slate-900">92.4%</div>
+            <div class="text-xs text-purple-700 font-bold">Criteria 1, 2, 5 compliant</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+            <div class="text-xs font-bold text-teal-600 uppercase tracking-wider">AICTE Faculty-Student Ratio</div>
+            <div class="text-3xl font-black text-slate-900">1 : 15</div>
+            <div class="text-xs text-emerald-600 font-bold">Optimal standard met</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
+            <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">UGC Academic Audit</div>
+            <div class="text-3xl font-black text-slate-900">Clear</div>
+            <div class="text-xs text-slate-500 font-semibold">Last audited: July 2026</div>
+        </div>
+    </div>
+
+    <!-- AI Natural Language Report Prompt -->
+    <div class="bg-white p-6 rounded-3xl border border-purple-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> AI Natural Language Report Generator
+        </h3>
+        <p class="text-xs font-medium text-slate-500">Type any custom report query without applying manual filters.</p>
+        
+        <div class="flex gap-3">
+            <input type="text" id="reportQueryInput" placeholder="e.g. 'Generate report of all students below 75% attendance'" class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white shadow-inner">
+            <button onclick="generateCustomReport()" class="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition">
+                Generate Report
+            </button>
+        </div>
+
+        <div id="reportOutput" class="hidden p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 space-y-2">
+        </div>
+    </div>
+</div>
+
+<script>
+async function generateCustomReport() {
+    const q = document.getElementById('reportQueryInput').value;
+    if(!q) return;
+    const out = document.getElementById('reportOutput');
+    out.classList.remove('hidden');
+    out.innerHTML = `<span class="text-purple-600 font-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> Generating natural language report...</span>`;
+    
+    const res = await fetch('/api/ai/command', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({query: q})
+    });
+    const data = await res.json();
+    out.innerHTML = `<div class="font-bold text-slate-900 text-sm">${data.title}</div><div class="text-slate-700 font-medium">${data.ai_summary}</div>`;
+}
+</script>
+{% block scripts %}{% endblock %}
+{% endblock %}

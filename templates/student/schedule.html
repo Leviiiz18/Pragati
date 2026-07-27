@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Class & Exam Timetable - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Class & Exam Timetable</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Weekly lecture schedule, lab sessions, room allocations, and exam dates.</p>
+        </div>
+    </div>
+
+    <!-- Timetable Slots Table -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-clock text-indigo-600"></i> Weekly Lecture & Lab Schedule
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Day</th>
+                        <th class="p-3">Time Slot</th>
+                        <th class="p-3">Subject & Code</th>
+                        <th class="p-3">Faculty / Teacher</th>
+                        <th class="p-3">Room / Venue</th>
+                        <th class="p-3">Type</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for slot in slots %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-bold text-slate-900">{{ slot.day }}</td>
+                        <td class="p-3 font-mono text-xs font-bold text-blue-600">{{ slot.start_time }} - {{ slot.end_time }}</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-0.5 rounded bg-blue-50 text-blue-800 font-mono font-bold text-xs">{{ slot.subject.code if slot.subject else 'CS101' }}</span>
+                            <div class="font-bold text-slate-900 mt-0.5">{{ slot.subject.name if slot.subject else 'Subject' }}</div>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-800">{{ slot.faculty.name if slot.faculty else 'Dr. Alan Turing' }}</td>
+                        <td class="p-3 font-bold text-purple-700">{{ slot.room or 'Lab 101' }}</td>
+                        <td class="p-3">
+                            {% if slot.is_lab %}
+                            <span class="px-2.5 py-1 rounded bg-amber-100 text-amber-800 font-bold text-xs border border-amber-200"><i class="fa-solid fa-flask mr-1"></i> Lab</span>
+                            {% else %}
+                            <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-700 font-bold text-xs">Lecture</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-slate-400 font-medium">
+                            No timetable slots assigned yet for this semester.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Upcoming Examinations Schedule -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-days text-amber-600"></i> Scheduled End-Semester Examinations
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for ex in upcoming_exams %}
+            <div class="p-5 rounded-2xl bg-amber-50/60 border border-amber-200 space-y-2">
+                <div class="flex items-center justify-between">
+                    <span class="font-bold text-slate-900 text-sm">{{ ex.title }}</span>
+                    <span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">{{ ex.date }}</span>
+                </div>
+                <div class="text-xs text-slate-600 font-medium">Subject: <strong class="text-slate-900">{{ ex.subject.name if ex.subject else 'Core Exam' }}</strong></div>
+                <div class="flex items-center justify-between text-xs pt-1 border-t border-amber-200/60">
+                    <span class="text-slate-500 font-semibold">Max Marks: {{ ex.max_marks }}</span>
+                    <span class="px-2 py-0.5 rounded bg-white text-amber-900 font-mono text-[10px] font-bold border border-amber-300">{{ ex.status }}</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-2 p-6 text-center text-slate-400 font-medium text-sm">
+                No upcoming exam dates published yet.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

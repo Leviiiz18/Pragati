@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block title %}{{ module.title }} - Faculty Module Management Desk{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb & Navigation -->
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+        <a href="{{ url_for('faculty.courses') }}" class="hover:text-blue-600">Faculty Desk</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="{{ url_for('faculty.course_detail', subject_id=subject.id) }}" class="hover:text-blue-600">{{ subject.code }} - {{ subject.name }}</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-900">{{ module.title }}</span>
+    </div>
+
+    <!-- Module Banner -->
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-xl space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 border border-white/20 text-xs font-mono font-bold">{{ subject.code }}</span>
+                    <span class="px-3 py-1 rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/40 text-xs font-bold">{{ module.title }}</span>
+                </div>
+                <h1 class="text-3xl font-black mt-3 tracking-tight">{{ module.title }}</h1>
+                <p class="text-sm text-blue-200 font-medium mt-1">Course: <strong class="text-white">{{ subject.name }}</strong> | Faculty In-charge: {{ current_user.name }}</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="document.getElementById('uploadFileModal').classList.remove('hidden'); document.getElementById('uploadFileModal').classList.add('flex');" class="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 border border-white/20 transition">
+                    <i class="fa-solid fa-file-arrow-up text-blue-300"></i> + Upload PDF
+                </button>
+                <button onclick="document.getElementById('createAssignmentModal').classList.remove('hidden'); document.getElementById('createAssignmentModal').classList.add('flex');" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-blue-500/30 transition">
+                    <i class="fa-solid fa-plus"></i> + Post Assignment
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. Google Classroom Assignments Section -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-clipboard-list text-blue-600"></i> Google Classroom Assignments (This Module)
+            </h3>
+            <button onclick="document.getElementById('createAssignmentModal').classList.remove('hidden'); document.getElementById('createAssignmentModal').classList.add('flex');" class="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 text-xs font-bold transition">
+                + Post New Assignment
+            </button>
+        </div>
+
+        <div class="space-y-4">
+            {% for assign in module.assignments %}
+            <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-extrabold text-[10px]">Assignment</span>
+                            <span class="text-xs font-bold text-slate-500">Due: <strong class="text-slate-900">{{ assign.due_date.strftime('%b %d, %Y') }}</strong></span>
+                            <span class="text-xs font-bold text-slate-500">• {{ assign.max_points|int }} Points</span>
+                        </div>
+                        <h5 class="text-base font-extrabold text-slate-900">{{ assign.title }}</h5>
+                        {% if assign.instructions %}
+                        <p class="text-xs text-slate-700 font-medium whitespace-pre-line leading-relaxed">{{ assign.instructions }}</p>
+                        {% endif %}
+                    </div>
+
+                    <form action="{{ url_for('faculty.module_detail', module_id=module.id) }}" method="POST" onsubmit="return confirm('Delete this assignment?');" class="inline">
+                        <input type="hidden" name="action" value="delete_assignment">
+                        <input type="hidden" name="assignment_id" value="{{ assign.id }}">
+                        <button type="submit" class="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 text-xs transition" title="Delete Assignment">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </form>
+                </div>
+
+                {% if assign.attachment_path %}
+                <div class="p-2.5 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs max-w-sm">
+                    <span class="font-bold text-slate-800 truncate"><i class="fa-solid fa-file-pdf text-rose-600 mr-1"></i> Problem Statement PDF</span>
+                    <a href="{{ assign.attachment_path }}" target="_blank" class="text-blue-600 hover:underline font-bold text-[11px]">View File</a>
+                </div>
+                {% endif %}
+
+                <!-- Submissions & Grading Drawer -->
+                <div class="pt-3 border-t border-slate-200 flex items-center justify-between text-xs">
+                    <span class="font-bold text-slate-700">Submissions Turned In: <span class="px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 font-extrabold">{{ assign.submissions|length }}</span></span>
+
+                    {% if assign.submissions %}
+                    <button onclick="openGradingModal('assign-sub-{{ assign.id }}')" class="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-sm transition">
+                        <i class="fa-solid fa-check-double mr-1"></i> Grade Submissions ({{ assign.submissions|length }})
+                    </button>
+                    {% else %}
+                    <span class="text-slate-400 font-medium">Awaiting student turned-in work</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Grading Modal Container -->
+            <div id="assign-sub-{{ assign.id }}" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+                <div class="w-full max-w-2xl bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl overflow-y-auto max-h-[85vh]">
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div>
+                            <h3 class="text-lg font-extrabold text-slate-900">Grade Student Submissions</h3>
+                            <p class="text-xs text-slate-500 font-medium">{{ assign.title }} (Max: {{ assign.max_points|int }} Pts)</p>
+                        </div>
+                        <button onclick="document.getElementById('assign-sub-{{ assign.id }}').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+                    </div>
+
+                    <div class="space-y-4">
+                        {% for sub in assign.submissions %}
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <div class="font-extrabold text-slate-900 text-sm">{{ sub.student.name }}</div>
+                                    <div class="text-[10px] text-slate-500 font-medium">Submitted: {{ sub.submitted_at.strftime('%b %d, %H:%M') if sub.submitted_at else '' }}</div>
+                                </div>
+
+                                <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold
+                                    {% if sub.status == 'Graded' %} bg-emerald-100 text-emerald-800 border border-emerald-200
+                                    {% else %} bg-amber-100 text-amber-800 border border-amber-200 {% endif %}">
+                                    {{ sub.status }}
+                                </span>
+                            </div>
+
+                            {% if sub.submission_text %}
+                            <p class="text-xs text-slate-700 bg-white p-3 rounded-xl border border-slate-200 whitespace-pre-line font-medium">{{ sub.submission_text }}</p>
+                            {% endif %}
+
+                            {% if sub.file_path %}
+                            <a href="{{ sub.file_path }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white border border-slate-300 rounded-xl text-xs font-bold text-blue-600 hover:bg-slate-100">
+                                <i class="fa-solid fa-file-arrow-down text-rose-600"></i> View Student Attached Work
+                            </a>
+                            {% endif %}
+
+                            <form action="{{ url_for('faculty.module_detail', module_id=module.id) }}" method="POST" class="pt-2 border-t border-slate-200 grid grid-cols-1 md:grid-cols-12 gap-3 items-end">
+                                <input type="hidden" name="action" value="grade_submission">
+                                <input type="hidden" name="submission_id" value="{{ sub.id }}">
+
+                                <div class="md:col-span-4">
+                                    <label class="block text-[10px] font-bold text-slate-600 mb-1">Points Awarded (out of {{ assign.max_points|int }})</label>
+                                    <input type="number" step="0.5" name="points_awarded" value="{{ sub.points_awarded or '' }}" placeholder="e.g. 92" required class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+                                </div>
+
+                                <div class="md:col-span-6">
+                                    <label class="block text-[10px] font-bold text-slate-600 mb-1">Feedback Comments</label>
+                                    <input type="text" name="feedback" value="{{ sub.feedback or '' }}" placeholder="Great execution on indexing..." class="w-full px-3 py-1.5 bg-white border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none">
+                                </div>
+
+                                <div class="md:col-span-2">
+                                    <button type="submit" class="w-full py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="p-5 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                No assignments posted for this module yet. Click "+ Post New Assignment" above.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- 2. Reference PDFs Section -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-file-pdf text-rose-600"></i> Module Reference PDFs & Notes
+            </h3>
+            <button onclick="document.getElementById('uploadFileModal').classList.remove('hidden'); document.getElementById('uploadFileModal').classList.add('flex');" class="px-3.5 py-1.5 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white border border-blue-200 text-xs font-bold transition">
+                + Upload PDF
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {% set files_found = false %}
+            {% for unit in module.units %}
+                {% for file in unit.files %}
+                {% set files_found = true %}
+                <div class="bg-slate-50 hover:bg-slate-100 rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 transition">
+                    <div class="space-y-2">
+                        <div class="flex items-center justify-between">
+                            <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">
+                                <i class="fa-solid fa-file-pdf"></i>
+                            </div>
+                            <span class="px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 text-[10px] font-bold">PDF Document</span>
+                        </div>
+
+                        <h5 class="text-xs font-extrabold text-slate-900 line-clamp-2 leading-snug">{{ file.filename }}</h5>
+                        <p class="text-[10px] text-slate-500 font-medium">Uploaded by You: {{ file.uploaded_at.strftime('%b %d, %Y') if file.uploaded_at else 'Jul 26, 2026' }}</p>
+                    </div>
+
+                    <div class="pt-2 border-t border-slate-200 flex items-center gap-2">
+                        <a href="{{ file.filepath }}" target="_blank" class="flex-1 py-1.5 bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-[11px] rounded-xl text-center transition shadow-sm">
+                            <i class="fa-solid fa-eye mr-1"></i> View
+                        </a>
+                        <form action="{{ url_for('faculty.module_detail', module_id=module.id) }}" method="POST" class="inline" onsubmit="return confirm('Permanently delete {{ file.filename }}?');">
+                            <input type="hidden" name="action" value="delete_file">
+                            <input type="hidden" name="file_id" value="{{ file.id }}">
+                            <button type="submit" title="Delete File" class="px-3 py-1.5 bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white border border-rose-200 font-bold text-[11px] rounded-xl transition shadow-sm">
+                                <i class="fa-solid fa-trash-can"></i> Delete
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% if not files_found %}
+            <div class="col-span-3 p-5 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                No files uploaded for this module yet.
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Post New Assignment -->
+<div id="createAssignmentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Post Assignment</h3>
+                <p class="text-xs text-blue-600 font-bold mt-0.5">{{ module.title }}</p>
+            </div>
+            <button onclick="document.getElementById('createAssignmentModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('faculty.module_detail', module_id=module.id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="action" value="create_assignment">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Assignment Title *</label>
+                <input type="text" name="title" placeholder="e.g. Lab Assignment 2: Normalization" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Instructions & Guidelines</label>
+                <textarea name="instructions" rows="3" placeholder="Provide problem statement..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none"></textarea>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Due Date *</label>
+                    <input type="date" name="due_date" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Max Points</label>
+                    <input type="number" name="max_points" value="100" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Attach Problem Sheet / PDF (Optional)</label>
+                <input type="file" name="attachment" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('createAssignmentModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Post Assignment</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Faculty Upload File -->
+<div id="uploadFileModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Upload Reference Material / PDF</h3>
+                <p class="text-xs text-blue-600 font-bold mt-0.5">{{ module.title }}</p>
+            </div>
+            <button onclick="document.getElementById('uploadFileModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('faculty.module_detail', module_id=module.id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="action" value="upload_file">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Select File (PDF, Slides, Lab Document) *</label>
+                <input type="file" name="file" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('uploadFileModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Upload File</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openGradingModal(modalId) {
+    const el = document.getElementById(modalId);
+    if (el) {
+        el.classList.remove('hidden');
+        el.classList.add('flex');
+    }
+}
+</script>
+{% endblock %}

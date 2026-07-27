@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block title %}{{ subject.name }} - Faculty Module Cards Grid{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb -->
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+        <a href="{{ url_for('faculty.courses') }}" class="hover:text-blue-600">Faculty Desk</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-900">{{ subject.code }} - {{ subject.name }}</span>
+    </div>
+
+    <!-- Course Header Banner -->
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-xl space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 border border-white/20 text-xs font-mono font-bold">{{ subject.code }}</span>
+                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 border border-white/20 text-xs font-bold">Sem {{ subject.semester }}</span>
+                    <span class="px-3 py-1 rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/40 text-xs font-bold">{{ subject.credits or 4 }} Credits</span>
+                </div>
+                <h1 class="text-3xl font-black mt-3 tracking-tight">{{ subject.name }}</h1>
+                <p class="text-sm text-blue-200 font-medium mt-1">Faculty In-charge: <strong class="text-white">{{ current_user.name }}</strong> | Select a Module Card below to enter & manage content</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section Heading -->
+    <div class="flex items-center justify-between">
+        <h3 class="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-blue-600"></i> Faculty Module Cards Grid (5 Modules)
+        </h3>
+        <span class="text-xs text-slate-500 font-semibold">Select a Module Card to Manage & Upload Files</span>
+    </div>
+
+    <!-- Nitte ERP Style Geometric Module Cards Grid (5 Modules) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {% for mod in modules %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-lg transition group">
+            <div>
+                <!-- Colorful Geometric Pattern Header Banner -->
+                <a href="{{ url_for('faculty.module_detail', module_id=mod.id) }}" class="block relative h-36 overflow-hidden 
+                    {% if loop.index % 5 == 1 %} bg-gradient-to-tr from-purple-700 via-indigo-600 to-purple-500
+                    {% elif loop.index % 5 == 2 %} bg-gradient-to-tr from-pink-600 via-rose-500 to-pink-400
+                    {% elif loop.index % 5 == 3 %} bg-gradient-to-tr from-sky-600 via-blue-500 to-cyan-400
+                    {% elif loop.index % 5 == 4 %} bg-gradient-to-tr from-teal-600 via-emerald-500 to-teal-400
+                    {% else %} bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400 {% endif %}">
+                    
+                    <div class="absolute inset-0 opacity-20 mix-blend-overlay bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-transparent transition"></div>
+
+                    <!-- Module Badge Overlay -->
+                    <div class="absolute top-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-xl text-slate-900 font-mono font-extrabold text-xs shadow-sm">
+                        Module {{ loop.index }} of 5
+                    </div>
+                </a>
+
+                <!-- Module Info -->
+                <div class="p-5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ subject.code }}</span>
+                        <span class="px-2.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">Faculty Access</span>
+                    </div>
+
+                    <a href="{{ url_for('faculty.module_detail', module_id=mod.id) }}" class="block">
+                        <h4 class="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition leading-snug line-clamp-2">
+                            {{ mod.title }}
+                        </h4>
+                    </a>
+
+                    <div class="flex flex-wrap gap-2 pt-1 text-[11px] font-bold text-slate-600">
+                        <span class="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200"><i class="fa-solid fa-file-pdf text-rose-600 mr-1"></i> Reference PDFs</span>
+                        <span class="px-2 py-1 rounded-lg bg-slate-100 border border-slate-200"><i class="fa-solid fa-clipboard-list text-blue-600 mr-1"></i> {{ mod.assignments|length }} Assignments</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card Footer -->
+            <div class="px-5 py-3.5 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs font-bold">
+                <span class="text-slate-600">Manage Content & Submissions</span>
+                <a href="{{ url_for('faculty.module_detail', module_id=mod.id) }}" class="px-3.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition flex items-center gap-1">
+                    Open Module Desk <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

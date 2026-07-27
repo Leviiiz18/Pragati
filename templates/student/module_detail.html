@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}{{ module.title }} - Module Content View{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumb & Navigation -->
+    <div class="flex items-center gap-2 text-xs font-bold text-slate-500">
+        <a href="{{ url_for('student.courses') }}" class="hover:text-blue-600">My Courses</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <a href="{{ url_for('student.course_detail', subject_id=subject.id) }}" class="hover:text-blue-600">{{ subject.code }} - {{ subject.name }}</a>
+        <i class="fa-solid fa-chevron-right text-[10px]"></i>
+        <span class="text-slate-900">{{ module.title }}</span>
+    </div>
+
+    <!-- Module Banner -->
+    <div class="bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900 rounded-3xl p-6 md:p-8 text-white shadow-xl space-y-3">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="px-3 py-1 rounded-full bg-white/10 text-blue-200 border border-white/20 text-xs font-mono font-bold">{{ subject.code }}</span>
+                    <span class="px-3 py-1 rounded-full bg-blue-500/30 text-blue-100 border border-blue-400/40 text-xs font-bold">{{ module.title }}</span>
+                </div>
+                <h1 class="text-3xl font-black mt-3 tracking-tight">{{ module.title }}</h1>
+                <p class="text-sm text-blue-200 font-medium mt-1">Course: <strong class="text-white">{{ subject.name }}</strong> | Faculty: {{ subject.faculty.name if subject.faculty else 'Dr. Alan Turing' }}</p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ url_for('student.course_detail', subject_id=subject.id) }}" class="px-4 py-2.5 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-xs flex items-center gap-2 border border-white/20 transition">
+                    <i class="fa-solid fa-grid-2"></i> All Module Cards
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Layout: Module Content (Left 8) | Personal Notes (Right 4) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+        <!-- Left Column: Google Classroom Tasks & PDFs for THIS Module -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- 1. Google Classroom Assignments in THIS Module -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-clipboard-list text-blue-600"></i> Module Assignments (Google Classroom Tasks)
+                    </h3>
+                    <span class="text-xs text-slate-500 font-semibold">{{ module.assignments|length }} Posted Tasks</span>
+                </div>
+
+                <div class="space-y-4">
+                    {% for assign in module.assignments %}
+                    {% set sub_item = namespace(found=None) %}
+                    {% for s in assign.submissions %}
+                        {% if s.student_id == current_user.id %}
+                            {% set sub_item.found = s %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <div class="bg-slate-50 rounded-2xl p-5 border border-slate-200 space-y-3">
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                            <div class="space-y-1">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-0.5 rounded-lg bg-blue-100 text-blue-800 font-extrabold text-[10px]">Classroom Task</span>
+                                    <span class="text-xs font-bold text-slate-500">Due: <strong class="text-slate-900">{{ assign.due_date.strftime('%b %d, %Y') }}</strong></span>
+                                    <span class="text-xs font-bold text-slate-500">• {{ assign.max_points|int }} Points</span>
+                                </div>
+                                <h5 class="text-base font-extrabold text-slate-900">{{ assign.title }}</h5>
+                                {% if assign.instructions %}
+                                <p class="text-xs text-slate-700 font-medium whitespace-pre-line leading-relaxed">{{ assign.instructions }}</p>
+                                {% endif %}
+                            </div>
+
+                            {% if sub_item.found %}
+                                {% if sub_item.found.status == 'Graded' %}
+                                <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 font-extrabold text-xs">
+                                    Graded: {{ sub_item.found.points_awarded|int }}/{{ assign.max_points|int }} Pts
+                                </span>
+                                {% else %}
+                                <span class="px-3 py-1 rounded-full bg-blue-100 text-blue-800 border border-blue-200 font-extrabold text-xs">
+                                    Turned In
+                                </span>
+                                {% endif %}
+                            {% else %}
+                            <span class="px-3 py-1 rounded-full bg-amber-100 text-amber-800 border border-amber-200 font-extrabold text-xs">
+                                Assigned (Pending)
+                            </span>
+                            {% endif %}
+                        </div>
+
+                        {% if assign.attachment_path %}
+                        <div class="p-2.5 bg-white border border-slate-200 rounded-xl flex items-center justify-between text-xs max-w-sm">
+                            <span class="font-bold text-slate-800 truncate"><i class="fa-solid fa-file-pdf text-rose-600 mr-1"></i> Problem Statement PDF</span>
+                            <a href="{{ assign.attachment_path }}" target="_blank" class="text-blue-600 hover:underline font-bold text-[11px]">View Sheet</a>
+                        </div>
+                        {% endif %}
+
+                        {% if sub_item.found and sub_item.found.feedback %}
+                        <div class="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs space-y-1">
+                            <div class="font-extrabold text-emerald-900">Faculty Feedback:</div>
+                            <div class="text-emerald-800 font-medium">{{ sub_item.found.feedback }}</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="pt-2 border-t border-slate-200 flex items-center justify-end">
+                            <button onclick="openSubmitModal('{{ assign.id }}', '{{ assign.title|escape }}')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-md shadow-blue-200 transition flex items-center gap-1.5">
+                                <i class="fa-solid fa-upload"></i> {{ 'Resubmit Work' if sub_item.found else 'Turn In Assignment' }}
+                            </button>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        No assignments posted for this module.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- 2. Reference PDFs in THIS Module -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                        <i class="fa-solid fa-file-pdf text-rose-600"></i> Module Reference PDFs & Lecture Files
+                    </h3>
+                    <span class="text-xs text-slate-500 font-semibold">Course Materials</span>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {% set files_found = false %}
+                    {% for unit in module.units %}
+                        {% for file in unit.files %}
+                        {% set files_found = true %}
+                        <div class="bg-slate-50 hover:bg-slate-100 rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col justify-between space-y-3 transition">
+                            <div class="space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm">
+                                        <i class="fa-solid fa-file-pdf"></i>
+                                    </div>
+                                    <span class="px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 text-[10px] font-bold">PDF Document</span>
+                                </div>
+
+                                <h5 class="text-xs font-extrabold text-slate-900 line-clamp-2 leading-snug">{{ file.filename }}</h5>
+                                <p class="text-[10px] text-slate-500 font-medium">Uploaded by Faculty: {{ file.uploaded_at.strftime('%b %d, %Y') if file.uploaded_at else 'Jul 26, 2026' }}</p>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-200 flex items-center gap-2">
+                                <a href="{{ file.filepath }}" target="_blank" class="flex-1 py-1.5 bg-white hover:bg-slate-200 text-slate-800 border border-slate-300 font-bold text-[11px] rounded-xl text-center transition shadow-sm">
+                                    <i class="fa-solid fa-eye mr-1"></i> View
+                                </a>
+                                <a href="{{ file.filepath }}" download class="flex-1 py-1.5 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-xl text-center transition shadow-sm shadow-blue-200">
+                                    <i class="fa-solid fa-download mr-1"></i> Download
+                                </a>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% if not files_found %}
+                    <div class="col-span-2 p-5 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                        No reference PDFs uploaded for this module.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- 3. Quizzes for THIS Module -->
+            {% for qz in module.quizzes %}
+            <div class="bg-purple-50 p-5 rounded-3xl border border-purple-200 flex items-center justify-between">
+                <div>
+                    <span class="px-2.5 py-0.5 rounded bg-purple-200 text-purple-900 font-bold text-[10px]">Mastery Quiz</span>
+                    <h4 class="text-base font-extrabold text-purple-950 mt-1">{{ qz.title }}</h4>
+                </div>
+                <button onclick="openQuizModal('{{ module.title|escape }}')" class="px-5 py-2.5 bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs rounded-2xl shadow-md transition">
+                    <i class="fa-solid fa-circle-play mr-1"></i> Attempt Quiz
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Right Column: Personal Notes -->
+        <div class="lg:col-span-4 space-y-6">
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-note-sticky text-amber-600"></i>
+                        <h3 class="text-base font-extrabold text-slate-900">My Notes Vault</h3>
+                    </div>
+                    <a href="{{ url_for('student.notes') }}" class="px-3 py-1.5 rounded-xl bg-amber-50 hover:bg-amber-600 text-amber-800 hover:text-white border border-amber-200 text-xs font-bold transition">
+                        + New Note
+                    </a>
+                </div>
+
+                <div class="space-y-3 max-h-[500px] overflow-y-auto">
+                    {% for n in notes %}
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                        <div class="flex items-center justify-between">
+                            <span class="font-extrabold text-slate-900 text-xs">{{ n.title }}</span>
+                        </div>
+                        {% if n.content %}
+                        <p class="text-xs text-slate-700 font-medium whitespace-pre-line leading-relaxed">{{ n.content }}</p>
+                        {% endif %}
+                        {% if n.attachment_path %}
+                            {% if n.attachment_type in ['Image', 'Camera Snapshot', 'Whiteboard Scribble'] or n.attachment_path.startswith('data:image') %}
+                            <img src="{{ n.attachment_path }}" class="w-full h-32 object-cover rounded-xl border">
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="p-5 text-center text-xs text-slate-400 font-medium">No personal notes saved yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Student Turn-In Assignment -->
+<div id="submitAssignmentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Turn In Assignment</h3>
+                <p id="submitAssignTitle" class="text-xs text-blue-600 font-bold mt-0.5"></p>
+            </div>
+            <button onclick="document.getElementById('submitAssignmentModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('student.module_detail', module_id=module.id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+            <input type="hidden" name="action" value="submit_assignment">
+            <input type="hidden" id="submitAssignId" name="assignment_id">
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Your Written Submission / Notes</label>
+                <textarea name="submission_text" rows="3" placeholder="Add comments or solution notes..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Attach Your Completed Work (PDF, Code, Document)</label>
+                <input type="file" name="file" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('submitAssignmentModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Turn In Work</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openSubmitModal(assignId, assignTitle) {
+    document.getElementById('submitAssignId').value = assignId;
+    document.getElementById('submitAssignTitle').innerText = assignTitle;
+    document.getElementById('submitAssignmentModal').classList.remove('hidden');
+    document.getElementById('submitAssignmentModal').classList.add('flex');
+}
+</script>
+{% endblock %}

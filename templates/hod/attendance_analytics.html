@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Attendance Analytics & Proxy AI - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Attendance Analytics & AI Proxy Detection</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Department attendance heatmaps, biometric anomaly alerts, and monthly trends.</p>
+    </div>
+
+    <!-- Analytics Stats -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-amber-200 bg-amber-50/50 shadow-sm">
+            <div class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Proxy Suspicion Flags</div>
+            <div class="text-3xl font-black text-amber-600">{{ proxy_anomalies }}</div>
+            <div class="text-xs text-amber-800 font-bold mt-1">Pattern anomalies under review</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Overall Dept Attendance</div>
+            <div class="text-3xl font-black text-emerald-600">88.4%</div>
+            <div class="text-xs text-emerald-600 font-bold mt-1">+2.1% higher than last sem</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mandatory Threshold Compliance</div>
+            <div class="text-3xl font-black text-blue-600">92%</div>
+            <div class="text-xs text-slate-500 font-semibold mt-1">Students above 75% cutoff</div>
+        </div>
+    </div>
+
+    <!-- Attendance Heatmap Simulation -->
+    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-fire text-amber-600"></i> Department Subject Attendance Heatmap
+        </h3>
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center text-xs font-bold">
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                Data Structures<br><span class="text-xl font-black text-emerald-700">94%</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                Database Systems<br><span class="text-xl font-black text-emerald-700">91%</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
+                Operating Systems<br><span class="text-xl font-black text-amber-700">79%</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900">
+                Computer Networks<br><span class="text-xl font-black text-rose-700">71%</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
+                AI & Machine Learning<br><span class="text-xl font-black text-emerald-700">96%</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

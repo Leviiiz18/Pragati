@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block header_title %}{{ subject.name }}{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Course Content -->
+    <div class="lg:col-span-3 space-y-6">
+        <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 mb-8">
+            <div class="flex items-center space-x-4 mb-4">
+                <div class="w-12 h-12 bg-indigo-100 rounded-2xl flex items-center justify-center text-indigo-600">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-indigo-400">{{ subject.course.name }}</span>
+                        <i class="fas fa-chevron-right text-[8px] text-slate-300"></i>
+                        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ subject.specialization.name if subject.specialization else 'General' }}</span>
+                    </div>
+                    <h3 class="text-2xl font-bold text-slate-800">{{ subject.name }}</h3>
+                    <p class="text-slate-500">Instructor: {{ subject.faculty.name if subject.faculty else 'Unassigned' }}</p>
+                </div>
+            </div>
+        </div>
+
+        {% for module in subject.modules %}
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-8 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <h4 class="font-bold text-slate-700 flex items-center">
+                    <span class="w-8 h-8 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center text-xs mr-3 font-black">
+                        M{{ loop.index }}
+                    </span>
+                    {{ module.title }}
+                </h4>
+                <a href="{{ url_for('student.module_chat_page', module_id=module.id) }}" class="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-indigo-600 hover:bg-indigo-50 hover:border-indigo-100 transition-all shadow-sm">
+                    <i class="fas fa-robot"></i>
+                    AI Chat
+                </a>
+            </div>
+            
+            <div class="p-8 space-y-6">
+                {% for unit in module.units %}
+                <div class="space-y-4">
+                    <h5 class="text-sm font-bold text-slate-400 uppercase tracking-widest">{{ unit.title }}</h5>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {% for file in unit.files %}
+                        <a href="{{ url_for('student.download_file', file_id=file.id) }}" 
+                            class="flex items-center p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-200 hover:bg-white transition-all group">
+                            <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center mr-4 group-hover:scale-110 transition-transform">
+                                <i class="fas {% if file.filetype in ['pdf'] %}fa-file-pdf text-red-500{% elif file.filetype in ['doc', 'docx'] %}fa-file-word text-blue-500{% else %}fa-file-download text-slate-400{% endif %}"></i>
+                            </div>
+                            <div class="flex-1 overflow-hidden">
+                                <p class="text-sm font-bold text-slate-700 truncate mb-0.5">{{ file.filename }}</p>
+                                <p class="text-[10px] font-medium text-slate-400">Published {{ file.uploaded_at.strftime('%d %b, %Y') }}</p>
+                            </div>
+                            <i class="fas fa-cloud-download-alt text-slate-300 group-hover:text-blue-500 ml-4"></i>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if not loop.last %}<hr class="border-slate-50">{% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Right Info -->
+    <div class="lg:col-span-1">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 sticky top-8">
+            <h3 class="font-bold text-slate-800 mb-6 flex items-center">
+                <i class="fas fa-info-circle mr-2 text-blue-500"></i> Information
+            </h3>
+            <div class="space-y-4 text-sm">
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Course</span>
+                    <span class="font-bold text-slate-700">{{ subject.course.name }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Total Modules</span>
+                    <span class="font-bold text-slate-700">{{ subject.modules | length }}</span>
+                </div>
+                <div class="flex justify-between">
+                    <span class="text-slate-400">Assignments</span>
+                    <span class="font-bold text-slate-700">0 pending</span>
+                </div>
+            </div>
+            
+            <button class="w-full mt-8 py-4 bg-slate-900 text-white rounded-2xl font-bold hover:bg-slate-800 transition-colors">
+                View Syllbus
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}AI Timetable Optimizer - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">AI Timetable & Room Optimizer</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Conflict-free schedule generation, faculty workload balance, and lab allocation.</p>
+        </div>
+        <form action="{{ url_for('hod.timetable') }}" method="POST">
+            <input type="hidden" name="action" value="auto_generate">
+            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2 transition">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Generate AI Schedule
+            </button>
+        </form>
+    </div>
+
+    <!-- Active Schedule Grid -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-calendar-days text-purple-600"></i> Active Department Timetable Matrix
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Day</th>
+                        <th class="p-3">Time Slot</th>
+                        <th class="p-3">Subject</th>
+                        <th class="p-3">Assigned Faculty</th>
+                        <th class="p-3">Room / Lab</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for slot in slots %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-bold text-slate-900">{{ slot.day }}</td>
+                        <td class="p-3"><span class="px-2.5 py-1 rounded bg-purple-50 border border-purple-200 text-purple-800 font-mono text-xs font-bold">{{ slot.start_time }} - {{ slot.end_time }}</span></td>
+                        <td class="p-3 font-bold text-blue-600">{{ slot.subject.name if slot.subject else 'Data Structures' }}</td>
+                        <td class="p-3 text-slate-900 font-semibold">{{ slot.faculty.name if slot.faculty else 'Dr. Alan Turing' }}</td>
+                        <td class="p-3">
+                            <span class="px-2.5 py-1 rounded text-xs font-bold {% if slot.is_lab %}bg-purple-100 text-purple-800 border border-purple-200{% else %}bg-slate-100 text-slate-800 border border-slate-200{% endif %}">
+                                {{ slot.room }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-slate-500 font-medium">No active slots. Click "Auto-Generate AI Schedule" to initialize.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

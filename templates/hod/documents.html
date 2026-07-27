@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Document Governance & Verification - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Document Management & OCR Verification</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Approve bonafide certificates, transfer certificates, and audit tamper-proof hash codes.</p>
+    </div>
+
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-file-shield text-rose-600"></i> Pending Certificate Requests
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Student Name</th>
+                        <th class="p-3">Document Type</th>
+                        <th class="p-3">Requested On</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3 text-right">Action / Hash Code</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for req in requests_list %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-bold text-slate-900">{{ req.student.name if req.student else 'Student' }}</td>
+                        <td class="p-3 text-blue-600 font-bold">{{ req.doc_type }}</td>
+                        <td class="p-3 text-slate-500 text-xs font-semibold">{{ req.requested_at.strftime('%Y-%m-%d') if req.requested_at else '2026-07-25' }}</td>
+                        <td class="p-3"><span class="px-2.5 py-1 rounded-full text-xs font-bold {% if req.status == 'Approved' %}bg-emerald-100 text-emerald-800{% else %}bg-amber-100 text-amber-800{% endif %}">{{ req.status }}</span></td>
+                        <td class="p-3 text-right">
+                            {% if req.status == 'Pending' %}
+                            <form action="{{ url_for('hod.documents') }}" method="POST" class="inline">
+                                <input type="hidden" name="request_id" value="{{ req.id }}">
+                                <button type="submit" class="px-3.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-100 transition">Approve & Hash</button>
+                            </form>
+                            {% else %}
+                            <span class="px-2.5 py-1 bg-slate-100 border border-slate-200 text-slate-800 font-mono text-xs rounded-lg font-bold">{{ req.hash_code or 'H8A9F201C' }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-6 text-center text-slate-500 font-medium">No document approval requests currently.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

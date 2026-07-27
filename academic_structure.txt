@@ -1,0 +1,35 @@
+StudySyncPro ERP - Academic Hierarchy
+=====================================
+
+1. BCA (Course) - Department: Computer Science
+   -------------------------------------------
+   * Specialization: AIML
+     - Subject: Introduction to AI (AIML101)
+     - Subject: Machine Learning Basics (AIML102)
+   
+   * Specialization: Cyber Security
+     - Subject: Network Security (CY101)
+     - Subject: Ethical Hacking (CY102)
+
+2. BBA (Course) - Department: Management
+   -------------------------------------
+   * Specialization: Finance
+     - Subject: Business Finance (FIN101)
+     - Subject: Corporate Accounting (FIN102)
+   
+   * Specialization: HR
+     - Subject: HR Management (HR101)
+     - Subject: Industrial Relations (HR102)
+
+3. BSc Computer Science (Course) - Department: Science
+   --------------------------------------------------
+   * Specialization: Data Science
+     - Subject: Introduction to Data Science (DS101)
+     - Subject: Data Analysis with Python (DS102)
+   
+   * Specialization: Software Engineering
+     - Subject: Software Development Life Cycle (SE101)
+     - Subject: Web Development Basics (SE102)
+
+Generated for: StudySyncPro Documentation
+Date: 2026-03-18

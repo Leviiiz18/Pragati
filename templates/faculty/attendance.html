@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Smart Attendance Marking - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div>
+        <h1 class="text-3xl font-extrabold text-slate-900">Smart Attendance Register</h1>
+        <p class="text-sm font-medium text-slate-600 mt-1">Bulk attendance entry with real-time biometric and proxy suspicion detection.</p>
+    </div>
+
+    <!-- Subject Selector -->
+    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
+        <form action="{{ url_for('faculty.attendance') }}" method="GET" class="flex items-center gap-4">
+            <label class="text-xs font-bold text-slate-500 uppercase">Select Subject:</label>
+            <select name="subject_id" onchange="this.form.submit()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                {% for s in subjects %}
+                <option value="{{ s.id }}" {% if s.id == selected_subject_id %}selected{% endif %}>{{ s.name }} ({{ s.code }})</option>
+                {% endfor %}
+            </select>
+        </form>
+        <span class="text-xs text-emerald-600 font-bold flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-check"></i> Biometric Validation Active
+        </span>
+    </div>
+
+    <!-- Attendance Form Table -->
+    {% if selected_subject_id %}
+    <form action="{{ url_for('faculty.attendance') }}" method="POST" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
+        
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div class="text-sm font-bold text-slate-900">Class Roster (Check = Present)</div>
+            <div class="flex items-center gap-3">
+                <input type="date" name="date" value="{{ today_date }}" class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900">
+                <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-200 transition">
+                    Submit Attendance
+                </button>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Present?</th>
+                        <th class="p-3">Student Name</th>
+                        <th class="p-3">Email</th>
+                        <th class="p-3">Current %</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for st in students %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3">
+                            <input type="checkbox" name="present_students" value="{{ st.id }}" checked class="w-4 h-4 rounded text-emerald-600 bg-slate-50 border-slate-300 focus:ring-emerald-500">
+                        </td>
+                        <td class="p-3 font-bold text-slate-900">{{ st.name }}</td>
+                        <td class="p-3 text-slate-500 text-xs font-medium">{{ st.email }}</td>
+                        <td class="p-3 font-bold {% if st.attendance_percentage < 75 %}text-rose-600{% else %}text-emerald-600{% endif %}">
+                            {{ st.attendance_percentage }}%
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="p-6 text-center text-slate-400 font-medium">No students enrolled in this subject yet.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block title %}Super Admin Executive Dashboard - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Executive Governance & Institutional Onboarding</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Pre-feed University branding, configure course codes, and audit cross-department performance.</p>
+        </div>
+        <div class="px-4 py-2 rounded-2xl bg-purple-100 border border-purple-200 text-purple-800 text-xs font-bold flex items-center gap-2">
+            <i class="fa-solid fa-shield-halved"></i> Super Admin Privileges Active
+        </div>
+    </div>
+
+    <!-- Executive Metrics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Students</div>
+            <div class="text-3xl font-black text-slate-900">{{ total_students }}</div>
+            <div class="mt-2 text-xs text-emerald-600 font-bold flex items-center gap-1"><i class="fa-solid fa-arrow-trend-up"></i> +5.4% this academic year</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Faculty Members</div>
+            <div class="text-3xl font-black text-slate-900">{{ total_faculty }}</div>
+            <div class="mt-2 text-xs text-slate-500 font-semibold">Ratio 1:15 (Compliant)</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Annual Fee Revenue</div>
+            <div class="text-3xl font-black text-emerald-600">₹{{ "{:,.0f}".format(total_fees_collected) }}</div>
+            <div class="mt-2 text-xs text-emerald-600 font-bold">94.2% collected</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Active Placement Drives</div>
+            <div class="text-3xl font-black text-purple-600">{{ placements_count }}</div>
+            <div class="mt-2 text-xs text-purple-700 font-semibold">Avg Package: 12.5 LPA</div>
+        </div>
+    </div>
+
+    <!-- Institution & Pre-Fed Course Onboarding Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Pre-feed University Settings -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl border border-blue-200">
+                    <i class="fa-solid fa-building-columns"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900">Pre-Fed University Setup</h3>
+                    <p class="text-xs text-slate-500 font-medium">Used for automatic Registration ID generation prefix (e.g. NU)</p>
+                </div>
+            </div>
+
+            <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3">
+                <input type="hidden" name="action" value="update_institution">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">University Name</label>
+                    <input type="text" name="name" value="{{ institution.name if institution else 'Nitte University' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">University Abbreviation Code (Used in Reg ID)</label>
+                    <input type="text" name="code" value="{{ institution.code if institution else 'NU' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
+                    <span class="text-[10px] text-slate-400 font-medium">e.g., NU for Nitte University -> Reg ID begins with NU</span>
+                </div>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition">Save University Setup</button>
+            </form>
+        </div>
+
+        <!-- Pre-feed Course Codes -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl border border-purple-200">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900">Pre-Feed Degree Courses</h3>
+                    <p class="text-xs text-slate-500 font-medium">Add degree programs & course codes (e.g., UCA for BCA, CSE for B.Tech)</p>
+                </div>
+            </div>
+
+            <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3">
+                <input type="hidden" name="action" value="add_course">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Course Name</label>
+                        <input type="text" name="name" placeholder="Bachelor of Computer Applications" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 mb-1">Course Code</label>
+                        <input type="text" name="code" placeholder="UCA" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 mb-1">Department</label>
+                    <input type="text" name="department" value="Computer Science" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                </div>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition">Pre-Feed New Course Code</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pre-Fed Courses Table -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-blue-600"></i> Pre-Fed Institutional Courses
+        </h3>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Course Name</th>
+                        <th class="p-3">Course Code</th>
+                        <th class="p-3">Department</th>
+                        <th class="p-3">Reg ID Example</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for c in courses %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-bold text-slate-900">{{ c.name }}</td>
+                        <td class="p-3"><span class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 text-xs font-mono font-bold">{{ c.code or 'UCA' }}</span></td>
+                        <td class="p-3 text-slate-700">{{ c.department }}</td>
+                        <td class="p-3 font-mono font-bold text-blue-600">{{ institution.code if institution else 'NU' }}26{{ c.code or 'UCA' }}001</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" class="p-4 text-center text-slate-400">No courses configured.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

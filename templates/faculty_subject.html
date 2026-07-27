@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block header_title %}{{ subject.name }} Management{% endblock %}
+
+{% block content %}
+<div class="mb-8">
+    <div class="flex items-center space-x-2 mb-2">
+        <span class="text-[10px] font-black uppercase tracking-widest text-blue-500">{{ subject.course.name }}</span>
+        <i class="fas fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ subject.specialization.name if subject.specialization else 'General' }}</span>
+    </div>
+    <h2 class="text-3xl font-bold text-slate-800">{{ subject.name }} Management</h2>
+</div>
+
+<div class="flex flex-col lg:flex-row gap-8">
+    <!-- Content Structure -->
+    <div class="lg:col-span-2 flex-1 space-y-6">
+        <div class="flex items-center justify-between mb-2">
+            <h3 class="text-xl font-bold text-slate-800">Modules & Units</h3>
+            <button onclick="document.getElementById('moduleModal').classList.toggle('hidden')" 
+                class="px-4 py-2 bg-blue-600 text-white text-sm font-bold rounded-lg hover:bg-blue-700 transition-colors">
+                <i class="fas fa-plus mr-2"></i> Add Module
+            </button>
+        </div>
+
+        {% for module in subject.modules %}
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="px-6 py-4 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <h4 class="font-bold text-slate-700">{{ module.title }}</h4>
+                <button onclick="document.getElementById('unitModal{{ module.id }}').classList.toggle('hidden')" 
+                    class="text-xs font-bold text-blue-600 hover:text-blue-700">
+                    Add Unit
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                {% for unit in module.units %}
+                <div class="border border-slate-100 rounded-xl p-4 bg-slate-50/50">
+                    <div class="flex items-center justify-between mb-4">
+                        <h5 class="text-sm font-bold text-slate-600 tracking-tight">{{ unit.title }}</h5>
+                        <form action="{{ url_for('faculty.upload_file') }}" method="POST" enctype="multipart/form-data" class="flex items-center space-x-2">
+                            <input type="hidden" name="unit_id" value="{{ unit.id }}">
+                            <label class="px-3 py-1 bg-white border border-slate-200 rounded text-[10px] font-bold text-slate-500 cursor-pointer hover:bg-slate-50">
+                                <i class="fas fa-upload mr-1 text-blue-500"></i> Upload File
+                                <input type="file" name="file" class="hidden" onchange="this.form.submit()">
+                            </label>
+                        </form>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        {% for file in unit.files %}
+                        <div class="flex items-center justify-between p-3 bg-white border border-slate-100 rounded-lg">
+                            <div class="flex items-center space-x-3 overflow-hidden">
+                                <i class="fas {% if file.filetype in ['pdf'] %}fa-file-pdf text-red-400{% elif file.filetype in ['doc', 'docx'] %}fa-file-word text-blue-400{% else %}fa-file-alt text-slate-400{% endif %}"></i>
+                                <span class="text-xs font-medium text-slate-600 truncate">{{ file.filename }}</span>
+                            </div>
+                            <span class="text-[10px] text-slate-300">{{ file.uploaded_at.strftime('%d %b') }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Unit Modal -->
+                <div id="unitModal{{ module.id }}" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50">
+                    <div class="bg-white p-8 rounded-3xl w-full max-w-sm">
+                        <h3 class="text-xl font-bold mb-4">Add New Unit</h3>
+                        <form method="POST">
+                            <input type="hidden" name="action" value="add_unit">
+                            <input type="hidden" name="module_id" value="{{ module.id }}">
+                            <input type="text" name="title" placeholder="Unit Title" class="w-full px-4 py-3 border rounded-xl mb-4">
+                            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl">Create</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Right Sidebar (Students) -->
+    <div class="lg:w-80">
+        <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 sticky top-8">
+            <h3 class="text-lg font-bold text-slate-800 mb-6">Students Enrolled</h3>
+            <div class="space-y-4">
+                {% for enrollment in subject.enrollments %}
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-slate-100 rounded-full flex items-center justify-center text-slate-500 font-bold uppercase text-xs">
+                        {{ enrollment.student.name[0] }}
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-slate-700">{{ enrollment.student.name }}</p>
+                        <p class="text-xs text-slate-400">#{{ enrollment.student.id }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Module Modal -->
+<div id="moduleModal" class="fixed inset-0 bg-slate-900/50 hidden flex items-center justify-center z-50">
+    <div class="bg-white p-8 rounded-3xl w-full max-w-sm">
+        <h3 class="text-xl font-bold mb-4">Add New Module</h3>
+        <form method="POST">
+            <input type="hidden" name="action" value="add_module">
+            <input type="text" name="title" placeholder="Module Title" class="w-full px-4 py-3 border rounded-xl mb-4">
+            <button type="submit" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl">Create</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

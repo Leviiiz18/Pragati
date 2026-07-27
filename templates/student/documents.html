@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Certificates & Official Requests - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">Certificate Requests & Official Letters</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Apply for official institutional certificates, track HOD approvals, and verify tamper-proof QR hashes.</p>
+        </div>
+        <button onclick="document.getElementById('requestDocModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
+            <i class="fa-solid fa-plus"></i> Request New Certificate
+        </button>
+    </div>
+
+    <!-- Requests Status Table -->
+    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
+        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-file-invoice text-rose-600"></i> My Submitted Document Applications
+        </h3>
+
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-700">
+                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                    <tr>
+                        <th class="p-3">Request ID</th>
+                        <th class="p-3">Certificate Type</th>
+                        <th class="p-3">Requested On</th>
+                        <th class="p-3">Status</th>
+                        <th class="p-3">Verification Hash Code</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200">
+                    {% for req in requests_list %}
+                    <tr class="hover:bg-slate-50 font-medium">
+                        <td class="p-3 font-mono font-bold text-xs text-blue-700">#REQ-{{ req.id }}</td>
+                        <td class="p-3 font-bold text-slate-900">{{ req.doc_type }}</td>
+                        <td class="p-3 text-xs text-slate-500 font-medium">{{ req.requested_at.strftime('%b %d, %Y') if req.requested_at else '2026-07-26' }}</td>
+                        <td class="p-3">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold 
+                                {% if req.status == 'Approved' %} bg-emerald-100 text-emerald-800 border border-emerald-200
+                                {% else %} bg-amber-100 text-amber-800 border border-amber-200 {% endif %}">
+                                <i class="fa-solid {% if req.status == 'Approved' %}fa-circle-check{% else %}fa-clock{% endif %} mr-1"></i>
+                                {{ req.status }}
+                            </span>
+                        </td>
+                        <td class="p-3">
+                            {% if req.hash_code %}
+                            <span class="px-2.5 py-1 rounded bg-slate-100 text-slate-800 font-mono text-xs font-bold border border-slate-200">
+                                {{ req.hash_code }}
+                            </span>
+                            {% else %}
+                            <span class="text-xs text-slate-400 font-medium italic">Pending HOD Verification</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="p-8 text-center text-slate-400 font-medium">
+                            No certificate requests submitted yet. Click "+ Request New Certificate" to apply.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Request Certificate Form -->
+<div id="requestDocModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="w-full max-w-md bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+            <div>
+                <h3 class="text-lg font-extrabold text-slate-900">Apply for Official Certificate</h3>
+                <p class="text-xs text-slate-500 font-medium">Select certificate type to send request to HOD Desk.</p>
+            </div>
+            <button onclick="document.getElementById('requestDocModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        </div>
+
+        <form action="{{ url_for('student.documents') }}" method="POST" class="space-y-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-1">Certificate / Document Type *</label>
+                <select name="doc_type" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500">
+                    <option value="Bonafide Student Certificate">Bonafide Student Certificate</option>
+                    <option value="Academic Official Transcript">Academic Official Transcript</option>
+                    <option value="Conduct & Character Certificate">Conduct & Character Certificate</option>
+                    <option value="Transfer / Migration Certificate">Transfer / Migration Certificate</option>
+                </select>
+            </div>
+
+            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('requestDocModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
+                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Submit Application</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

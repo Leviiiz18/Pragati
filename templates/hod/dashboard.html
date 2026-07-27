@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}HOD Command Dashboard - StudySyncOS{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-3xl font-extrabold text-slate-900">HOD Department Command Center</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Department: <strong class="text-blue-600">{{ dept_name }}</strong> | Real-time decision intelligence & AI risk alerts.</p>
+        </div>
+        <button onclick="openCommandCenter()" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-200 transition">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> Open AI Command Center
+        </button>
+    </div>
+
+    <!-- Department Key Metrics Grid -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Avg Attendance</div>
+            <div class="text-3xl font-black text-emerald-600">{{ avg_attendance }}%</div>
+            <div class="mt-1 text-xs text-slate-500 font-semibold">Target: &gt;85.0%</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Average CGPA</div>
+            <div class="text-3xl font-black text-blue-600">{{ avg_cgpa }}</div>
+            <div class="mt-1 text-xs text-slate-500 font-semibold">Dept Standing: Top 10%</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-rose-200 bg-rose-50/50 shadow-sm">
+            <div class="text-xs font-bold text-rose-700 uppercase tracking-wider mb-1">Students at Risk</div>
+            <div class="text-3xl font-black text-rose-600">{{ at_risk_students|length }}</div>
+            <div class="mt-1 text-xs text-rose-700 font-bold">Action Required</div>
+        </div>
+        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Placement Ready</div>
+            <div class="text-3xl font-black text-purple-600">{{ placement_ready }}</div>
+            <div class="mt-1 text-xs text-purple-700 font-semibold">CGPA ≥7.5 & Att ≥75%</div>
+        </div>
+    </div>
+
+    <!-- AI Student Risk Alerts Section -->
+    <div class="bg-white p-6 rounded-3xl border border-rose-200 shadow-sm space-y-4">
+        <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center border border-rose-200 font-bold text-lg">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <div>
+                    <h3 class="text-lg font-extrabold text-slate-900">AI Predictive Risk Alerts</h3>
+                    <p class="text-xs font-medium text-slate-500">Students flagged for dropout risk, attendance manipulation, or academic struggle.</p>
+                </div>
+            </div>
+            <a href="{{ url_for('hod.student_management') }}" class="text-xs font-bold text-blue-600 hover:text-blue-800">Manage All Students →</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {% for s in at_risk_students[:4] %}
+            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 space-y-2">
+                <div class="flex items-center justify-between">
+                    <div class="font-bold text-slate-900 text-sm flex items-center gap-2">
+                        <i class="fa-solid fa-user text-slate-500"></i> {{ s.name }}
+                        <span class="text-xs text-slate-500 font-medium">Sem {{ s.semester }}</span>
+                    </div>
+                    <span class="px-3 py-1 rounded-full bg-rose-600 text-white text-xs font-bold shadow-sm">
+                        Risk {{ s.risk_score }}%
+                    </span>
+                </div>
+                <div class="text-xs text-slate-800 font-medium">
+                    <strong class="text-slate-900">Reason:</strong> {{ s.risk_reason or 'Low attendance & missing assignment submissions' }}
+                </div>
+                <div class="text-xs text-purple-900 bg-purple-100 p-2.5 rounded-xl border border-purple-200 flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-lightbulb text-amber-600"></i>
+                    <span><strong>AI Action:</strong> Schedule counselling session & alert parent.</span>
+                </div>
+            </div>
+            {% else %}
+            <div class="col-span-2 p-6 text-center text-slate-500 text-sm font-medium">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-2xl block mb-2"></i>
+                No high-risk students detected in department currently.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- HOD Quick Navigation Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <a href="{{ url_for('hod.timetable') }}" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-purple-500 hover:shadow-md transition group">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:scale-105 transition font-bold text-xl border border-purple-200">
+                    <i class="fa-solid fa-calendar-days"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-slate-900 text-base group-hover:text-purple-600 transition">AI Timetable Optimizer</h4>
+                    <span class="text-xs font-semibold text-slate-500">Zero room conflicts & load balance</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">Auto-generate schedules, assign lab rooms, and minimize faculty idle hours.</p>
+        </a>
+
+        <a href="{{ url_for('hod.attendance_analytics') }}" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-amber-500 hover:shadow-md transition group">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center group-hover:scale-105 transition font-bold text-xl border border-amber-200">
+                    <i class="fa-solid fa-clipboard-user"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-slate-900 text-base group-hover:text-amber-600 transition">Proxy & Heatmap Detector</h4>
+                    <span class="text-xs font-semibold text-slate-500">Biometric & pattern anomaly AI</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">Audit proxy attendance flags, monthly trends, and subject-wise heatmaps.</p>
+        </a>
+
+        <a href="{{ url_for('hod.placement') }}" class="bg-white p-6 rounded-3xl border border-slate-200 hover:border-teal-500 hover:shadow-md transition group">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-12 h-12 rounded-2xl bg-teal-100 text-teal-600 flex items-center justify-center group-hover:scale-105 transition font-bold text-xl border border-teal-200">
+                    <i class="fa-solid fa-briefcase"></i>
+                </div>
+                <div>
+                    <h4 class="font-extrabold text-slate-900 text-base group-hover:text-teal-600 transition">Placement & ATS Suite</h4>
+                    <span class="text-xs font-semibold text-slate-500">Resume & readiness scoring</span>
+                </div>
+            </div>
+            <p class="text-xs text-slate-600 font-medium leading-relaxed">Track company drives, ATS readiness scores, and mock interview practice logs.</p>
+        </a>
+    </div>
+</div>
+{% endblock %}

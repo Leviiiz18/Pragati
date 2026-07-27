@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block header_title %}My Students{% endblock %}
+
+{% block content %}
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h3 class="text-2xl font-bold text-slate-800 mb-2">My Subjects & Students</h3>
+        <p class="text-slate-500">Detailed list of students enrolled in your subjects.</p>
+    </div>
+    <div class="flex items-center space-x-4">
+        <label class="text-sm font-bold text-slate-500 uppercase tracking-wider">Filter by Subject:</label>
+        <select onchange="filterSubjects(this.value)" class="px-4 py-2 rounded-xl border border-slate-200 focus:border-blue-500 outline-none transition-all">
+            <option value="all">All Subjects</option>
+            {% for detail in subject_details %}
+            <option value="subject-{{ detail.subject.id }}">{{ detail.subject.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+</div>
+
+<script>
+function filterSubjects(val) {
+    const sections = document.querySelectorAll('.subject-section');
+    sections.forEach(s => {
+        if (val === 'all' || s.id === val) {
+            s.style.display = 'block';
+        } else {
+            s.style.display = 'none';
+        }
+    });
+}
+</script>
+
+<div class="space-y-6">
+    {% for detail in subject_details %}
+    <div id="subject-{{ detail.subject.id }}" class="subject-section bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="bg-slate-50 px-8 py-6 flex items-center justify-between border-b border-slate-100">
+            <div>
+                <span class="text-xs font-bold text-blue-600 uppercase tracking-wider">{{ detail.subject.course.name }}</span>
+                <h4 class="text-xl font-bold text-slate-800">{{ detail.subject.name }}</h4>
+                <p class="text-xs text-slate-400 mt-1">Subject Code: {{ detail.subject.code }}</p>
+            </div>
+            <div class="px-4 py-2 bg-white border border-slate-200 rounded-2xl shadow-sm">
+                <span class="text-lg font-black text-blue-600">{{ detail.students | length }}</span>
+                <span class="text-[10px] font-bold text-slate-400 uppercase ml-1">Students Enrolled</span>
+            </div>
+        </div>
+        
+        <div class="p-8">
+            {% if detail.students %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {% for student in detail.students %}
+                <div class="p-6 bg-slate-50 rounded-2xl border border-transparent hover:border-blue-200 hover:bg-blue-50 transition-all group">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 rounded-2xl bg-white shadow-sm flex items-center justify-center text-blue-600 font-black text-lg group-hover:scale-110 transition-transform">
+                            {{ student.name[0] | upper }}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <h5 class="font-bold text-slate-800 truncate">{{ student.name }}</h5>
+                            <p class="text-xs text-slate-500 truncate">{{ student.email }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+                <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center text-slate-300 mb-4 text-2xl">
+                    <i class="fas fa-user-slash"></i>
+                </div>
+                <p class="text-slate-400 font-medium italic">No students currently enrolled in this subject.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

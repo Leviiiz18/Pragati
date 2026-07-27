@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block header_title %}Academic Schedule{% endblock %}
+
+{% block content %}
+<div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 mb-8">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h3 class="text-2xl font-bold text-slate-800">My Schedule</h3>
+            <p class="text-slate-500">Upcoming events, classes, and personal reminders.</p>
+        </div>
+        <button onclick="openReminderModal()" class="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-100 flex items-center gap-2">
+            <i class="fas fa-plus"></i>
+            Add Reminder
+        </button>
+    </div>
+    <div id="calendar" class="min-h-[600px]"></div>
+</div>
+
+<!-- Reminder Modal -->
+<div id="reminderModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden">
+        <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+                <h3 class="text-2xl font-bold text-slate-800">Add Reminder</h3>
+                <button onclick="closeReminderModal()" class="p-2 hover:bg-slate-100 rounded-full transition-colors">
+                    <i class="fas fa-times text-slate-400"></i>
+                </button>
+            </div>
+            <form action="{{ url_for('student.create_personal_event') }}" method="POST" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Task / Reminder</label>
+                    <input type="text" name="title" required placeholder="e.g. Study for DS Quiz" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Description</label>
+                    <textarea name="description" rows="2" class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Target Date</label>
+                    <input type="date" name="date" required class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-indigo-500 outline-none transition-all">
+                </div>
+                <button type="submit" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl transition-all shadow-lg shadow-indigo-100">
+                    Save Reminder
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<link href='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css' rel='stylesheet' />
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth'
+        },
+        events: '/api/events',
+        eventClick: function(info) {
+            alert(info.event.title + (info.event.extendedProps.description ? ': ' + info.event.extendedProps.description : ''));
+        }
+    });
+    calendar.render();
+});
+function openReminderModal() { document.getElementById('reminderModal').classList.remove('hidden'); }
+function closeReminderModal() { document.getElementById('reminderModal').classList.add('hidden'); }
+</script>
+<style>
+    .fc .fc-button-primary { background-color: #4f46e5; border-color: #4f46e5; border-radius: 0.75rem; font-weight: bold; }
+    .fc .fc-toolbar-title { font-weight: 800; color: #1e293b; }
+    .fc .fc-event { cursor: pointer; border-radius: 4px; padding: 4px; border: none; font-size: 0.85em; }
+</style>
+{% endblock %}
