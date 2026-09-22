@@ -1,11 +1,12 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
-from models import db, User, Course, Specialization, Subject, Enrollment, Exam, ExamResult, TimetableSlot, PlacementDrive, FeeRecord, DocumentRequest, AIRiskAlert, Institution, Department, PlacementApplication, AttendanceRecord, Module, Unit
+from models import db, User, Course, Specialization, Subject, Enrollment, Exam, ExamResult, TimetableSlot, PlacementDrive, FeeRecord, DocumentRequest, AIRiskAlert, Institution, Department, PlacementApplication, AttendanceRecord, Module, Unit, Event, Notification
 from services.risk_analytics import RiskAnalyticsService
 from services.scheduler import AISchedulerService
 from services.command_center import CommandCenterService
 from flask_bcrypt import Bcrypt
 import hashlib
+from datetime import datetime
 
 hod_bp = Blueprint('hod', __name__)
 bcrypt = Bcrypt()
@@ -442,3 +443,118 @@ def documents():
 def reports():
     total_students = User.query.filter_by(role='student').count()
     return render_template('hod/reports.html', total_students=total_students)
+
+@hod_bp.route('/calendar')
+@login_required
+def calendar():
+    subjects = Subject.query.join(Course).filter(Course.department == current_user.department).all()
+    upcoming_exams = Exam.query.join(Subject).join(Course).filter(Course.department == current_user.department).order_by(Exam.date.asc()).limit(8).all()
+    return render_template('hod/calendar.html', subjects=subjects, upcoming_exams=upcoming_exams)
+
+@hod_bp.route('/calendar/create', methods=['POST'])
+@hod_bp.route('/create_event', methods=['POST'])
+@login_required
+def create_event():
+    title = request.form.get('title')
+    description = request.form.get('description', '')
+    date_str = request.form.get('date')
+    target_role = request.form.get('target_role', 'all')
+    event_type = request.form.get('event_type', 'announcement')
+    subject_id = request.form.get('subject_id')
+
+    if not title or not date_str:
+        flash('Event title and date are required.', 'danger')
+        return redirect(url_for('hod.calendar'))
+
+    try:
+        ev_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        flash('Invalid date format.', 'danger')
+        return redirect(url_for('hod.calendar'))
+
+    event_title = f"[EXAM] {title}" if event_type == 'exam' and not title.startswith('[EXAM]') else title
+
+    new_event = Event(
+        title=event_title,
+        description=description,
+        date=ev_date,
+        created_by=current_user.id,
+        target_role=target_role,
+        subject_id=int(subject_id) if subject_id and subject_id.isdigit() else None,
+        user_id=current_user.id if target_role == 'personal' else None
+    )
+    db.session.add(new_event)
+
+    # If tagged as exam with a subject, also add to Exam table
+    if event_type == 'exam' and subject_id and subject_id.isdigit():
+        new_exam = Exam(
+            title=title,
+            subject_id=int(subject_id),
+            date=ev_date,
+            max_marks=float(request.form.get('max_marks', 100)),
+            type=request.form.get('exam_category', 'Internal'),
+            status='Scheduled'
+        )
+        db.session.add(new_exam)
+
+    # Dispatch Notifications across dashboards
+    if target_role != 'personal':
+        if event_type == 'exam':
+            notif_title = f"📢 Exam Scheduled: {title}"
+        else:
+            notif_title = f"🏛️ Department Notice: {title}"
+
+        detail_snippet = f" - {description}" if description else ""
+        notif_msg = f"HOD {current_user.name} posted for {ev_date.strftime('%b %d, %Y')}: {title}{detail_snippet}"
+
+        # 1. Notify Faculty
+        if target_role in ['all', 'faculty']:
+            fac_query = User.query.filter_by(role='faculty').filter(User.id != current_user.id)
+            if current_user.department:
+                fac_recipients = fac_query.filter(
+                    (User.department == current_user.department) | (User.department.is_(None))
+                ).all()
+                if not fac_recipients:
+                    fac_recipients = fac_query.all()
+            else:
+                fac_recipients = fac_query.all()
+
+            for fac in fac_recipients:
+                db.session.add(Notification(
+                    user_id=fac.id,
+                    title=notif_title,
+                    message=notif_msg,
+                    link=url_for('faculty.calendar')
+                ))
+
+        # 2. Notify Students
+        if target_role in ['all', 'student']:
+            stu_query = User.query.filter_by(role='student')
+            if current_user.department:
+                stu_recipients = stu_query.filter(
+                    (User.department == current_user.department) | (User.department.is_(None))
+                ).all()
+                if not stu_recipients:
+                    stu_recipients = stu_query.all()
+            else:
+                stu_recipients = stu_query.all()
+
+            # If subject specified, ensure enrolled students are included
+            if subject_id and subject_id.isdigit():
+                enrolled_students = User.query.join(Enrollment, Enrollment.student_id == User.id).filter(Enrollment.subject_id == int(subject_id)).all()
+                all_students = {s.id: s for s in (stu_recipients + enrolled_students)}.values()
+            else:
+                all_students = stu_recipients
+
+            for stu in all_students:
+                db.session.add(Notification(
+                    user_id=stu.id,
+                    title=notif_title,
+                    message=notif_msg,
+                    link=url_for('student.calendar')
+                ))
+
+    db.session.commit()
+    flash(f'Department event "{event_title}" published and notifications dispatched successfully!', 'success')
+    return redirect(url_for('hod.calendar'))
+

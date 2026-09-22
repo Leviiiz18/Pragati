@@ -27,6 +27,26 @@
         })();
     </script>
     <style>
+        /* Instant zero-flash collapsed layout before any stylesheet or script loads */
+        .sidebar-collapsed #mainSidebar {
+            width: 4.75rem !important;
+            transition: none !important;
+        }
+        .sidebar-collapsed #mainSidebar .sidebar-text,
+        .sidebar-collapsed #mainSidebar .sidebar-section-header {
+            display: none !important;
+        }
+        .sidebar-collapsed #mainSidebar .sidebar-footer-expanded {
+            display: none !important;
+        }
+        .sidebar-collapsed #mainSidebar .sidebar-footer-compact {
+            display: flex !important;
+        }
+        .sidebar-collapsed #sidebarCollapseIcon {
+            transform: rotate(180deg) !important;
+        }
+    </style>
+    <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
 
         /* Pragati Minimal Animated Loader Keyframes */
@@ -70,6 +90,11 @@
     </style>
 </head>
 <body class="h-full flex flex-col bg-slate-50 text-slate-800 cool-canvas-bg antialiased selection:bg-[#4757F0] selection:text-white">
+    <script>
+        if (document.documentElement.classList.contains('sidebar-collapsed')) {
+            document.body.classList.add('sidebar-collapsed');
+        }
+    </script>
 
     {% block auth_content %}
     <!-- Main Application Container for Authenticated Users -->
@@ -84,7 +109,7 @@
 
                 <!-- Desktop Sidebar Collapse Toggle Button (21st Aceternity style) -->
                 <button id="sidebarToggleBtn" onclick="toggleSidebar()" aria-label="Toggle Sidebar" title="Collapse / Expand Sidebar (Ctrl+B)" 
-                        class="hidden md:flex w-9 h-9 rounded-xl bg-slate-100/90 hover:bg-blue-50 border border-slate-200/90 hover:border-blue-300 text-slate-600 hover:text-blue-600 items-center justify-center transition-all shadow-sm active:scale-95 group">
+                        class="hidden md:flex w-9 h-9 rounded-xl bg-slate-100/90 hover:bg-blue-50 border border-slate-200/90 hover:border-blue-300 text-slate-600 hover:text-blue-600 items-center justify-center transition-colors shadow-sm active:bg-slate-200 group">
                     <i id="sidebarCollapseIcon" class="fa-solid fa-angles-left text-xs group-hover:scale-110 transition-transform duration-300"></i>
                 </button>
 
@@ -200,7 +225,7 @@
         <div class="flex flex-1 overflow-hidden">
             <!-- Sidebar Navigation (Desktop Collapsible) -->
             {% if current_user.is_authenticated %}
-            <aside id="mainSidebar" class="bg-white border-r border-slate-200/90 p-3 flex flex-col justify-between hidden md:flex shadow-sm transition-all duration-300 z-30 select-none">
+            <aside id="mainSidebar" class="bg-white border-r border-slate-200/90 p-3 flex flex-col justify-between hidden md:flex shadow-sm z-30 select-none">
                 <nav class="space-y-1 overflow-y-auto overflow-x-hidden flex-1 py-1 pr-0.5 custom-scroll">
                     {% if current_user.role in ['super_admin', 'principal'] %}
                     <div class="sidebar-section-header px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Executive Admin</div>
@@ -233,8 +258,12 @@
                         <span class="sidebar-text truncate">Attendance & Proxies</span>
                     </a>
                     <a href="{{ url_for('hod.timetable') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="AI Timetable">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-calendar-days"></i></span>
+                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-clock"></i></span>
                         <span class="sidebar-text truncate">AI Timetable</span>
+                    </a>
+                    <a href="{{ url_for('hod.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Department Calendar">
+                        <span class="sidebar-icon text-rose-600"><i class="fa-solid fa-calendar-days"></i></span>
+                        <span class="sidebar-text truncate">Department Calendar</span>
                     </a>
                     <a href="{{ url_for('hod.placement') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Placement Suite">
                         <span class="sidebar-icon text-teal-600"><i class="fa-solid fa-briefcase"></i></span>
@@ -259,6 +288,10 @@
                     <a href="{{ url_for('faculty.attendance') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Mark Attendance">
                         <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-user-check"></i></span>
                         <span class="sidebar-text truncate">Mark Attendance</span>
+                    </a>
+                    <a href="{{ url_for('faculty.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Academic Calendar">
+                        <span class="sidebar-icon text-indigo-600"><i class="fa-solid fa-calendar-days"></i></span>
+                        <span class="sidebar-text truncate">Academic Calendar</span>
                     </a>
                     <a href="{{ url_for('faculty.courses') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Course Materials & Quiz AI">
                         <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-book-open"></i></span>
@@ -295,6 +328,10 @@
                     <a href="{{ url_for('student.attendance') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Attendance Register">
                         <span class="sidebar-icon text-emerald-600"><i class="fa-solid fa-calendar-check"></i></span>
                         <span class="sidebar-text truncate">Attendance Register</span>
+                    </a>
+                    <a href="{{ url_for('student.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Academic Calendar">
+                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-calendar-days"></i></span>
+                        <span class="sidebar-text truncate">Academic Calendar</span>
                     </a>
                     <a href="{{ url_for('student.schedule') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Class Timetable">
                         <span class="sidebar-icon text-indigo-600"><i class="fa-solid fa-clock"></i></span>
@@ -349,7 +386,7 @@
                     </div>
 
                     <!-- Bottom Collapse Quick Button -->
-                    <button onclick="toggleSidebar()" class="w-full py-2 px-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 border border-slate-200/80 hover:border-blue-200 text-slate-500 text-xs font-bold flex items-center justify-center gap-2 transition active:scale-95 group" title="Toggle Sidebar (Ctrl+B)">
+                    <button onclick="toggleSidebar()" class="w-full py-2 px-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 border border-slate-200/80 hover:border-blue-200 text-slate-500 text-xs font-bold flex items-center justify-center gap-2 transition-colors group" title="Toggle Sidebar (Ctrl+B)">
                         <i id="bottomCollapseIcon" class="fa-solid fa-chevron-left text-[11px] transition-transform duration-300 group-hover:-translate-x-0.5"></i>
                         <span class="sidebar-text text-xs">Collapse Menu</span>
                     </button>
@@ -453,11 +490,12 @@
 
     <!-- Core Interactive Scripts -->
     <script>
-        // Synchronize Collapsed State
+        // Synchronize Collapsed State across both documentElement and body
         function syncSidebarUI(isCollapsed) {
             const collapseIcon = document.getElementById('sidebarCollapseIcon');
             const bottomIcon = document.getElementById('bottomCollapseIcon');
             if (isCollapsed) {
+                document.documentElement.classList.add('sidebar-collapsed');
                 document.body.classList.add('sidebar-collapsed');
                 if (collapseIcon) {
                     collapseIcon.classList.remove('fa-angles-left');
@@ -468,6 +506,7 @@
                     bottomIcon.classList.add('fa-chevron-right');
                 }
             } else {
+                document.documentElement.classList.remove('sidebar-collapsed');
                 document.body.classList.remove('sidebar-collapsed');
                 if (collapseIcon) {
                     collapseIcon.classList.remove('fa-angles-right');
@@ -480,12 +519,15 @@
             }
         }
 
-        // Toggle Desktop Sidebar
+        // Toggle Desktop Sidebar with smooth animation
         function toggleSidebar() {
-            const isCollapsed = !document.body.classList.contains('sidebar-collapsed');
-            syncSidebarUI(isCollapsed);
+            document.documentElement.classList.add('sidebar-animated');
+            const isCurrentlyCollapsed = document.documentElement.classList.contains('sidebar-collapsed') || document.body.classList.contains('sidebar-collapsed');
+            const nextCollapsed = !isCurrentlyCollapsed;
+            syncSidebarUI(nextCollapsed);
             try {
-                localStorage.setItem('pragati_sidebar_collapsed', isCollapsed ? 'true' : 'false');
+                localStorage.setItem('pragati_sidebar_collapsed', nextCollapsed ? 'true' : 'false');
+                localStorage.setItem('studysync_sidebar_collapsed', nextCollapsed ? 'true' : 'false');
             } catch (e) {}
         }
 
@@ -493,6 +535,11 @@
         document.addEventListener('DOMContentLoaded', () => {
             const savedState = localStorage.getItem('pragati_sidebar_collapsed') === 'true' || localStorage.getItem('studysync_sidebar_collapsed') === 'true';
             syncSidebarUI(savedState);
+
+            // Enable smooth transitions only after initial paint settles (prevents navigation popout)
+            setTimeout(() => {
+                document.documentElement.classList.add('sidebar-animated');
+            }, 120);
 
             // Active link indicator based on current URL path
             const currentPath = window.location.pathname;

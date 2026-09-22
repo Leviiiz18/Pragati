@@ -48,8 +48,12 @@
         }
     }
 
-    .sculpture-card {
+    .sculpture-float-container {
         animation: sculptureFloat 7s ease-in-out infinite;
+        will-change: transform;
+    }
+
+    #sculptureWrapper {
         transform-style: preserve-3d;
         will-change: transform;
     }
@@ -285,15 +289,17 @@
         </div>
 
         <!-- The 3D Pragati Sculpture Vector Hero Graphic (With 21st Lerp Inertia Physics) -->
-        <div id="sculptureWrapper" class="sculpture-card relative z-10 flex items-center justify-center max-w-[580px] w-full cursor-pointer group">
-            <!-- Dynamic Interactive Glass Flare Reflection Layer -->
-            <div id="sculptureGlowFlare" class="absolute -inset-4 bg-gradient-to-tr from-[#6257F5]/10 via-[#7B8CFA]/15 to-[#18D9D2]/15 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
+        <div class="sculpture-float-container relative z-10 flex items-center justify-center max-w-[580px] w-full">
+            <div id="sculptureWrapper" class="relative flex items-center justify-center w-full select-none cursor-default group">
+                <!-- Dynamic Interactive Glass Flare Reflection Layer -->
+                <div id="sculptureGlowFlare" class="absolute -inset-4 bg-gradient-to-tr from-[#6257F5]/10 via-[#7B8CFA]/15 to-[#18D9D2]/15 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
 
-            <!-- Crisp 3D Pragati Sculpture SVG -->
-            <img src="{{ url_for('static', filename='images/pragati_3d_sculpture.svg') }}" 
-                 alt="Pragati 3D Signature Sculpture" 
-                 class="w-full max-h-[720px] object-contain drop-shadow-[0_24px_48px_rgba(71,85,105,0.12)] transition-transform duration-300 group-hover:scale-[1.02]"
-                 id="sculptureSvgElement">
+                <!-- Crisp 3D Pragati Sculpture SVG -->
+                <img src="{{ url_for('static', filename='images/pragati_3d_sculpture.svg') }}" 
+                     alt="Pragati 3D Signature Sculpture" 
+                     class="w-full max-h-[720px] object-contain drop-shadow-[0_24px_48px_rgba(71,85,105,0.12)] pointer-events-none"
+                     id="sculptureSvgElement">
+            </div>
         </div>
 
         <!-- Bottom Left Institutional Meta -->
@@ -741,7 +747,6 @@
 
     let currentRotX = 0, targetRotX = 0;
     let currentRotY = 0, targetRotY = 0;
-    let currentScale = 1, targetScale = 1;
     let isHoveringShowcase = false;
 
     if (leftPanel && sculptureCard) {
@@ -758,30 +763,26 @@
                 mouseLight.style.opacity = '1';
             }
 
-            // Target angles with spring dampening
+            // Target angles with gentle damping (no jitter)
             const centerX = rect.width / 2;
             const centerY = rect.height / 2;
-            targetRotX = ((y - centerY) / centerY) * -14;
-            targetRotY = ((x - centerX) / centerX) * 14;
-            targetScale = 1.025;
+            targetRotX = ((y - centerY) / centerY) * -8;
+            targetRotY = ((x - centerX) / centerX) * 8;
         });
 
         leftPanel.addEventListener('mouseleave', () => {
             isHoveringShowcase = false;
             targetRotX = 0;
             targetRotY = 0;
-            targetScale = 1;
             if (mouseLight) mouseLight.style.opacity = '0';
         });
 
-        // 60FPS Lerp interpolation loop
+        // 60FPS Lerp interpolation loop (pure smooth rotational tilt, no scale jumping)
         function updateSculpturePhysics() {
-            // Smooth lerp: 0.08 smoothing factor
             currentRotX += (targetRotX - currentRotX) * 0.08;
             currentRotY += (targetRotY - currentRotY) * 0.08;
-            currentScale += (targetScale - currentScale) * 0.08;
 
-            sculptureCard.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg) scale(${currentScale.toFixed(3)})`;
+            sculptureCard.style.transform = `perspective(1000px) rotateX(${currentRotX.toFixed(2)}deg) rotateY(${currentRotY.toFixed(2)}deg)`;
 
             requestAnimationFrame(updateSculpturePhysics);
         }

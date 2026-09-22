@@ -5,6 +5,7 @@ from services.ai_engine import AIEngine
 from services.career_service import CareerService
 from services.risk_analytics import RiskAnalyticsService
 import os
+from datetime import datetime, date
 from werkzeug.utils import secure_filename
 
 student_bp = Blueprint('student', __name__)
@@ -297,3 +298,59 @@ def career():
 @student_bp.route('/wellness')
 def wellness():
     return render_template('student/wellness.html')
+
+@student_bp.route('/calendar')
+def calendar():
+    enrolled_subject_ids = [e.subject_id for e in current_user.enrollments]
+    subjects = Subject.query.filter(Subject.id.in_(enrolled_subject_ids)).all()
+    upcoming_exams = Exam.query.filter(Exam.subject_id.in_(enrolled_subject_ids)).order_by(Exam.date.asc()).limit(5).all()
+    my_reminders = Event.query.filter_by(user_id=current_user.id, target_role='personal').order_by(Event.date.asc()).all()
+    
+    total_att = AttendanceRecord.query.filter_by(student_id=current_user.id).count()
+    present_att = AttendanceRecord.query.filter_by(student_id=current_user.id, status='present').count()
+    absent_att = AttendanceRecord.query.filter_by(student_id=current_user.id, status='absent').count()
+    att_pct = round((present_att / total_att * 100), 1) if total_att > 0 else 85.0
+
+    return render_template(
+        'student/calendar.html',
+        subjects=subjects,
+        upcoming_exams=upcoming_exams,
+        my_reminders=my_reminders,
+        total_att=total_att,
+        present_att=present_att,
+        absent_att=absent_att,
+        att_pct=att_pct
+    )
+
+@student_bp.route('/calendar/create-reminder', methods=['POST'])
+@student_bp.route('/create_personal_event', methods=['POST'])
+def create_personal_event():
+    title = request.form.get('title')
+    description = request.form.get('description', '')
+    date_str = request.form.get('date')
+    subject_id = request.form.get('subject_id')
+
+    if not title or not date_str:
+        flash('Reminder title and date are required.', 'danger')
+        return redirect(url_for('student.calendar'))
+
+    try:
+        ev_date = datetime.strptime(date_str, '%Y-%m-%d').date()
+    except ValueError:
+        flash('Invalid date format.', 'danger')
+        return redirect(url_for('student.calendar'))
+
+    new_event = Event(
+        title=title,
+        description=description,
+        date=ev_date,
+        created_by=current_user.id,
+        target_role='personal',
+        user_id=current_user.id,
+        subject_id=int(subject_id) if subject_id and subject_id.isdigit() else None
+    )
+    db.session.add(new_event)
+    db.session.commit()
+    flash(f'Personal reminder "{title}" added to your private calendar!', 'success')
+    return redirect(url_for('student.calendar'))
+

@@ -7,9 +7,14 @@
             <h1 class="text-3xl font-extrabold text-slate-900">Student Academic Cockpit</h1>
             <p class="text-sm font-medium text-slate-600 mt-1">Welcome, <strong class="text-amber-600">{{ current_user.name }}</strong> | Sem {{ current_user.semester }} | Department of {{ current_user.department or 'Computer Science' }}</p>
         </div>
-        <a href="{{ url_for('student.ai_tutor') }}" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-200 transition">
-            <i class="fa-solid fa-robot"></i> Open AI Course Tutor
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('student.calendar') }}" class="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-200 transition">
+                <i class="fa-solid fa-calendar-days"></i> Academic & Attendance Calendar
+            </a>
+            <a href="{{ url_for('student.ai_tutor') }}" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-200 transition">
+                <i class="fa-solid fa-robot"></i> Open AI Course Tutor
+            </a>
+        </div>
     </div>
 
     <!-- Real-Time Critical Attendance Alert Station -->
