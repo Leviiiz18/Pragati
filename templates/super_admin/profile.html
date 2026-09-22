@@ -1,0 +1,256 @@
+{% extends "base.html" %}
+{% block title %}Executive Administration Profile & Digital ID - Pragati by Kalpkrats{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-widest mb-1">
+                <i class="fa-solid fa-id-card"></i> Pragati Digital Identity System
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Executive Administrator Profile & Digital ID</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Institutional executive authority credentials, university chancellor/principal ID, and administration records.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
+                <i class="fa-solid fa-print text-purple-600"></i> Print / Save ID
+            </button>
+            <button onclick="flipAdminIdCard()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-purple-200 transition active:scale-95">
+                <i class="fa-solid fa-rotate text-xs"></i> Flip ID Card (Front / Back)
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: EXECUTIVE ID CARD (Col-Span 5) -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping"></span>
+                    Verified Supreme Administrator Card
+                </span>
+                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
+                    <i class="fa-solid fa-crown text-[10px]"></i> Executive Clearance
+                </span>
+            </div>
+
+            <!-- 3D Perspective Card Container -->
+            <div class="id-card-perspective mx-auto w-full max-w-sm" id="printableIdCard">
+                <div class="id-card-flipper" id="adminCardFlipper">
+                    
+                    <!-- ================= FRONT OF ADMIN ID CARD ================= -->
+                    <div class="id-card-face w-full rounded-3xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden relative transition-all text-slate-800">
+                        <div class="id-hologram absolute inset-0 z-20 pointer-events-none rounded-3xl"></div>
+                        
+                        <!-- Top Banner -->
+                        <div class="bg-gradient-to-r from-slate-950 via-purple-950 to-indigo-950 text-white p-4 relative overflow-hidden">
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-500/20 rounded-full blur-xl"></div>
+                            <div class="flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md p-1.5 flex items-center justify-center border border-white/20">
+                                        <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="NU" class="w-full h-full object-contain">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-black tracking-wide leading-tight uppercase text-white">{{ institution.name if institution else 'Nitte University' }}</h3>
+                                        <span class="text-[9px] font-semibold text-purple-200 block uppercase tracking-wider">Office of Chancellor &amp; Principal</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 py-0.5 rounded-md bg-purple-400 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow-xs">EXECUTIVE</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body -->
+                        <div class="p-5 space-y-4 relative z-10 bg-white">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="id-smart-chip" title="EMV Smart Microchip"></div>
+                                    <i class="fa-solid fa-wifi text-slate-400 text-sm rotate-90" title="Contactless Pass"></i>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">AUTHORIZATION</span>
+                                    <span class="text-xs font-extrabold text-purple-700 font-mono">Supreme Admin</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-4">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-24 h-28 rounded-2xl bg-gradient-to-tr from-purple-100 to-indigo-100 border-2 border-purple-200 p-1 shadow-md flex items-center justify-center overflow-hidden">
+                                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ current_user.email }}" alt="{{ current_user.name }}" class="w-full h-full object-cover rounded-xl">
+                                    </div>
+                                    <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-purple-600 border-2 border-white flex items-center justify-center text-white text-[10px] shadow-sm">
+                                        <i class="fa-solid fa-shield-halved"></i>
+                                    </span>
+                                </div>
+                                <div class="space-y-1 min-w-0 flex-1">
+                                    <span class="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider block">INSTITUTIONAL HEAD</span>
+                                    <h2 class="text-base font-black text-slate-900 leading-tight uppercase truncate" title="{{ current_user.name }}">{{ current_user.name }}</h2>
+                                    
+                                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 mt-1">
+                                        <span class="text-[9px] text-slate-400 font-bold block uppercase">ADMIN IDENTIFIER</span>
+                                        <span class="text-xs font-black text-slate-900 font-mono tracking-wider">
+                                            NU-ADMIN-001
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 text-xs">
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">ROLE / OFFICE</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">Executive Principal</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">UNIVERSITY CODE</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px]">{{ institution.code if institution else 'NU' }}</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">CAMPUS</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">Mangaluru, India</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">SYSTEM PASS</span>
+                                    <span class="font-extrabold text-purple-700 text-[11px]">Active Unlimited</span>
+                                </div>
+                            </div>
+
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <div class="id-barcode-pattern w-36 h-7 rounded"></div>
+                                    <span class="text-[8px] font-mono text-slate-400 tracking-widest mt-0.5 block">NU-SUPREME-TOKEN-001</span>
+                                </div>
+                                <div class="text-right flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full border border-purple-200 bg-purple-50 flex items-center justify-center text-purple-700 text-[10px] font-black">
+                                        <i class="fa-solid fa-stamp"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] text-slate-400 uppercase block font-bold">BOARD OF TRUSTEES</span>
+                                        <span class="text-[9px] font-serif italic font-bold text-purple-950">NU Seal</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= BACK OF ADMIN ID CARD ================= -->
+                    <div class="id-card-face id-card-back absolute inset-0 w-full rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden text-slate-200 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="w-full h-8 bg-black -mx-5 -mt-5 mb-4 shadow-inner"></div>
+                            
+                            <div class="space-y-3 text-xs">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">OFFICE OF THE CHANCELLOR</span>
+                                    <span class="text-[9px] font-mono text-purple-400">NU-EXEC-2026</span>
+                                </div>
+
+                                <div class="space-y-1.5 bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Executive Secretariat:</span>
+                                        <span class="font-mono font-bold text-slate-100">{{ current_user.email }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Direct Office Ext:</span>
+                                        <span class="font-mono font-bold text-amber-300">Ext. 100 (Direct Line)</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60 text-[10px] space-y-1">
+                                    <span class="text-slate-400 font-bold uppercase block">CAMPUS ADDRESS</span>
+                                    <p class="text-slate-200 line-clamp-2 leading-tight font-medium">
+                                        Office of the Principal, Administrative Block 1, {{ institution.name if institution else 'Nitte University' }}, Mangaluru
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-800 text-center space-y-1">
+                            <p class="text-[8px] text-slate-400 leading-tight">
+                                Supreme Institutional Identity Card. Authorized for all Campus Facilities and Governance Operations.
+                            </p>
+                            <span class="text-[9px] font-mono text-purple-400 font-bold block">Pragati Campus OS &bull; by Kalpkrats</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-around gap-2 text-xs font-bold text-slate-700">
+                <button onclick="flipAdminIdCard()" class="flex items-center gap-1.5 hover:text-purple-600 transition">
+                    <i class="fa-solid fa-rotate text-purple-600"></i> Turn Over
+                </button>
+                <span class="text-slate-300">|</span>
+                <button onclick="window.print()" class="flex items-center gap-1.5 hover:text-emerald-600 transition">
+                    <i class="fa-solid fa-download text-emerald-600"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: OFFICIAL ADMIN RECORDS & INSTITUTIONAL DOSSIER ENTITY (Col-Span 7) -->
+        <div class="lg:col-span-7 space-y-6">
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                <div class="border-b border-slate-100 pb-4">
+                    <span class="text-xs font-extrabold text-purple-600 uppercase tracking-widest">Executive Authority Registry</span>
+                    <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">Principal Administrator Records Dossier</h2>
+                </div>
+
+                <div class="space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Institution Name</span>
+                            <div class="text-sm font-black text-slate-900">{{ institution.name if institution else 'Nitte University' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Code: {{ institution.code if institution else 'NU' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Executive Role</span>
+                            <div class="text-sm font-bold text-slate-800">Super Administrator &bull; Principal</div>
+                            <span class="text-xs text-purple-600 font-bold">Unrestricted Access</span>
+                        </div>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('super_admin.profile') }}" class="space-y-4 pt-2 border-t border-slate-100">
+                        <input type="hidden" name="action" value="update_profile">
+                        <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Update Executive Contact Details</h4>
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Direct Mobile Contact</label>
+                                <input type="text" name="phone" value="{{ current_user.phone or '' }}" placeholder="+91 98450 00001" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Alternate / Personal Email</label>
+                                <input type="email" name="personal_email" value="{{ current_user.personal_email or '' }}" placeholder="principal.nitte@gmail.com" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Office / Residential Address</label>
+                            <textarea name="current_address" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">{{ current_user.current_address or '' }}</textarea>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex justify-end">
+                            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-200 transition">
+                                <i class="fa-solid fa-save mr-1.5"></i> Save &amp; Update Records
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function flipAdminIdCard() {
+        const flipper = document.getElementById('adminCardFlipper');
+        if (flipper) {
+            flipper.classList.toggle('is-flipped');
+        }
+    }
+</script>
+{% endblock %}

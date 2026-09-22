@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
 from flask_login import login_required, current_user
-from models import db, User, Subject, Enrollment, Module, Unit, File, Event, AttendanceRecord, ExamResult, FeeRecord, PlacementDrive, DocumentRequest, TimetableSlot, Exam, Course, StudentNote, Quiz, Assignment, AssignmentSubmission, Notification
+from models import db, User, Subject, Enrollment, Module, Unit, File, Event, AttendanceRecord, ExamResult, FeeRecord, PlacementDrive, DocumentRequest, TimetableSlot, Exam, Course, StudentNote, Quiz, Assignment, AssignmentSubmission, Notification, Institution
 from services.ai_engine import AIEngine
 from services.career_service import CareerService
 from services.risk_analytics import RiskAnalyticsService
@@ -15,6 +15,29 @@ def check_student():
     if current_user.role != 'student':
         flash('Access restricted to Student portal.', 'danger')
         return redirect(url_for('auth.login'))
+
+@student_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    inst = Institution.query.first() or Institution(name="Nitte University", code="NU", address="Mangaluru, Karnataka, India")
+    course_info = Course.query.filter_by(code=current_user.course_code or 'UCA').first()
+    mentor = User.query.get(current_user.mentor_id) if current_user.mentor_id else None
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'update_contact':
+            current_user.student_phone = request.form.get('student_phone', current_user.student_phone)
+            current_user.parent_phone = request.form.get('parent_phone', current_user.parent_phone)
+            current_user.personal_email = request.form.get('personal_email', current_user.personal_email)
+            current_user.current_address = request.form.get('current_address', current_user.current_address)
+            current_user.permanent_address = request.form.get('permanent_address', current_user.permanent_address)
+            current_user.emergency_contact_name = request.form.get('emergency_contact_name', current_user.emergency_contact_name)
+            current_user.emergency_contact_phone = request.form.get('emergency_contact_phone', current_user.emergency_contact_phone)
+            current_user.emergency_contact_relation = request.form.get('emergency_contact_relation', current_user.emergency_contact_relation)
+            db.session.commit()
+            flash('Contact & Emergency records updated successfully in your student dossier.', 'success')
+            return redirect(url_for('student.profile'))
+            
+    return render_template('student/profile.html', institution=inst, course_info=course_info, mentor=mentor)
 
 def auto_enroll_student_if_needed():
     """Ensure student is enrolled in all subjects matching their semester and course."""

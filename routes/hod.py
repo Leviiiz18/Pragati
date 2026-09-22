@@ -35,6 +35,28 @@ def check_hod():
         flash('Access restricted to Department Admin and HOD.', 'danger')
         return redirect(url_for('auth.login'))
 
+@hod_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    inst = Institution.query.first() or Institution(name="Nitte University", code="NU", address="Mangaluru, Karnataka, India")
+    dept = Department.query.filter_by(name=current_user.department).first() if current_user.department else None
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'update_profile':
+            current_user.phone = request.form.get('phone', current_user.phone)
+            current_user.personal_email = request.form.get('personal_email', current_user.personal_email)
+            current_user.current_address = request.form.get('current_address', current_user.current_address)
+            current_user.specialization = request.form.get('specialization', current_user.specialization)
+            current_user.qualifications = request.form.get('qualifications', current_user.qualifications)
+            current_user.research_publications = request.form.get('research_publications', current_user.research_publications)
+            current_user.emergency_contact_name = request.form.get('emergency_contact_name', current_user.emergency_contact_name)
+            current_user.emergency_contact_phone = request.form.get('emergency_contact_phone', current_user.emergency_contact_phone)
+            db.session.commit()
+            flash('Executive HOD profile records updated successfully.', 'success')
+            return redirect(url_for('hod.profile'))
+            
+    return render_template('hod/profile.html', institution=inst, department_obj=dept)
+
 @hod_bp.route('/dashboard')
 def dashboard():
     dept_name = current_user.department or 'Computer Science'

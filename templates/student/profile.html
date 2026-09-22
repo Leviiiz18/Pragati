@@ -1,0 +1,467 @@
+{% extends "base.html" %}
+{% block title %}Digital Student ID & Official Dossier - Pragati by Kalpkrats{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-amber-600 uppercase tracking-widest mb-1">
+                <i class="fa-solid fa-id-card"></i> Pragati Digital Identity System
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Student Profile & Digital ID Card</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Official verified university identity credentials and comprehensive student academic dossier.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
+                <i class="fa-solid fa-print text-blue-600"></i> Print / Save ID
+            </button>
+            <button onclick="flipStudentIdCard()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition active:scale-95">
+                <i class="fa-solid fa-rotate text-xs"></i> Flip ID Card (Front / Back)
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout: Left ID Card, Right User Records Entity -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: DIGITAL SMART ID CARD (Col-Span 5) -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    Verified Digital Smart Card
+                </span>
+                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> RFID / NFC Active
+                </span>
+            </div>
+
+            <!-- 3D Perspective Card Container -->
+            <div class="id-card-perspective mx-auto w-full max-w-sm" id="printableIdCard">
+                <div class="id-card-flipper" id="studentCardFlipper">
+                    
+                    <!-- ================= FRONT OF ID CARD ================= -->
+                    <div class="id-card-face w-full rounded-3xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden relative transition-all text-slate-800">
+                        <!-- Holographic Shimmer Overlay -->
+                        <div class="id-hologram absolute inset-0 z-20 pointer-events-none rounded-3xl"></div>
+                        
+                        <!-- Top University Branding Banner -->
+                        <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-blue-900 text-white p-4 relative overflow-hidden">
+                            <!-- Background Pattern & Glow -->
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-blue-500/20 rounded-full blur-xl"></div>
+                            <div class="flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md p-1.5 flex items-center justify-center border border-white/20">
+                                        <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="NU" class="w-full h-full object-contain">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-black tracking-wide leading-tight uppercase text-white">{{ institution.name if institution else 'Nitte University' }}</h3>
+                                        <span class="text-[9px] font-semibold text-blue-200 block uppercase tracking-wider">Autonomous Institution • NAAC A+</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 py-0.5 rounded-md bg-amber-400 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow-xs">STUDENT</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body with Chip & Portrait -->
+                        <div class="p-5 space-y-4 relative z-10 bg-white">
+                            <!-- Smart Chip & RFID Icon Bar -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="id-smart-chip" title="EMV Smart Identity Microchip"></div>
+                                    <i class="fa-solid fa-wifi text-slate-400 text-sm rotate-90" title="Contactless Smart Card"></i>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">VALID THRU</span>
+                                    <span class="text-xs font-extrabold text-slate-800 font-mono">07/2027</span>
+                                </div>
+                            </div>
+
+                            <!-- Photo & Core Profile Details -->
+                            <div class="flex items-center gap-4">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-24 h-28 rounded-2xl bg-gradient-to-tr from-amber-100 to-indigo-100 border-2 border-indigo-200 p-1 shadow-md flex items-center justify-center overflow-hidden">
+                                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ current_user.email }}" alt="{{ current_user.name }}" class="w-full h-full object-cover rounded-xl">
+                                    </div>
+                                    <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-[10px] shadow-sm" title="Active Verified Enrolled Student">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
+                                </div>
+                                <div class="space-y-1 min-w-0 flex-1">
+                                    <span class="text-[10px] font-extrabold text-indigo-600 uppercase tracking-wider block">IDENTITY RECORD</span>
+                                    <h2 class="text-base font-black text-slate-900 leading-tight uppercase truncate" title="{{ current_user.name }}">{{ current_user.name }}</h2>
+                                    
+                                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 mt-1">
+                                        <span class="text-[9px] text-slate-400 font-bold block uppercase">REGISTRATION ID</span>
+                                        <span class="text-xs font-black text-slate-900 font-mono tracking-wider">
+                                            {{ current_user.registration_id or ('NU23UCA' ~ ("%03d"|format(current_user.id))) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Academic Metadata Grid -->
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 text-xs">
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">COURSE / PROGRAM</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">{{ course_info.name if course_info else 'Computer Applications' }} ({{ current_user.course_code or 'UCA' }})</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">SEMESTER & BATCH</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px]">Sem {{ current_user.semester }} • {{ current_user.admission_year }}-{{ current_user.admission_year + 3 }}</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">DEPARTMENT</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">{{ current_user.department or 'Computer Science' }}</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">BLOOD GRP / CAT</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px]">O+ • {{ current_user.category or 'General' }}</span>
+                                </div>
+                            </div>
+
+                            <!-- Barcode & University Authentication Seal Footer -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <div class="id-barcode-pattern w-36 h-7 rounded"></div>
+                                    <span class="text-[8px] font-mono text-slate-400 tracking-widest mt-0.5 block">NU-DIGITAL-PASS-{{ current_user.id }}</span>
+                                </div>
+                                <div class="text-right flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full border border-indigo-200 bg-indigo-50 flex items-center justify-center text-indigo-700 text-[10px] font-black" title="Registrar Digital Stamp">
+                                        <i class="fa-solid fa-stamp"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] text-slate-400 uppercase block font-bold">REGISTRAR</span>
+                                        <span class="text-[9px] font-serif italic font-bold text-indigo-950">NU Office</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= BACK OF ID CARD ================= -->
+                    <div class="id-card-face id-card-back absolute inset-0 w-full rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden text-slate-200 p-5 flex flex-col justify-between">
+                        <!-- Top Magnetic Stripe Simulation -->
+                        <div>
+                            <div class="w-full h-8 bg-black -mx-5 -mt-5 mb-4 shadow-inner"></div>
+                            
+                            <div class="space-y-3 text-xs">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">OFFICIAL RESIDENTIAL & EMERGENCY REGISTRY</span>
+                                    <span class="text-[9px] font-mono text-indigo-400">NU-CERT-2026</span>
+                                </div>
+
+                                <div class="space-y-1.5 bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Emergency Contact:</span>
+                                        <span class="font-bold text-slate-100">{{ current_user.emergency_contact_name or 'Guardian' }} ({{ current_user.emergency_contact_relation or 'Parent' }})</span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Emergency Phone:</span>
+                                        <span class="font-mono font-bold text-amber-300">{{ current_user.emergency_contact_phone or current_user.parent_phone or '+91 98765 43210' }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Student Mobile:</span>
+                                        <span class="font-mono font-bold text-slate-100">{{ current_user.student_phone or current_user.phone or '+91 91234 56789' }}</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60 text-[10px] space-y-1">
+                                    <span class="text-slate-400 font-bold uppercase block">PERMANENT ADDRESS</span>
+                                    <p class="text-slate-200 line-clamp-2 leading-tight font-medium">
+                                        {{ current_user.permanent_address or 'Mangaluru Campus Residential Complex, Karnataka 575018' }}
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                                    <div class="bg-slate-800/50 p-2 rounded-lg border border-slate-700/40">
+                                        <span class="text-slate-400 block">Govt ID Type:</span>
+                                        <span class="font-bold text-slate-200">{{ current_user.govt_id_type or 'Aadhar' }} (Verified)</span>
+                                    </div>
+                                    <div class="bg-slate-800/50 p-2 rounded-lg border border-slate-700/40">
+                                        <span class="text-slate-400 block">Biometric ID:</span>
+                                        <span class="font-mono font-bold text-slate-200">{{ current_user.biometric_id or 'BIO-NU-00982' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Terms & Help Footer -->
+                        <div class="pt-3 border-t border-slate-800 text-center space-y-1">
+                            <p class="text-[8px] text-slate-400 leading-tight">
+                                This digital identity smart card is the property of {{ institution.name if institution else 'Nitte University' }}. If found, please return to Campus Security Office or email security@nitte.edu.in.
+                            </p>
+                            <span class="text-[9px] font-mono text-indigo-400 font-bold block">Helpline: +91 824 220 4310 • www.nitte.edu.in</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons on ID Card -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-around gap-2 text-xs font-bold text-slate-700">
+                <button onclick="flipStudentIdCard()" class="flex items-center gap-1.5 hover:text-blue-600 transition">
+                    <i class="fa-solid fa-rotate text-blue-600"></i> Turn Over
+                </button>
+                <span class="text-slate-300">|</span>
+                <button onclick="copyIdNumber('{{ current_user.registration_id or ('NU23UCA' ~ ('%03d'|format(current_user.id))) }}')" class="flex items-center gap-1.5 hover:text-indigo-600 transition">
+                    <i class="fa-solid fa-copy text-indigo-600"></i> Copy Reg ID
+                </button>
+                <span class="text-slate-300">|</span>
+                <button onclick="window.print()" class="flex items-center gap-1.5 hover:text-emerald-600 transition">
+                    <i class="fa-solid fa-download text-emerald-600"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: OFFICIAL USER RECORDS & ACADEMIC DOSSIER ENTITY (Col-Span 7) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <!-- Dossier Navigation Tabs -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <span class="text-xs font-extrabold text-blue-600 uppercase tracking-widest">Institutional Records Registry</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">Comprehensive Student Dossier</h2>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl">
+                        <button onclick="switchRecordTab('academic')" id="tabBtn-academic" class="record-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-blue-700 shadow-sm transition">
+                            <i class="fa-solid fa-graduation-cap mr-1"></i> Academic
+                        </button>
+                        <button onclick="switchRecordTab('personal')" id="tabBtn-personal" class="record-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-user-shield mr-1"></i> Identity
+                        </button>
+                        <button onclick="switchRecordTab('contact')" id="tabBtn-contact" class="record-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-address-book mr-1"></i> Contact & Emergency
+                        </button>
+                        <button onclick="switchRecordTab('update')" id="tabBtn-update" class="record-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 1: ACADEMIC & ADMISSION DOSSIER -->
+                <div id="tabContent-academic" class="record-tab-content space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Course & Department</span>
+                            <div class="text-sm font-black text-slate-900">{{ course_info.name if course_info else 'Bachelor of Computer Applications' }} ({{ current_user.course_code or 'UCA' }})</div>
+                            <span class="text-xs text-slate-500 font-medium">{{ current_user.department or 'Department of Computer Applications' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Academic Performance</span>
+                            <div class="flex items-center gap-3">
+                                <span class="text-lg font-black text-blue-600">{{ current_user.cgpa if current_user.cgpa else 'N/A (Sem 1)' }} <span class="text-xs text-slate-400 font-normal">CGPA</span></span>
+                                <span class="px-2 py-0.5 rounded-full {% if current_user.attendance_percentage >= 75 %}bg-emerald-100 text-emerald-800{% else %}bg-rose-100 text-rose-800{% endif %} text-[10px] font-black">
+                                    {{ current_user.attendance_percentage }}% Attendance
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Admission Year & Batch</span>
+                            <div class="text-sm font-bold text-slate-800">Academic Batch {{ current_user.admission_year }} &bull; Semester {{ current_user.semester }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Status: <strong class="text-emerald-600 uppercase">{{ current_user.status }}</strong></span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Assigned Faculty Mentor</span>
+                            <div class="text-sm font-bold text-slate-800">{{ mentor.name if mentor else 'Dr. Alan Turing (Professor)' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">{{ mentor.email if mentor else 'faculty@nitte.edu.in' }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Admission Background Details -->
+                    <div class="p-5 rounded-2xl bg-blue-50/50 border border-blue-100 space-y-3">
+                        <h4 class="text-xs font-black text-blue-950 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-school text-blue-600"></i> Pre-Admission Academic History
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">PREVIOUS SCHOOL / COLLEGE</span>
+                                <span class="font-bold text-slate-800">{{ current_user.previous_school or 'St. Aloysius Pre-University College' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">BOARD & PASSING YEAR</span>
+                                <span class="font-bold text-slate-800">{{ current_user.previous_board or 'Karnataka State PU Board' }} ({{ current_user.previous_passing_year or 2023 }})</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">12TH / PU MARKS</span>
+                                <span class="font-bold text-blue-700">{{ current_user.previous_marks_percentage or '92.4' }}% Aggregate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PERSONAL & GOVT IDENTIFICATION -->
+                <div id="tabContent-personal" class="record-tab-content hidden space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Legal Full Name</span>
+                            <div class="text-sm font-black text-slate-900">{{ current_user.name }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Gender: {{ current_user.gender or 'Male' }} &bull; Nationality: {{ current_user.nationality or 'Indian' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Date of Birth</span>
+                            <div class="text-sm font-bold text-slate-800">{{ current_user.dob or '2005-04-14' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Category: {{ current_user.category or 'General' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Government Identity Record</span>
+                            <div class="text-sm font-bold text-slate-800">{{ current_user.govt_id_type or 'Aadhar Card' }}</div>
+                            <span class="text-xs font-mono text-slate-600 font-bold">Number: {{ current_user.govt_id_number or 'XXXX-XXXX-8921' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Institutional Biometric Badge</span>
+                            <div class="text-sm font-mono font-bold text-indigo-700">{{ current_user.biometric_id or 'BIO-NU-23-0054' }}</div>
+                            <span class="text-xs text-emerald-600 font-bold flex items-center gap-1"><i class="fa-solid fa-fingerprint"></i> Biometric Profile Synced</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: CONTACT & EMERGENCY REGISTRY -->
+                <div id="tabContent-contact" class="record-tab-content hidden space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Official University Email</span>
+                            <div class="text-sm font-mono font-bold text-slate-900 truncate">{{ current_user.email }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Personal: {{ current_user.personal_email or 'student.personal@gmail.com' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Primary Phone Numbers</span>
+                            <div class="text-sm font-mono font-bold text-slate-900">Student: {{ current_user.student_phone or current_user.phone or '+91 98765 43210' }}</div>
+                            <span class="text-xs font-mono text-slate-600 font-medium">Parent/Guardian: {{ current_user.parent_phone or '+91 91234 56789' }}</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-3">
+                        <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-house-user text-indigo-600"></i> Residential Addresses
+                        </h4>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block uppercase">CURRENT RESIDENCE</span>
+                                <p class="text-slate-700 font-medium mt-0.5">{{ current_user.current_address or 'Room 304, Block B, University Hostel, Mangaluru' }}</p>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block uppercase">PERMANENT RESIDENCE</span>
+                                <p class="text-slate-700 font-medium mt-0.5">{{ current_user.permanent_address or '#45 Green Valley Road, Kodialbail, Mangaluru, Karnataka 575003' }}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2">
+                        <span class="text-[10px] font-extrabold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone-volume"></i> Emergency Contact Registry
+                        </span>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">CONTACT PERSON</span>
+                                <span class="font-bold text-slate-800">{{ current_user.emergency_contact_name or 'Guardian / Father' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">RELATIONSHIP</span>
+                                <span class="font-bold text-slate-800">{{ current_user.emergency_contact_relation or 'Parent' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">EMERGENCY PHONE</span>
+                                <span class="font-mono font-black text-rose-700">{{ current_user.emergency_contact_phone or '+91 98765 00000' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: EDIT CONTACT RECORDS -->
+                <div id="tabContent-update" class="record-tab-content hidden space-y-4">
+                    <form method="POST" action="{{ url_for('student.profile') }}" class="space-y-4">
+                        <input type="hidden" name="action" value="update_contact">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Student Mobile Number</label>
+                                <input type="text" name="student_phone" value="{{ current_user.student_phone or current_user.phone or '' }}" placeholder="+91 98765 43210" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Parent / Guardian Phone</label>
+                                <input type="text" name="parent_phone" value="{{ current_user.parent_phone or '' }}" placeholder="+91 91234 56789" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Personal Email Address</label>
+                                <input type="email" name="personal_email" value="{{ current_user.personal_email or '' }}" placeholder="personal@gmail.com" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Emergency Contact Name</label>
+                                <input type="text" name="emergency_contact_name" value="{{ current_user.emergency_contact_name or '' }}" placeholder="e.g. John Doe" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Emergency Contact Phone</label>
+                                <input type="text" name="emergency_contact_phone" value="{{ current_user.emergency_contact_phone or '' }}" placeholder="+91 98765 00000" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Emergency Relationship</label>
+                                <input type="text" name="emergency_contact_relation" value="{{ current_user.emergency_contact_relation or '' }}" placeholder="e.g. Father / Mother" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Current Residence Address</label>
+                            <textarea name="current_address" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">{{ current_user.current_address or '' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Permanent Home Address</label>
+                            <textarea name="permanent_address" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">{{ current_user.permanent_address or '' }}</textarea>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex justify-end">
+                            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs shadow-md shadow-blue-200 transition">
+                                <i class="fa-solid fa-save mr-1.5"></i> Save &amp; Update Dossier
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function flipStudentIdCard() {
+        const flipper = document.getElementById('studentCardFlipper');
+        if (flipper) {
+            flipper.classList.toggle('is-flipped');
+        }
+    }
+
+    function switchRecordTab(tabName) {
+        document.querySelectorAll('.record-tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.record-tab-btn').forEach(btn => {
+            btn.classList.remove('bg-white', 'text-blue-700', 'shadow-sm');
+            btn.classList.add('text-slate-600');
+        });
+
+        const targetContent = document.getElementById('tabContent-' + tabName);
+        const targetBtn = document.getElementById('tabBtn-' + tabName);
+        if (targetContent) targetContent.classList.remove('hidden');
+        if (targetBtn) {
+            targetBtn.classList.remove('text-slate-600');
+            targetBtn.classList.add('bg-white', 'text-blue-700', 'shadow-sm');
+        }
+    }
+
+    function copyIdNumber(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text);
+            alert('Registration ID copied: ' + text);
+        }
+    }
+</script>
+{% endblock %}

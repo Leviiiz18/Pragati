@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
-from models import db, User, Subject, Module, Unit, File, AttendanceRecord, Exam, ExamResult, Enrollment, Event, Quiz, Assignment, AssignmentSubmission, Notification
+from models import db, User, Subject, Module, Unit, File, AttendanceRecord, Exam, ExamResult, Enrollment, Event, Quiz, Assignment, AssignmentSubmission, Notification, Institution
 from services.grading_service import GradingService
 from services.ai_engine import AIEngine
 from datetime import datetime, date, timedelta
@@ -15,6 +15,28 @@ def check_faculty():
     if current_user.role not in ['faculty', 'hod', 'super_admin']:
         flash('Access restricted to Faculty portal.', 'danger')
         return redirect(url_for('auth.login'))
+
+@faculty_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    inst = Institution.query.first() or Institution(name="Nitte University", code="NU", address="Mangaluru, Karnataka, India")
+    subjects = Subject.query.filter_by(faculty_id=current_user.id).all()
+    
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'update_profile':
+            current_user.phone = request.form.get('phone', current_user.phone)
+            current_user.personal_email = request.form.get('personal_email', current_user.personal_email)
+            current_user.current_address = request.form.get('current_address', current_user.current_address)
+            current_user.specialization = request.form.get('specialization', current_user.specialization)
+            current_user.qualifications = request.form.get('qualifications', current_user.qualifications)
+            current_user.research_publications = request.form.get('research_publications', current_user.research_publications)
+            current_user.emergency_contact_name = request.form.get('emergency_contact_name', current_user.emergency_contact_name)
+            current_user.emergency_contact_phone = request.form.get('emergency_contact_phone', current_user.emergency_contact_phone)
+            db.session.commit()
+            flash('Faculty credentials & contact records updated successfully.', 'success')
+            return redirect(url_for('faculty.profile'))
+            
+    return render_template('faculty/profile.html', institution=inst, subjects=subjects)
 
 @faculty_bp.route('/dashboard')
 def dashboard():

@@ -1,0 +1,438 @@
+{% extends "base.html" %}
+{% block title %}Faculty ID & Academic Dossier - Pragati by Kalpkrats{% endblock %}
+{% block content %}
+<div class="space-y-8">
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">
+                <i class="fa-solid fa-id-card"></i> Pragati Digital Identity System
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Faculty Profile & Digital ID Card</h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">Institutional academic credentials, university employee ID card, and research portfolio dossier.</p>
+        </div>
+        <div class="flex items-center gap-3">
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
+                <i class="fa-solid fa-print text-emerald-600"></i> Print / Save ID
+            </button>
+            <button onclick="flipFacultyIdCard()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-emerald-200 transition active:scale-95">
+                <i class="fa-solid fa-rotate text-xs"></i> Flip ID Card (Front / Back)
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Two-Column Layout: Left ID Card, Right Records Dossier -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        
+        <!-- LEFT COLUMN: FACULTY SMART ID CARD (Col-Span 5) -->
+        <div class="lg:col-span-5 space-y-6">
+            <div class="flex items-center justify-between">
+                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-ping"></span>
+                    Verified Faculty Smart Card
+                </span>
+                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> Active Academician
+                </span>
+            </div>
+
+            <!-- 3D Perspective Card Container -->
+            <div class="id-card-perspective mx-auto w-full max-w-sm" id="printableIdCard">
+                <div class="id-card-flipper" id="facultyCardFlipper">
+                    
+                    <!-- ================= FRONT OF FACULTY ID CARD ================= -->
+                    <div class="id-card-face w-full rounded-3xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden relative transition-all text-slate-800">
+                        <!-- Holographic Shimmer Overlay -->
+                        <div class="id-hologram absolute inset-0 z-20 pointer-events-none rounded-3xl"></div>
+                        
+                        <!-- Top University Branding Banner -->
+                        <div class="bg-gradient-to-r from-slate-900 via-emerald-950 to-teal-900 text-white p-4 relative overflow-hidden">
+                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-emerald-500/20 rounded-full blur-xl"></div>
+                            <div class="flex items-center justify-between relative z-10">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md p-1.5 flex items-center justify-center border border-white/20">
+                                        <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="NU" class="w-full h-full object-contain">
+                                    </div>
+                                    <div>
+                                        <h3 class="text-xs font-black tracking-wide leading-tight uppercase text-white">{{ institution.name if institution else 'Nitte University' }}</h3>
+                                        <span class="text-[9px] font-semibold text-emerald-200 block uppercase tracking-wider">Faculty & Research Council</span>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <span class="px-2 py-0.5 rounded-md bg-emerald-400 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow-xs">FACULTY</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card Body with Chip & Portrait -->
+                        <div class="p-5 space-y-4 relative z-10 bg-white">
+                            <!-- Smart Chip & RFID Icon Bar -->
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-2">
+                                    <div class="id-smart-chip" title="EMV Smart Microchip"></div>
+                                    <i class="fa-solid fa-wifi text-slate-400 text-sm rotate-90" title="Contactless Smart Pass"></i>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">FACULTY TENURE</span>
+                                    <span class="text-xs font-extrabold text-slate-800 font-mono">Permanent</span>
+                                </div>
+                            </div>
+
+                            <!-- Photo & Core Details -->
+                            <div class="flex items-center gap-4">
+                                <div class="relative flex-shrink-0">
+                                    <div class="w-24 h-28 rounded-2xl bg-gradient-to-tr from-emerald-100 to-teal-100 border-2 border-emerald-200 p-1 shadow-md flex items-center justify-center overflow-hidden">
+                                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ current_user.email }}" alt="{{ current_user.name }}" class="w-full h-full object-cover rounded-xl">
+                                    </div>
+                                    <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-emerald-500 border-2 border-white flex items-center justify-center text-white text-[10px] shadow-sm" title="Active Faculty">
+                                        <i class="fa-solid fa-check"></i>
+                                    </span>
+                                </div>
+                                <div class="space-y-1 min-w-0 flex-1">
+                                    <span class="text-[10px] font-extrabold text-emerald-700 uppercase tracking-wider block">{{ current_user.designation or 'Assistant Professor' }}</span>
+                                    <h2 class="text-base font-black text-slate-900 leading-tight uppercase truncate" title="{{ current_user.name }}">{{ current_user.name }}</h2>
+                                    
+                                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 mt-1">
+                                        <span class="text-[9px] text-slate-400 font-bold block uppercase">EMPLOYEE ID</span>
+                                        <span class="text-xs font-black text-slate-900 font-mono tracking-wider">
+                                            {{ current_user.employee_id or ('NU26FAC' ~ ("%03d"|format(current_user.id))) }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Academic Metadata Grid -->
+                            <div class="grid grid-cols-2 gap-2 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 text-xs">
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">DEPARTMENT</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">{{ current_user.department or 'Computer Science' }}</span>
+                                </div>
+                                <div>
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">QUALIFICATIONS</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">{{ current_user.qualifications or 'Ph.D., M.Tech' }}</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">JOINING DATE</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px]">{{ current_user.joining_date or '2021-08-01' }}</span>
+                                </div>
+                                <div class="pt-1.5 border-t border-slate-200/60">
+                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">EXPERIENCE</span>
+                                    <span class="font-extrabold text-slate-800 text-[11px]">{{ current_user.work_experience_years or 5.0 }} Years</span>
+                                </div>
+                            </div>
+
+                            <!-- Barcode & University Authentication Seal Footer -->
+                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
+                                <div>
+                                    <div class="id-barcode-pattern w-36 h-7 rounded"></div>
+                                    <span class="text-[8px] font-mono text-slate-400 tracking-widest mt-0.5 block">NU-FACULTY-TOKEN-{{ current_user.id }}</span>
+                                </div>
+                                <div class="text-right flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full border border-emerald-200 bg-emerald-50 flex items-center justify-center text-emerald-700 text-[10px] font-black" title="Dean Academic Affairs Seal">
+                                        <i class="fa-solid fa-stamp"></i>
+                                    </div>
+                                    <div>
+                                        <span class="text-[8px] text-slate-400 uppercase block font-bold">DEAN ACADEMICS</span>
+                                        <span class="text-[9px] font-serif italic font-bold text-emerald-950">NU Office</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- ================= BACK OF FACULTY ID CARD ================= -->
+                    <div class="id-card-face id-card-back absolute inset-0 w-full rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden text-slate-200 p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="w-full h-8 bg-black -mx-5 -mt-5 mb-4 shadow-inner"></div>
+                            
+                            <div class="space-y-3 text-xs">
+                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
+                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">OFFICIAL FACULTY EMERGENCIES &amp; DESK</span>
+                                    <span class="text-[9px] font-mono text-emerald-400">NU-FAC-2026</span>
+                                </div>
+
+                                <div class="space-y-1.5 bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Faculty Mobile:</span>
+                                        <span class="font-mono font-bold text-slate-100">{{ current_user.phone or '+91 98450 12345' }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Official Email:</span>
+                                        <span class="font-mono font-bold text-slate-100 truncate max-w-[180px]">{{ current_user.email }}</span>
+                                    </div>
+                                    <div class="flex justify-between text-[11px]">
+                                        <span class="text-slate-400">Emergency Contact:</span>
+                                        <span class="font-bold text-amber-300">{{ current_user.emergency_contact_name or 'Family Contact' }} ({{ current_user.emergency_contact_phone or '+91 98450 99999' }})</span>
+                                    </div>
+                                </div>
+
+                                <div class="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60 text-[10px] space-y-1">
+                                    <span class="text-slate-400 font-bold uppercase block">RESIDENTIAL ADDRESS</span>
+                                    <p class="text-slate-200 line-clamp-2 leading-tight font-medium">
+                                        {{ current_user.current_address or current_user.permanent_address or 'Staff Quarters, Block A-12, Nitte University Campus, Mangaluru' }}
+                                    </p>
+                                </div>
+
+                                <div class="grid grid-cols-2 gap-2 text-[10px]">
+                                    <div class="bg-slate-800/50 p-2 rounded-lg border border-slate-700/40">
+                                        <span class="text-slate-400 block">Govt ID Record:</span>
+                                        <span class="font-bold text-slate-200">{{ current_user.govt_id_type or 'PAN / Aadhar' }} (Verified)</span>
+                                    </div>
+                                    <div class="bg-slate-800/50 p-2 rounded-lg border border-slate-700/40">
+                                        <span class="text-slate-400 block">Biometric Sensor:</span>
+                                        <span class="font-mono font-bold text-slate-200">{{ current_user.biometric_id or 'BIO-FAC-0012' }}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Footer -->
+                        <div class="pt-3 border-t border-slate-800 text-center space-y-1">
+                            <p class="text-[8px] text-slate-400 leading-tight">
+                                Official Employee Identity of {{ institution.name if institution else 'Nitte University' }}. Must be produced on demand within institutional premises.
+                            </p>
+                            <span class="text-[9px] font-mono text-emerald-400 font-bold block">Office of Registrar &bull; Phone: +91 824 220 4300</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Quick Action Buttons -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-around gap-2 text-xs font-bold text-slate-700">
+                <button onclick="flipFacultyIdCard()" class="flex items-center gap-1.5 hover:text-emerald-600 transition">
+                    <i class="fa-solid fa-rotate text-emerald-600"></i> Turn Over
+                </button>
+                <span class="text-slate-300">|</span>
+                <button onclick="copyEmpId('{{ current_user.employee_id or ('NU26FAC' ~ ('%03d'|format(current_user.id))) }}')" class="flex items-center gap-1.5 hover:text-indigo-600 transition">
+                    <i class="fa-solid fa-copy text-indigo-600"></i> Copy Emp ID
+                </button>
+                <span class="text-slate-300">|</span>
+                <button onclick="window.print()" class="flex items-center gap-1.5 hover:text-emerald-600 transition">
+                    <i class="fa-solid fa-download text-emerald-600"></i> Download
+                </button>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: OFFICIAL FACULTY RECORDS & DOSSIER ENTITY (Col-Span 7) -->
+        <div class="lg:col-span-7 space-y-6">
+            
+            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+                    <div>
+                        <span class="text-xs font-extrabold text-emerald-600 uppercase tracking-widest">Institutional Faculty Registry</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">Faculty Academic & Service Dossier</h2>
+                    </div>
+                    <div class="flex items-center gap-1.5 bg-slate-100 p-1 rounded-2xl flex-wrap">
+                        <button onclick="switchFacultyTab('academic')" id="facTabBtn-academic" class="fac-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold bg-white text-emerald-700 shadow-sm transition">
+                            <i class="fa-solid fa-graduation-cap mr-1"></i> Academic & Research
+                        </button>
+                        <button onclick="switchFacultyTab('payroll')" id="facTabBtn-payroll" class="fac-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-money-check-dollar mr-1"></i> Payroll
+                        </button>
+                        <button onclick="switchFacultyTab('contact')" id="facTabBtn-contact" class="fac-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-address-book mr-1"></i> Contact & Residence
+                        </button>
+                        <button onclick="switchFacultyTab('update')" id="facTabBtn-update" class="fac-tab-btn px-3.5 py-1.5 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 transition">
+                            <i class="fa-solid fa-pen-to-square mr-1"></i> Edit
+                        </button>
+                    </div>
+                </div>
+
+                <!-- TAB 1: ACADEMIC, RESEARCH & COURSES -->
+                <div id="facTabContent-academic" class="fac-tab-content space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Department & Designation</span>
+                            <div class="text-sm font-black text-slate-900">{{ current_user.designation or 'Assistant Professor' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">{{ current_user.department or 'Department of Computer Science & Engineering' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Qualifications & Specialization</span>
+                            <div class="text-sm font-bold text-emerald-800">{{ current_user.qualifications or 'Ph.D. in Computer Science, M.Tech' }}</div>
+                            <span class="text-xs text-slate-600 font-medium">Domain: {{ current_user.specialization or 'Machine Learning, Distributed Systems' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Date of Joining & Experience</span>
+                            <div class="text-sm font-bold text-slate-800">Joined: {{ current_user.joining_date or 'August 1, 2021' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">{{ current_user.work_experience_years or 5.0 }} Years Professional Experience</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Teaching Subjects Load</span>
+                            <div class="text-sm font-bold text-slate-800">{{ subjects|length }} Active Subject Modules</div>
+                            <span class="text-xs text-indigo-600 font-medium">Curriculum Assigned</span>
+                        </div>
+                    </div>
+
+                    <!-- Research & Publications Section -->
+                    <div class="p-5 rounded-2xl bg-emerald-50/50 border border-emerald-100 space-y-3">
+                        <h4 class="text-xs font-black text-emerald-950 uppercase tracking-wider flex items-center gap-2">
+                            <i class="fa-solid fa-microscope text-emerald-600"></i> Research Publications &amp; Patents
+                        </h4>
+                        <div class="bg-white p-3.5 rounded-xl border border-emerald-200/60 text-xs text-slate-700 leading-relaxed">
+                            {{ current_user.research_publications or '1. "Optimizing Deep Convolutional Networks for Edge AI" — IEEE Transactions (2024)\n2. "Predictive Student Performance Tracking via Graph Neural Networks" — Springer LNCS (2023)\n3. Patent Granted: Automated Campus Resource Allocation System (Application #IN2023-4412).'|replace('\n', '<br>')|safe }}
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 2: PAYROLL & BANKING OVERVIEW (MASKED) -->
+                <div id="facTabContent-payroll" class="fac-tab-content hidden space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Pay Grade & Basic Pay</span>
+                            <div class="text-sm font-black text-slate-900">₹{{ "{:,.2f}".format(current_user.basic_salary or 85000.0) }} / month</div>
+                            <span class="text-xs text-emerald-600 font-bold">Grade 7th Pay Scale (UGC)</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Provident Fund / Pension No</span>
+                            <div class="text-sm font-mono font-bold text-slate-800">{{ current_user.pf_pension_number or 'PF-NU-MNG-99201' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">EPFO Integrated</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Bank Name</span>
+                            <div class="text-sm font-bold text-slate-800">{{ current_user.bank_name or 'State Bank of India (University Branch)' }}</div>
+                            <span class="text-xs font-mono text-slate-600">IFSC: {{ current_user.ifsc_code or 'SBIN0040219' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Bank Account (Masked)</span>
+                            <div class="text-sm font-mono font-bold text-slate-800">XXXX-XXXX-{{ current_user.bank_account_number[-4:] if current_user.bank_account_number else '5892' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Direct Salary Credit Enabled</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 3: CONTACT & RESIDENTIAL REGISTRY -->
+                <div id="facTabContent-contact" class="fac-tab-content hidden space-y-5">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Official University Email</span>
+                            <div class="text-sm font-mono font-bold text-slate-900 truncate">{{ current_user.email }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Personal: {{ current_user.personal_email or 'faculty.academic@gmail.com' }}</span>
+                        </div>
+
+                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Phone & Mobile Contact</span>
+                            <div class="text-sm font-mono font-bold text-slate-900">{{ current_user.phone or '+91 98450 12345' }}</div>
+                            <span class="text-xs text-slate-500 font-medium">Office Intercom: Ext. 412</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
+                        <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider block">Residential Address</span>
+                        <p class="text-xs text-slate-700 font-medium">{{ current_user.current_address or current_user.permanent_address or 'Staff Quarters, Block A-12, Nitte University Campus, Mangaluru, Karnataka 575018' }}</p>
+                    </div>
+
+                    <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 space-y-2">
+                        <span class="text-[10px] font-extrabold text-rose-700 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-phone-volume"></i> Emergency Contact Registry
+                        </span>
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">CONTACT PERSON</span>
+                                <span class="font-bold text-slate-800">{{ current_user.emergency_contact_name or 'Spouse / Family Contact' }}</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">RELATIONSHIP</span>
+                                <span class="font-bold text-slate-800">Next of Kin</span>
+                            </div>
+                            <div>
+                                <span class="text-[10px] text-slate-400 font-bold block">EMERGENCY PHONE</span>
+                                <span class="font-mono font-black text-rose-700">{{ current_user.emergency_contact_phone or '+91 98450 99999' }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TAB 4: EDIT FACULTY PROFILE -->
+                <div id="facTabContent-update" class="fac-tab-content hidden space-y-4">
+                    <form method="POST" action="{{ url_for('faculty.profile') }}" class="space-y-4">
+                        <input type="hidden" name="action" value="update_profile">
+                        
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Mobile Contact Number</label>
+                                <input type="text" name="phone" value="{{ current_user.phone or '' }}" placeholder="+91 98450 12345" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Personal / Alternate Email</label>
+                                <input type="email" name="personal_email" value="{{ current_user.personal_email or '' }}" placeholder="personal@gmail.com" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Academic Qualifications</label>
+                                <input type="text" name="qualifications" value="{{ current_user.qualifications or '' }}" placeholder="e.g. Ph.D. in AI, M.Tech CSE" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Research Specialization</label>
+                                <input type="text" name="specialization" value="{{ current_user.specialization or '' }}" placeholder="e.g. Natural Language Processing, Robotics" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Emergency Contact Name</label>
+                                <input type="text" name="emergency_contact_name" value="{{ current_user.emergency_contact_name or '' }}" placeholder="e.g. Spouse Name" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-slate-700 mb-1">Emergency Contact Phone</label>
+                                <input type="text" name="emergency_contact_phone" value="{{ current_user.emergency_contact_phone or '' }}" placeholder="+91 98450 99999" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Residential Address</label>
+                            <textarea name="current_address" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">{{ current_user.current_address or '' }}</textarea>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Research Publications &amp; Patents Summary</label>
+                            <textarea name="research_publications" rows="3" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-emerald-500 focus:bg-white">{{ current_user.research_publications or '' }}</textarea>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-100 flex justify-end">
+                            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-200 transition">
+                                <i class="fa-solid fa-save mr-1.5"></i> Save &amp; Update Dossier
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function flipFacultyIdCard() {
+        const flipper = document.getElementById('facultyCardFlipper');
+        if (flipper) {
+            flipper.classList.toggle('is-flipped');
+        }
+    }
+
+    function switchFacultyTab(tabName) {
+        document.querySelectorAll('.fac-tab-content').forEach(el => el.classList.add('hidden'));
+        document.querySelectorAll('.fac-tab-btn').forEach(btn => {
+            btn.classList.remove('bg-white', 'text-emerald-700', 'shadow-sm');
+            btn.classList.add('text-slate-600');
+        });
+
+        const targetContent = document.getElementById('facTabContent-' + tabName);
+        const targetBtn = document.getElementById('facTabBtn-' + tabName);
+        if (targetContent) targetContent.classList.remove('hidden');
+        if (targetBtn) {
+            targetBtn.classList.remove('text-slate-600');
+            targetBtn.classList.add('bg-white', 'text-emerald-700', 'shadow-sm');
+        }
+    }
+
+    function copyEmpId(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text);
+            alert('Employee ID copied: ' + text);
+        }
+    }
+</script>
+{% endblock %}

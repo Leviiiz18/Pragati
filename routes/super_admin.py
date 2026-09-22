@@ -11,6 +11,20 @@ def check_permission():
         flash('Unauthorized access to Executive Super Admin Portal.', 'danger')
         return redirect(url_for('auth.login'))
 
+@super_admin_bp.route('/profile', methods=['GET', 'POST'])
+def profile():
+    inst = Institution.query.first() or Institution(name="Nitte University", code="NU", address="Mangaluru, Karnataka, India")
+    if request.method == 'POST':
+        action = request.form.get('action')
+        if action == 'update_profile':
+            current_user.phone = request.form.get('phone', current_user.phone)
+            current_user.personal_email = request.form.get('personal_email', current_user.personal_email)
+            current_user.current_address = request.form.get('current_address', current_user.current_address)
+            db.session.commit()
+            flash('Executive Admin credentials updated successfully.', 'success')
+            return redirect(url_for('super_admin.profile'))
+    return render_template('super_admin/profile.html', institution=inst)
+
 @super_admin_bp.route('/dashboard', methods=['GET', 'POST'])
 def dashboard():
     inst = Institution.query.first()
