@@ -40,17 +40,20 @@
 
 #mainSidebar {
   width: var(--sidebar-expanded-width);
-  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s ease;
   will-change: width;
 }
 
+.sidebar-animated #mainSidebar {
+  transition: width 0.3s cubic-bezier(0.2, 0.8, 0.2, 1), transform 0.3s ease;
+}
+
 /* Collapsed state */
-body.sidebar-collapsed #mainSidebar {
+.sidebar-collapsed #mainSidebar {
   width: var(--sidebar-collapsed-width);
 }
 
 /* Hide section headers when collapsed */
-body.sidebar-collapsed #mainSidebar .sidebar-section-header {
+.sidebar-collapsed #mainSidebar .sidebar-section-header {
   opacity: 0;
   max-height: 0;
   margin: 0;
@@ -61,53 +64,54 @@ body.sidebar-collapsed #mainSidebar .sidebar-section-header {
 }
 
 /* Hide text labels when collapsed */
-body.sidebar-collapsed #mainSidebar .sidebar-text {
+.sidebar-collapsed #mainSidebar .sidebar-text {
   opacity: 0;
   max-width: 0;
   margin-left: 0;
   overflow: hidden;
-  white-space: nowrap;
+  white-space: nowrap !important;
   pointer-events: none;
   display: inline-block;
   transition: opacity 0.15s ease, max-width 0.25s ease, margin 0.25s ease;
 }
 
-body:not(.sidebar-collapsed) #mainSidebar .sidebar-text {
+:not(.sidebar-collapsed) #mainSidebar .sidebar-text {
   opacity: 1;
   max-width: 200px;
+  white-space: nowrap !important;
   transition: opacity 0.25s ease 0.1s, max-width 0.25s ease;
 }
 
-/* Center icons in collapsed mode */
-body.sidebar-collapsed #mainSidebar .sidebar-link {
-  justify-content: center;
-  padding-left: 0.5rem;
-  padding-right: 0.5rem;
+/* Stable icon alignment in collapsed mode (no horizontal jumping) */
+.sidebar-collapsed #mainSidebar .sidebar-link {
+  justify-content: flex-start;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
   position: relative;
 }
 
 /* Collapse Toggle Button Rotation */
-body.sidebar-collapsed #sidebarCollapseIcon {
+.sidebar-collapsed #sidebarCollapseIcon {
   transform: rotate(180deg);
 }
-#sidebarCollapseIcon {
+.sidebar-animated #sidebarCollapseIcon {
   transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Collapsed widget morphing */
-body.sidebar-collapsed #mainSidebar .sidebar-footer-expanded {
+.sidebar-collapsed #mainSidebar .sidebar-footer-expanded {
   display: none !important;
 }
-body:not(.sidebar-collapsed) #mainSidebar .sidebar-footer-compact {
+:not(.sidebar-collapsed) #mainSidebar .sidebar-footer-compact {
   display: none !important;
 }
 
 /* Floating Tooltip for Collapsed Sidebar Items (21st Tooltip style) */
-body.sidebar-collapsed #mainSidebar .sidebar-link {
+.sidebar-collapsed #mainSidebar .sidebar-link {
   position: relative;
 }
 
-body.sidebar-collapsed #mainSidebar .sidebar-link::after {
+.sidebar-collapsed #mainSidebar .sidebar-link::after {
   content: attr(data-tooltip);
   position: absolute;
   left: calc(100% + 12px);
@@ -130,7 +134,7 @@ body.sidebar-collapsed #mainSidebar .sidebar-link::after {
   z-index: 999;
 }
 
-body.sidebar-collapsed #mainSidebar .sidebar-link::before {
+.sidebar-collapsed #mainSidebar .sidebar-link::before {
   content: '';
   position: absolute;
   left: calc(100% + 6px);
@@ -146,8 +150,8 @@ body.sidebar-collapsed #mainSidebar .sidebar-link::before {
   z-index: 999;
 }
 
-body.sidebar-collapsed #mainSidebar .sidebar-link:hover::after,
-body.sidebar-collapsed #mainSidebar .sidebar-link:hover::before {
+.sidebar-collapsed #mainSidebar .sidebar-link:hover::after,
+.sidebar-collapsed #mainSidebar .sidebar-link:hover::before {
   opacity: 1;
   transform: translateY(-50%) scale(1);
 }
@@ -156,10 +160,10 @@ body.sidebar-collapsed #mainSidebar .sidebar-link:hover::before {
    Hover Animations & Micro-Interactions
    ========================================================= */
 
-/* Sidebar Link Interactive Hover */
+/* Sidebar Link Interactive Hover & Active */
 .sidebar-link {
   position: relative;
-  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), padding 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 .sidebar-link:hover {
@@ -168,8 +172,16 @@ body.sidebar-collapsed #mainSidebar .sidebar-link:hover::before {
   transform: translateX(3px);
 }
 
-body.sidebar-collapsed .sidebar-link:hover {
-  transform: none;
+.sidebar-link:active,
+a.sidebar-link.rounded-xl:active {
+  transform: translateX(3px) !important;
+  background-color: #e2e8f0;
+}
+
+.sidebar-collapsed .sidebar-link:hover,
+.sidebar-collapsed .sidebar-link:active,
+.sidebar-collapsed a.sidebar-link.rounded-xl:active {
+  transform: none !important;
 }
 
 .sidebar-link .sidebar-icon {
@@ -273,9 +285,9 @@ a.rounded-xl:hover,
   transform: translateY(-1.5px);
 }
 
-button:active:not(:disabled), 
-a.rounded-2xl:active, 
-a.rounded-xl:active,
+button:active:not(:disabled):not(#sidebarToggleBtn):not(.no-scale-active), 
+a.rounded-2xl:active:not(.sidebar-link), 
+a.rounded-xl:active:not(.sidebar-link),
 .cool-btn:active {
   transform: scale(0.97) translateY(0);
 }

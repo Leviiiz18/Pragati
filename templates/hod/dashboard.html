@@ -2,14 +2,23 @@
 {% block title %}HOD Command Dashboard - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">HOD Department Command Center</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Department: <strong class="text-blue-600">{{ dept_name }}</strong> | Real-time decision intelligence & AI risk alerts.</p>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                {{ current_user.name }}'s Command Center
+            </h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">
+                Department: <strong class="text-blue-600">{{ dept_name }}</strong> | Real-time decision intelligence & AI risk alerts.
+            </p>
         </div>
-        <button onclick="openCommandCenter()" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-200 transition">
-            <i class="fa-solid fa-wand-magic-sparkles"></i> Open AI Command Center
-        </button>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('hod.calendar') }}" class="px-5 py-2.5 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-rose-200 transition">
+                <i class="fa-solid fa-calendar-days"></i> Department Calendar
+            </a>
+            <button onclick="openCommandCenter()" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-lg shadow-blue-200 transition">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Open AI Command Center
+            </button>
+        </div>
     </div>
 
     <!-- Department Key Metrics Grid (Modern Glassmorphic 21st Style) -->

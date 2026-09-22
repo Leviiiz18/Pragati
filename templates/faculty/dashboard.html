@@ -2,14 +2,23 @@
 {% block title %}Faculty Cockpit - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-8">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">Faculty Cockpit & Teaching Assistant</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Welcome, <strong class="text-emerald-600">{{ current_user.name }}</strong> | Today is {{ today_date.strftime('%B %d, %Y') }}.</p>
+            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
+                {{ current_user.name }}'s Faculty Cockpit
+            </h1>
+            <p class="text-sm font-medium text-slate-600 mt-1">
+                Teaching Assistant & Department Portal | Today is {{ today_date.strftime('%B %d, %Y') }}.
+            </p>
         </div>
-        <a href="{{ url_for('faculty.attendance') }}" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-emerald-200 transition">
-            <i class="fa-solid fa-user-check"></i> Take Today's Attendance
-        </a>
+        <div class="flex items-center gap-3">
+            <a href="{{ url_for('faculty.calendar') }}" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-200 transition">
+                <i class="fa-solid fa-calendar-days"></i> Academic Calendar
+            </a>
+            <a href="{{ url_for('faculty.attendance') }}" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-emerald-200 transition">
+                <i class="fa-solid fa-user-check"></i> Take Today's Attendance
+            </a>
+        </div>
     </div>
 
     <!-- Faculty Key Stats (Modern Glassmorphic 21st Style) -->
