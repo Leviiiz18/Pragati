@@ -149,52 +149,57 @@
                 </button>
 
                 <!-- Notification Bar Dropdown -->
-                <div class="relative group/notif">
-                    <button class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 transition shadow-sm active:scale-95" aria-label="Notifications">
+                <div class="relative" id="notifDropdownContainer">
+                    <button id="notifBellBtn" onclick="toggleNotifications(event)" class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 transition shadow-sm active:scale-95" aria-label="Notifications" aria-expanded="false" title="Notifications">
                         <i class="fa-solid fa-bell text-sm text-slate-700"></i>
                         {% if unread_notif_count and unread_notif_count > 0 %}
-                        <span class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white font-black text-[9px] rounded-full flex items-center justify-center animate-pulse shadow-sm">
+                        <span id="notifBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white font-black text-[9px] rounded-full flex items-center justify-center animate-pulse shadow-sm">
                             {{ unread_notif_count }}
                         </span>
                         {% endif %}
                     </button>
 
-                    <!-- Notifications Dropdown Menu -->
-                    <div class="absolute right-0 mt-2 w-88 bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl p-4 hidden group-hover/notif:block z-50 space-y-3" style="width: 22rem;">
-                        <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                            <span class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                                <i class="fa-solid fa-bell text-blue-600 text-xs"></i> Real-Time Notifications
-                            </span>
-                            <div class="flex items-center gap-2">
-                                <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{{ unread_notif_count or 0 }} New</span>
-                                {% if unread_notif_count and unread_notif_count > 0 %}
-                                <button onclick="markAllNotificationsRead()" class="text-[10px] font-bold text-slate-500 hover:text-blue-600 underline">
-                                    Mark Read
-                                </button>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scroll">
-                            {% for n in user_notifications %}
-                            <a href="{{ n.link or '#' }}" data-notif-id="{{ n.id }}" onclick="markNotificationRead(this.dataset.notifId)" 
-                               class="block p-3 rounded-xl {% if 'Attendance' in n.title or 'Absent' in n.title %}bg-rose-50/80 hover:bg-rose-100/70 border border-rose-200/90{% else %}bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-200{% endif %} transition space-y-1 group">
-                                <div class="font-extrabold text-xs flex items-center justify-between {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-950{% else %}text-slate-900{% endif %}">
-                                    <span class="truncate max-w-[200px] flex items-center gap-1.5">
-                                        {% if 'Attendance' in n.title or 'Absent' in n.title %}
-                                        <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
-                                        {% else %}
-                                        <i class="fa-solid fa-circle-info text-blue-600 text-xs"></i>
-                                        {% endif %}
-                                        {{ n.title }}
-                                    </span>
-                                    <span class="text-[9px] text-slate-400 font-normal whitespace-nowrap">{{ n.created_at.strftime('%b %d, %H:%M') if n.created_at else '' }}</span>
+                    <!-- Notifications Dropdown Menu (Direct top-full bridge with pt-2, eliminating cursor drop-off gap) -->
+                    <div id="notifDropdown" class="absolute right-0 top-full pt-2 w-88 z-50 hidden transition-all duration-150" style="width: 22rem;">
+                        <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-3 ring-1 ring-black/5">
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                                <span class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-bell text-blue-600 text-xs"></i> Real-Time Notifications
+                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{{ unread_notif_count or 0 }} New</span>
+                                    {% if unread_notif_count and unread_notif_count > 0 %}
+                                    <button onclick="markAllNotificationsRead()" class="text-[10px] font-bold text-slate-500 hover:text-blue-600 underline">
+                                        Mark Read
+                                    </button>
+                                    {% endif %}
+                                    <button onclick="closeNotifications(true)" class="w-6 h-6 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs transition" title="Close">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
                                 </div>
-                                <p class="text-[11px] {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-800{% else %}text-slate-600{% endif %} font-medium leading-snug line-clamp-2">{{ n.message }}</p>
-                            </a>
-                            {% else %}
-                            <div class="p-4 text-center text-xs text-slate-400 font-medium">No recent notifications</div>
-                            {% endfor %}
+                            </div>
+
+                            <div class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scroll">
+                                {% for n in user_notifications %}
+                                <a href="{{ n.link or '#' }}" data-notif-id="{{ n.id }}" onclick="markNotificationRead(this.dataset.notifId)" 
+                                   class="block p-3 rounded-xl {% if 'Attendance' in n.title or 'Absent' in n.title %}bg-rose-50/80 hover:bg-rose-100/70 border border-rose-200/90{% else %}bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-200{% endif %} transition space-y-1 group">
+                                    <div class="font-extrabold text-xs flex items-center justify-between {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-950{% else %}text-slate-900{% endif %}">
+                                        <span class="truncate max-w-[200px] flex items-center gap-1.5">
+                                            {% if 'Attendance' in n.title or 'Absent' in n.title %}
+                                            <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
+                                            {% else %}
+                                            <i class="fa-solid fa-circle-info text-blue-600 text-xs"></i>
+                                            {% endif %}
+                                            {{ n.title }}
+                                        </span>
+                                        <span class="text-[9px] text-slate-400 font-normal whitespace-nowrap">{{ n.created_at.strftime('%b %d, %H:%M') if n.created_at else '' }}</span>
+                                    </div>
+                                    <p class="text-[11px] {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-800{% else %}text-slate-600{% endif %} font-medium leading-snug line-clamp-2">{{ n.message }}</p>
+                                </a>
+                                {% else %}
+                                <div class="p-4 text-center text-xs text-slate-400 font-medium">No recent notifications</div>
+                                {% endfor %}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -674,6 +679,73 @@
                 resDiv.innerHTML = `<div class="text-rose-600 font-semibold p-2">Failed to process command. Please try again.</div>`;
             }
         }
+
+        // Notifications Dropdown Controller
+        let notifTimeout = null;
+        let notifPinned = false;
+
+        function openNotifications() {
+            clearTimeout(notifTimeout);
+            const dropdown = document.getElementById('notifDropdown');
+            const btn = document.getElementById('notifBellBtn');
+            if (dropdown) {
+                dropdown.classList.remove('hidden');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+            }
+        }
+
+        function closeNotifications(force = false) {
+            if (notifPinned && !force) return;
+            const dropdown = document.getElementById('notifDropdown');
+            const btn = document.getElementById('notifBellBtn');
+            if (dropdown) {
+                dropdown.classList.add('hidden');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            }
+            if (force) notifPinned = false;
+        }
+
+        function toggleNotifications(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            clearTimeout(notifTimeout);
+            const dropdown = document.getElementById('notifDropdown');
+            if (!dropdown) return;
+            const isHidden = dropdown.classList.contains('hidden');
+            if (isHidden) {
+                notifPinned = true;
+                openNotifications();
+            } else {
+                notifPinned = false;
+                closeNotifications(true);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const container = document.getElementById('notifDropdownContainer');
+            if (container) {
+                container.addEventListener('mouseenter', () => {
+                    clearTimeout(notifTimeout);
+                    openNotifications();
+                });
+                container.addEventListener('mouseleave', () => {
+                    if (!notifPinned) {
+                        notifTimeout = setTimeout(() => {
+                            closeNotifications();
+                        }, 350);
+                    }
+                });
+            }
+
+            document.addEventListener('click', (e) => {
+                const container = document.getElementById('notifDropdownContainer');
+                if (container && !container.contains(e.target)) {
+                    closeNotifications(true);
+                }
+            });
+        });
 
         async function markNotificationRead(notifId) {
             try {
