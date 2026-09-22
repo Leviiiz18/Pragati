@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Attendance Predictor - StudySyncOS{% endblock %}
+{% block title %}Attendance Predictor - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
     <div>
@@ -8,15 +8,39 @@
     </div>
 
     <!-- Attendance Predictor Alert Card -->
-    <div class="bg-amber-50 p-6 rounded-3xl border border-amber-200 shadow-sm space-y-2">
-        <div class="flex items-center gap-3">
-            <i class="fa-solid fa-calculator text-amber-600 text-2xl"></i>
+    {% if current_user.attendance_percentage < 75 %}
+    <div class="p-6 rounded-3xl bg-gradient-to-r from-rose-500/10 via-rose-50 to-amber-50/70 border-2 border-rose-300 shadow-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <div class="w-12 h-12 rounded-2xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-rose-300 animate-pulse">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+            </div>
             <div>
-                <h3 class="text-base font-extrabold text-amber-950">AI Mandatory Threshold Predictor</h3>
-                <p class="text-xs font-semibold text-amber-800">Maintain ≥75% attendance to qualify for End-Semester examinations.</p>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-black uppercase">Low Attendance Station</span>
+                    <span class="text-xs font-bold text-rose-800">Current: {{ current_user.attendance_percentage }}%</span>
+                </div>
+                <h3 class="text-base font-black text-rose-950 mt-0.5">Critical Attendance Warning & Examination Ineligibility Alert</h3>
+                <p class="text-xs text-rose-800 font-medium">You are currently below the required 75% threshold. You must attend consecutive upcoming classes without absence.</p>
             </div>
         </div>
+        <a href="{{ url_for('student.ai_tutor') }}" class="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold rounded-xl shadow-xs transition flex-shrink-0 text-center">
+            Generate AI Recovery Schedule
+        </a>
     </div>
+    {% else %}
+    <div class="bg-emerald-50 p-5 rounded-3xl border border-emerald-200 shadow-sm flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center">
+                <i class="fa-solid fa-circle-check text-lg"></i>
+            </div>
+            <div>
+                <h3 class="text-sm font-extrabold text-emerald-950">Safe Zone Attendance ({{ current_user.attendance_percentage }}%)</h3>
+                <p class="text-xs font-semibold text-emerald-800">You fulfill the university-mandated ≥75% attendance threshold for semester exams.</p>
+            </div>
+        </div>
+        <span class="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">Compliant</span>
+    </div>
+    {% endif %}
 
     <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
         <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">

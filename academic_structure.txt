@@ -1,5 +1,5 @@
-StudySyncPro ERP - Academic Hierarchy
-=====================================
+Pragati by Kalpkrats ERP - Academic Hierarchy
+=============================================
 
 1. BCA (Course) - Department: Computer Science
    -------------------------------------------
@@ -31,5 +31,5 @@ StudySyncPro ERP - Academic Hierarchy
      - Subject: Software Development Life Cycle (SE101)
      - Subject: Web Development Basics (SE102)
 
-Generated for: StudySyncPro Documentation
+Generated for: Pragati by Kalpkrats Documentation
 Date: 2026-03-18

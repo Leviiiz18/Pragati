@@ -4,14 +4,19 @@ from datetime import datetime
 
 db = SQLAlchemy()
 
-class Institution(db.Model):
+class BaseModel(db.Model):
+    __abstract__ = True
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+class Institution(BaseModel):
     __tablename__ = 'institution'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False, default="Nitte University")
     code = db.Column(db.String(20), nullable=False, default="NU") # Pre-fed university abbreviation e.g. NU
     address = db.Column(db.String(250), default="Mangaluru, Karnataka, India")
 
-class Department(db.Model):
+class Department(BaseModel):
     __tablename__ = 'department'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
@@ -19,7 +24,7 @@ class Department(db.Model):
     hod_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     budget = db.Column(db.Float, default=1000000.0)
 
-class User(db.Model, UserMixin):
+class User(BaseModel, UserMixin):
     __tablename__ = 'user'
     id = db.Column(db.Integer, primary_key=True)
     registration_id = db.Column(db.String(50), unique=True, nullable=True) # Auto-generated e.g. NU23UCA054
@@ -100,7 +105,7 @@ class User(db.Model, UserMixin):
     attendance_records = db.relationship('AttendanceRecord', backref='student', lazy=True, cascade="all, delete-orphan")
     exam_results = db.relationship('ExamResult', backref='student', lazy=True, cascade="all, delete-orphan")
 
-class Course(db.Model):
+class Course(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(20), nullable=False, default="UCA") # e.g. UCA or CSE
@@ -108,13 +113,13 @@ class Course(db.Model):
     specializations = db.relationship('Specialization', backref='course', lazy=True, cascade="all, delete-orphan")
     subjects = db.relationship('Subject', backref='course', lazy=True, cascade="all, delete-orphan")
 
-class Specialization(db.Model):
+class Specialization(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('course.id'), nullable=False)
     subjects = db.relationship('Subject', backref='specialization', lazy=True, cascade="all, delete-orphan")
 
-class Subject(db.Model):
+class Subject(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     code = db.Column(db.String(20), unique=True)
@@ -131,31 +136,31 @@ class Subject(db.Model):
     enrollments = db.relationship('Enrollment', backref='subject', lazy=True, cascade="all, delete-orphan")
     events = db.relationship('Event', backref='subject', lazy=True, cascade="all, delete-orphan")
 
-class Enrollment(db.Model):
+class Enrollment(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
 
-class Module(db.Model):
+class Module(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     units = db.relationship('Unit', backref='module', lazy=True, cascade="all, delete-orphan")
     quizzes = db.relationship('Quiz', backref='module', lazy=True, cascade="all, delete-orphan")
 
-class Quiz(db.Model):
+class Quiz(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     module_id = db.Column(db.Integer, db.ForeignKey('module.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     questions_json = db.Column(db.Text, nullable=False) # JSON array of questions, options, and correct answer
 
-class Unit(db.Model):
+class Unit(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     module_id = db.Column(db.Integer, db.ForeignKey('module.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     files = db.relationship('File', backref='unit', lazy=True, cascade="all, delete-orphan")
 
-class File(db.Model):
+class File(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     unit_id = db.Column(db.Integer, db.ForeignKey('unit.id'), nullable=False)
     filename = db.Column(db.String(200), nullable=False)
@@ -163,7 +168,7 @@ class File(db.Model):
     filetype = db.Column(db.String(50), nullable=False)
     uploaded_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class Event(db.Model):
+class Event(BaseModel):
     __tablename__ = 'event'
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
@@ -178,14 +183,14 @@ class Event(db.Model):
     user_rel = db.relationship('User', foreign_keys=[user_id], overlaps="owner,personal_reminders")
     creator_rel = db.relationship('User', foreign_keys=[created_by], overlaps="creator,events_created")
 
-class DocumentChunk(db.Model):
+class DocumentChunk(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     module_id = db.Column(db.Integer, db.ForeignKey('module.id'), nullable=False)
     file_id = db.Column(db.Integer, db.ForeignKey('file.id'), nullable=True)
     content = db.Column(db.Text, nullable=False)
     embedding = db.Column(db.Text, nullable=False)
 
-class AttendanceRecord(db.Model):
+class AttendanceRecord(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
@@ -194,7 +199,7 @@ class AttendanceRecord(db.Model):
     is_proxy_suspect = db.Column(db.Boolean, default=False)
     proxy_reason = db.Column(db.String(200), nullable=True)
 
-class Exam(db.Model):
+class Exam(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
@@ -205,7 +210,7 @@ class Exam(db.Model):
     status = db.Column(db.String(20), default='Scheduled') # Scheduled, Approved, Published
     subject = db.relationship('Subject', backref='exams')
 
-class ExamResult(db.Model):
+class ExamResult(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     exam_id = db.Column(db.Integer, db.ForeignKey('exam.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -214,7 +219,7 @@ class ExamResult(db.Model):
     feedback = db.Column(db.Text, nullable=True)
     exam = db.relationship('Exam', backref='results')
 
-class TimetableSlot(db.Model):
+class TimetableSlot(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     day = db.Column(db.String(20), nullable=False) # Monday, Tuesday, ...
     start_time = db.Column(db.String(10), nullable=False) # 09:00
@@ -226,7 +231,7 @@ class TimetableSlot(db.Model):
     subject = db.relationship('Subject', backref='timetable_slots')
     faculty = db.relationship('User', foreign_keys=[faculty_id])
 
-class PlacementDrive(db.Model):
+class PlacementDrive(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     company_name = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(100), nullable=False)
@@ -235,7 +240,7 @@ class PlacementDrive(db.Model):
     drive_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), default='Upcoming') # Upcoming, Active, Completed
 
-class PlacementApplication(db.Model):
+class PlacementApplication(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     drive_id = db.Column(db.Integer, db.ForeignKey('placement_drive.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -244,7 +249,7 @@ class PlacementApplication(db.Model):
     drive = db.relationship('PlacementDrive', backref='applications')
     student = db.relationship('User', backref='placements')
 
-class FeeRecord(db.Model):
+class FeeRecord(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     semester = db.Column(db.Integer, default=1)
@@ -255,7 +260,7 @@ class FeeRecord(db.Model):
     risk_flag = db.Column(db.Boolean, default=False)
     student = db.relationship('User', backref='fee_records')
 
-class DocumentRequest(db.Model):
+class DocumentRequest(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     doc_type = db.Column(db.String(50), nullable=False) # Bonafide, Transcript, Transfer Certificate, Conduct
@@ -264,7 +269,7 @@ class DocumentRequest(db.Model):
     requested_at = db.Column(db.DateTime, default=datetime.utcnow)
     student = db.relationship('User', backref='doc_requests')
 
-class AIRiskAlert(db.Model):
+class AIRiskAlert(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     risk_score = db.Column(db.Float, nullable=False)
@@ -274,7 +279,7 @@ class AIRiskAlert(db.Model):
     status = db.Column(db.String(20), default='Active') # Active, Resolved
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-class AICommandLog(db.Model):
+class AICommandLog(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     query = db.Column(db.Text, nullable=False)
@@ -282,7 +287,7 @@ class AICommandLog(db.Model):
     result_summary = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow)
 
-class StudentNote(db.Model):
+class StudentNote(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=True)
@@ -296,7 +301,7 @@ class StudentNote(db.Model):
     student = db.relationship('User', backref=db.backref('notes', lazy=True, cascade="all, delete-orphan"))
     subject = db.relationship('Subject', backref='student_notes')
 
-class Assignment(db.Model):
+class Assignment(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     module_id = db.Column(db.Integer, db.ForeignKey('module.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)
@@ -309,7 +314,7 @@ class Assignment(db.Model):
     module = db.relationship('Module', backref=db.backref('assignments', lazy=True, cascade="all, delete-orphan"))
     submissions = db.relationship('AssignmentSubmission', backref='assignment', lazy=True, cascade="all, delete-orphan")
 
-class AssignmentSubmission(db.Model):
+class AssignmentSubmission(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     assignment_id = db.Column(db.Integer, db.ForeignKey('assignment.id'), nullable=False)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
@@ -322,7 +327,7 @@ class AssignmentSubmission(db.Model):
 
     student = db.relationship('User', backref=db.backref('assignment_submissions', lazy=True, cascade="all, delete-orphan"))
 
-class Notification(db.Model):
+class Notification(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     title = db.Column(db.String(200), nullable=False)

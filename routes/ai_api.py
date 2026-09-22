@@ -25,3 +25,22 @@ def tutor_api():
     prompt = data.get('prompt', '')
     answer = AIEngine.generate_completion(prompt, system_message="You are an AI Tutor providing institutional assistance.")
     return jsonify({'status': 'success', 'answer': answer})
+
+@ai_api_bp.route('/api/notifications/mark-read/<int:notif_id>', methods=['POST'])
+@login_required
+def mark_notification_read(notif_id):
+    from models import db, Notification
+    notif = Notification.query.filter_by(id=notif_id, user_id=current_user.id).first()
+    if notif:
+        notif.is_read = True
+        db.session.commit()
+    return jsonify({'status': 'success'})
+
+@ai_api_bp.route('/api/notifications/mark-all-read', methods=['POST'])
+@login_required
+def mark_all_notifications_read():
+    from models import db, Notification
+    Notification.query.filter_by(user_id=current_user.id, is_read=False).update({'is_read': True})
+    db.session.commit()
+    return jsonify({'status': 'success'})
+

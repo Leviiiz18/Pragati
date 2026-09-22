@@ -1,0 +1,12 @@
+<svg viewBox="85 100 155 155" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="pragatiLogoGrad" x1="95.5263" y1="103.526" x2="225.211" y2="247.105" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#6257F5"/>
+      <stop offset="0.55" stop-color="#7A73D1"/>
+      <stop offset="1" stop-color="#18D9D2"/>
+    </linearGradient>
+  </defs>
+  <path d="M99.2316 105.379H175.189C207.611 105.379 232.621 129.463 232.621 161.884C232.621 184.116 220.579 203.568 202.053 212.832L176.116 225.8V185.042L198.347 173C205.758 169.295 209.463 162.811 209.463 154.474C209.463 143.358 201.126 135.021 189.084 135.021H146.474V167.442L165 185.968L136.284 214.684L117.758 196.158L99.2316 214.684V105.379Z" fill="url(#pragatiLogoGrad)"/>
+  <path d="M117.758 197.084H150.179V235.989H117.758V197.084Z" fill="url(#pragatiLogoGrad)"/>
+  <circle cx="102.011" cy="236.916" r="12.042" fill="url(#pragatiLogoGrad)"/>
+</svg>

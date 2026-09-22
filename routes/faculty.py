@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from models import db, User, Subject, Module, Unit, File, AttendanceRecord, Exam, ExamResult, Enrollment, Event, Quiz, Assignment, AssignmentSubmission, Notification
 from services.grading_service import GradingService
 from services.ai_engine import AIEngine
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import os
 from werkzeug.utils import secure_filename
 
@@ -50,6 +50,8 @@ def attendance():
         subject_id = int(request.form.get('subject_id'))
         attendance_data = request.form.getlist('present_students')
         att_date = datetime.strptime(request.form.get('date'), '%Y-%m-%d').date() if request.form.get('date') else date.today()
+        subject = Subject.query.get(subject_id)
+        notifications_sent = 0
         
         enrollments = Enrollment.query.filter_by(subject_id=subject_id).all()
         for e in enrollments:
@@ -67,9 +69,45 @@ def attendance():
             if all_records:
                 p_count = sum(1 for r in all_records if r.status == 'present')
                 e.student.attendance_percentage = round((p_count / len(all_records)) * 100, 1)
+
+            # Calculate subject-level attendance percentage
+            subj_records = AttendanceRecord.query.filter_by(student_id=e.student_id, subject_id=subject_id).all()
+            subj_present = sum(1 for r in subj_records if r.status == 'present')
+            subj_total = len(subj_records)
+            subj_pct = round((subj_present / subj_total) * 100, 1) if subj_total > 0 else 100.0
+
+            # Real-Time Notification Dispatch to Student Station
+            if not is_present or e.student.attendance_percentage < 75 or subj_pct < 75:
+                if e.student.attendance_percentage < 75 or subj_pct < 75:
+                    notif_title = f"⚠️ CRITICAL: Attendance Low in {subject.name if subject else 'Course'}"
+                    notif_msg = (
+                        f"Your attendance in {subject.name if subject else 'Subject'} is at {subj_pct}% "
+                        f"(Overall: {e.student.attendance_percentage}%). This is below the mandatory 75% threshold "
+                        f"for end-semester exam eligibility. Immediate makeup attendance required!"
+                    )
+                else:
+                    notif_title = f"Absent Recorded: {subject.name if subject else 'Subject'}"
+                    notif_msg = (
+                        f"You were marked absent in {subject.name if subject else 'Subject'} on {att_date.strftime('%b %d, %Y')}. "
+                        f"Your overall attendance is currently {e.student.attendance_percentage}%."
+                    )
+
+                new_notif = Notification(
+                    user_id=e.student_id,
+                    title=notif_title,
+                    message=notif_msg,
+                    link=url_for('student.attendance'),
+                    is_read=False,
+                    created_at=datetime.utcnow()
+                )
+                db.session.add(new_notif)
+                notifications_sent += 1
                 
         db.session.commit()
-        flash('Attendance submitted successfully. Student percentages updated.', 'success')
+        if notifications_sent > 0:
+            flash(f'Attendance recorded. {notifications_sent} real-time low attendance / absence notifications dispatched to student stations.', 'info')
+        else:
+            flash('Attendance submitted successfully. Student percentages updated.', 'success')
         return redirect(url_for('faculty.attendance', subject_id=subject_id))
 
     return render_template('faculty/attendance.html', subjects=subjects, selected_subject_id=selected_subject_id, students=students)

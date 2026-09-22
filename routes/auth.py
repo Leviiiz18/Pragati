@@ -22,9 +22,13 @@ def login():
         return redirect(get_role_redirect(current_user.role))
             
     if request.method == 'POST':
-        email = request.form.get('email')
+        login_input = (request.form.get('campus_id') or request.form.get('email') or '').strip()
         password = request.form.get('password')
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter(
+            (User.email == login_input) | 
+            (User.registration_id == login_input) | 
+            (User.employee_id == login_input)
+        ).first()
         
         if user and (bcrypt.check_password_hash(user.password, password) or password == 'admin123' or password == 'password123'):
             login_user(user)
@@ -33,7 +37,7 @@ def login():
                 return redirect(next_page)
             return redirect(get_role_redirect(user.role))
         else:
-            flash('Login Unsuccessful. Please check email and password', 'danger')
+            flash('Invalid credentials. Please verify your Campus ID / Email and password.', 'danger')
             
     return render_template('login.html')
 

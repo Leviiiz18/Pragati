@@ -1,6 +1,6 @@
-# StudySyncPro - Intelligent ERP for Higher Education
+# Pragati by Kalpkrats — Intelligent ERP for Higher Education
 
-StudySyncPro is a modern, AI-powered ERP system designed for Colleges and Universities. It streamlines academic management, material distribution, and student-faculty interaction with integrated AI assistance.
+Pragati by Kalpkrats is a next-generation, AI-powered campus operating system designed for higher education institutions. It unifies academic governance, predictive attendance tracking, material vaults, student performance telemetry, and multi-role workflows under a singular cohesive platform.
 
 ## 🚀 Key Features
 
