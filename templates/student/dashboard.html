@@ -2,18 +2,70 @@
 {% block title %}Student Cockpit - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-8">
-    <div class="flex items-center justify-between">
-        <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">Student Academic Cockpit</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Welcome, <strong class="text-amber-600">{{ current_user.name }}</strong> | Sem {{ current_user.semester }} | Department of {{ current_user.department or 'Computer Science' }}</p>
+    <!-- Personalized Student Identity & Academic Hero Card -->
+    <div class="p-6 sm:p-7 rounded-3xl bg-white border border-slate-200/90 shadow-sm relative overflow-hidden transition-all group">
+        <div class="absolute -right-16 -bottom-16 w-64 h-64 rounded-full bg-gradient-to-br from-indigo-500/10 via-blue-500/5 to-transparent blur-3xl pointer-events-none"></div>
+        <div class="absolute right-8 top-6 text-[120px] font-black text-slate-100/40 select-none pointer-events-none leading-none -z-0">
+            {{ current_user.semester or '4' }}
         </div>
-        <div class="flex items-center gap-3">
-            <a href="{{ url_for('student.calendar') }}" class="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-200 transition">
-                <i class="fa-solid fa-calendar-days"></i> Academic & Attendance Calendar
-            </a>
-            <a href="{{ url_for('student.ai_tutor') }}" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-blue-200 transition">
-                <i class="fa-solid fa-robot"></i> Open AI Course Tutor
-            </a>
+
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 relative z-10">
+            <!-- Left: Avatar + Big Standout Name + Academic Metadata -->
+            <div class="flex items-center gap-5 sm:gap-6">
+                <!-- Monogram Avatar with online badge -->
+                <div class="relative flex-shrink-0">
+                    <div class="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-gradient-to-tr from-[#4757F0] via-indigo-600 to-purple-600 text-white font-black text-2xl sm:text-3xl flex items-center justify-center shadow-lg shadow-indigo-200 ring-4 ring-indigo-50 transform group-hover:scale-105 transition-transform duration-300">
+                        {{ current_user.name[:2]|upper }}
+                    </div>
+                    <span class="absolute -bottom-1 -right-1 w-5 h-5 bg-emerald-500 border-2 border-white rounded-full flex items-center justify-center text-[9px] text-white font-black shadow-xs" title="Enrolled & Active Student">
+                        <i class="fa-solid fa-check"></i>
+                    </span>
+                </div>
+
+                <!-- Personalized Greetings & Prominent Name -->
+                <div class="space-y-1.5 min-w-0">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-extrabold uppercase tracking-wider">
+                            <i class="fa-solid fa-graduation-cap text-[10px]"></i> Semester {{ current_user.semester or '4' }}
+                        </span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 text-xs font-bold">
+                            <i class="fa-solid fa-id-badge text-[10px] text-slate-400"></i> Roll: {{ current_user.registration_id or 'CS2026-042' }}
+                        </span>
+                        {% if current_user.attendance_percentage >= 75 %}
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700 text-[11px] font-bold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Academic Good Standing
+                        </span>
+                        {% else %}
+                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-rose-50 border border-rose-200 text-rose-700 text-[11px] font-bold">
+                            <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-ping"></span> Attendance Risk Zone
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- STANDOUT NAME: Big, bold, personalized -->
+                    <h1 class="text-2xl sm:text-4xl font-black text-slate-900 tracking-tight leading-tight">
+                        Welcome back, <span class="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 bg-clip-text text-transparent">{{ current_user.name }}</span> <span class="inline-block text-2xl sm:text-3xl">👋</span>
+                    </h1>
+
+                    <p class="text-xs sm:text-sm text-slate-500 font-semibold flex items-center gap-2 flex-wrap">
+                        <span class="text-slate-700 font-bold flex items-center gap-1.5">
+                            <i class="fa-solid fa-building-columns text-indigo-600 text-xs"></i> Department of {{ current_user.department or 'Computer Science & Engineering' }}
+                        </span>
+                        <span class="text-slate-300">&bull;</span>
+                        <span class="text-slate-500">Bachelor of Technology (B.Tech)</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Right: Quick Hub Actions -->
+            <div class="flex flex-wrap sm:flex-nowrap items-center gap-3 self-start lg:self-center flex-shrink-0">
+                <a href="{{ url_for('student.calendar') }}" class="px-4 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 border border-indigo-200 text-xs font-bold flex items-center gap-2 transition active:scale-95 shadow-2xs">
+                    <i class="fa-solid fa-calendar-days text-indigo-600"></i> My Calendar
+                </a>
+                <a href="{{ url_for('student.ai_tutor') }}" class="px-4 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-indigo-200 transition active:scale-95">
+                    <i class="fa-solid fa-robot"></i> Ask AI Tutor
+                </a>
+            </div>
         </div>
     </div>
 
