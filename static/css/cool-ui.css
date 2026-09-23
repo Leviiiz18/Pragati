@@ -541,3 +541,52 @@ tbody tr:hover {
   }
 }
 
+/* ======================================================== */
+/* FULLCALENDAR SUBTLE HOVER & INTERACTION SUITE            */
+/* ======================================================== */
+.fc-theme-standard .fc-daygrid-day {
+  transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+}
+
+.fc-theme-standard .fc-daygrid-day:not(.fc-day-today):hover {
+  background-color: rgba(241, 245, 249, 0.85) !important;
+  cursor: pointer;
+}
+
+.fc-theme-standard .fc-day-today:hover {
+  background-color: rgba(79, 70, 229, 0.07) !important;
+}
+
+.fc-daygrid-day:hover .fc-daygrid-day-number {
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  transform: scale(1.06);
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+/* Event Badges - Micro-Lift & Soft Glow */
+.fc-daygrid-event {
+  cursor: pointer;
+  transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, filter 0.15s ease !important;
+}
+
+.fc-daygrid-event:hover {
+  transform: translateY(-1.5px) scale(1.02);
+  box-shadow: 0 4px 10px -1px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06) !important;
+  z-index: 25 !important;
+  filter: brightness(0.96);
+}
+
+/* More Link Hover Effect */
+.fc-daygrid-more-link {
+  transition: all 0.15s ease !important;
+}
+
+.fc-daygrid-more-link:hover {
+  background-color: #e0e7ff !important;
+  color: #3730a3 !important;
+  transform: translateY(-0.5px);
+  box-shadow: 0 2px 5px rgba(79, 70, 229, 0.18);
+}
+
+

@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for
+from flask import Blueprint, render_template, request, jsonify, flash, redirect, url_for, current_app
 from flask_login import login_required, current_user
 from models import db, User, Subject, Enrollment, Module, Unit, File, Event, AttendanceRecord, ExamResult, FeeRecord, PlacementDrive, DocumentRequest, TimetableSlot, Exam, Course, StudentNote, Quiz, Assignment, AssignmentSubmission, Notification, Institution
 from services.ai_engine import AIEngine
@@ -62,11 +62,67 @@ def dashboard():
     subjects = [e.subject for e in enrollments]
     subj_ids = [e.subject_id for e in enrollments]
     
-    # Fetch upcoming assignments for enrolled subjects
+    # Fetch all modules and assignments for enrolled subjects
     enrolled_modules = Module.query.filter(Module.subject_id.in_(subj_ids)).all() if subj_ids else []
     mod_ids = [m.id for m in enrolled_modules]
-    upcoming_assignments = Assignment.query.filter(Assignment.module_id.in_(mod_ids)).order_by(Assignment.due_date.asc()).all() if mod_ids else []
+    assignments = Assignment.query.filter(Assignment.module_id.in_(mod_ids)).order_by(Assignment.due_date.asc()).all() if mod_ids else []
     
+    # Submissions by this student
+    submissions = AssignmentSubmission.query.filter_by(student_id=current_user.id).all()
+    submitted_assignment_ids = {s.assignment_id: s for s in submissions}
+    
+    today = date.today()
+    
+    # Structured deadlines list with status, days left, urgency
+    deadlines = []
+    for a in assignments:
+        sub = submitted_assignment_ids.get(a.id)
+        days_left = (a.due_date - today).days if a.due_date else 999
+        status = 'Graded' if (sub and sub.status == 'Graded') else ('Submitted' if sub else ('Overdue' if days_left < 0 else ('Urgent' if days_left <= 2 else 'Pending')))
+        deadlines.append({
+            'type': 'Assignment',
+            'id': a.id,
+            'title': a.title,
+            'subject_code': a.module.subject.code if (a.module and a.module.subject) else 'COURSE',
+            'subject_name': a.module.subject.name if (a.module and a.module.subject) else '',
+            'subject_id': a.module.subject_id if a.module else None,
+            'due_date': a.due_date,
+            'days_left': days_left,
+            'points': int(a.max_points or 100),
+            'status': status,
+            'submission': sub,
+            'instructions': a.instructions or ''
+        })
+    
+    # Upcoming exams
+    upcoming_exams = Exam.query.filter(Exam.subject_id.in_(subj_ids)).filter(Exam.date >= today).order_by(Exam.date.asc()).limit(5).all() if subj_ids else []
+    for ex in upcoming_exams:
+        days_left = (ex.date - today).days
+        deadlines.append({
+            'type': 'Exam',
+            'id': ex.id,
+            'title': ex.title,
+            'subject_code': ex.subject.code if ex.subject else 'EXAM',
+            'subject_name': ex.subject.name if ex.subject else '',
+            'subject_id': ex.subject_id,
+            'due_date': ex.date,
+            'days_left': days_left,
+            'points': int(ex.max_marks or 100),
+            'status': 'Urgent' if days_left <= 3 else 'Scheduled',
+            'submission': None,
+            'instructions': f"Max Marks: {int(ex.max_marks)} | Type: {ex.type} | Bloom: {ex.bloom_level}"
+        })
+        
+    # Sort all deadlines chronologically
+    deadlines.sort(key=lambda d: d['days_left'])
+    
+    # Today's timetable slots
+    day_name = datetime.now().strftime('%A')
+    today_slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids)).filter_by(day=day_name).order_by(TimetableSlot.start_time.asc()).all() if subj_ids else []
+    if not today_slots and subj_ids:
+        # Show timetable preview if no slots specifically for today
+        today_slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids)).order_by(TimetableSlot.day.asc(), TimetableSlot.start_time.asc()).limit(4).all()
+        
     # Calculate classes needed to reach 75% attendance
     att_pct = current_user.attendance_percentage
     classes_needed = 0
@@ -87,7 +143,11 @@ def dashboard():
                            fee_rec=fee_rec,
                            placements=placements,
                            events=events,
-                           upcoming_assignments=upcoming_assignments)
+                           deadlines=deadlines,
+                           today_slots=today_slots,
+                           today_date=today,
+                           day_name=day_name,
+                           upcoming_assignments=assignments)
 
 @student_bp.route('/courses')
 def courses():

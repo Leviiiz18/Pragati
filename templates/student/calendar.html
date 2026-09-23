@@ -210,6 +210,24 @@
     .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f5f9 !important; }
     .fc-col-header-cell { padding: 0.4rem 0 !important; background: #f8fafc; font-weight: 700; font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0 !important; }
     
+    /* Day Cells with Smooth Subtle Hover */
+    .fc-theme-standard .fc-daygrid-day {
+        transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+    }
+    .fc-theme-standard .fc-daygrid-day:not(.fc-day-today):hover {
+        background-color: rgba(241, 245, 249, 0.85) !important;
+        cursor: pointer;
+    }
+    .fc-theme-standard .fc-day-today:hover {
+        background-color: rgba(79, 70, 229, 0.07) !important;
+    }
+    .fc-daygrid-day:hover .fc-daygrid-day-number {
+        color: #0f172a !important;
+        font-weight: 700 !important;
+        transform: scale(1.06);
+        transition: transform 0.15s ease, color 0.15s ease;
+    }
+
     .fc-daygrid-day-frame { min-height: 70px !important; padding: 2px !important; }
     .fc-daygrid-day-top { flex-direction: row !important; padding: 2px 4px !important; }
     .fc-daygrid-day-number { font-size: 0.7rem !important; font-weight: 600 !important; color: #64748b !important; padding: 1px 4px !important; }
@@ -226,32 +244,40 @@
         font-weight: 700 !important;
     }
 
-    /* Event Badges - Clean Pill Design with subtle borders & micro-dots */
+    /* Event Badges - Clean Pill Design with subtle hover elevation */
     .fc-daygrid-event {
         margin: 1.5px 0 !important;
         border-radius: 6px !important;
-        padding: 1px 3px !important;
+        padding: 1.5px 4px !important;
         font-size: 0.68rem !important;
         font-weight: 600 !important;
         cursor: pointer;
-        transition: transform 0.12s ease, box-shadow 0.12s ease !important;
+        transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, filter 0.15s ease !important;
         border-width: 1px !important;
     }
     .fc-daygrid-event:hover {
-        transform: translateY(-1px) scale(1.01);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-        z-index: 20 !important;
+        transform: translateY(-1.5px) scale(1.02);
+        box-shadow: 0 4px 10px -1px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+        z-index: 25 !important;
+        filter: brightness(0.96);
     }
 
     .fc-daygrid-more-link {
         font-size: 0.68rem !important;
         font-weight: 700 !important;
         color: #4f46e5 !important;
-        padding: 0px 4px !important;
-        border-radius: 4px !important;
+        padding: 1px 5px !important;
+        border-radius: 5px !important;
         background: #eef2ff !important;
         display: inline-block !important;
         margin-top: 1px !important;
+        transition: all 0.15s ease !important;
+    }
+    .fc-daygrid-more-link:hover {
+        background: #e0e7ff !important;
+        color: #3730a3 !important;
+        transform: translateY(-0.5px);
+        box-shadow: 0 2px 5px rgba(79, 70, 229, 0.18);
     }
 </style>
 

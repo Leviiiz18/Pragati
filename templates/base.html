@@ -16,38 +16,22 @@
     <!-- 21st & Modern UI Stylesheet -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/cool-ui.css') }}">
     
-    <script>
-        // Apply saved sidebar state instantly before render to avoid flash
-        (function() {
-            try {
-                if (localStorage.getItem('pragati_sidebar_collapsed') === 'true' || localStorage.getItem('studysync_sidebar_collapsed') === 'true') {
-                    document.documentElement.classList.add('sidebar-collapsed');
-                }
-            } catch (e) {}
-        })();
-    </script>
-    <style>
-        /* Instant zero-flash collapsed layout before any stylesheet or script loads */
-        .sidebar-collapsed #mainSidebar {
-            width: 4.75rem !important;
-            transition: none !important;
-        }
-        .sidebar-collapsed #mainSidebar .sidebar-text,
-        .sidebar-collapsed #mainSidebar .sidebar-section-header {
-            display: none !important;
-        }
-        .sidebar-collapsed #mainSidebar .sidebar-footer-expanded {
-            display: none !important;
-        }
-        .sidebar-collapsed #mainSidebar .sidebar-footer-compact {
-            display: flex !important;
-        }
-        .sidebar-collapsed #sidebarCollapseIcon {
-            transform: rotate(180deg) !important;
-        }
-    </style>
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        .top-nav-link {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .top-nav-link.is-active {
+            background-color: #EEF2FF !important;
+            color: #4757F0 !important;
+            font-weight: 800 !important;
+            border-color: #C7D2FE !important;
+            box-shadow: 0 1px 2px 0 rgba(71, 87, 240, 0.08) !important;
+        }
+        .top-nav-link.is-active i {
+            color: #4757F0 !important;
+        }
 
         /* Pragati Minimal Animated Loader Keyframes */
         @keyframes spinSmooth {
@@ -90,391 +74,489 @@
     </style>
 </head>
 <body class="h-full flex flex-col bg-slate-50 text-slate-800 cool-canvas-bg antialiased selection:bg-[#4757F0] selection:text-white">
-    <script>
-        if (document.documentElement.classList.contains('sidebar-collapsed')) {
-            document.body.classList.add('sidebar-collapsed');
-        }
-    </script>
 
     {% block auth_content %}
-    <!-- Main Application Container for Authenticated Users -->
-    <div class="min-h-screen flex flex-col">
-        <!-- Top Navigation Header -->
-        <header class="bg-white/90 backdrop-blur-md sticky top-0 z-40 px-4 md:px-6 py-3 flex items-center justify-between border-b border-slate-200/80 shadow-sm transition-all">
-            <div class="flex items-center gap-3 md:gap-4">
-                <!-- Mobile Sidebar Toggle -->
-                <button onclick="toggleMobileSidebar()" class="md:hidden w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 flex items-center justify-center transition active:scale-95">
-                    <i class="fa-solid fa-bars text-sm"></i>
-                </button>
-
-                <!-- Desktop Sidebar Collapse Toggle Button (21st Aceternity style) -->
-                <button id="sidebarToggleBtn" onclick="toggleSidebar()" aria-label="Toggle Sidebar" title="Collapse / Expand Sidebar (Ctrl+B)" 
-                        class="hidden md:flex w-9 h-9 rounded-xl bg-slate-100/90 hover:bg-blue-50 border border-slate-200/90 hover:border-blue-300 text-slate-600 hover:text-blue-600 items-center justify-center transition-colors shadow-sm active:bg-slate-200 group">
-                    <i id="sidebarCollapseIcon" class="fa-solid fa-angles-left text-xs group-hover:scale-110 transition-transform duration-300"></i>
-                </button>
-
-                <!-- Brand Logo & Name: Pragati by Kalpkrats -->
-                <a href="/" class="flex items-center gap-2.5 md:gap-3 group">
-                    <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                        <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="Pragati" class="w-8 h-8 object-contain drop-shadow-2xs">
-                    </div>
-                    <div>
-                        <span class="text-xl font-black text-slate-900 tracking-tight leading-none block">
-                            Pragati
-                        </span>
-                        <span class="block text-[9px] font-extrabold tracking-widest text-[#4757F0] uppercase mt-0.5">by Kalpkrats</span>
-                    </div>
-                </a>
-            </div>
-
-            <!-- Global AI Command Center Trigger Button -->
-            <div class="flex-1 max-w-xl mx-4 lg:mx-8 hidden md:block">
-                <button onclick="openCommandCenter()" class="w-full flex items-center justify-between px-4 py-2 rounded-2xl bg-slate-100/80 border border-slate-200 text-slate-600 hover:border-blue-500/80 hover:bg-white hover:text-slate-900 transition-all shadow-inner cool-shimmer-btn group">
-                    <div class="flex items-center gap-3">
-                        <div class="w-7 h-7 rounded-lg bg-blue-100/80 text-blue-600 flex items-center justify-center group-hover:scale-110 transition-transform">
-                            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+    <!-- Main Application Shell: Full-Width Layout with Modern Horizontal Top Navigation -->
+    <div class="min-h-screen flex flex-col bg-slate-50 selection:bg-[#4757F0] selection:text-white">
+        {% if current_user.is_authenticated %}
+        <!-- Top Navigation Header (Sticky, Full-Width) -->
+        <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex items-center justify-between h-16 gap-2 lg:gap-4">
+                    
+                    <!-- Left: Pragati Brand Identity -->
+                    <a href="/" class="flex items-center gap-2.5 flex-shrink-0 group">
+                        <div class="w-9 h-9 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
+                            <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="Pragati" class="w-8 h-8 object-contain drop-shadow-2xs">
                         </div>
-                        <span class="text-xs lg:text-sm font-semibold text-slate-600 group-hover:text-slate-900 transition-colors">Ask AI Command Center... ("Students at risk", "Timetable")</span>
-                    </div>
-                    <kbd class="px-2 py-0.5 text-[11px] bg-white border border-slate-300 text-slate-500 rounded-lg font-mono shadow-sm group-hover:border-blue-300 group-hover:text-blue-600 transition-colors">Ctrl + K</kbd>
-                </button>
-            </div>
+                        <div class="hidden sm:block">
+                            <span class="text-lg font-black text-slate-900 tracking-tight leading-none block">Pragati</span>
+                            <span class="block text-[8px] font-extrabold tracking-widest text-[#4757F0] uppercase mt-0.5">by Kalpkrats</span>
+                        </div>
+                    </a>
 
-            <!-- User Profile & Quick Controls -->
-            {% if current_user.is_authenticated %}
-            <div class="flex items-center gap-2 md:gap-3.5">
-                <!-- Mobile AI Command Button -->
-                <button onclick="openCommandCenter()" class="md:hidden w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 text-blue-600 flex items-center justify-center" title="AI Command">
-                    <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-                </button>
-
-                <!-- Notification Bar Dropdown -->
-                <div class="relative" id="notifDropdownContainer">
-                    <button id="notifBellBtn" onclick="toggleNotifications(event)" class="relative w-9 h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 transition shadow-sm active:scale-95" aria-label="Notifications" aria-expanded="false" title="Notifications">
-                        <i class="fa-solid fa-bell text-sm text-slate-700"></i>
-                        {% if unread_notif_count and unread_notif_count > 0 %}
-                        <span id="notifBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white font-black text-[9px] rounded-full flex items-center justify-center animate-pulse shadow-sm">
-                            {{ unread_notif_count }}
-                        </span>
+                    <!-- Center: Minimalist 4 Essential Tabs + All Modules Dropdown -->
+                    <nav class="hidden md:flex items-center gap-1.5 py-1" id="desktopTopNav">
+                        {% if current_user.role in ['super_admin', 'principal'] %}
+                        <a href="{{ url_for('super_admin.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-chart-line text-purple-600"></i>
+                            <span>Executive Overview</span>
+                        </a>
+                        <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-id-card text-purple-600"></i>
+                            <span>Executive ID</span>
+                        </a>
                         {% endif %}
-                    </button>
 
-                    <!-- Notifications Dropdown Menu (Direct top-full bridge with pt-2, eliminating cursor drop-off gap) -->
-                    <div id="notifDropdown" class="absolute right-0 top-full pt-2 w-88 z-50 hidden transition-all duration-150" style="width: 22rem;">
-                        <div class="bg-white/95 backdrop-blur-md rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-3 ring-1 ring-black/5">
-                            <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
-                                <span class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-bell text-blue-600 text-xs"></i> Real-Time Notifications
-                                </span>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{{ unread_notif_count or 0 }} New</span>
-                                    {% if unread_notif_count and unread_notif_count > 0 %}
-                                    <button onclick="markAllNotificationsRead()" class="text-[10px] font-bold text-slate-500 hover:text-blue-600 underline">
-                                        Mark Read
-                                    </button>
-                                    {% endif %}
-                                    <button onclick="closeNotifications(true)" class="w-6 h-6 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs transition" title="Close">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
+                        {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
+                        <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-gauge-high text-blue-600"></i>
+                            <span>Department Health</span>
+                        </a>
+                        <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-user-graduate text-emerald-600"></i>
+                            <span>Students</span>
+                        </a>
+                        <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-chalkboard-user text-indigo-600"></i>
+                            <span>Faculty</span>
+                        </a>
+                        <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-calendar-days text-rose-600"></i>
+                            <span>Calendar</span>
+                        </a>
+
+                        <!-- HOD All Modules Menu (Click Only) -->
+                        <div class="relative" id="hodModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                                <span>All Modules</span>
+                                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            </button>                            <div id="hodModulesDropdown" class="absolute left-0 top-full pt-2 w-80 sm:w-96 hidden z-50 transition-all duration-150">
+                                <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
+                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Department Operations</div>
+                                    <div class="space-y-1">
+                                        <a href="{{ url_for('hod.curriculum') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
+                                            <i class="fa-solid fa-book-bookmark text-amber-500 w-4 text-center"></i>
+                                            <span>Curriculum & Syllabus</span>
+                                        </a>
+                                        <a href="{{ url_for('hod.attendance_analytics') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
+                                            <i class="fa-solid fa-clipboard-user text-amber-500 w-4 text-center"></i>
+                                            <span>Attendance Analytics</span>
+                                        </a>
+                                        <a href="{{ url_for('hod.timetable') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-700 transition">
+                                            <i class="fa-solid fa-clock text-purple-500 w-4 text-center"></i>
+                                            <span>AI Timetable</span>
+                                        </a>
+                                    </div>
+                                    <div class="border-t border-slate-100 my-1.5"></div>
+                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Placements & Compliance</div>
+                                    <div class="space-y-1">
+                                        <a href="{{ url_for('hod.placement') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-700 transition">
+                                            <i class="fa-solid fa-briefcase text-teal-500 w-4 text-center"></i>
+                                            <span>Placement Suite</span>
+                                        </a>
+                                        <a href="{{ url_for('hod.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-700 transition">
+                                            <i class="fa-solid fa-file-signature text-rose-500 w-4 text-center"></i>
+                                            <span>Certificates & OCR</span>
+                                        </a>
+                                        <a href="{{ url_for('hod.reports') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-cyan-700 transition">
+                                            <i class="fa-solid fa-file-contract text-cyan-500 w-4 text-center"></i>
+                                            <span>NAAC / NBA Reports</span>
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
+                        </div>
+                        {% endif %}
 
-                            <div class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scroll">
-                                {% for n in user_notifications %}
-                                <a href="{{ n.link or '#' }}" data-notif-id="{{ n.id }}" onclick="markNotificationRead(this.dataset.notifId)" 
-                                   class="block p-3 rounded-xl {% if 'Attendance' in n.title or 'Absent' in n.title %}bg-rose-50/80 hover:bg-rose-100/70 border border-rose-200/90{% else %}bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-200{% endif %} transition space-y-1 group">
-                                    <div class="font-extrabold text-xs flex items-center justify-between {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-950{% else %}text-slate-900{% endif %}">
-                                        <span class="truncate max-w-[200px] flex items-center gap-1.5">
-                                            {% if 'Attendance' in n.title or 'Absent' in n.title %}
-                                            <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
-                                            {% else %}
-                                            <i class="fa-solid fa-circle-info text-blue-600 text-xs"></i>
-                                            {% endif %}
-                                            {{ n.title }}
-                                        </span>
-                                        <span class="text-[9px] text-slate-400 font-normal whitespace-nowrap">{{ n.created_at.strftime('%b %d, %H:%M') if n.created_at else '' }}</span>
+                        {% if current_user.role == 'faculty' %}
+                        <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-table-columns text-emerald-600"></i>
+                            <span>My Cockpit</span>
+                        </a>
+                        <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-user-check text-blue-600"></i>
+                            <span>Mark Attendance</span>
+                        </a>
+                        <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-book-open text-purple-600"></i>
+                            <span>Courses & AI Quiz</span>
+                        </a>
+                        <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                            <span>Calendar</span>
+                        </a>
+
+                        <!-- Faculty All Modules Menu (Click Only) -->
+                        <div class="relative" id="facultyModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                                <span>All Modules</span>
+                                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            </button>
+                            <div id="facultyModulesDropdown" class="absolute left-0 top-full pt-2 w-72 hidden z-50 transition-all duration-150">
+                                <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
+                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Faculty Academic Tools</div>
+                                    <div class="space-y-1">
+                                        <a href="{{ url_for('faculty.evaluation') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
+                                            <i class="fa-solid fa-pen-ruler text-amber-500 w-4 text-center"></i>
+                                            <span>Evaluation & Auto-Grade</span>
+                                        </a>
+                                        <a href="{{ url_for('faculty.research') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-700 transition">
+                                            <i class="fa-solid fa-microscope text-teal-500 w-4 text-center"></i>
+                                            <span>Research & Patents</span>
+                                        </a>
                                     </div>
-                                    <p class="text-[11px] {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-800{% else %}text-slate-600{% endif %} font-medium leading-snug line-clamp-2">{{ n.message }}</p>
-                                </a>
-                                {% else %}
-                                <div class="p-4 text-center text-xs text-slate-400 font-medium">No recent notifications</div>
-                                {% endfor %}
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                        {% endif %}
 
-                <!-- Role Badge & Profile Link -->
-                {% set profile_url = url_for('student.profile') if current_user.role == 'student' else (url_for('faculty.profile') if current_user.role == 'faculty' else (url_for('hod.profile') if current_user.role == 'hod' else url_for('super_admin.profile'))) %}
-                <a href="{{ profile_url }}" 
-                   title="View My Digital ID Card & Profile"
-                   class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold rounded-full modern-badge shadow-sm hover:scale-105 transition-transform
-                    {% if current_user.role in ['super_admin','principal'] %} bg-purple-100 text-purple-700 border border-purple-200 hover:bg-purple-200/70
-                    {% elif current_user.role == 'hod' %} bg-blue-100 text-blue-700 border border-blue-200 hover:bg-blue-200/70
-                    {% elif current_user.role == 'faculty' %} bg-emerald-100 text-emerald-700 border border-emerald-200 hover:bg-emerald-200/70
-                    {% else %} bg-indigo-100 text-indigo-700 border border-indigo-200 hover:bg-indigo-200/70 {% endif %} capitalize">
-                    <i class="fa-solid fa-id-card text-[11px]"></i> {{ current_user.role.replace('_', ' ') }} ID
-                </a>
+                        {% if current_user.role == 'student' %}
+                        <!-- 4 Clean Essential Tabs for Student -->
+                        <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-compass text-amber-600"></i>
+                            <span>Dashboard</span>
+                        </a>
+                        <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-book-open text-blue-600"></i>
+                            <span>Courses</span>
+                        </a>
+                        <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                            <span>Attendance</span>
+                        </a>
+                        <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                            <i class="fa-solid fa-calendar-days text-purple-600"></i>
+                            <span>Calendar</span>
+                        </a>
 
-                <!-- User Details & Sign Out -->
-                <div class="flex items-center gap-2.5 md:gap-3 border-l border-slate-200 pl-3 md:pl-4">
-                    <a href="{{ profile_url }}" 
-                       title="View My Digital ID Card & Profile" class="text-right hidden sm:block group">
-                        <div class="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors truncate max-w-[120px]">{{ current_user.name }}</div>
-                        <div class="text-[10px] text-slate-500 font-medium truncate max-w-[120px]">{{ current_user.department or 'Institution' }}</div>
-                    </a>
-                    <a href="{{ profile_url }}" 
-                       title="Digital Smart ID Card" 
-                       class="w-9 h-9 rounded-xl bg-blue-50 hover:bg-blue-100 border border-blue-200 text-blue-600 flex items-center justify-center transition shadow-sm active:scale-95">
-                        <i class="fa-solid fa-id-card text-xs"></i>
-                    </a>
-                    <a href="{{ url_for('auth.logout') }}" title="Sign Out" class="w-9 h-9 rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 flex items-center justify-center text-slate-600 hover:text-rose-600 transition shadow-sm active:scale-95">
-                        <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
-                    </a>
-                </div>
+                        <!-- Student All Modules Menu (100% Solid White, 2-Column Clean Layout) -->
+                        <div class="relative" id="studentModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                                <span>All Modules</span>
+                                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            </button>
+                            <div id="studentModulesDropdown" class="absolute left-0 top-full pt-2 w-[30rem] hidden z-50 transition-all duration-150">
+                                <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 ring-1 ring-black/5" style="background-color: #ffffff !important;">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <!-- Column 1: Academics & Study -->
+                                        <div>
+                                            <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
+                                                Academics & Study
+                                            </div>
+                                            <div class="space-y-1">
+                                                <a href="{{ url_for('student.schedule') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                    <i class="fa-solid fa-clock text-indigo-500 w-4 text-center"></i>
+                                                    <span>Timetable</span>
+                                                </a>
+                                                <a href="{{ url_for('student.notes') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-600 transition">
+                                                    <i class="fa-solid fa-note-sticky text-amber-500 w-4 text-center"></i>
+                                                    <span>Study Notes</span>
+                                                </a>
+                                                <a href="{{ url_for('student.grades') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-600 transition">
+                                                    <i class="fa-solid fa-award text-purple-500 w-4 text-center"></i>
+                                                    <span>Marks & Results</span>
+                                                </a>
+                                            </div>
+                                        </div>
 
-            </div>
-            {% endif %}
-        </header>
+                                        <!-- Column 2: Campus Services & AI -->
+                                        <div class="space-y-3">
+                                            <div>
+                                                <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
+                                                    Services & Career
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <a href="{{ url_for('student.fees') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-600 transition">
+                                                        <i class="fa-solid fa-receipt text-teal-500 w-4 text-center"></i>
+                                                        <span>Fee Receipts</span>
+                                                    </a>
+                                                    <a href="{{ url_for('student.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-600 transition">
+                                                        <i class="fa-solid fa-file-invoice text-rose-500 w-4 text-center"></i>
+                                                        <span>Certificates & OCR</span>
+                                                    </a>
+                                                    <a href="{{ url_for('student.career') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-cyan-600 transition">
+                                                        <i class="fa-solid fa-rocket text-cyan-500 w-4 text-center"></i>
+                                                        <span>Career & Placements</span>
+                                                    </a>
+                                                </div>
+                                            </div>
 
-        <div class="flex flex-1 overflow-hidden">
-            <!-- Sidebar Navigation (Desktop Collapsible) -->
-            {% if current_user.is_authenticated %}
-            <aside id="mainSidebar" class="bg-white border-r border-slate-200/90 p-3 flex flex-col justify-between hidden md:flex shadow-sm z-30 select-none">
-                <nav class="space-y-1 overflow-y-auto overflow-x-hidden flex-1 py-1 pr-0.5 custom-scroll">
-                    {% if current_user.role in ['super_admin', 'principal'] %}
-                    <div class="sidebar-section-header px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Executive Admin</div>
-                    <a href="{{ url_for('super_admin.dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Executive Overview">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-chart-line"></i></span>
-                        <span class="sidebar-text truncate">Executive Overview</span>
-                    </a>
-                    <a href="{{ url_for('super_admin.profile') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Executive ID & Profile">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-id-card"></i></span>
-                        <span class="sidebar-text truncate">Executive ID & Profile</span>
-                    </a>
-                    {% endif %}
+                                            <div>
+                                                <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
+                                                    AI & Wellness
+                                                </div>
+                                                <div class="space-y-1">
+                                                    <a href="{{ url_for('student.ai_tutor') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-600 transition">
+                                                        <i class="fa-solid fa-robot text-purple-500 w-4 text-center"></i>
+                                                        <span>AI Course Tutor</span>
+                                                    </a>
+                                                    <a href="{{ url_for('student.wellness') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-600 transition">
+                                                        <i class="fa-solid fa-heart-pulse text-rose-500 w-4 text-center"></i>
+                                                        <span>Mental Wellness AI</span>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </nav>
 
-                    {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
-                    <div class="sidebar-section-header px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">HOD Portal</div>
-                    <a href="{{ url_for('hod.dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Department Health">
-                        <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-gauge-high"></i></span>
-                        <span class="sidebar-text truncate">Department Health</span>
-                    </a>
-                    <a href="{{ url_for('hod.profile') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Executive ID & Profile">
-                        <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-id-card"></i></span>
-                        <span class="sidebar-text truncate">Executive ID & Profile</span>
-                    </a>
-                    <a href="{{ url_for('hod.student_management') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Student Directory">
-                        <span class="sidebar-icon text-emerald-600"><i class="fa-solid fa-user-graduate"></i></span>
-                        <span class="sidebar-text truncate">Student Directory</span>
-                    </a>
-                    <a href="{{ url_for('hod.faculty_management') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Faculty Workload">
-                        <span class="sidebar-icon text-indigo-600"><i class="fa-solid fa-chalkboard-user"></i></span>
-                        <span class="sidebar-text truncate">Faculty Workload</span>
-                    </a>
-                    <a href="{{ url_for('hod.curriculum') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Curriculum & Syllabus">
-                        <span class="sidebar-icon text-amber-600"><i class="fa-solid fa-book-bookmark"></i></span>
-                        <span class="sidebar-text truncate">Curriculum & Syllabus</span>
-                    </a>
-                    <a href="{{ url_for('hod.attendance_analytics') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Attendance & Proxies">
-                        <span class="sidebar-icon text-amber-600"><i class="fa-solid fa-clipboard-user"></i></span>
-                        <span class="sidebar-text truncate">Attendance & Proxies</span>
-                    </a>
-                    <a href="{{ url_for('hod.timetable') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="AI Timetable">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-clock"></i></span>
-                        <span class="sidebar-text truncate">AI Timetable</span>
-                    </a>
-                    <a href="{{ url_for('hod.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Department Calendar">
-                        <span class="sidebar-icon text-rose-600"><i class="fa-solid fa-calendar-days"></i></span>
-                        <span class="sidebar-text truncate">Department Calendar</span>
-                    </a>
-                    <a href="{{ url_for('hod.placement') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Placement Suite">
-                        <span class="sidebar-icon text-teal-600"><i class="fa-solid fa-briefcase"></i></span>
-                        <span class="sidebar-text truncate">Placement Suite</span>
-                    </a>
-                    <a href="{{ url_for('hod.documents') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Certificates & OCR">
-                        <span class="sidebar-icon text-rose-600"><i class="fa-solid fa-file-signature"></i></span>
-                        <span class="sidebar-text truncate">Certificates & OCR</span>
-                    </a>
-                    <a href="{{ url_for('hod.reports') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="NAAC / NBA Reports">
-                        <span class="sidebar-icon text-cyan-600"><i class="fa-solid fa-file-contract"></i></span>
-                        <span class="sidebar-text truncate">NAAC / NBA Reports</span>
-                    </a>
-                    {% endif %}
+                    <!-- Right Controls: AI Command, Notifications, Single Profile Badge, Logout & Mobile Button -->
+                    <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                        <!-- AI Command Center Trigger Button -->
+                        <button onclick="openCommandCenter()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/90 hover:bg-blue-50/90 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 transition shadow-2xs group" title="Open AI Command Center (Ctrl+K)">
+                            <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-600 group-hover:scale-110 transition-transform"></i>
+                            <span class="text-xs font-semibold hidden xl:inline">Ask AI</span>
+                            <kbd class="px-1.5 py-0.5 text-[10px] bg-white border border-slate-300 text-slate-500 rounded font-mono shadow-2xs hidden sm:inline-block">Ctrl K</kbd>
+                        </button>
 
-                    {% if current_user.role == 'faculty' %}
-                    <div class="sidebar-section-header px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Faculty Desk</div>
-                    <a href="{{ url_for('faculty.dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="My Cockpit">
-                        <span class="sidebar-icon text-emerald-600"><i class="fa-solid fa-table-columns"></i></span>
-                        <span class="sidebar-text truncate">My Cockpit</span>
-                    </a>
-                    <a href="{{ url_for('faculty.profile') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Faculty ID & Profile">
-                        <span class="sidebar-icon text-emerald-600"><i class="fa-solid fa-id-card"></i></span>
-                        <span class="sidebar-text truncate">Faculty ID & Profile</span>
-                    </a>
-                    <a href="{{ url_for('faculty.attendance') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Mark Attendance">
-                        <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-user-check"></i></span>
-                        <span class="sidebar-text truncate">Mark Attendance</span>
-                    </a>
-                    <a href="{{ url_for('faculty.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Academic Calendar">
-                        <span class="sidebar-icon text-indigo-600"><i class="fa-solid fa-calendar-days"></i></span>
-                        <span class="sidebar-text truncate">Academic Calendar</span>
-                    </a>
-                    <a href="{{ url_for('faculty.courses') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Course Materials & Quiz AI">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-book-open"></i></span>
-                        <span class="sidebar-text truncate">Course Materials & Quiz AI</span>
-                    </a>
-                    <a href="{{ url_for('faculty.evaluation') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Evaluation & Auto-Grade">
-                        <span class="sidebar-icon text-amber-600"><i class="fa-solid fa-pen-ruler"></i></span>
-                        <span class="sidebar-text truncate">Evaluation & Auto-Grade</span>
-                    </a>
-                    <a href="{{ url_for('faculty.research') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Research & Patents">
-                        <span class="sidebar-icon text-teal-600"><i class="fa-solid fa-microscope"></i></span>
-                        <span class="sidebar-text truncate">Research & Patents</span>
-                    </a>
-                    {% endif %}
-
-                    {% if current_user.role == 'student' %}
-                    <div class="sidebar-section-header px-3 py-2 text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Student ERP Hub</div>
-                    <a href="{{ url_for('student.dashboard') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Academic Dashboard">
-                        <span class="sidebar-icon text-amber-600"><i class="fa-solid fa-compass"></i></span>
-                        <span class="sidebar-text truncate">Academic Dashboard</span>
-                    </a>
-                    <a href="{{ url_for('student.profile') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Digital ID & Profile">
-                        <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-id-card"></i></span>
-                        <span class="sidebar-text truncate">Digital ID & Profile</span>
-                    </a>
-                    <a href="{{ url_for('student.courses') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Enrolled Courses & Syllabi">
-                        <span class="sidebar-icon text-blue-600"><i class="fa-solid fa-book-open"></i></span>
-                        <span class="sidebar-text truncate">Enrolled Courses & Syllabi</span>
-                    </a>
-                    <a href="{{ url_for('student.notes') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="My Study Notes">
-                        <span class="sidebar-icon text-amber-600"><i class="fa-solid fa-note-sticky"></i></span>
-                        <span class="sidebar-text truncate">My Personal Study Notes</span>
-                    </a>
-                    <a href="{{ url_for('student.grades') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Marks & Exam Results">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-award"></i></span>
-                        <span class="sidebar-text truncate">Marks & Exam Results</span>
-                    </a>
-                    <a href="{{ url_for('student.attendance') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Attendance Register">
-                        <span class="sidebar-icon text-emerald-600"><i class="fa-solid fa-calendar-check"></i></span>
-                        <span class="sidebar-text truncate">Attendance Register</span>
-                    </a>
-                    <a href="{{ url_for('student.calendar') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Academic Calendar">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-calendar-days"></i></span>
-                        <span class="sidebar-text truncate">Academic Calendar</span>
-                    </a>
-                    <a href="{{ url_for('student.schedule') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Class Timetable">
-                        <span class="sidebar-icon text-indigo-600"><i class="fa-solid fa-clock"></i></span>
-                        <span class="sidebar-text truncate">Class & Exam Timetable</span>
-                    </a>
-                    <a href="{{ url_for('student.fees') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Fee Receipts">
-                        <span class="sidebar-icon text-teal-600"><i class="fa-solid fa-receipt"></i></span>
-                        <span class="sidebar-text truncate">Fee Status & Receipts</span>
-                    </a>
-                    <a href="{{ url_for('student.documents') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Certificates">
-                        <span class="sidebar-icon text-rose-600"><i class="fa-solid fa-file-invoice"></i></span>
-                        <span class="sidebar-text truncate">Certificate Requests</span>
-                    </a>
-                    <a href="{{ url_for('student.career') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Career & Placements">
-                        <span class="sidebar-icon text-cyan-600"><i class="fa-solid fa-rocket"></i></span>
-                        <span class="sidebar-text truncate">Career & Placements</span>
-                    </a>
-                    <a href="{{ url_for('student.ai_tutor') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="AI Course Tutor">
-                        <span class="sidebar-icon text-purple-600"><i class="fa-solid fa-robot"></i></span>
-                        <span class="sidebar-text truncate">AI Course Tutor (RAG)</span>
-                    </a>
-                    <a href="{{ url_for('student.wellness') }}" class="sidebar-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 transition group" data-tooltip="Mental Wellness AI">
-                        <span class="sidebar-icon text-rose-600"><i class="fa-solid fa-heart-pulse"></i></span>
-                        <span class="sidebar-text truncate">Mental Wellness AI</span>
-                    </a>
-                    {% endif %}
-                </nav>
-
-                <!-- Sidebar Bottom Status & Quick Toggle -->
-                <div class="pt-3 border-t border-slate-100 space-y-2">
-                    <!-- Expanded AI OS Status Card -->
-                    <div class="sidebar-footer-expanded p-3 rounded-2xl bg-gradient-to-br from-indigo-50/90 via-blue-50/60 to-purple-50/40 border border-indigo-100/90 text-indigo-950 shadow-sm transition-all">
-                        <div class="flex items-center justify-between mb-1">
-                            <div class="flex items-center gap-2 text-xs font-extrabold text-[#1E293B]">
-                                <span class="relative flex h-2 w-2">
-                                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#4757F0] opacity-75"></span>
-                                  <span class="relative inline-flex rounded-full h-2 w-2 bg-[#4757F0]"></span>
+                        <!-- Notification Bell Dropdown -->
+                        <div class="relative" id="notifDropdownContainer">
+                            <button id="notifBellBtn" onclick="toggleNotifications(event)" class="relative w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 flex items-center justify-center text-slate-600 hover:text-blue-600 transition shadow-sm active:scale-95" aria-label="Notifications" aria-expanded="false" title="Notifications">
+                                <i class="fa-solid fa-bell text-xs sm:text-sm text-slate-700"></i>
+                                {% if unread_notif_count and unread_notif_count > 0 %}
+                                <span id="notifBadge" class="absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white font-black text-[9px] rounded-full flex items-center justify-center animate-pulse shadow-sm">
+                                    {{ unread_notif_count }}
                                 </span>
-                                <span>Pragati OS Active</span>
+                                {% endif %}
+                            </button>
+
+                            <!-- Notifications Dropdown Menu (100% Solid White) -->
+                            <div id="notifDropdown" class="absolute right-0 top-full pt-2 w-80 sm:w-88 z-50 hidden transition-all duration-150" style="width: 22rem;">
+                                <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-3 ring-1 ring-black/5" style="background-color: #ffffff !important;">
+                                    <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
+                                        <span class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
+                                            <i class="fa-solid fa-bell text-blue-600 text-xs"></i> Real-Time Notifications
+                                        </span>
+                                        <div class="flex items-center gap-2">
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{{ unread_notif_count or 0 }} New</span>
+                                            {% if unread_notif_count and unread_notif_count > 0 %}
+                                            <button onclick="markAllNotificationsRead()" class="text-[10px] font-bold text-slate-500 hover:text-blue-600 underline">
+                                                Mark Read
+                                            </button>
+                                            {% endif %}
+                                            <button onclick="closeNotifications(true)" class="w-6 h-6 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center text-xs transition" title="Close">
+                                                <i class="fa-solid fa-xmark"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-2 max-h-72 overflow-y-auto pr-1 custom-scroll">
+                                        {% for n in user_notifications %}
+                                        <a href="{{ n.link or '#' }}" data-notif-id="{{ n.id }}" onclick="markNotificationRead(this.dataset.notifId)" 
+                                           class="block p-3 rounded-xl {% if 'Attendance' in n.title or 'Absent' in n.title %}bg-rose-50/80 hover:bg-rose-100/70 border border-rose-200/90{% else %}bg-slate-50 hover:bg-blue-50/70 border border-slate-200/80 hover:border-blue-200{% endif %} transition space-y-1 group">
+                                            <div class="font-extrabold text-xs flex items-center justify-between {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-950{% else %}text-slate-900{% endif %}">
+                                                <span class="truncate max-w-[200px] flex items-center gap-1.5">
+                                                    {% if 'Attendance' in n.title or 'Absent' in n.title %}
+                                                    <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
+                                                    {% else %}
+                                                    <i class="fa-solid fa-circle-info text-blue-600 text-xs"></i>
+                                                    {% endif %}
+                                                    {{ n.title }}
+                                                </span>
+                                                <span class="text-[9px] text-slate-400 font-normal whitespace-nowrap">{{ n.created_at.strftime('%b %d, %H:%M') if n.created_at else '' }}</span>
+                                            </div>
+                                            <p class="text-[11px] {% if 'Attendance' in n.title or 'Absent' in n.title %}text-rose-800{% else %}text-slate-600{% endif %} font-medium leading-snug line-clamp-2">{{ n.message }}</p>
+                                        </a>
+                                        {% else %}
+                                        <div class="p-4 text-center text-xs text-slate-400 font-medium">No recent notifications</div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
                             </div>
-                            <span class="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-200/50 text-indigo-800 font-mono">v2.4</span>
                         </div>
-                        <p class="text-[10px] font-bold uppercase tracking-wider text-[#4757F0]">by Kalpkrats</p>
-                    </div>
 
-                    <!-- Collapsed Compact Icon Status -->
-                    <div class="sidebar-footer-compact py-2 flex flex-col items-center justify-center cursor-help" title="Pragati by Kalpkrats: Multi-agent Copilot Online">
-                        <div class="w-9 h-9 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center text-[#4757F0] relative group">
-                            <i class="fa-solid fa-wand-magic-sparkles text-xs group-hover:scale-125 transition-transform"></i>
-                            <span class="absolute -top-0.5 -right-0.5 w-2.5 h-2.5 bg-emerald-500 rounded-full ring-2 ring-white"></span>
-                        </div>
-                    </div>
+                        <!-- Single Clean User Profile Badge (No duplicate ID buttons) -->
+                        {% set profile_url = url_for('student.profile') if current_user.role == 'student' else (url_for('faculty.profile') if current_user.role == 'faculty' else (url_for('hod.profile') if current_user.role == 'hod' else url_for('super_admin.profile'))) %}
+                        <a href="{{ profile_url }}" title="View My Digital ID & Profile" class="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-xl bg-slate-100/90 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition group">
+                            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#4757F0] to-[#7B8CFA] text-white font-black text-xs flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
+                                {{ current_user.name[:2]|upper }}
+                            </div>
+                            <div class="text-left hidden lg:block">
+                                <div class="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight truncate max-w-[120px]">{{ current_user.name }}</div>
+                                <div class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider leading-tight">{{ current_user.role.replace('_', ' ') }}</div>
+                            </div>
+                        </a>
 
-                    <!-- Bottom Collapse Quick Button -->
-                    <button onclick="toggleSidebar()" class="w-full py-2 px-2.5 rounded-xl bg-slate-50 hover:bg-blue-50 hover:text-blue-600 border border-slate-200/80 hover:border-blue-200 text-slate-500 text-xs font-bold flex items-center justify-center gap-2 transition-colors group" title="Toggle Sidebar (Ctrl+B)">
-                        <i id="bottomCollapseIcon" class="fa-solid fa-chevron-left text-[11px] transition-transform duration-300 group-hover:-translate-x-0.5"></i>
-                        <span class="sidebar-text text-xs">Collapse Menu</span>
-                    </button>
-                </div>
-            </aside>
+                        <!-- Sign Out -->
+                        <a href="{{ url_for('auth.logout') }}" title="Sign Out" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 flex items-center justify-center text-slate-600 hover:text-rose-600 transition shadow-2xs active:scale-95">
+                            <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
+                        </a>
 
-            <!-- Mobile Drawer Sidebar (Sliding Drawer) -->
-            <div id="mobileSidebarDrawer" class="fixed inset-y-0 left-0 z-50 w-72 bg-white shadow-2xl p-4 flex flex-col justify-between transform -translate-x-full transition-transform duration-300 md:hidden">
-                <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-2">
-                    <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 flex-shrink-0 flex items-center justify-center">
-                            <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="Pragati" class="w-7 h-7 object-contain drop-shadow-2xs">
-                        </div>
-                        <div>
-                            <span class="font-black text-slate-900 text-sm leading-none block">Pragati</span>
-                            <span class="text-[9px] font-bold text-[#4757F0] uppercase tracking-wider block mt-0.5">by Kalpkrats</span>
-                        </div>
+                        <!-- Mobile Hamburger Button -->
+                        <button onclick="toggleMobileNav()" class="md:hidden w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-600 flex items-center justify-center transition active:scale-95" aria-label="Toggle Navigation">
+                            <i id="mobileNavIcon" class="fa-solid fa-bars text-xs"></i>
+                        </button>
                     </div>
-                    <button onclick="toggleMobileSidebar()" class="w-8 h-8 rounded-xl bg-slate-100 flex items-center justify-center text-slate-500 hover:text-slate-900">
-                        <i class="fa-solid fa-xmark text-sm"></i>
-                    </button>
-                </div>
-                <div id="mobileNavContainer" class="overflow-y-auto flex-1 space-y-1 py-2">
-                    <!-- Cloned from desktop nav via JS -->
-                </div>
-                <div class="pt-3 border-t border-slate-100 text-center">
-                    <div class="text-[11px] text-slate-500 font-bold">Pragati &bull; Campus OS</div>
-                    <div class="text-[9px] text-[#4757F0] font-extrabold uppercase tracking-widest mt-0.5">by Kalpkrats</div>
                 </div>
             </div>
-            <!-- Mobile Drawer Backdrop -->
-            <div id="sidebarMobileBackdrop" onclick="toggleMobileSidebar()" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-40 hidden md:hidden transition-opacity duration-300"></div>
-            {% endif %}
 
-            <!-- Main Content Canvas -->
-            <main class="flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 bg-slate-50/60 cool-canvas-bg transition-all">
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    <div class="mb-6 space-y-3">
-                    {% for category, message in messages %}
-                      <div class="p-4 rounded-2xl flex items-center justify-between text-sm border shadow-sm cool-card
-                        {% if category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-900
-                        {% elif category == 'danger' %} bg-rose-50 border-rose-200 text-rose-900
-                        {% else %} bg-blue-50 border-blue-200 text-blue-900 {% endif %}">
-                          <div class="flex items-center gap-3">
-                              <i class="fa-solid {% if category == 'success' %}fa-circle-check text-emerald-600{% elif category == 'danger' %}fa-triangle-exclamation text-rose-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
-                              <span class="font-bold">{{ message }}</span>
-                          </div>
+            <!-- Mobile Navigation Menu -->
+            <div id="mobileTopNav" class="hidden md:hidden border-t border-slate-200/90 bg-white px-4 py-3 space-y-1 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
+                {% if current_user.role in ['super_admin', 'principal'] %}
+                <a href="{{ url_for('super_admin.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-chart-line text-purple-600"></i>
+                    <span>Executive Overview</span>
+                </a>
+                <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-id-card text-purple-600"></i>
+                    <span>Executive ID & Profile</span>
+                </a>
+                {% endif %}
+
+                {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
+                <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-gauge-high text-blue-600"></i>
+                    <span>Department Health</span>
+                </a>
+                <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-user-graduate text-emerald-600"></i>
+                    <span>Student Directory</span>
+                </a>
+                <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-chalkboard-user text-indigo-600"></i>
+                    <span>Faculty Workload</span>
+                </a>
+                <a href="{{ url_for('hod.curriculum') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-book-bookmark text-amber-600"></i>
+                    <span>Curriculum & Syllabus</span>
+                </a>
+                <a href="{{ url_for('hod.attendance_analytics') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-clipboard-user text-amber-600"></i>
+                    <span>Attendance & Proxies</span>
+                </a>
+                <a href="{{ url_for('hod.timetable') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-clock text-purple-600"></i>
+                    <span>AI Timetable</span>
+                </a>
+                <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-calendar-days text-rose-600"></i>
+                    <span>Department Calendar</span>
+                </a>
+                <a href="{{ url_for('hod.placement') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-briefcase text-teal-600"></i>
+                    <span>Placement Suite</span>
+                </a>
+                <a href="{{ url_for('hod.documents') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-file-signature text-rose-600"></i>
+                    <span>Certificates & OCR</span>
+                </a>
+                <a href="{{ url_for('hod.reports') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-file-contract text-cyan-600"></i>
+                    <span>NAAC / NBA Reports</span>
+                </a>
+                {% endif %}
+
+                {% if current_user.role == 'faculty' %}
+                <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-table-columns text-emerald-600"></i>
+                    <span>My Cockpit</span>
+                </a>
+                <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-user-check text-blue-600"></i>
+                    <span>Mark Attendance</span>
+                </a>
+                <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                    <span>Academic Calendar</span>
+                </a>
+                <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-book-open text-purple-600"></i>
+                    <span>Course Materials & Quiz AI</span>
+                </a>
+                <a href="{{ url_for('faculty.evaluation') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-pen-ruler text-amber-600"></i>
+                    <span>Evaluation & Auto-Grade</span>
+                </a>
+                <a href="{{ url_for('faculty.research') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-microscope text-teal-600"></i>
+                    <span>Research & Patents</span>
+                </a>
+                {% endif %}
+
+                {% if current_user.role == 'student' %}
+                <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-compass text-amber-600"></i>
+                    <span>Academic Dashboard</span>
+                </a>
+                <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-book-open text-blue-600"></i>
+                    <span>Enrolled Courses & Syllabi</span>
+                </a>
+                <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                    <span>Attendance Register</span>
+                </a>
+                <a href="{{ url_for('student.schedule') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-clock text-indigo-600"></i>
+                    <span>Class Timetable</span>
+                </a>
+                <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-calendar-days text-purple-600"></i>
+                    <span>Academic Calendar</span>
+                </a>
+                <a href="{{ url_for('student.notes') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-note-sticky text-amber-600"></i>
+                    <span>Study Notes</span>
+                </a>
+                <a href="{{ url_for('student.grades') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-award text-purple-600"></i>
+                    <span>Marks & Exam Results</span>
+                </a>
+                <a href="{{ url_for('student.fees') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-receipt text-teal-600"></i>
+                    <span>Fee Status & Receipts</span>
+                </a>
+                <a href="{{ url_for('student.documents') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-file-invoice text-rose-600"></i>
+                    <span>Certificate Requests</span>
+                </a>
+                <a href="{{ url_for('student.career') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-rocket text-cyan-600"></i>
+                    <span>Career & Placements</span>
+                </a>
+                <a href="{{ url_for('student.ai_tutor') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-robot text-purple-600"></i>
+                    <span>AI Course Tutor (RAG)</span>
+                </a>
+                <a href="{{ url_for('student.wellness') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-heart-pulse text-rose-600"></i>
+                    <span>Mental Wellness AI</span>
+                </a>
+                {% endif %}
+            </div>
+        </header>
+        {% endif %}
+
+        <!-- Main Content Area: Centered, Spacious & Free from Sidebar Squishing -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-5 cool-canvas-bg transition-all flex flex-col">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="mb-6 space-y-3">
+                {% for category, message in messages %}
+                  <div class="p-4 rounded-2xl flex items-center justify-between text-sm border shadow-sm cool-card
+                    {% if category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-900
+                    {% elif category == 'danger' %} bg-rose-50 border-rose-200 text-rose-900
+                    {% else %} bg-blue-50 border-blue-200 text-blue-900 {% endif %}">
+                      <div class="flex items-center gap-3">
+                          <i class="fa-solid {% if category == 'success' %}fa-circle-check text-emerald-600{% elif category == 'danger' %}fa-triangle-exclamation text-rose-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
+                          <span class="font-bold">{{ message }}</span>
                       </div>
-                    {% endfor %}
-                    </div>
-                  {% endif %}
-                {% endwith %}
+                  </div>
+                {% endfor %}
+                </div>
+              {% endif %}
+            {% endwith %}
 
-                {% block content %}{% endblock %}
-            </main>
-        </div>
+            {% block content %}{% endblock %}
+        </main>
     </div>
     {% endblock %}
 
@@ -521,89 +603,76 @@
 
     <!-- Core Interactive Scripts -->
     <script>
-        // Synchronize Collapsed State across both documentElement and body
-        function syncSidebarUI(isCollapsed) {
-            const collapseIcon = document.getElementById('sidebarCollapseIcon');
-            const bottomIcon = document.getElementById('bottomCollapseIcon');
-            if (isCollapsed) {
-                document.documentElement.classList.add('sidebar-collapsed');
-                document.body.classList.add('sidebar-collapsed');
-                if (collapseIcon) {
-                    collapseIcon.classList.remove('fa-angles-left');
-                    collapseIcon.classList.add('fa-angles-right');
-                }
-                if (bottomIcon) {
-                    bottomIcon.classList.remove('fa-chevron-left');
-                    bottomIcon.classList.add('fa-chevron-right');
+        // Clean up any obsolete sidebar storage
+        try {
+            localStorage.removeItem('pragati_sidebar_collapsed');
+        } catch (e) {}
+
+        // Toggle Mobile Top Navigation Dropdown
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobileTopNav');
+            const icon = document.getElementById('mobileNavIcon');
+            if (!nav) return;
+            const isHidden = nav.classList.contains('hidden');
+            if (isHidden) {
+                nav.classList.remove('hidden');
+                if (icon) {
+                    icon.classList.remove('fa-bars');
+                    icon.classList.add('fa-xmark');
                 }
             } else {
-                document.documentElement.classList.remove('sidebar-collapsed');
-                document.body.classList.remove('sidebar-collapsed');
-                if (collapseIcon) {
-                    collapseIcon.classList.remove('fa-angles-right');
-                    collapseIcon.classList.add('fa-angles-left');
-                }
-                if (bottomIcon) {
-                    bottomIcon.classList.remove('fa-chevron-right');
-                    bottomIcon.classList.add('fa-chevron-left');
+                nav.classList.add('hidden');
+                if (icon) {
+                    icon.classList.remove('fa-xmark');
+                    icon.classList.add('fa-bars');
                 }
             }
         }
 
-        // Toggle Desktop Sidebar with smooth animation
-        function toggleSidebar() {
-            document.documentElement.classList.add('sidebar-animated');
-            const isCurrentlyCollapsed = document.documentElement.classList.contains('sidebar-collapsed') || document.body.classList.contains('sidebar-collapsed');
-            const nextCollapsed = !isCurrentlyCollapsed;
-            syncSidebarUI(nextCollapsed);
-            try {
-                localStorage.setItem('pragati_sidebar_collapsed', nextCollapsed ? 'true' : 'false');
-                localStorage.setItem('studysync_sidebar_collapsed', nextCollapsed ? 'true' : 'false');
-            } catch (e) {}
+        // Toggle "All Modules" Dropdown in Top Nav (Click Only)
+        function toggleNavModules(event) {
+            if (event) {
+                event.stopPropagation();
+                event.preventDefault();
+            }
+            const dropdown = document.getElementById('studentModulesDropdown') || 
+                             document.getElementById('hodModulesDropdown') || 
+                             document.getElementById('facultyModulesDropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+            }
         }
 
-        // Initialize state on DOM ready
+        function closeNavModules() {
+            ['studentModulesDropdown', 'hodModulesDropdown', 'facultyModulesDropdown'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+        }
+
+        document.addEventListener('click', (e) => {
+            const studentContainer = document.getElementById('studentModulesContainer');
+            const hodContainer = document.getElementById('hodModulesContainer');
+            const facultyContainer = document.getElementById('facultyModulesContainer');
+            const clickedInside = (studentContainer && studentContainer.contains(e.target)) ||
+                                  (hodContainer && hodContainer.contains(e.target)) ||
+                                  (facultyContainer && facultyContainer.contains(e.target));
+            if (!clickedInside) {
+                closeNavModules();
+            }
+        });
+
+        // Initialize active link highlighting on DOM ready
         document.addEventListener('DOMContentLoaded', () => {
-            const savedState = localStorage.getItem('pragati_sidebar_collapsed') === 'true' || localStorage.getItem('studysync_sidebar_collapsed') === 'true';
-            syncSidebarUI(savedState);
-
-            // Enable smooth transitions only after initial paint settles (prevents navigation popout)
-            setTimeout(() => {
-                document.documentElement.classList.add('sidebar-animated');
-            }, 120);
-
-            // Active link indicator based on current URL path
             const currentPath = window.location.pathname;
-            const links = document.querySelectorAll('.sidebar-link');
+            const links = document.querySelectorAll('.top-nav-link');
             links.forEach(link => {
                 const href = link.getAttribute('href');
                 if (href && (href === currentPath || (href.length > 1 && currentPath.startsWith(href) && href !== '/'))) {
                     link.classList.add('is-active');
                 }
             });
-
-            // Populate mobile drawer from desktop nav items
-            const desktopNav = document.querySelector('#mainSidebar nav');
-            const mobileNavContainer = document.getElementById('mobileNavContainer');
-            if (desktopNav && mobileNavContainer) {
-                mobileNavContainer.innerHTML = desktopNav.innerHTML;
-            }
         });
-
-        // Toggle Mobile Sidebar Drawer
-        function toggleMobileSidebar() {
-            const drawer = document.getElementById('mobileSidebarDrawer');
-            const backdrop = document.getElementById('sidebarMobileBackdrop');
-            if (!drawer || !backdrop) return;
-            const isOpen = !drawer.classList.contains('-translate-x-full');
-            if (isOpen) {
-                drawer.classList.add('-translate-x-full');
-                backdrop.classList.add('hidden');
-            } else {
-                drawer.classList.remove('-translate-x-full');
-                backdrop.classList.remove('hidden');
-            }
-        }
 
         // AI Command Center Modal
         function openCommandCenter() {
@@ -636,21 +705,19 @@
             }, 150);
         }
 
-        // Global Keybindings: Ctrl+B (Sidebar), Ctrl+K (AI), Escape (Close)
+        // Global Keybindings: Ctrl+K (AI Command), Escape (Close Modals)
         document.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
                 e.preventDefault();
                 openCommandCenter();
             }
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
-                e.preventDefault();
-                toggleSidebar();
-            }
             if (e.key === 'Escape') {
                 closeCommandCenter();
-                const drawer = document.getElementById('mobileSidebarDrawer');
-                if (drawer && !drawer.classList.contains('-translate-x-full')) {
-                    toggleMobileSidebar();
+                closeNotifications();
+                closeNavModules();
+                const nav = document.getElementById('mobileTopNav');
+                if (nav && !nav.classList.contains('hidden')) {
+                    toggleMobileNav();
                 }
             }
         });
@@ -706,12 +773,8 @@
             }
         }
 
-        // Notifications Dropdown Controller
-        let notifTimeout = null;
-        let notifPinned = false;
-
+        // Notifications Dropdown Controller (Strictly Click-Only, Zero Hover)
         function openNotifications() {
-            clearTimeout(notifTimeout);
             const dropdown = document.getElementById('notifDropdown');
             const btn = document.getElementById('notifBellBtn');
             if (dropdown) {
@@ -720,15 +783,13 @@
             }
         }
 
-        function closeNotifications(force = false) {
-            if (notifPinned && !force) return;
+        function closeNotifications() {
             const dropdown = document.getElementById('notifDropdown');
             const btn = document.getElementById('notifBellBtn');
             if (dropdown) {
                 dropdown.classList.add('hidden');
                 if (btn) btn.setAttribute('aria-expanded', 'false');
             }
-            if (force) notifPinned = false;
         }
 
         function toggleNotifications(event) {
@@ -736,41 +797,22 @@
                 event.stopPropagation();
                 event.preventDefault();
             }
-            clearTimeout(notifTimeout);
             const dropdown = document.getElementById('notifDropdown');
             if (!dropdown) return;
             const isHidden = dropdown.classList.contains('hidden');
             if (isHidden) {
-                notifPinned = true;
                 openNotifications();
             } else {
-                notifPinned = false;
-                closeNotifications(true);
+                closeNotifications();
             }
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
+        // Close notifications when clicking anywhere outside
+        document.addEventListener('click', (e) => {
             const container = document.getElementById('notifDropdownContainer');
-            if (container) {
-                container.addEventListener('mouseenter', () => {
-                    clearTimeout(notifTimeout);
-                    openNotifications();
-                });
-                container.addEventListener('mouseleave', () => {
-                    if (!notifPinned) {
-                        notifTimeout = setTimeout(() => {
-                            closeNotifications();
-                        }, 350);
-                    }
-                });
+            if (container && !container.contains(e.target)) {
+                closeNotifications();
             }
-
-            document.addEventListener('click', (e) => {
-                const container = document.getElementById('notifDropdownContainer');
-                if (container && !container.contains(e.target)) {
-                    closeNotifications(true);
-                }
-            });
         });
 
         async function markNotificationRead(notifId) {
