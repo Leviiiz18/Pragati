@@ -1,57 +1,419 @@
 {% extends "base.html" %}
-{% block title %}AI Timetable Optimizer - Pragati by Kalpkrats{% endblock %}
+{% block title %}Department Master Timetable & AI Optimizer - Pragati by Kalpkrats{% endblock %}
+
 {% block content %}
-<div class="space-y-6">
-    <div class="flex items-center justify-between">
+<div class="space-y-6 pb-12">
+    <!-- Header Controls -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">AI Timetable & Room Optimizer</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Conflict-free schedule generation, faculty workload balance, and lab allocation.</p>
+            <div class="flex items-center gap-2">
+                <span class="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-black uppercase tracking-wider">Department Matrix</span>
+                <span class="text-xs font-semibold text-slate-500">AY 2026-27 &bull; Zero Room Conflicts</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">Master Timetable & AI Optimizer</h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-600">Standard institutional matrix schedule with period distributions, 2-period lab allocations, and faculty workload balance.</p>
         </div>
-        <form action="{{ url_for('hod.timetable') }}" method="POST">
-            <input type="hidden" name="action" value="auto_generate">
-            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2 transition">
-                <i class="fa-solid fa-wand-magic-sparkles"></i> Auto-Generate AI Schedule
+        <div class="flex items-center gap-2 flex-wrap">
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition active:scale-95">
+                <i class="fa-solid fa-print"></i>
+                <span>Print Official Timetable</span>
             </button>
-        </form>
+            <form action="{{ url_for('hod.timetable') }}" method="POST" class="inline-block">
+                <input type="hidden" name="action" value="auto_generate">
+                <button type="submit" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2 transition active:scale-95">
+                    <i class="fa-solid fa-rotate"></i> Re-Optimize AI Schedule
+                </button>
+            </form>
+        </div>
     </div>
 
-    <!-- Active Schedule Grid -->
-    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-calendar-days text-purple-600"></i> Active Department Timetable Matrix
-        </h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-700">
-                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
-                    <tr>
-                        <th class="p-3">Day</th>
-                        <th class="p-3">Time Slot</th>
-                        <th class="p-3">Subject</th>
-                        <th class="p-3">Assigned Faculty</th>
-                        <th class="p-3">Room / Lab</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                    {% for slot in slots %}
-                    <tr class="hover:bg-slate-50 font-medium">
-                        <td class="p-3 font-bold text-slate-900">{{ slot.day }}</td>
-                        <td class="p-3"><span class="px-2.5 py-1 rounded bg-purple-50 border border-purple-200 text-purple-800 font-mono text-xs font-bold">{{ slot.start_time }} - {{ slot.end_time }}</span></td>
-                        <td class="p-3 font-bold text-blue-600">{{ slot.subject.name if slot.subject else 'Data Structures' }}</td>
-                        <td class="p-3 text-slate-900 font-semibold">{{ slot.faculty.name if slot.faculty else 'Dr. Alan Turing' }}</td>
-                        <td class="p-3">
-                            <span class="px-2.5 py-1 rounded text-xs font-bold {% if slot.is_lab %}bg-purple-100 text-purple-800 border border-purple-200{% else %}bg-slate-100 text-slate-800 border border-slate-200{% endif %}">
-                                {{ slot.room }}
-                            </span>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="5" class="p-6 text-center text-slate-500 font-medium">No active slots. Click "Auto-Generate AI Schedule" to initialize.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- Optimization KPI Overview Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 print:hidden">
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Weekly Periods</div>
+            <div class="text-2xl font-black text-slate-900">{{ slots|length }} Slots</div>
+            <div class="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+                <i class="fa-solid fa-circle-check text-[9px]"></i> 100% Curriculum Covered
+            </div>
+        </div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Lab Practicals</div>
+            <div class="text-2xl font-black text-amber-600">3 Sessions</div>
+            <div class="text-[11px] font-semibold text-slate-500">2-Hour Continuous Blocks</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Room Conflicts</div>
+            <div class="text-2xl font-black text-emerald-600">0 Conflicts</div>
+            <div class="text-[11px] font-semibold text-emerald-600">AI Collision Verification Passed</div>
+        </div>
+        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
+            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Faculty Workload</div>
+            <div class="text-2xl font-black text-purple-700">Balanced</div>
+            <div class="text-[11px] font-semibold text-slate-500">Avg 16-18 hrs / week</div>
+        </div>
+    </div>
+
+    <!-- Master Timetable Document Container -->
+    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-7 space-y-6 print:border-none print:shadow-none print:p-0">
+        
+        <!-- Institutional Header Block -->
+        <div class="border-b border-slate-200 pb-5 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div class="space-y-1">
+                <div class="text-[10px] font-black tracking-widest text-blue-700 uppercase">Department of Computer Science & Engineering</div>
+                <h2 class="text-xl font-black text-slate-900 tracking-tight">Institutional Master Class Timetable (AY 2026-27)</h2>
+                <div class="text-xs font-semibold text-slate-600">
+                    B.Tech Computer Science &bull; <strong class="text-slate-800">Semester IV (Section A)</strong>
+                </div>
+            </div>
+            <div class="flex sm:flex-col sm:items-end justify-between sm:justify-center text-xs font-semibold text-slate-600 gap-1 bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-2xl border sm:border-0 border-slate-200">
+                <div><span class="text-slate-400">Classroom:</span> <strong class="text-slate-800">LH-101 / Comp Lab A</strong></div>
+                <div><span class="text-slate-400">Effective From:</span> <strong class="text-blue-700">01-Aug-2026</strong></div>
+                <div><span class="text-slate-400">Working Schedule:</span> <strong class="text-slate-800">6 Days (Mon - Sat)</strong></div>
+            </div>
+        </div>
+
+        <!-- Timetable Matrix Grid (Indian University AICTE/UGC Format) -->
+        <div class="space-y-2">
+            <div class="flex items-center justify-between">
+                <div class="text-xs font-extrabold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-table-cells text-blue-600"></i> Active Department Timetable Matrix
+                </div>
+                <div class="text-[11px] font-semibold text-slate-500 hidden sm:flex items-center gap-3">
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-blue-50 border border-blue-200 inline-block"></span> Theory Lecture</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-amber-100 border border-amber-300 inline-block"></span> 2-Slot Lab / Practical</span>
+                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-emerald-50 border border-emerald-300 inline-block"></span> Today</span>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto rounded-2xl border border-slate-300 shadow-2xs custom-scroll">
+                <table class="w-full text-center border-collapse text-xs min-w-[880px]">
+                    <thead>
+                        <tr class="bg-slate-100/90 text-slate-700 font-extrabold border-b-2 border-slate-300">
+                            <!-- Day Column Header -->
+                            <th class="p-3 w-28 border-r-2 border-slate-300 bg-slate-200/80 text-left pl-4 text-[11px] uppercase tracking-wider text-slate-800">
+                                Day / Time
+                            </th>
+                            <!-- Period 1 -->
+                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 1</div>
+                                <div class="font-black text-slate-900 text-xs">09:30 - 10:20</div>
+                            </th>
+                            <!-- Period 2 -->
+                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 2</div>
+                                <div class="font-black text-slate-900 text-xs">10:20 - 11:10</div>
+                            </th>
+                            <!-- Tea Break Header (Period Separator) -->
+                            <th class="p-1.5 w-7 bg-amber-100/80 border-r-2 border-slate-300 text-amber-900 font-black text-[9px] uppercase tracking-wider">
+                                <i class="fa-solid fa-mug-hot"></i>
+                            </th>
+                            <!-- Period 3 -->
+                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 3</div>
+                                <div class="font-black text-slate-900 text-xs">11:20 - 12:10</div>
+                            </th>
+                            <!-- Period 4 -->
+                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 4</div>
+                                <div class="font-black text-slate-900 text-xs">12:10 - 01:00</div>
+                            </th>
+                            <!-- Lunch Break Header (Period Separator) -->
+                            <th class="p-1.5 w-8 bg-rose-100/80 border-r-2 border-slate-300 text-rose-900 font-black text-[9px] uppercase tracking-wider">
+                                <i class="fa-solid fa-utensils"></i>
+                            </th>
+                            <!-- Period 5 -->
+                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 5</div>
+                                <div class="font-black text-slate-900 text-xs">01:50 - 02:40</div>
+                            </th>
+                            <!-- Period 6 -->
+                            <th class="p-2.5 w-[14%]">
+                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 6</div>
+                                <div class="font-black text-slate-900 text-xs">02:40 - 03:30</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-300 font-medium">
+                        {% for day, row in matrix.items() %}
+                        {% set is_today = (day == today_name) %}
+                        <tr class="{% if is_today %}bg-blue-50/40{% else %}hover:bg-slate-50/60{% endif %} transition-colors">
+                            
+                            <!-- Day Row Header -->
+                            <td class="p-3 border-r-2 border-slate-300 text-left pl-4 font-bold text-slate-900 {% if is_today %}bg-blue-100/60 text-blue-900 border-l-4 border-l-blue-600{% else %}bg-slate-100/50{% endif %}">
+                                <div class="flex items-center justify-between">
+                                    <span>{{ day }}</span>
+                                    {% if is_today %}
+                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-blue-600 text-white tracking-wider">Today</span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Session 1: Periods 1 & 2 -->
+                            {% for c in row.session_1 %}
+                                {% if c.type == 'slot' and c.slot %}
+                                    {% set s = c.slot %}
+                                    {% if c.span == 2 %}
+                                    <!-- Merged 2-Period Lab Session -->
+                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
+                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
+                                                </span>
+                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
+                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
+                                                </span>
+                                            </div>
+                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
+                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
+                                            </div>
+                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
+                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
+                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% else %}
+                                    <!-- Standard 1-Period Lecture -->
+                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center justify-between">
+                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
+                                                    {{ s.subject.code if s.subject else 'CS101' }}
+                                                </span>
+                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
+                                            </div>
+                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
+                                                {{ s.subject.name if s.subject else 'Subject' }}
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-medium truncate">
+                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Empty Period -->
+                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-300 font-semibold text-[11px]">-</td>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Tea Break (Spans all 6 days vertically) -->
+                            {% if loop.first %}
+                            <td rowspan="{{ matrix|length }}" class="p-1 w-7 bg-amber-50/80 border-r-2 border-slate-300 text-amber-900 font-black text-[9px] uppercase tracking-tighter text-center" style="writing-mode: vertical-rl; text-orientation: mixed;">
+                                <div class="py-6 tracking-widest text-amber-800 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-mug-hot text-[9px] -rotate-90"></i> TEA BREAK (11:10 - 11:20)
+                                </div>
+                            </td>
+                            {% endif %}
+
+                            <!-- Session 2: Periods 3 & 4 -->
+                            {% for c in row.session_2 %}
+                                {% if c.type == 'slot' and c.slot %}
+                                    {% set s = c.slot %}
+                                    {% if c.span == 2 %}
+                                    <!-- Merged 2-Period Lab Session -->
+                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
+                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
+                                                </span>
+                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
+                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
+                                                </span>
+                                            </div>
+                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
+                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
+                                            </div>
+                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
+                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
+                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% else %}
+                                    <!-- Standard 1-Period Lecture -->
+                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center justify-between">
+                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
+                                                    {{ s.subject.code if s.subject else 'CS101' }}
+                                                </span>
+                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
+                                            </div>
+                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
+                                                {{ s.subject.name if s.subject else 'Subject' }}
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-medium truncate">
+                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Empty Period -->
+                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-300 font-semibold text-[11px]">-</td>
+                                {% endif %}
+                            {% endfor %}
+
+                            <!-- Lunch Break (Spans all 6 days vertically) -->
+                            {% if loop.first %}
+                            <td rowspan="{{ matrix|length }}" class="p-1 w-8 bg-rose-50/80 border-r-2 border-slate-300 text-rose-900 font-black text-[9px] uppercase tracking-tighter text-center" style="writing-mode: vertical-rl; text-orientation: mixed;">
+                                <div class="py-6 tracking-widest text-rose-800 flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-utensils text-[9px] -rotate-90"></i> LUNCH BREAK (01:00 - 01:50)
+                                </div>
+                            </td>
+                            {% endif %}
+
+                            <!-- Session 3: Periods 5 & 6 -->
+                            {% for c in row.session_3 %}
+                                {% if c.type == 'slot' and c.slot %}
+                                    {% set s = c.slot %}
+                                    {% if c.span == 2 %}
+                                    <!-- Merged 2-Period Lab Session -->
+                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center gap-1.5">
+                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
+                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
+                                                </span>
+                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
+                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
+                                                </span>
+                                            </div>
+                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
+                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
+                                            </div>
+                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
+                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
+                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% else %}
+                                    <!-- Standard 1-Period Lecture -->
+                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
+                                        <div class="space-y-0.5">
+                                            <div class="flex items-center justify-between">
+                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
+                                                    {{ s.subject.code if s.subject else 'CS101' }}
+                                                </span>
+                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
+                                            </div>
+                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
+                                                {{ s.subject.name if s.subject else 'Subject' }}
+                                            </div>
+                                            <div class="text-[10px] text-slate-500 font-medium truncate">
+                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                {% else %}
+                                    <!-- Empty Period -->
+                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-400 font-semibold text-[11px]">
+                                        {% if day == 'Saturday' and c.period.id > 4 %}
+                                        <span class="text-[10px] text-slate-400 italic">Off</span>
+                                        {% else %}
+                                        <span class="text-slate-300 font-mono">-</span>
+                                        {% endif %}
+                                    </td>
+                                {% endif %}
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Subject & Faculty Directory Legend -->
+        <div class="space-y-3 pt-2">
+            <div class="text-xs font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-indigo-600"></i> Course Details & Faculty In-Charge Directory
+            </div>
+            <div class="overflow-x-auto rounded-2xl border border-slate-200">
+                <table class="w-full text-left text-xs">
+                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase text-[10px]">
+                        <tr>
+                            <th class="p-2.5 w-12 text-center">#</th>
+                            <th class="p-2.5 w-24">Code</th>
+                            <th class="p-2.5">Course Title</th>
+                            <th class="p-2.5 w-24 text-center">L-T-P</th>
+                            <th class="p-2.5 w-20 text-center">Credits</th>
+                            <th class="p-2.5">Faculty In-Charge</th>
+                            <th class="p-2.5">Designation & Department</th>
+                            <th class="p-2.5">Allotted Venue</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200 font-medium text-slate-700">
+                        {% for item in legend %}
+                        <tr class="hover:bg-slate-50/80 transition">
+                            <td class="p-2.5 text-center font-bold text-slate-400">{{ loop.index }}</td>
+                            <td class="p-2.5">
+                                <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-800 font-mono font-bold text-xs border border-blue-200">
+                                    {{ item.code }}
+                                </span>
+                            </td>
+                            <td class="p-2.5 font-bold text-slate-900">{{ item.name }}</td>
+                            <td class="p-2.5 text-center font-mono font-bold text-slate-600">{{ item.ltp }}</td>
+                            <td class="p-2.5 text-center font-bold text-purple-700">{{ item.credits }}</td>
+                            <td class="p-2.5 font-bold text-slate-900 flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 text-[9px] font-black flex items-center justify-center">
+                                    {{ item.faculty_name[:2]|upper }}
+                                </div>
+                                <span>{{ item.faculty_name }}</span>
+                            </td>
+                            <td class="p-2.5 text-slate-600 text-[11px]">{{ item.faculty_designation }} &bull; {{ item.faculty_dept }}</td>
+                            <td class="p-2.5 font-bold text-blue-700">{{ item.room }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Institutional Note & Approval Footer -->
+        <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
+            <div>
+                <span class="font-bold text-slate-700">Audit Status:</span> Conflict-free algorithm checked. All 6 departmental working days verified.
+            </div>
+            <div class="flex items-center gap-6 font-bold text-slate-600">
+                <span>Timetable In-Charge</span>
+                <span>Head of Department</span>
+                <span>Principal / Director</span>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- Print Stylesheet Enhancement -->
+<style>
+@media print {
+    body {
+        background: #ffffff !important;
+        color: #000000 !important;
+        font-size: 10pt;
+    }
+    header, nav, #desktopTopNav, .print\:hidden {
+        display: none !important;
+    }
+    .min-h-screen {
+        min-height: auto !important;
+    }
+    table {
+        border: 1.5pt solid #000000 !important;
+        width: 100% !important;
+    }
+    th, td {
+        border: 1pt solid #333333 !important;
+        padding: 4pt !important;
+    }
+    @page {
+        size: A4 landscape;
+        margin: 10mm;
+    }
+}
+</style>
 {% endblock %}

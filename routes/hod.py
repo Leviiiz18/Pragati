@@ -439,7 +439,10 @@ def timetable():
     slots = TimetableSlot.query.order_by(TimetableSlot.day, TimetableSlot.start_time).all()
     subjects = Subject.query.all()
     faculties = User.query.filter_by(role='faculty').all()
-    return render_template('hod/timetable.html', slots=slots, subjects=subjects, faculties=faculties)
+    matrix, legend, periods = AISchedulerService.get_structured_grid(slots)
+    import datetime
+    today_name = datetime.datetime.now().strftime('%A')
+    return render_template('hod/timetable.html', slots=slots, matrix=matrix, legend=legend, periods=periods, today_name=today_name, subjects=subjects, faculties=faculties)
 
 @hod_bp.route('/placement')
 def placement():

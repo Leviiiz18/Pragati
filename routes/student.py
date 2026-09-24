@@ -289,10 +289,15 @@ def schedule():
     enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
     subj_ids = [e.subject_id for e in enrollments]
     
-    slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids)).order_by(TimetableSlot.day, TimetableSlot.start_time).all()
-    upcoming_exams = Exam.query.filter(Exam.subject_id.in_(subj_ids)).all()
+    slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids)).order_by(TimetableSlot.day, TimetableSlot.start_time).all() if subj_ids else TimetableSlot.query.all()
+    upcoming_exams = Exam.query.filter(Exam.subject_id.in_(subj_ids)).all() if subj_ids else Exam.query.all()
     
-    return render_template('student/schedule.html', slots=slots, upcoming_exams=upcoming_exams)
+    from services.scheduler import AISchedulerService
+    import datetime
+    matrix, legend, periods = AISchedulerService.get_structured_grid(slots)
+    today_name = datetime.datetime.now().strftime('%A')
+    
+    return render_template('student/schedule.html', slots=slots, matrix=matrix, legend=legend, periods=periods, today_name=today_name, upcoming_exams=upcoming_exams)
 
 @student_bp.route('/fees', methods=['GET', 'POST'])
 def fees():

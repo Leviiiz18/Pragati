@@ -85,14 +85,10 @@
                 <div class="flex items-center justify-between h-16 gap-2 lg:gap-4">
                     
                     <!-- Left: Pragati Brand Identity -->
-                    <a href="/" class="flex items-center gap-2.5 flex-shrink-0 group">
-                        <div class="w-9 h-9 flex items-center justify-center transition-transform duration-300 group-hover:scale-105">
-                            <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="Pragati" class="w-8 h-8 object-contain drop-shadow-2xs">
-                        </div>
-                        <div class="hidden sm:block">
-                            <span class="text-lg font-black text-slate-900 tracking-tight leading-none block">Pragati</span>
-                            <span class="block text-[8px] font-extrabold tracking-widest text-[#4757F0] uppercase mt-0.5">by Kalpkrats</span>
-                        </div>
+                    <a href="/" class="flex items-center flex-shrink-0 group py-1" title="Pragati by Kalpkrats">
+                        <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=3" 
+                             alt="Pragati by Kalpkrats" 
+                             class="h-7 sm:h-8 md:h-8.5 w-auto max-w-[160px] sm:max-w-[185px] object-contain transition-transform duration-300 group-hover:scale-105 drop-shadow-2xs">
                     </a>
 
                     <!-- Center: Minimalist 4 Essential Tabs + All Modules Dropdown -->
@@ -109,30 +105,31 @@
                         {% endif %}
 
                         {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
-                        <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-gauge-high text-blue-600"></i>
-                            <span>Department Health</span>
+                        <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-compass text-blue-600"></i>
+                            <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-user-graduate text-emerald-600"></i>
                             <span>Students</span>
                         </a>
-                        <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-chalkboard-user text-indigo-600"></i>
                             <span>Faculty</span>
                         </a>
-                        <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-calendar-days text-rose-600"></i>
                             <span>Calendar</span>
                         </a>
 
                         <!-- HOD All Modules Menu (Click Only) -->
-                        <div class="relative" id="hodModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                        <div class="relative flex-shrink-0" id="hodModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
                                 <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
-                                <span>All Modules</span>
+                                <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
-                            </button>                            <div id="hodModulesDropdown" class="absolute left-0 top-full pt-2 w-80 sm:w-96 hidden z-50 transition-all duration-150">
+                            </button>
+                            <div id="hodModulesDropdown" class="absolute left-0 top-full pt-2 w-80 sm:w-96 hidden z-50 transition-all duration-150">
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
                                     <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Department Operations</div>
                                     <div class="space-y-1">
@@ -171,28 +168,28 @@
                         {% endif %}
 
                         {% if current_user.role == 'faculty' %}
-                        <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-table-columns text-emerald-600"></i>
-                            <span>My Cockpit</span>
+                        <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-compass text-emerald-600"></i>
+                            <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-user-check text-blue-600"></i>
-                            <span>Mark Attendance</span>
+                        <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-book-open text-blue-600"></i>
+                            <span>Courses</span>
                         </a>
-                        <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-book-open text-purple-600"></i>
-                            <span>Courses & AI Quiz</span>
+                        <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                            <span>Attendance</span>
                         </a>
-                        <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                        <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-calendar-days text-purple-600"></i>
                             <span>Calendar</span>
                         </a>
 
                         <!-- Faculty All Modules Menu (Click Only) -->
-                        <div class="relative" id="facultyModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                        <div class="relative flex-shrink-0" id="facultyModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
                                 <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
-                                <span>All Modules</span>
+                                <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                             </button>
                             <div id="facultyModulesDropdown" class="absolute left-0 top-full pt-2 w-72 hidden z-50 transition-all duration-150">
@@ -215,30 +212,31 @@
 
                         {% if current_user.role == 'student' %}
                         <!-- 4 Clean Essential Tabs for Student -->
-                        <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-compass text-amber-600"></i>
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-book-open text-blue-600"></i>
                             <span>Courses</span>
                         </a>
-                        <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-calendar-check text-emerald-600"></i>
                             <span>Attendance</span>
                         </a>
-                        <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
+                        <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-calendar-days text-purple-600"></i>
                             <span>Calendar</span>
                         </a>
 
                         <!-- Student All Modules Menu (100% Solid White, 2-Column Clean Layout) -->
-                        <div class="relative" id="studentModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group">
+                        <div class="relative flex-shrink-0" id="studentModulesContainer">
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
                                 <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
-                                <span>All Modules</span>
+                                <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                             </button>
+
                             <div id="studentModulesDropdown" class="absolute left-0 top-full pt-2 w-[30rem] hidden z-50 transition-all duration-150">
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 ring-1 ring-black/5" style="background-color: #ffffff !important;">
                                     <div class="grid grid-cols-2 gap-4">
@@ -310,11 +308,10 @@
 
                     <!-- Right Controls: AI Command, Notifications, Single Profile Badge, Logout & Mobile Button -->
                     <div class="flex items-center gap-2 sm:gap-3 flex-shrink-0">
-                        <!-- AI Command Center Trigger Button -->
-                        <button onclick="openCommandCenter()" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100/90 hover:bg-blue-50/90 border border-slate-200 hover:border-blue-300 text-slate-700 hover:text-blue-700 transition shadow-2xs group" title="Open AI Command Center (Ctrl+K)">
-                            <i class="fa-solid fa-wand-magic-sparkles text-xs text-blue-600 group-hover:scale-110 transition-transform"></i>
-                            <span class="text-xs font-semibold hidden xl:inline">Ask AI</span>
-                            <kbd class="px-1.5 py-0.5 text-[10px] bg-white border border-slate-300 text-slate-500 rounded font-mono shadow-2xs hidden sm:inline-block">Ctrl K</kbd>
+                        <!-- Search Bar Trigger (Opens Quick Search / Command Center) -->
+                        <button onclick="openCommandCenter()" class="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-slate-100/90 hover:bg-slate-50 border border-slate-200 hover:border-slate-300 text-slate-500 hover:text-slate-800 transition shadow-2xs group cursor-pointer" title="Search">
+                            <i class="fa-solid fa-magnifying-glass text-xs text-slate-400 group-hover:text-blue-600 transition-colors"></i>
+                            <span class="text-xs font-medium text-slate-500 group-hover:text-slate-700 hidden sm:inline">Search...</span>
                         </button>
 
                         <!-- Notification Bell Dropdown -->
@@ -373,16 +370,10 @@
                             </div>
                         </div>
 
-                        <!-- Single Clean User Profile Badge (No duplicate ID buttons) -->
+                        <!-- Compact User Profile Avatar Button -->
                         {% set profile_url = url_for('student.profile') if current_user.role == 'student' else (url_for('faculty.profile') if current_user.role == 'faculty' else (url_for('hod.profile') if current_user.role == 'hod' else url_for('super_admin.profile'))) %}
-                        <a href="{{ profile_url }}" title="View My Digital ID & Profile" class="flex items-center gap-2 p-1 pl-1.5 pr-2.5 rounded-xl bg-slate-100/90 hover:bg-blue-50 border border-slate-200 hover:border-blue-200 transition group">
-                            <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-[#4757F0] to-[#7B8CFA] text-white font-black text-xs flex items-center justify-center shadow-2xs group-hover:scale-105 transition-transform">
-                                {{ current_user.name[:2]|upper }}
-                            </div>
-                            <div class="text-left hidden lg:block">
-                                <div class="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors leading-tight truncate max-w-[120px]">{{ current_user.name }}</div>
-                                <div class="text-[9px] text-slate-500 font-semibold uppercase tracking-wider leading-tight">{{ current_user.role.replace('_', ' ') }}</div>
-                            </div>
+                        <a href="{{ profile_url }}" title="{{ current_user.name }} ({{ current_user.role.replace('_', ' ')|title }}) - View Digital ID & Profile" class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-gradient-to-tr from-[#4757F0] to-[#7B8CFA] hover:shadow-md hover:shadow-blue-200 text-white font-black text-xs flex items-center justify-center shadow-2xs transition-all hover:scale-105 active:scale-95" aria-label="Profile">
+                            {{ current_user.name[:2]|upper }}
                         </a>
 
                         <!-- Sign Out -->
@@ -560,17 +551,17 @@
     </div>
     {% endblock %}
 
-    <!-- AI Command Center Modal (Ctrl + K) -->
+    <!-- Global Search & Command Modal (Ctrl + K) -->
     <div id="commandCenterModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4 transition-all duration-200">
         <div class="w-full max-w-2xl bg-white rounded-3xl border border-slate-200/90 p-6 shadow-2xl transform transition-all scale-95 duration-200" id="commandCenterCard">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4 mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center border border-purple-200 font-bold shadow-sm">
-                        <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
+                    <div class="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center border border-blue-100 font-bold shadow-sm">
+                        <i class="fa-solid fa-magnifying-glass text-base"></i>
                     </div>
                     <div>
-                        <h3 class="text-base font-extrabold text-slate-900">AI Command Center</h3>
-                        <p class="text-xs text-slate-500 font-medium">Institutional Natural Language ERP Operator</p>
+                        <h3 class="text-base font-extrabold text-slate-900">Search Pragati</h3>
+                        <p class="text-xs text-slate-500 font-medium">Search students, faculty, courses, attendance, or run institutional actions</p>
                     </div>
                 </div>
                 <button onclick="closeCommandCenter()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
@@ -580,16 +571,16 @@
 
             <div class="space-y-4">
                 <div class="relative">
-                    <input type="text" id="cmdInput" placeholder="Type command e.g. 'Show students at risk', 'Which faculty is overloaded?'..." 
-                           class="w-full pl-11 pr-32 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 shadow-inner transition">
+                    <input type="text" id="cmdInput" placeholder="Search students, faculty, courses, or type a request..." 
+                           class="w-full pl-11 pr-28 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm text-slate-900 font-medium placeholder-slate-400 focus:outline-none focus:border-blue-500 focus:bg-white focus:ring-4 focus:ring-blue-100 shadow-inner transition">
                     <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-400"></i>
                     <button onclick="submitCommand()" class="absolute right-2 top-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold transition shadow-md shadow-blue-200 cool-shimmer-btn active:scale-95">
-                        Run Command
+                        Search
                     </button>
                 </div>
 
                 <div class="flex flex-wrap gap-2 text-xs">
-                    <span class="text-slate-400 font-medium self-center">Suggestions:</span>
+                    <span class="text-slate-400 font-medium self-center">Quick Searches:</span>
                     <button onclick="quickCmd('Show students at risk')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">⚠️ Students at Risk</button>
                     <button onclick="quickCmd('Which faculty is overloaded?')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">⚖️ Faculty Workload</button>
                     <button onclick="quickCmd('Generate NAAC report')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">📄 NAAC Report</button>
