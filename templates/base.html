@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-50 text-slate-800">
 <head>
     <meta charset="UTF-8">
@@ -95,22 +95,22 @@
                     <nav class="hidden md:flex items-center gap-1.5 py-1" id="desktopTopNav">
                         {% if current_user.role in ['super_admin', 'principal'] %}
                         <a href="{{ url_for('super_admin.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-chart-line text-purple-600"></i>
+                            <i class="fa-solid fa-chart-line text-slate-400"></i>
                             <span>Executive Overview</span>
                         </a>
                         <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap">
-                            <i class="fa-solid fa-id-card text-purple-600"></i>
+                            <i class="fa-solid fa-id-card text-slate-400"></i>
                             <span>Executive ID</span>
                         </a>
                         {% endif %}
 
                         {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
                         <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-compass text-blue-600"></i>
+                            <i class="fa-solid fa-compass text-slate-400"></i>
                             <span>Dashboard</span>
                         </a>
                         <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-user-graduate text-emerald-600"></i>
+                            <i class="fa-solid fa-user-graduate text-slate-400"></i>
                             <span>Students</span>
                         </a>
                         <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
@@ -124,8 +124,8 @@
 
                         <!-- HOD All Modules Menu (Click Only) -->
                         <div class="relative flex-shrink-0" id="hodModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
-                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
+                                <i class="fa-solid fa-shapes text-slate-500 text-xs group-hover:rotate-12 transition-transform"></i>
                                 <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                             </button>
@@ -133,32 +133,32 @@
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
                                     <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Department Operations</div>
                                     <div class="space-y-1">
-                                        <a href="{{ url_for('hod.curriculum') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
-                                            <i class="fa-solid fa-book-bookmark text-amber-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.curriculum') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-book-bookmark text-slate-400 w-4 text-center"></i>
                                             <span>Curriculum & Syllabus</span>
                                         </a>
-                                        <a href="{{ url_for('hod.attendance_analytics') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
-                                            <i class="fa-solid fa-clipboard-user text-amber-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.attendance_analytics') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-clipboard-user text-slate-400 w-4 text-center"></i>
                                             <span>Attendance Analytics</span>
                                         </a>
-                                        <a href="{{ url_for('hod.timetable') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-700 transition">
-                                            <i class="fa-solid fa-clock text-purple-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.timetable') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-clock text-slate-400 w-4 text-center"></i>
                                             <span>AI Timetable</span>
                                         </a>
                                     </div>
                                     <div class="border-t border-slate-100 my-1.5"></div>
                                     <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Placements & Compliance</div>
                                     <div class="space-y-1">
-                                        <a href="{{ url_for('hod.placement') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-700 transition">
-                                            <i class="fa-solid fa-briefcase text-teal-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.placement') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-briefcase text-slate-400 w-4 text-center"></i>
                                             <span>Placement Suite</span>
                                         </a>
-                                        <a href="{{ url_for('hod.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-700 transition">
-                                            <i class="fa-solid fa-file-signature text-rose-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-file-signature text-slate-400 w-4 text-center"></i>
                                             <span>Certificates & OCR</span>
                                         </a>
-                                        <a href="{{ url_for('hod.reports') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-cyan-700 transition">
-                                            <i class="fa-solid fa-file-contract text-cyan-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.reports') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-file-contract text-slate-400 w-4 text-center"></i>
                                             <span>NAAC / NBA Reports</span>
                                         </a>
                                     </div>
@@ -169,26 +169,30 @@
 
                         {% if current_user.role == 'faculty' %}
                         <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-compass text-emerald-600"></i>
+                            <i class="fa-solid fa-compass text-slate-400"></i>
                             <span>Dashboard</span>
                         </a>
                         <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-book-open text-blue-600"></i>
+                            <i class="fa-solid fa-book-open text-slate-400"></i>
                             <span>Courses</span>
                         </a>
                         <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                            <i class="fa-solid fa-calendar-check text-slate-400"></i>
                             <span>Attendance</span>
                         </a>
                         <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-days text-purple-600"></i>
+                            <i class="fa-solid fa-calendar-days text-slate-400"></i>
                             <span>Calendar</span>
+                        </a>
+                        <a href="{{ url_for('faculty.schedule') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-clock text-indigo-600"></i>
+                            <span>My Schedule</span>
                         </a>
 
                         <!-- Faculty All Modules Menu (Click Only) -->
                         <div class="relative flex-shrink-0" id="facultyModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
-                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
+                                <i class="fa-solid fa-shapes text-slate-500 text-xs group-hover:rotate-12 transition-transform"></i>
                                 <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                             </button>
@@ -196,12 +200,12 @@
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
                                     <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Faculty Academic Tools</div>
                                     <div class="space-y-1">
-                                        <a href="{{ url_for('faculty.evaluation') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-700 transition">
-                                            <i class="fa-solid fa-pen-ruler text-amber-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('faculty.evaluation') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-pen-ruler text-slate-400 w-4 text-center"></i>
                                             <span>Evaluation & Auto-Grade</span>
                                         </a>
-                                        <a href="{{ url_for('faculty.research') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-700 transition">
-                                            <i class="fa-solid fa-microscope text-teal-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('faculty.research') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                            <i class="fa-solid fa-microscope text-slate-400 w-4 text-center"></i>
                                             <span>Research & Patents</span>
                                         </a>
                                     </div>
@@ -213,26 +217,26 @@
                         {% if current_user.role == 'student' %}
                         <!-- 4 Clean Essential Tabs for Student -->
                         <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-compass text-amber-600"></i>
+                            <i class="fa-solid fa-compass text-slate-400"></i>
                             <span>Dashboard</span>
                         </a>
                         <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-book-open text-blue-600"></i>
+                            <i class="fa-solid fa-book-open text-slate-400"></i>
                             <span>Courses</span>
                         </a>
                         <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                            <i class="fa-solid fa-calendar-check text-slate-400"></i>
                             <span>Attendance</span>
                         </a>
                         <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-days text-purple-600"></i>
+                            <i class="fa-solid fa-calendar-days text-slate-400"></i>
                             <span>Calendar</span>
                         </a>
 
                         <!-- Student All Modules Menu (100% Solid White, 2-Column Clean Layout) -->
                         <div class="relative flex-shrink-0" id="studentModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-blue-50 hover:text-blue-700 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
-                                <i class="fa-solid fa-shapes text-blue-600 text-xs group-hover:rotate-12 transition-transform"></i>
+                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
+                                <i class="fa-solid fa-shapes text-slate-500 text-xs group-hover:rotate-12 transition-transform"></i>
                                 <span class="whitespace-nowrap">All Modules</span>
                                 <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
                             </button>
@@ -250,12 +254,12 @@
                                                     <i class="fa-solid fa-clock text-indigo-500 w-4 text-center"></i>
                                                     <span>Timetable</span>
                                                 </a>
-                                                <a href="{{ url_for('student.notes') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-amber-600 transition">
-                                                    <i class="fa-solid fa-note-sticky text-amber-500 w-4 text-center"></i>
+                                                <a href="{{ url_for('student.notes') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-400 transition">
+                                                    <i class="fa-solid fa-note-sticky text-slate-400 w-4 text-center"></i>
                                                     <span>Study Notes</span>
                                                 </a>
-                                                <a href="{{ url_for('student.grades') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-600 transition">
-                                                    <i class="fa-solid fa-award text-purple-500 w-4 text-center"></i>
+                                                <a href="{{ url_for('student.grades') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-400 transition">
+                                                    <i class="fa-solid fa-award text-slate-400 w-4 text-center"></i>
                                                     <span>Marks & Results</span>
                                                 </a>
                                             </div>
@@ -268,16 +272,16 @@
                                                     Services & Career
                                                 </div>
                                                 <div class="space-y-1">
-                                                    <a href="{{ url_for('student.fees') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-teal-600 transition">
-                                                        <i class="fa-solid fa-receipt text-teal-500 w-4 text-center"></i>
+                                                    <a href="{{ url_for('student.fees') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-400 transition">
+                                                        <i class="fa-solid fa-receipt text-slate-400 w-4 text-center"></i>
                                                         <span>Fee Receipts</span>
                                                     </a>
-                                                    <a href="{{ url_for('student.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-600 transition">
-                                                        <i class="fa-solid fa-file-invoice text-rose-500 w-4 text-center"></i>
+                                                    <a href="{{ url_for('student.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                        <i class="fa-solid fa-file-invoice text-slate-400 w-4 text-center"></i>
                                                         <span>Certificates & OCR</span>
                                                     </a>
-                                                    <a href="{{ url_for('student.career') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-cyan-600 transition">
-                                                        <i class="fa-solid fa-rocket text-cyan-500 w-4 text-center"></i>
+                                                    <a href="{{ url_for('student.career') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-400 transition">
+                                                        <i class="fa-solid fa-rocket text-slate-400 w-4 text-center"></i>
                                                         <span>Career & Placements</span>
                                                     </a>
                                                 </div>
@@ -288,12 +292,12 @@
                                                     AI & Wellness
                                                 </div>
                                                 <div class="space-y-1">
-                                                    <a href="{{ url_for('student.ai_tutor') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-purple-600 transition">
-                                                        <i class="fa-solid fa-robot text-purple-500 w-4 text-center"></i>
+                                                    <a href="{{ url_for('student.ai_tutor') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-slate-400 transition">
+                                                        <i class="fa-solid fa-robot text-slate-400 w-4 text-center"></i>
                                                         <span>AI Course Tutor</span>
                                                     </a>
-                                                    <a href="{{ url_for('student.wellness') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-rose-600 transition">
-                                                        <i class="fa-solid fa-heart-pulse text-rose-500 w-4 text-center"></i>
+                                                    <a href="{{ url_for('student.wellness') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                        <i class="fa-solid fa-heart-pulse text-slate-400 w-4 text-center"></i>
                                                         <span>Mental Wellness AI</span>
                                                     </a>
                                                 </div>
@@ -330,10 +334,10 @@
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-3 ring-1 ring-black/5" style="background-color: #ffffff !important;">
                                     <div class="flex items-center justify-between border-b border-slate-100 pb-2.5">
                                         <span class="text-xs font-extrabold text-slate-900 flex items-center gap-1.5">
-                                            <i class="fa-solid fa-bell text-blue-600 text-xs"></i> Real-Time Notifications
+                                            <i class="fa-solid fa-bell text-slate-500 text-xs"></i> Real-Time Notifications
                                         </span>
                                         <div class="flex items-center gap-2">
-                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-blue-50 text-blue-700">{{ unread_notif_count or 0 }} New</span>
+                                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-100 text-slate-600">{{ unread_notif_count or 0 }} New</span>
                                             {% if unread_notif_count and unread_notif_count > 0 %}
                                             <button onclick="markAllNotificationsRead()" class="text-[10px] font-bold text-slate-500 hover:text-blue-600 underline">
                                                 Mark Read
@@ -354,7 +358,7 @@
                                                     {% if 'Attendance' in n.title or 'Absent' in n.title %}
                                                     <i class="fa-solid fa-triangle-exclamation text-rose-600 text-xs"></i>
                                                     {% else %}
-                                                    <i class="fa-solid fa-circle-info text-blue-600 text-xs"></i>
+                                                    <i class="fa-solid fa-circle-info text-slate-400 text-xs"></i>
                                                     {% endif %}
                                                     {{ n.title }}
                                                 </span>
@@ -377,7 +381,7 @@
                         </a>
 
                         <!-- Sign Out -->
-                        <a href="{{ url_for('auth.logout') }}" title="Sign Out" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 flex items-center justify-center text-slate-600 hover:text-rose-600 transition shadow-2xs active:scale-95">
+                        <a href="{{ url_for('auth.logout') }}" title="Sign Out" class="w-8 h-8 rounded-xl bg-slate-100 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 flex items-center justify-center text-slate-600 hover:text-indigo-600 transition shadow-2xs active:scale-95">
                             <i class="fa-solid fa-arrow-right-from-bracket text-xs"></i>
                         </a>
 
@@ -393,22 +397,22 @@
             <div id="mobileTopNav" class="hidden md:hidden border-t border-slate-200/90 bg-white px-4 py-3 space-y-1 shadow-xl max-h-[calc(100vh-4rem)] overflow-y-auto">
                 {% if current_user.role in ['super_admin', 'principal'] %}
                 <a href="{{ url_for('super_admin.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-chart-line text-purple-600"></i>
+                    <i class="fa-solid fa-chart-line text-slate-400"></i>
                     <span>Executive Overview</span>
                 </a>
                 <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-id-card text-purple-600"></i>
+                    <i class="fa-solid fa-id-card text-slate-400"></i>
                     <span>Executive ID & Profile</span>
                 </a>
                 {% endif %}
 
                 {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
                 <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-gauge-high text-blue-600"></i>
+                    <i class="fa-solid fa-gauge-high text-slate-400"></i>
                     <span>Department Health</span>
                 </a>
                 <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-user-graduate text-emerald-600"></i>
+                    <i class="fa-solid fa-user-graduate text-slate-400"></i>
                     <span>Student Directory</span>
                 </a>
                 <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -416,15 +420,15 @@
                     <span>Faculty Workload</span>
                 </a>
                 <a href="{{ url_for('hod.curriculum') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-book-bookmark text-amber-600"></i>
+                    <i class="fa-solid fa-book-bookmark text-slate-400"></i>
                     <span>Curriculum & Syllabus</span>
                 </a>
                 <a href="{{ url_for('hod.attendance_analytics') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-clipboard-user text-amber-600"></i>
+                    <i class="fa-solid fa-clipboard-user text-slate-400"></i>
                     <span>Attendance & Proxies</span>
                 </a>
                 <a href="{{ url_for('hod.timetable') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-clock text-purple-600"></i>
+                    <i class="fa-solid fa-clock text-slate-400"></i>
                     <span>AI Timetable</span>
                 </a>
                 <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -432,7 +436,7 @@
                     <span>Department Calendar</span>
                 </a>
                 <a href="{{ url_for('hod.placement') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-briefcase text-teal-600"></i>
+                    <i class="fa-solid fa-briefcase text-slate-400"></i>
                     <span>Placement Suite</span>
                 </a>
                 <a href="{{ url_for('hod.documents') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -440,18 +444,18 @@
                     <span>Certificates & OCR</span>
                 </a>
                 <a href="{{ url_for('hod.reports') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-file-contract text-cyan-600"></i>
+                    <i class="fa-solid fa-file-contract text-slate-400"></i>
                     <span>NAAC / NBA Reports</span>
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'faculty' %}
                 <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-table-columns text-emerald-600"></i>
+                    <i class="fa-solid fa-table-columns text-slate-400"></i>
                     <span>My Cockpit</span>
                 </a>
                 <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-user-check text-blue-600"></i>
+                    <i class="fa-solid fa-user-check text-slate-400"></i>
                     <span>Mark Attendance</span>
                 </a>
                 <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -459,30 +463,30 @@
                     <span>Academic Calendar</span>
                 </a>
                 <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-book-open text-purple-600"></i>
+                    <i class="fa-solid fa-book-open text-slate-400"></i>
                     <span>Course Materials & Quiz AI</span>
                 </a>
                 <a href="{{ url_for('faculty.evaluation') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-pen-ruler text-amber-600"></i>
+                    <i class="fa-solid fa-pen-ruler text-slate-400"></i>
                     <span>Evaluation & Auto-Grade</span>
                 </a>
                 <a href="{{ url_for('faculty.research') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-microscope text-teal-600"></i>
+                    <i class="fa-solid fa-microscope text-slate-400"></i>
                     <span>Research & Patents</span>
                 </a>
                 {% endif %}
 
                 {% if current_user.role == 'student' %}
                 <a href="{{ url_for('student.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-compass text-amber-600"></i>
+                    <i class="fa-solid fa-compass text-slate-400"></i>
                     <span>Academic Dashboard</span>
                 </a>
                 <a href="{{ url_for('student.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-book-open text-blue-600"></i>
+                    <i class="fa-solid fa-book-open text-slate-400"></i>
                     <span>Enrolled Courses & Syllabi</span>
                 </a>
                 <a href="{{ url_for('student.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                    <i class="fa-solid fa-calendar-check text-slate-400"></i>
                     <span>Attendance Register</span>
                 </a>
                 <a href="{{ url_for('student.schedule') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -490,19 +494,19 @@
                     <span>Class Timetable</span>
                 </a>
                 <a href="{{ url_for('student.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-calendar-days text-purple-600"></i>
+                    <i class="fa-solid fa-calendar-days text-slate-400"></i>
                     <span>Academic Calendar</span>
                 </a>
                 <a href="{{ url_for('student.notes') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-note-sticky text-amber-600"></i>
+                    <i class="fa-solid fa-note-sticky text-slate-400"></i>
                     <span>Study Notes</span>
                 </a>
                 <a href="{{ url_for('student.grades') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-award text-purple-600"></i>
+                    <i class="fa-solid fa-award text-slate-400"></i>
                     <span>Marks & Exam Results</span>
                 </a>
                 <a href="{{ url_for('student.fees') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-receipt text-teal-600"></i>
+                    <i class="fa-solid fa-receipt text-slate-400"></i>
                     <span>Fee Status & Receipts</span>
                 </a>
                 <a href="{{ url_for('student.documents') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -510,11 +514,11 @@
                     <span>Certificate Requests</span>
                 </a>
                 <a href="{{ url_for('student.career') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-rocket text-cyan-600"></i>
+                    <i class="fa-solid fa-rocket text-slate-400"></i>
                     <span>Career & Placements</span>
                 </a>
                 <a href="{{ url_for('student.ai_tutor') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-robot text-purple-600"></i>
+                    <i class="fa-solid fa-robot text-slate-400"></i>
                     <span>AI Course Tutor (RAG)</span>
                 </a>
                 <a href="{{ url_for('student.wellness') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
@@ -537,7 +541,7 @@
                     {% elif category == 'danger' %} bg-rose-50 border-rose-200 text-rose-900
                     {% else %} bg-blue-50 border-blue-200 text-blue-900 {% endif %}">
                       <div class="flex items-center gap-3">
-                          <i class="fa-solid {% if category == 'success' %}fa-circle-check text-emerald-600{% elif category == 'danger' %}fa-triangle-exclamation text-rose-600{% else %}fa-circle-info text-blue-600{% endif %} text-base"></i>
+                          <i class="fa-solid {% if category == 'success' %}fa-circle-check text-slate-400{% elif category == 'danger' %}fa-triangle-exclamation text-rose-600{% else %}fa-circle-info text-slate-400{% endif %} text-base"></i>
                           <span class="font-bold">{{ message }}</span>
                       </div>
                   </div>

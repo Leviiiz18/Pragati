@@ -444,6 +444,112 @@ def timetable():
     today_name = datetime.datetime.now().strftime('%A')
     return render_template('hod/timetable.html', slots=slots, matrix=matrix, legend=legend, periods=periods, today_name=today_name, subjects=subjects, faculties=faculties)
 
+
+# ─── Timetable Drag-and-Drop API ───────────────────────────────────────────────
+
+@hod_bp.route('/api/timetable/slot/<int:slot_id>', methods=['PATCH'])
+def update_slot(slot_id):
+    """Move or update a timetable slot (drag-and-drop / inline edit)."""
+    slot = TimetableSlot.query.get_or_404(slot_id)
+    data = request.get_json()
+    if not data:
+        return jsonify({'ok': False, 'error': 'No data'}), 400
+
+    new_day = data.get('day', slot.day)
+    new_start = data.get('start_time', slot.start_time)
+    new_end = data.get('end_time', slot.end_time)
+
+    # Conflict check: same day + overlapping room or faculty (excluding self)
+    conflicts = TimetableSlot.query.filter(
+        TimetableSlot.id != slot_id,
+        TimetableSlot.day == new_day,
+        TimetableSlot.start_time == new_start
+    ).filter(
+        db.or_(
+            TimetableSlot.room == data.get('room', slot.room),
+            TimetableSlot.faculty_id == data.get('faculty_id', slot.faculty_id)
+        )
+    ).first()
+
+    if conflicts:
+        return jsonify({
+            'ok': False,
+            'error': f'Conflict: {conflicts.subject.name if conflicts.subject else "Another class"} already occupies that slot for this faculty/room.'
+        }), 409
+
+    slot.day = new_day
+    slot.start_time = new_start
+    slot.end_time = new_end
+    if 'subject_id' in data and data['subject_id']:
+        slot.subject_id = int(data['subject_id'])
+    if 'faculty_id' in data and data['faculty_id']:
+        slot.faculty_id = int(data['faculty_id'])
+    if 'room' in data:
+        slot.room = data['room']
+    if 'is_lab' in data:
+        slot.is_lab = bool(data['is_lab'])
+
+    db.session.commit()
+    return jsonify({'ok': True, 'slot_id': slot.id})
+
+
+@hod_bp.route('/api/timetable/slot/<int:slot_id>', methods=['DELETE'])
+def delete_slot(slot_id):
+    """Delete a timetable slot."""
+    slot = TimetableSlot.query.get_or_404(slot_id)
+    db.session.delete(slot)
+    db.session.commit()
+    return jsonify({'ok': True})
+
+
+@hod_bp.route('/api/timetable/slot', methods=['POST'])
+def add_slot():
+    """Add a new timetable slot."""
+    data = request.get_json()
+    if not data or not data.get('subject_id') or not data.get('faculty_id'):
+        return jsonify({'ok': False, 'error': 'subject_id and faculty_id are required'}), 400
+
+    from services.scheduler import AISchedulerService
+    period_map = {p['start']: p for p in AISchedulerService.PERIODS}
+
+    slot = TimetableSlot(
+        day=data.get('day', 'Monday'),
+        start_time=data.get('start_time', '09:30'),
+        end_time=data.get('end_time', '10:20'),
+        subject_id=int(data['subject_id']),
+        faculty_id=int(data['faculty_id']),
+        room=data.get('room', 'LH-101'),
+        is_lab=bool(data.get('is_lab', False))
+    )
+    db.session.add(slot)
+    db.session.commit()
+    return jsonify({'ok': True, 'slot_id': slot.id})
+
+
+@hod_bp.route('/api/timetable/slots', methods=['GET'])
+def get_all_slots():
+    """Return all slots as JSON — accessible to any authenticated user (faculty read their own)."""
+    slots = TimetableSlot.query.order_by(TimetableSlot.day, TimetableSlot.start_time).all()
+    result = []
+    for s in slots:
+        # Faculty only see their own slots; HOD/admin see all
+        if current_user.role == 'faculty' and s.faculty_id != current_user.id:
+            continue
+        result.append({
+            'id': s.id,
+            'day': s.day,
+            'start_time': s.start_time,
+            'end_time': s.end_time,
+            'subject_id': s.subject_id,
+            'subject_name': s.subject.name if s.subject else '',
+            'subject_code': s.subject.code if s.subject else '',
+            'faculty_id': s.faculty_id,
+            'faculty_name': s.faculty.name if s.faculty else '',
+            'room': s.room,
+            'is_lab': s.is_lab,
+        })
+    return jsonify(result)
+
 @hod_bp.route('/placement')
 def placement():
     drives = PlacementDrive.query.all()

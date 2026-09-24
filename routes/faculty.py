@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify, current_app
 from flask_login import login_required, current_user
-from models import db, User, Course, Subject, Module, Unit, File, AttendanceRecord, Exam, ExamResult, Enrollment, Event, Quiz, Assignment, AssignmentSubmission, Notification, Institution
+from models import db, User, Course, Subject, Module, Unit, File, AttendanceRecord, Exam, ExamResult, Enrollment, Event, Quiz, Assignment, AssignmentSubmission, Notification, Institution, TimetableSlot
 from services.grading_service import GradingService
 from services.ai_engine import AIEngine
 from datetime import datetime, date, timedelta
@@ -38,13 +38,45 @@ def profile():
             
     return render_template('faculty/profile.html', institution=inst, subjects=subjects)
 
+
+@faculty_bp.route('/api/timetable/slots', methods=['GET'])
+def get_my_slots():
+    """Return timetable slots as JSON. Faculty get only their own; HOD/admin get all."""
+    from models import TimetableSlot
+    if current_user.role == 'faculty':
+        slots = TimetableSlot.query.filter_by(faculty_id=current_user.id)\
+            .order_by(TimetableSlot.day, TimetableSlot.start_time).all()
+    else:
+        slots = TimetableSlot.query.order_by(TimetableSlot.day, TimetableSlot.start_time).all()
+    return jsonify([{
+        'id': s.id,
+        'day': s.day,
+        'start_time': s.start_time,
+        'end_time': s.end_time,
+        'subject_id': s.subject_id,
+        'subject_name': s.subject.name if s.subject else '',
+        'subject_code': s.subject.code if s.subject else '',
+        'faculty_id': s.faculty_id,
+        'faculty_name': s.faculty.name if s.faculty else '',
+        'room': s.room,
+        'is_lab': s.is_lab,
+    } for s in slots])
+
+
 @faculty_bp.route('/dashboard')
 def dashboard():
     subjects = Subject.query.filter_by(faculty_id=current_user.id).all()
     if not subjects:
         subjects = Subject.query.all()
     today_date = date.today()
+    day_name = today_date.strftime('%A')
     my_events = Event.query.filter_by(created_by=current_user.id).all()
+    
+    today_slots = TimetableSlot.query.filter_by(faculty_id=current_user.id, day=day_name).all()
+    if not today_slots:
+        # Fallback to general department slots for this faculty's subjects
+        subj_ids = [s.id for s in subjects]
+        today_slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids), TimetableSlot.day == day_name).all()
     
     enrolled_students_count = 0
     for s in subjects:
@@ -54,7 +86,35 @@ def dashboard():
                            subjects=subjects,
                            my_events=my_events,
                            enrolled_students_count=enrolled_students_count,
+                           today_date=today_date,
+                           day_name=day_name,
+                           today_slots=today_slots)
+
+@faculty_bp.route('/schedule')
+def schedule():
+    """Faculty personal timetable — all slots assigned to this faculty member."""
+    from services.scheduler import AISchedulerService
+    my_slots = TimetableSlot.query.filter_by(faculty_id=current_user.id)\
+        .order_by(TimetableSlot.day, TimetableSlot.start_time).all()
+    # Fallback: show all slots if none assigned directly by faculty_id
+    if not my_slots:
+        subjects = Subject.query.filter_by(faculty_id=current_user.id).all()
+        subj_ids = [s.id for s in subjects]
+        if subj_ids:
+            my_slots = TimetableSlot.query.filter(TimetableSlot.subject_id.in_(subj_ids))\
+                .order_by(TimetableSlot.day, TimetableSlot.start_time).all()
+
+    matrix, legend, periods = AISchedulerService.get_structured_grid(my_slots)
+    today_name = date.today().strftime('%A')
+    today_date = date.today()
+    return render_template('faculty/schedule.html',
+                           slots=my_slots,
+                           matrix=matrix,
+                           legend=legend,
+                           periods=periods,
+                           today_name=today_name,
                            today_date=today_date)
+
 
 @faculty_bp.route('/attendance', methods=['GET', 'POST'])
 def attendance():

@@ -2,79 +2,74 @@
 {% block title %}Student Cockpit - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="h-auto lg:h-[calc(100vh-6.5rem)] flex flex-col gap-2.5 sm:gap-3 min-h-0 overflow-hidden">
-    <!-- Top Cockpit Bar: Header & Direct Navigation Actions -->
+
+    <!-- Top Cockpit Bar -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 flex-shrink-0">
         <div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2.5">
                 <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
                     {{ current_user.name }}'s Academic Cockpit
                 </h1>
-                <span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-extrabold text-[11px] hidden sm:inline-block">
+                <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[11px] border border-slate-200 hidden sm:inline-block">
                     Sem {{ current_user.semester or '4' }}
                 </span>
             </div>
-            <p class="text-xs font-semibold text-slate-500 mt-0.5">
-                Department of {{ current_user.department or 'Computer Science & Engineering' }} &bull; Academic Year 2026-27
+            <p class="text-xs font-medium text-slate-400 mt-0.5">
+                Dept. of {{ current_user.department or 'Computer Science & Engineering' }} &bull; Academic Year 2026-27
             </p>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="{{ url_for('student.calendar') }}" class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-indigo-200 transition">
+            <a href="{{ url_for('student.calendar') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-calendar-days text-[11px]"></i>
-                <span>Academic Calendar</span>
+                <span>Calendar</span>
             </a>
-            <a href="{{ url_for('student.ai_tutor') }}" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm shadow-blue-200 transition">
+            <a href="{{ url_for('student.ai_tutor') }}" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
                 <i class="fa-solid fa-robot text-[11px]"></i>
-                <span>AI Course Tutor</span>
+                <span>AI Tutor</span>
             </a>
         </div>
     </div>
 
-    <!-- Real-Time Critical Attendance Warning Bar (Ultra-Compact Single Line Alert) -->
+    <!-- Attendance Warning Bar (only shown if needed) -->
     {% if current_user.attendance_percentage < 75 %}
-    <div class="px-3.5 py-2 rounded-2xl bg-gradient-to-r from-rose-500/10 via-rose-50 to-amber-50/70 border border-rose-300 shadow-2xs flex items-center justify-between gap-3 flex-shrink-0">
+    <div class="px-3.5 py-2 rounded-xl bg-white border border-rose-200 flex items-center justify-between gap-3 flex-shrink-0 shadow-sm">
         <div class="flex items-center gap-2.5 truncate">
-            <div class="w-7 h-7 rounded-xl bg-rose-600 text-white flex items-center justify-center flex-shrink-0 shadow-xs animate-pulse">
+            <div class="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center flex-shrink-0 animate-pulse">
                 <i class="fa-solid fa-triangle-exclamation text-xs"></i>
             </div>
             <div class="truncate">
-                <span class="text-xs text-rose-950 font-bold truncate">
-                    <strong class="text-rose-700 uppercase font-black text-[10px] tracking-wider px-1.5 py-0.5 rounded bg-rose-100 mr-1.5">Action Required</strong>
-                    Attendance is <strong class="text-rose-600 underline font-black text-sm">{{ current_user.attendance_percentage }}%</strong> (Debarment Risk) &bull; Under ordinance, you must attend next <strong class="text-rose-900 font-extrabold">{{ classes_needed }} consecutive classes</strong>.
+                <span class="text-xs text-slate-800 font-semibold truncate">
+                    <strong class="text-rose-600 font-bold">Action Required —</strong>
+                    Attendance at <strong class="text-rose-600 font-black">{{ current_user.attendance_percentage }}%</strong>. Attend next <strong class="text-slate-900 font-black">{{ classes_needed }} consecutive classes</strong> to clear debarment risk.
                 </span>
             </div>
         </div>
         <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="{{ url_for('student.attendance') }}" class="px-3 py-1 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-calendar-check text-[11px]"></i> Tracker
-            </a>
-            <a href="{{ url_for('student.ai_tutor') }}" class="px-3 py-1 rounded-xl bg-white hover:bg-rose-50 border border-rose-300 text-rose-700 text-xs font-bold shadow-xs transition flex items-center gap-1.5">
-                <i class="fa-solid fa-robot text-[11px]"></i> Remedial Plan
+            <a href="{{ url_for('student.attendance') }}" class="px-3 py-1 rounded-lg bg-rose-600 hover:bg-rose-700 text-white text-xs font-semibold transition">
+                Tracker
             </a>
         </div>
     </div>
     {% elif current_user.attendance_percentage < 80 %}
-    <div class="px-3.5 py-1.5 rounded-2xl bg-amber-50/90 border border-amber-300 shadow-2xs flex items-center justify-between gap-3 flex-shrink-0">
+    <div class="px-3.5 py-2 rounded-xl bg-white border border-amber-200 flex items-center justify-between gap-3 flex-shrink-0">
         <div class="flex items-center gap-2">
-            <i class="fa-solid fa-bell text-amber-600 text-xs"></i>
-            <span class="text-xs font-bold text-amber-900">Attendance Advisory: {{ current_user.attendance_percentage }}% (Near 75% limit). Maintain regular class presence.</span>
+            <i class="fa-solid fa-circle-exclamation text-amber-500 text-xs"></i>
+            <span class="text-xs font-medium text-slate-700">Attendance Advisory: <strong class="text-slate-900">{{ current_user.attendance_percentage }}%</strong> — Near 75% limit. Maintain regular attendance.</span>
         </div>
-        <a href="{{ url_for('student.attendance') }}" class="text-xs font-bold text-amber-800 hover:underline">
-            Check Tracker &rarr;
+        <a href="{{ url_for('student.attendance') }}" class="text-xs font-semibold text-slate-600 hover:text-slate-900 whitespace-nowrap">
+            View Tracker &rarr;
         </a>
     </div>
     {% endif %}
 
-    <!-- 4 Key Metrics Strip (Sleek Animated Display) -->
+    <!-- 4 Metric Cards Strip -->
     <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 flex-shrink-0">
-        <!-- Card 1: Academic CGPA -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <!-- Ambient Glowing Orb -->
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-blue-500/15 blur-xl pointer-events-none group-hover:scale-150 group-hover:bg-blue-500/25 transition-all duration-500"></div>
 
+        <!-- CGPA -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-blue-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
             <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 group-hover:text-blue-600 transition-colors">
-                    Academic CGPA
-                </div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Academic CGPA</div>
                 <div class="flex items-baseline gap-1.5">
                     <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">
                         {% if current_user.semester == 1 or current_user.cgpa is none %}
@@ -83,315 +78,223 @@
                             {{ current_user.cgpa }}
                         {% endif %}
                     </span>
-                    <span class="text-[10px] font-bold text-blue-600 flex items-center gap-0.5">
-                        <i class="fa-solid fa-award text-[9px] text-amber-500"></i> Standing
-                    </span>
+                    <span class="text-[10px] font-semibold text-slate-400">/ 10.0</span>
                 </div>
-                <div class="text-[10px] text-slate-500 font-semibold truncate max-w-[140px]">
-                    {% if current_user.semester == 1 %}Awaiting 1st Sem{% else %}First Class Distinction{% endif %}
+                <div class="text-[10px] text-slate-400 font-medium">
+                    {% if current_user.semester == 1 %}Awaiting 1st Sem{% else %}First Class{% endif %}
                 </div>
             </div>
-
-            <div class="w-9 h-9 rounded-xl bg-blue-500/10 border border-blue-300/40 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-115 group-hover:rotate-6 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300 relative z-10">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
                 <i class="fa-solid fa-graduation-cap text-xs"></i>
             </div>
-
-            <!-- Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-20 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
                 <path d="M0 22 Q 25 18, 50 12 T 75 8 T 100 3 L 100 25 L 0 25 Z" fill="url(#sparkBlueStd)" />
-                <defs>
-                    <linearGradient id="sparkBlueStd" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#3B82F6" />
-                        <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+                <defs><linearGradient id="sparkBlueStd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3B82F6" /><stop offset="100%" stop-color="#3B82F6" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
 
-        <!-- Card 2: Attendance -->
-        <div class="stat-card-glass {% if current_user.attendance_percentage < 75 %}stat-glow-rose bg-rose-50/30 border-rose-200/80{% else %}stat-glow-emerald bg-emerald-50/20 border-emerald-200/60{% endif %} p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <!-- Ambient Glowing Orb -->
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full {% if current_user.attendance_percentage < 75 %}bg-rose-500/15{% else %}bg-emerald-500/15{% endif %} blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-
+        <!-- Attendance -->
+        <div class="stat-card-glass {% if current_user.attendance_percentage < 75 %}stat-glow-rose{% else %}stat-glow-blue{% endif %} p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full {% if current_user.attendance_percentage < 75 %}bg-rose-500/10{% else %}bg-slate-500/08{% endif %} blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
             <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-extrabold uppercase tracking-wider {% if current_user.attendance_percentage < 75 %}text-rose-500{% else %}text-slate-400{% endif %} flex items-center gap-1">
+                <div class="text-[10px] font-bold uppercase tracking-widest {% if current_user.attendance_percentage < 75 %}text-rose-500{% else %}text-slate-400{% endif %} flex items-center gap-1">
                     {% if current_user.attendance_percentage < 75 %}
                     <span class="relative flex h-1.5 w-1.5">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
                         <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
                     </span>
                     {% endif %}
-                    Attendance %
+                    Attendance
                 </div>
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black {% if current_user.attendance_percentage < 75 %}text-rose-600{% else %}text-emerald-600{% endif %} tracking-tight group-hover:scale-105 transition-transform origin-left">
+                    <span class="text-2xl font-black {% if current_user.attendance_percentage < 75 %}text-rose-600{% else %}text-slate-900{% endif %} tracking-tight group-hover:scale-105 transition-transform origin-left">
                         {{ current_user.attendance_percentage }}%
                     </span>
-                    <span class="text-[10px] font-bold {% if current_user.attendance_percentage < 75 %}text-rose-600{% else %}text-emerald-600{% endif %}">
-                        &ge;75% Target
-                    </span>
+                    <span class="text-[10px] font-semibold text-slate-400">&ge;75% req.</span>
                 </div>
-                <div class="text-[10px] font-bold {% if current_user.attendance_percentage < 75 %}text-rose-700{% else %}text-emerald-700{% endif %}">
-                    {% if current_user.attendance_percentage < 75 %}Critical Debarment Risk{% else %}Compliant &amp; Safe{% endif %}
+                <div class="text-[10px] font-medium {% if current_user.attendance_percentage < 75 %}text-rose-500{% else %}text-slate-400{% endif %}">
+                    {% if current_user.attendance_percentage < 75 %}Debarment Risk{% else %}Compliant{% endif %}
                 </div>
             </div>
-
-            <div class="w-9 h-9 rounded-xl {% if current_user.attendance_percentage < 75 %}bg-rose-500/15 border border-rose-300/50 text-rose-600 animate-pulse group-hover:bg-rose-600 group-hover:text-white{% else %}bg-emerald-500/10 border border-emerald-300/40 text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white{% endif %} flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-115 group-hover:-rotate-6 transition-all duration-300 relative z-10">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 {% if current_user.attendance_percentage < 75 %}animate-pulse group-hover:bg-rose-600 group-hover:text-white group-hover:border-rose-600{% else %}group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900{% endif %} transition-all duration-300 relative z-10">
                 <i class="fa-solid fa-calendar-check text-xs"></i>
             </div>
-
-            <!-- Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-20 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
                 <path d="M0 20 Q 25 15, 50 10 T 75 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkAttStd)" />
-                <defs>
-                    <linearGradient id="sparkAttStd" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="{% if current_user.attendance_percentage < 75 %}#F43F5E{% else %}#10B981{% endif %}" />
-                        <stop offset="100%" stop-color="{% if current_user.attendance_percentage < 75 %}#F43F5E{% else %}#10B981{% endif %}" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+                <defs><linearGradient id="sparkAttStd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="{% if current_user.attendance_percentage < 75 %}#F43F5E{% else %}#64748B{% endif %}" /><stop offset="100%" stop-color="{% if current_user.attendance_percentage < 75 %}#F43F5E{% else %}#64748B{% endif %}" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
 
-        <!-- Card 3: Classes Needed -->
-        <div class="stat-card-glass stat-glow-amber p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <!-- Ambient Glowing Orb -->
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-amber-500/15 blur-xl pointer-events-none group-hover:scale-150 group-hover:bg-amber-500/25 transition-all duration-500"></div>
-
+        <!-- Classes Needed -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
             <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 group-hover:text-amber-700 transition-colors">
-                    Classes Needed
-                </div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Classes Needed</div>
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-amber-600 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ classes_needed }}</span>
-                    <span class="text-[10px] font-bold text-amber-700">
-                        To Reach 75%
-                    </span>
+                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ classes_needed }}</span>
+                    <span class="text-[10px] font-semibold text-slate-400">to reach 75%</span>
                 </div>
-                <div class="text-[10px] text-slate-500 font-semibold">
-                    Predictive AI Formula
-                </div>
+                <div class="text-[10px] text-slate-400 font-medium">Predictive formula</div>
             </div>
-
-            <div class="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-300/40 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-115 group-hover:rotate-6 group-hover:bg-amber-500 group-hover:text-white transition-all duration-300 relative z-10">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
                 <i class="fa-solid fa-shield-halved text-xs"></i>
             </div>
-
-            <!-- Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-20 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
                 <path d="M0 16 L 25 16 L 35 6 L 45 22 L 55 12 L 65 16 L 100 16 L 100 25 L 0 25 Z" fill="url(#sparkAmberStd)" />
-                <defs>
-                    <linearGradient id="sparkAmberStd" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#F59E0B" />
-                        <stop offset="100%" stop-color="#F59E0B" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+                <defs><linearGradient id="sparkAmberStd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
 
-        <!-- Card 4: Placement Status -->
-        <div class="stat-card-glass stat-glow-purple p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <!-- Ambient Glowing Orb -->
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-purple-500/15 blur-xl pointer-events-none group-hover:scale-150 group-hover:bg-purple-500/25 transition-all duration-500"></div>
-
+        <!-- Placement -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
             <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 group-hover:text-purple-700 transition-colors">
-                    Placement Status
-                </div>
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Placement Status</div>
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-xl sm:text-2xl font-black text-purple-600 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ current_user.placement_status }}</span>
-                    <span class="text-[10px] font-bold text-purple-700">
-                        ATS 85%
-                    </span>
+                    <span class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ current_user.placement_status }}</span>
                 </div>
-                <div class="text-[10px] text-slate-500 font-semibold">
-                    Drives &amp; Internships Ready
-                </div>
+                <div class="text-[10px] text-slate-400 font-medium">Drives &amp; Internships</div>
             </div>
-
-            <div class="w-9 h-9 rounded-xl bg-purple-500/10 border border-purple-300/40 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:scale-115 group-hover:-rotate-12 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300 relative z-10">
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all duration-300 relative z-10">
                 <i class="fa-solid fa-rocket text-xs"></i>
             </div>
-
-            <!-- Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-20 group-hover:opacity-45 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
                 <path d="M0 24 Q 25 20, 50 14 T 75 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkPurpleStd)" />
-                <defs>
-                    <linearGradient id="sparkPurpleStd" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#A855F7" />
-                        <stop offset="100%" stop-color="#A855F7" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+                <defs><linearGradient id="sparkPurpleStd" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
     </div>
 
-    <!-- Main Workspace: Split Screen Cockpit (Left: Deadlines Hub | Right: Today's Schedule & AI Mentor) -->
+    <!-- Main Workspace -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
-        
-        <!-- Left Column (Span 7): Upcoming Deadlines & Examination Milestones -->
-        <div class="lg:col-span-7 flex flex-col h-full bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 min-h-0">
-            <!-- Deadlines Header -->
+
+        <!-- Left: Deadlines Hub -->
+        <div class="lg:col-span-7 flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
             <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 flex-shrink-0">
                 <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs shadow-2xs">
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
                         <i class="fa-solid fa-hourglass-half"></i>
                     </span>
-                    <div>
-                        <h3 class="text-sm font-black text-slate-900 tracking-tight">
-                            Upcoming Deadlines &amp; Academic Tasks
-                        </h3>
-                    </div>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-tight">Upcoming Deadlines &amp; Academic Tasks</h3>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
-                        {{ deadlines|length }} Items
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold border border-slate-200">
+                        {{ deadlines|length }} items
                     </span>
-                    <a href="{{ url_for('student.calendar') }}" class="text-[11px] font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                    <a href="{{ url_for('student.calendar') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
                         Calendar <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
             </div>
 
-            <!-- Scrollable Deadlines List (Internal sleek scroll so outer page never scrolls) -->
-            <div class="flex-1 overflow-y-auto custom-scroll space-y-2 pr-1.5 pt-2.5 min-h-0">
+            <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1.5 pt-2.5 min-h-0">
                 {% for item in deadlines %}
                 <div class="p-3 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 group
-                    {% if item.status == 'Urgent' %} bg-gradient-to-r from-rose-50/50 to-white border-rose-200 hover:border-rose-300
-                    {% elif item.status == 'Submitted' or item.status == 'Graded' %} bg-gradient-to-r from-emerald-50/40 to-white border-emerald-200 hover:border-emerald-300
-                    {% elif item.status == 'Overdue' %} bg-rose-50/70 border-rose-300
-                    {% else %} bg-slate-50/70 hover:bg-white border-slate-200 hover:border-blue-300 hover:shadow-2xs {% endif %}">
-                    
+                    {% if item.status == 'Urgent' or item.days_left is defined and item.days_left <= 1 %} border-l-2 border-l-rose-400 border-slate-200 bg-slate-50/80 hover:bg-white
+                    {% elif item.status == 'Submitted' or item.status == 'Graded' %} border-l-2 border-l-emerald-400 border-slate-200 bg-slate-50/80 hover:bg-white
+                    {% elif item.status == 'Overdue' %} border-l-2 border-l-rose-600 border-slate-200 bg-slate-50/80
+                    {% else %} border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 {% endif %}">
+
                     <div class="space-y-1 flex-1 min-w-0">
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <span class="px-2 py-0.5 rounded-md text-[9px] font-black font-mono uppercase tracking-wider
-                                {% if item.type == 'Exam' %} bg-purple-100 text-purple-800 border border-purple-200
-                                {% else %} bg-blue-100 text-blue-800 border border-blue-200 {% endif %}">
+                        <div class="flex items-center gap-1.5 flex-wrap">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold font-mono uppercase tracking-wider bg-slate-200 text-slate-700">
                                 {{ item.subject_code }} &bull; {{ item.type }}
                             </span>
 
-                            <!-- Urgency Countdown Badge -->
                             {% if item.status == 'Submitted' or item.status == 'Graded' %}
-                            <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[9px] font-bold flex items-center gap-1">
-                                <i class="fa-solid fa-check text-[8px]"></i> {{ item.status }}
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 text-[9px] font-semibold flex items-center gap-1">
+                                <i class="fa-solid fa-check text-emerald-500 text-[8px]"></i> {{ item.status }}
                             </span>
                             {% elif item.days_left < 0 %}
-                            <span class="px-2 py-0.5 rounded-full bg-rose-600 text-white text-[9px] font-black uppercase tracking-wider animate-pulse">
-                                Overdue
-                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[9px] font-bold uppercase tracking-wider">Overdue</span>
                             {% elif item.days_left == 0 %}
-                            <span class="px-2 py-0.5 rounded-full bg-rose-500 text-white text-[9px] font-black uppercase tracking-wider">
-                                Due Today!
-                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[9px] font-bold">Due Today</span>
                             {% elif item.days_left == 1 %}
-                            <span class="px-2 py-0.5 rounded-full bg-amber-500 text-white text-[9px] font-black uppercase tracking-wider">
-                                Due Tomorrow
-                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[9px] font-bold">Due Tomorrow</span>
                             {% elif item.days_left <= 3 %}
-                            <span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 border border-amber-300 text-[9px] font-bold">
-                                {{ item.days_left }} Days Left
-                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[9px] font-semibold">{{ item.days_left }}d left</span>
                             {% else %}
-                            <span class="px-2 py-0.5 rounded-full bg-slate-200 text-slate-700 text-[9px] font-bold">
-                                Due in {{ item.days_left }}d
-                            </span>
+                            <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-500 text-[9px] font-medium">Due in {{ item.days_left }}d</span>
                             {% endif %}
 
-                            <span class="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                            <span class="text-[10px] text-slate-400 font-medium flex items-center gap-1">
                                 <i class="fa-regular fa-clock text-[9px]"></i>
                                 {{ item.due_date.strftime('%b %d') if item.due_date else 'Scheduled' }}
                             </span>
                         </div>
-
                         <div>
-                            <h4 class="text-xs font-extrabold text-slate-900 leading-snug group-hover:text-blue-600 transition-colors truncate">
-                                {{ item.title }}
-                            </h4>
-                            {% if item.subject_name %}
-                            <p class="text-[10px] font-medium text-slate-500 truncate">{{ item.subject_name }}</p>
-                            {% endif %}
+                            <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-indigo-600 transition-colors truncate">{{ item.title }}</h4>
+                            {% if item.subject_name %}<p class="text-[10px] font-medium text-slate-400 truncate">{{ item.subject_name }}</p>{% endif %}
                         </div>
                     </div>
 
                     <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
                         {% if item.subject_id %}
-                        <a href="{{ url_for('student.course_detail', subject_id=item.subject_id) }}" 
-                           class="px-3 py-1.5 rounded-xl text-[11px] font-bold transition flex items-center gap-1 shadow-2xs whitespace-nowrap
-                            {% if item.status == 'Submitted' or item.status == 'Graded' %}
-                            bg-slate-100 hover:bg-slate-200 text-slate-700
-                            {% elif item.status == 'Urgent' or item.status == 'Overdue' %}
-                            bg-rose-600 hover:bg-rose-700 text-white shadow-rose-200
-                            {% else %}
-                            bg-blue-600 hover:bg-blue-700 text-white shadow-blue-200 {% endif %}">
-                            {% if item.type == 'Exam' %}
-                            View Scope <i class="fa-solid fa-arrow-right text-[9px]"></i>
-                            {% elif item.status == 'Submitted' or item.status == 'Graded' %}
-                            View Work
-                            {% else %}
-                            Turn In <i class="fa-solid fa-arrow-right text-[9px]"></i>
-                            {% endif %}
+                        <a href="{{ url_for('student.course_detail', subject_id=item.subject_id) }}"
+                           class="px-3 py-1.5 rounded-lg text-[11px] font-semibold transition flex items-center gap-1 whitespace-nowrap
+                            {% if item.status == 'Submitted' or item.status == 'Graded' %}bg-slate-100 hover:bg-slate-200 text-slate-600
+                            {% elif item.status == 'Urgent' or item.status == 'Overdue' %}bg-rose-600 hover:bg-rose-700 text-white
+                            {% else %}bg-slate-900 hover:bg-slate-700 text-white{% endif %}">
+                            {% if item.type == 'Exam' %}View Scope{% elif item.status == 'Submitted' or item.status == 'Graded' %}View Work{% else %}Turn In <i class="fa-solid fa-arrow-right text-[9px]"></i>{% endif %}
                         </a>
                         {% endif %}
                     </div>
                 </div>
                 {% else %}
                 <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1.5 my-auto">
-                    <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-sm font-bold">
-                        <i class="fa-solid fa-circle-check"></i>
+                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
+                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
                     </div>
-                    <h4 class="font-extrabold text-slate-800 text-xs">No Pending Deadlines</h4>
-                    <p class="text-[11px] text-slate-500">You're caught up with all assignments, submissions, and tests!</p>
+                    <h4 class="font-bold text-slate-700 text-xs">No Pending Deadlines</h4>
+                    <p class="text-[11px] text-slate-400">All caught up!</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Right Column (Span 5): Split into Today's Timetable + AI Personal Mentor -->
+        <!-- Right Column -->
         <div class="lg:col-span-5 flex flex-col h-full gap-3 min-h-0">
-            
-            <!-- Today's Schedule Card (Fills top portion of right column) -->
-            <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-3.5 min-h-0">
+
+            <!-- Today's Schedule -->
+            <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
                 <div class="flex items-center justify-between pb-2 border-b border-slate-100 flex-shrink-0">
                     <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs shadow-2xs">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
                             <i class="fa-solid fa-calendar-day"></i>
                         </span>
                         <div>
-                            <h3 class="text-sm font-black text-slate-900 tracking-tight">
-                                Today's Schedule &bull; {{ day_name }}
-                            </h3>
+                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Today &bull; {{ day_name }}</h3>
                             <p class="text-[10px] text-slate-400 font-medium">{{ today_date.strftime('%B %d, %Y') if today_date else '' }}</p>
                         </div>
                     </div>
-                    <a href="{{ url_for('student.schedule') }}" class="text-[11px] font-bold text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                        Timetable <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    <a href="{{ url_for('student.schedule') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        Full Timetable <i class="fa-solid fa-arrow-right text-[9px]"></i>
                     </a>
                 </div>
 
-                <!-- Internal scrollable slots list -->
-                <div class="flex-1 overflow-y-auto custom-scroll space-y-2 pr-1 pt-2 min-h-0">
+                <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1 pt-2 min-h-0">
                     {% for slot in today_slots %}
-                    <div class="p-2.5 rounded-xl bg-slate-50/90 border border-slate-200/90 hover:border-indigo-300 hover:bg-white transition-all space-y-1.5 group shadow-2xs">
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white hover:border-slate-300 transition-all space-y-1.5 group">
                         <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-900 font-mono text-[10px] font-black flex items-center gap-1">
-                                <i class="fa-regular fa-clock text-[9px]"></i> {{ slot.start_time }} - {{ slot.end_time }}
+                            <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-mono text-[10px] font-bold flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-[9px]"></i> {{ slot.start_time }} – {{ slot.end_time }}
                             </span>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-bold {% if slot.is_lab %}bg-purple-100 text-purple-700{% else %}bg-slate-200 text-slate-700{% endif %}">
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold {% if slot.is_lab %}bg-slate-200 text-slate-600{% else %}bg-slate-100 text-slate-500{% endif %}">
                                 {{ 'Lab' if slot.is_lab else 'Lecture' }}
                             </span>
                         </div>
-
                         <div class="flex items-start justify-between gap-2">
                             <div class="min-w-0">
-                                <h5 class="text-xs font-black text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                                <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">
                                     {{ slot.subject.name if slot.subject else 'Class Session' }}
                                 </h5>
-                                <p class="text-[10px] text-slate-500 font-medium truncate flex items-center gap-1">
-                                    <i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i>
-                                    {{ slot.faculty.name if slot.faculty else 'Faculty' }} &bull; {{ slot.room or 'Room 101' }}
+                                <p class="text-[10px] text-slate-400 font-medium truncate flex items-center gap-1">
+                                    <i class="fa-solid fa-user-tie text-[9px]"></i>
+                                    {{ slot.faculty.name if slot.faculty else 'Faculty' }} &bull; {{ slot.room or 'Room TBD' }}
                                 </p>
                             </div>
                             {% if slot.subject_id %}
-                            <a href="{{ url_for('student.course_detail', subject_id=slot.subject_id) }}" class="text-[10px] font-bold text-indigo-600 hover:underline flex-shrink-0 self-center">
+                            <a href="{{ url_for('student.course_detail', subject_id=slot.subject_id) }}" class="text-[10px] font-semibold text-indigo-600 hover:underline flex-shrink-0 self-center">
                                 Notes &rarr;
                             </a>
                             {% endif %}
@@ -405,38 +308,36 @@
                 </div>
             </div>
 
-            <!-- AI Academic Mentor Box (Bottom of right column) -->
-            <div class="bg-gradient-to-r from-blue-500/10 via-indigo-50/70 to-blue-50/40 rounded-2xl border border-blue-200/80 p-3 shadow-2xs flex-shrink-0 space-y-2">
+            <!-- AI Mentor -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-3 flex-shrink-0 space-y-2">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-lg bg-blue-600 text-white flex items-center justify-center text-xs shadow-xs">
+                        <div class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">
                             <i class="fa-solid fa-sparkles"></i>
                         </div>
                         <div>
-                            <span class="text-xs font-extrabold text-blue-950">AI Academic Mentor</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block ml-1"></span>
+                            <span class="text-xs font-bold text-white">AI Academic Mentor</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1.5 animate-pulse"></span>
                         </div>
                     </div>
-                    <a href="{{ url_for('student.ai_tutor') }}" class="px-2.5 py-1 rounded-lg bg-blue-600 hover:bg-blue-700 text-white text-[10px] font-bold shadow-xs transition flex items-center gap-1">
-                        Chat AI <i class="fa-solid fa-arrow-right text-[8px]"></i>
+                    <a href="{{ url_for('student.ai_tutor') }}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold transition flex items-center gap-1">
+                        Ask AI <i class="fa-solid fa-arrow-right text-[8px]"></i>
                     </a>
                 </div>
-
                 <div class="flex items-center gap-1.5 flex-wrap">
-                    <a href="{{ url_for('student.ai_tutor') }}?q=How+to+reach+75%+attendance+fast" class="px-2 py-1 rounded-lg bg-white/90 hover:bg-white border border-blue-200/70 text-[10px] font-bold text-blue-800 transition shadow-2xs">
+                    <a href="{{ url_for('student.ai_tutor') }}?q=How+to+reach+75%25+attendance+fast" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
                         ⚡ Fix Attendance
                     </a>
-                    <a href="{{ url_for('student.ai_tutor') }}?q=Create+a+study+schedule+for+next+exams" class="px-2 py-1 rounded-lg bg-white/90 hover:bg-white border border-blue-200/70 text-[10px] font-bold text-blue-800 transition shadow-2xs">
+                    <a href="{{ url_for('student.ai_tutor') }}?q=Create+a+study+schedule+for+next+exams" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
                         📅 7-Day Plan
                     </a>
-                    <a href="{{ url_for('student.ai_tutor') }}?q=What+skills+do+I+need+for+placement" class="px-2 py-1 rounded-lg bg-white/90 hover:bg-white border border-blue-200/70 text-[10px] font-bold text-blue-800 transition shadow-2xs">
+                    <a href="{{ url_for('student.ai_tutor') }}?q=What+skills+do+I+need+for+placement" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
                         🚀 Placement Tips
                     </a>
                 </div>
             </div>
 
         </div>
-
     </div>
 </div>
 {% endblock %}

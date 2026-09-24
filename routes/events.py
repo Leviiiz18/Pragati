@@ -63,28 +63,31 @@ def get_events():
         creator_role = ev.creator.role if ev.creator else 'unknown'
         creator_name = ev.creator.name if ev.creator else 'System'
         
-        # Sleek modern pastel color coding & dot tagging
+        # Distinct pastel color coding & category tagging
         if ev.target_role == 'personal':
-            bg_color = '#ecfdf5' # Emerald Tint
-            border_color = '#a7f3d0'
-            text_color = '#065f46'
-            dot_color = '#10b981'
+            bg_color = '#eef2ff' # Indigo Tint
+            border_color = '#c7d2fe'
+            text_color = '#3730a3'
+            dot_color = '#4f46e5'
             ev_type = 'Personal Reminder'
             prefix = '📌 '
+            category = 'reminder'
         elif creator_role in ['hod', 'super_admin']:
             bg_color = '#fff1f2' # Rose Tint
             border_color = '#fecdd3'
             text_color = '#9f1239'
             dot_color = '#e11d48'
             ev_type = 'HOD / Department Broadcast'
-            prefix = '🏛️ '
+            prefix = '📢 '
+            category = 'notice'
         else:
-            bg_color = '#eff6ff' # Blue Tint
+            bg_color = '#eff6ff' # Sky Blue Tint
             border_color = '#bfdbfe'
             text_color = '#1e40af'
             dot_color = '#2563eb'
             ev_type = 'Faculty Course Notice'
             prefix = '👨‍🏫 '
+            category = 'notice'
 
         results.append({
             'id': f"event_{ev.id}",
@@ -98,6 +101,7 @@ def get_events():
             'allDay': True,
             'extendedProps': {
                 'source': 'event',
+                'category': category,
                 'type': ev_type,
                 'creator': creator_name,
                 'creator_role': creator_role,
@@ -131,14 +135,16 @@ def get_events():
             'title': f"⏳ Due: {a.title} ({code})",
             'start': a.due_date.isoformat(),
             'description': f"Assignment Due Date\nInstructions: {a.instructions or 'None'}\nMax Points: {int(a.max_points)}",
-            'backgroundColor': '#fffbeb', # Amber Tint
-            'borderColor': '#fde68a',
-            'textColor': '#92400e',
+            'backgroundColor': '#fffbeb', # Warm Amber Tint
+            'borderColor': '#fcd34d',
+            'textColor': '#78350f',
             'allDay': True,
             'extendedProps': {
                 'source': 'assignment',
+                'category': 'deadline',
                 'type': 'Assignment Deadline',
                 'subject': subj.name if subj else code,
+                'sub_code': code,
                 'dot_color': '#d97706',
                 'can_delete': False
             }
@@ -163,18 +169,20 @@ def get_events():
         code = ex.subject.code if ex.subject else 'COURSE'
         results.append({
             'id': f"exam_{ex.id}",
-            'title': f"📝 Exam: {ex.title} ({code})",
+            'title': f"🎓 Exam: {ex.title} ({code})",
             'start': ex.date.isoformat(),
             'description': f"{ex.type} Examination | Max Marks: {int(ex.max_marks)} | Bloom: {ex.bloom_level} | Status: {ex.status}",
-            'backgroundColor': '#f5f3ff', # Purple Tint
-            'borderColor': '#ddd6fe',
-            'textColor': '#5b21b6',
+            'backgroundColor': '#faf5ff', # Royal Purple Tint
+            'borderColor': '#e9d5ff',
+            'textColor': '#6b21a8',
             'allDay': True,
             'extendedProps': {
                 'source': 'exam',
+                'category': 'exam',
                 'type': 'Academic Examination',
                 'subject': ex.subject.name if ex.subject else code,
-                'dot_color': '#7c3aed',
+                'sub_code': code,
+                'dot_color': '#9333ea',
                 'can_delete': False
             }
         })
@@ -186,40 +194,48 @@ def get_events():
         # Show Student's attendance records by date
         att_records = AttendanceRecord.query.filter_by(student_id=current_user.id).order_by(AttendanceRecord.date.desc()).all()
         for att in att_records:
-            sub_code = att.subject.code if hasattr(att, 'subject') and att.subject else f"SUB{att.subject_id}"
+            sub = Subject.query.get(att.subject_id)
+            sub_code = sub.code if sub else f"SUB{att.subject_id}"
+            sub_name = sub.name if sub else sub_code
             
             if att.status.lower() == 'present':
                 att_bg = '#f0fdf4' # Soft Mint Green
-                att_border = '#bbf7d0'
-                att_text = '#166534'
-                att_dot = '#10b981'
-                att_title = f"✅ Present: {sub_code}"
+                att_border = '#86efac'
+                att_text = '#14532d'
+                att_dot = '#16a34a'
+                att_title = f"✓ Present: {sub_code}"
+                category = 'attendance-present'
             elif att.status.lower() == 'absent':
                 att_bg = '#fef2f2' # Soft Rose
-                att_border = '#fecaca'
+                att_border = '#fca5a5'
                 att_text = '#991b1b'
-                att_dot = '#f43f5e'
-                att_title = f"❌ Absent: {sub_code}"
+                att_dot = '#dc2626'
+                att_title = f"✕ Absent: {sub_code}"
+                category = 'attendance-absent'
             else:
                 att_bg = '#fffbeb' # Soft Amber Late
                 att_border = '#fde68a'
                 att_text = '#92400e'
                 att_dot = '#f59e0b'
-                att_title = f"⚠️ Late: {sub_code}"
+                att_title = f"⚠ Late: {sub_code}"
+                category = 'attendance-late'
 
             results.append({
                 'id': f"att_{att.id}",
                 'title': att_title,
                 'start': att.date.isoformat(),
-                'description': f"Subject: {att.subject.name if hasattr(att, 'subject') and att.subject else sub_code}\nStatus: {att.status.capitalize()}{' (Proxy Suspect)' if att.is_proxy_suspect else ''}",
+                'description': f"Subject: {sub_name} ({sub_code})\nStatus: {att.status.capitalize()}{' (Proxy Suspect)' if att.is_proxy_suspect else ''}",
                 'backgroundColor': att_bg,
                 'borderColor': att_border,
                 'textColor': att_text,
                 'allDay': True,
                 'extendedProps': {
                     'source': 'attendance',
-                    'type': 'Attendance Record',
-                    'status': att.status,
+                    'category': category,
+                    'type': f'Attendance: {att.status.capitalize()}',
+                    'status': att.status.lower(),
+                    'sub_code': sub_code,
+                    'sub_name': sub_name,
                     'dot_color': att_dot,
                     'can_delete': False
                 }

@@ -5,10 +5,73 @@
 :root {
   --sidebar-expanded-width: 16.5rem; /* 264px */
   --sidebar-collapsed-width: 4.75rem; /* 76px */
-  --primary-glow: rgba(59, 130, 246, 0.15);
-  --accent-glow: rgba(147, 51, 234, 0.15);
+  --primary-glow: rgba(99, 102, 241, 0.12);
+  --accent-glow: rgba(99, 102, 241, 0.08);
   --card-transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* =========================================================
+   Global Color Harmonization — Pragati Design System
+   Desaturates loud pastel backgrounds to crisp neutral tones.
+   Text colors are preserved for semantic meaning (danger/success).
+   ========================================================= */
+
+/* Pastel background overrides → near-white neutrals */
+.bg-purple-50  { background-color: #f8f8fc !important; }
+.bg-purple-100 { background-color: #f1f1f8 !important; }
+.bg-purple-200 { background-color: #e4e4f0 !important; }
+.bg-emerald-50  { background-color: #f6faf8 !important; }
+.bg-emerald-100 { background-color: #edf5f1 !important; }
+.bg-amber-50  { background-color: #faf9f5 !important; }
+.bg-amber-100 { background-color: #f4f2e8 !important; }
+.bg-teal-50  { background-color: #f5fafa !important; }
+.bg-teal-100 { background-color: #eaf4f4 !important; }
+.bg-cyan-50  { background-color: #f4f9fa !important; }
+.bg-cyan-100 { background-color: #e8f3f5 !important; }
+/* Keep blue-50 since it's used for active/today states */
+/* Keep rose-50 since it's used for danger/critical states */
+
+/* Icon color overrides → all non-indigo/non-rose icons become slate */
+/* (only applies to standalone icon uses, not to interactive states) */
+nav a i.text-purple-600,
+nav a i.text-emerald-600,
+nav a i.text-amber-600,
+nav a i.text-teal-600,
+nav a i.text-cyan-600 {
+  color: #94a3b8 !important; /* slate-400 */
+}
+
+/* Badge/pill text color overrides — desaturate non-semantic colorful pills */
+.bg-purple-100.text-purple-800,
+.bg-purple-100.text-purple-700 {
+  background-color: #f1f1f8 !important;
+  color: #374151 !important;
+}
+.bg-amber-100.text-amber-800,
+.bg-amber-100.text-amber-700 {
+  background-color: #f4f2e8 !important;
+  color: #374151 !important;
+}
+.bg-teal-100.text-teal-800,
+.bg-teal-100.text-teal-700 {
+  background-color: #eaf4f4 !important;
+  color: #374151 !important;
+}
+.bg-emerald-100.text-emerald-800,
+.bg-emerald-100.text-emerald-700 {
+  background-color: #edf5f1 !important;
+  color: #374151 !important;
+}
+.bg-cyan-100.text-cyan-800,
+.bg-cyan-100.text-cyan-700 {
+  background-color: #e8f3f5 !important;
+  color: #374151 !important;
+}
+
+/* Unify all colored nav icon hover accents to indigo */
+.top-nav-link:hover i { color: #6366f1 !important; }
+.top-nav-link.is-active i { color: #4757F0 !important; }
+
 
 /* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {

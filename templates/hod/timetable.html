@@ -1,419 +1,618 @@
 {% extends "base.html" %}
-{% block title %}Department Master Timetable & AI Optimizer - Pragati by Kalpkrats{% endblock %}
+{% block title %}Interactive Department Timetable - Pragati by Kalpkrats{% endblock %}
 
 {% block content %}
-<div class="space-y-6 pb-12">
-    <!-- Header Controls -->
+<div class="space-y-5 pb-10">
+
+    <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
             <div class="flex items-center gap-2">
-                <span class="px-2.5 py-0.5 rounded-full bg-purple-100 text-purple-800 text-[10px] font-black uppercase tracking-wider">Department Matrix</span>
-                <span class="text-xs font-semibold text-slate-500">AY 2026-27 &bull; Zero Room Conflicts</span>
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[10px] font-bold uppercase tracking-wider border border-slate-200">Department Matrix</span>
+                <span id="conflictBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-[10px] font-bold border border-emerald-200 hidden">
+                    <i class="fa-solid fa-circle-check text-[9px]"></i> 0 Conflicts
+                </span>
+                <span id="conflictWarn" class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 text-[10px] font-bold border border-rose-200 hidden">
+                    <i class="fa-solid fa-triangle-exclamation text-[9px]"></i> <span id="conflictCount">0</span> Conflict(s)
+                </span>
             </div>
-            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">Master Timetable & AI Optimizer</h1>
-            <p class="text-xs sm:text-sm font-medium text-slate-600">Standard institutional matrix schedule with period distributions, 2-period lab allocations, and faculty workload balance.</p>
+            <h1 class="text-2xl font-black text-slate-900 tracking-tight mt-1">Interactive Timetable Editor</h1>
+            <p class="text-xs font-medium text-slate-400 mt-0.5">Drag &amp; drop slots to reschedule. Click any cell to edit. Changes save instantly.</p>
         </div>
         <div class="flex items-center gap-2 flex-wrap">
-            <button onclick="window.print()" class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-sm transition active:scale-95">
-                <i class="fa-solid fa-print"></i>
-                <span>Print Official Timetable</span>
+            <button onclick="window.print()" class="px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-2 transition hover:bg-slate-50">
+                <i class="fa-solid fa-print"></i> Print
+            </button>
+            <button onclick="openAddSlotModal()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-2 transition">
+                <i class="fa-solid fa-plus"></i> Add Slot
             </button>
             <form action="{{ url_for('hod.timetable') }}" method="POST" class="inline-block">
                 <input type="hidden" name="action" value="auto_generate">
-                <button type="submit" class="px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 flex items-center gap-2 transition active:scale-95">
-                    <i class="fa-solid fa-rotate"></i> Re-Optimize AI Schedule
+                <button type="submit" class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-2 transition">
+                    <i class="fa-solid fa-rotate"></i> AI Re-Generate
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- Optimization KPI Overview Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 print:hidden">
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Total Weekly Periods</div>
-            <div class="text-2xl font-black text-slate-900">{{ slots|length }} Slots</div>
-            <div class="text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
-                <i class="fa-solid fa-circle-check text-[9px]"></i> 100% Curriculum Covered
-            </div>
+    <!-- KPI Strip -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 print:hidden">
+        <div class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-0.5">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Slots</div>
+            <div class="text-2xl font-black text-slate-900" id="kpiTotal">{{ slots|length }}</div>
+            <div class="text-[10px] text-slate-400">Weekly periods</div>
         </div>
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Lab Practicals</div>
-            <div class="text-2xl font-black text-amber-600">3 Sessions</div>
-            <div class="text-[11px] font-semibold text-slate-500">2-Hour Continuous Blocks</div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-0.5">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Lab Practicals</div>
+            <div class="text-2xl font-black text-slate-900">{{ slots | selectattr('is_lab') | list | length }}</div>
+            <div class="text-[10px] text-slate-400">2-hour blocks</div>
         </div>
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Room Conflicts</div>
-            <div class="text-2xl font-black text-emerald-600">0 Conflicts</div>
-            <div class="text-[11px] font-semibold text-emerald-600">AI Collision Verification Passed</div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-0.5">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Faculty Load</div>
+            <div class="text-2xl font-black text-slate-900">{{ faculties|length }}</div>
+            <div class="text-[10px] text-slate-400">Active faculty</div>
         </div>
-        <div class="p-4 rounded-2xl bg-white border border-slate-200 shadow-2xs space-y-1">
-            <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Faculty Workload</div>
-            <div class="text-2xl font-black text-purple-700">Balanced</div>
-            <div class="text-[11px] font-semibold text-slate-500">Avg 16-18 hrs / week</div>
+        <div class="bg-white border border-slate-200 rounded-2xl p-3.5 space-y-0.5">
+            <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Room Conflicts</div>
+            <div class="text-2xl font-black text-slate-900 text-emerald-600" id="kpiConflicts">0</div>
+            <div class="text-[10px] text-slate-400">Verified clear</div>
         </div>
     </div>
 
-    <!-- Master Timetable Document Container -->
-    <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm p-5 sm:p-7 space-y-6 print:border-none print:shadow-none print:p-0">
-        
-        <!-- Institutional Header Block -->
-        <div class="border-b border-slate-200 pb-5 text-center sm:text-left flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="space-y-1">
-                <div class="text-[10px] font-black tracking-widest text-blue-700 uppercase">Department of Computer Science & Engineering</div>
-                <h2 class="text-xl font-black text-slate-900 tracking-tight">Institutional Master Class Timetable (AY 2026-27)</h2>
-                <div class="text-xs font-semibold text-slate-600">
-                    B.Tech Computer Science &bull; <strong class="text-slate-800">Semester IV (Section A)</strong>
-                </div>
+    <!-- Timetable Matrix -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+        <!-- Matrix Header -->
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-2 text-xs font-bold text-slate-700">
+                <i class="fa-solid fa-table-cells text-slate-400"></i> Department Master Grid
+                <span class="text-[10px] font-medium text-slate-400">(Drag slots to rearrange)</span>
             </div>
-            <div class="flex sm:flex-col sm:items-end justify-between sm:justify-center text-xs font-semibold text-slate-600 gap-1 bg-slate-50 sm:bg-transparent p-3 sm:p-0 rounded-2xl border sm:border-0 border-slate-200">
-                <div><span class="text-slate-400">Classroom:</span> <strong class="text-slate-800">LH-101 / Comp Lab A</strong></div>
-                <div><span class="text-slate-400">Effective From:</span> <strong class="text-blue-700">01-Aug-2026</strong></div>
-                <div><span class="text-slate-400">Working Schedule:</span> <strong class="text-slate-800">6 Days (Mon - Sat)</strong></div>
+            <div class="flex items-center gap-3 text-[10px] font-semibold text-slate-500">
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-100 border border-slate-300 inline-block"></span>Theory</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-50 border border-amber-300 inline-block"></span>Lab</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-indigo-50 border border-indigo-300 inline-block"></span>Today</span>
+                <span class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-rose-50 border border-rose-300 inline-block"></span>Conflict</span>
             </div>
         </div>
 
-        <!-- Timetable Matrix Grid (Indian University AICTE/UGC Format) -->
-        <div class="space-y-2">
-            <div class="flex items-center justify-between">
-                <div class="text-xs font-extrabold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-table-cells text-blue-600"></i> Active Department Timetable Matrix
-                </div>
-                <div class="text-[11px] font-semibold text-slate-500 hidden sm:flex items-center gap-3">
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-blue-50 border border-blue-200 inline-block"></span> Theory Lecture</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-amber-100 border border-amber-300 inline-block"></span> 2-Slot Lab / Practical</span>
-                    <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded bg-emerald-50 border border-emerald-300 inline-block"></span> Today</span>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto rounded-2xl border border-slate-300 shadow-2xs custom-scroll">
-                <table class="w-full text-center border-collapse text-xs min-w-[880px]">
-                    <thead>
-                        <tr class="bg-slate-100/90 text-slate-700 font-extrabold border-b-2 border-slate-300">
-                            <!-- Day Column Header -->
-                            <th class="p-3 w-28 border-r-2 border-slate-300 bg-slate-200/80 text-left pl-4 text-[11px] uppercase tracking-wider text-slate-800">
-                                Day / Time
-                            </th>
-                            <!-- Period 1 -->
-                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 1</div>
-                                <div class="font-black text-slate-900 text-xs">09:30 - 10:20</div>
-                            </th>
-                            <!-- Period 2 -->
-                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 2</div>
-                                <div class="font-black text-slate-900 text-xs">10:20 - 11:10</div>
-                            </th>
-                            <!-- Tea Break Header (Period Separator) -->
-                            <th class="p-1.5 w-7 bg-amber-100/80 border-r-2 border-slate-300 text-amber-900 font-black text-[9px] uppercase tracking-wider">
-                                <i class="fa-solid fa-mug-hot"></i>
-                            </th>
-                            <!-- Period 3 -->
-                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 3</div>
-                                <div class="font-black text-slate-900 text-xs">11:20 - 12:10</div>
-                            </th>
-                            <!-- Period 4 -->
-                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 4</div>
-                                <div class="font-black text-slate-900 text-xs">12:10 - 01:00</div>
-                            </th>
-                            <!-- Lunch Break Header (Period Separator) -->
-                            <th class="p-1.5 w-8 bg-rose-100/80 border-r-2 border-slate-300 text-rose-900 font-black text-[9px] uppercase tracking-wider">
-                                <i class="fa-solid fa-utensils"></i>
-                            </th>
-                            <!-- Period 5 -->
-                            <th class="p-2.5 border-r border-slate-300 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 5</div>
-                                <div class="font-black text-slate-900 text-xs">01:50 - 02:40</div>
-                            </th>
-                            <!-- Period 6 -->
-                            <th class="p-2.5 w-[14%]">
-                                <div class="text-[10px] text-slate-500 font-bold uppercase">Period 6</div>
-                                <div class="font-black text-slate-900 text-xs">02:40 - 03:30</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-300 font-medium">
-                        {% for day, row in matrix.items() %}
-                        {% set is_today = (day == today_name) %}
-                        <tr class="{% if is_today %}bg-blue-50/40{% else %}hover:bg-slate-50/60{% endif %} transition-colors">
-                            
-                            <!-- Day Row Header -->
-                            <td class="p-3 border-r-2 border-slate-300 text-left pl-4 font-bold text-slate-900 {% if is_today %}bg-blue-100/60 text-blue-900 border-l-4 border-l-blue-600{% else %}bg-slate-100/50{% endif %}">
-                                <div class="flex items-center justify-between">
-                                    <span>{{ day }}</span>
-                                    {% if is_today %}
-                                    <span class="px-1.5 py-0.5 rounded text-[8px] font-black uppercase bg-blue-600 text-white tracking-wider">Today</span>
-                                    {% endif %}
-                                </div>
-                            </td>
-
-                            <!-- Session 1: Periods 1 & 2 -->
-                            {% for c in row.session_1 %}
-                                {% if c.type == 'slot' and c.slot %}
-                                    {% set s = c.slot %}
-                                    {% if c.span == 2 %}
-                                    <!-- Merged 2-Period Lab Session -->
-                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
-                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
-                                                </span>
-                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
-                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
-                                                </span>
-                                            </div>
-                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
-                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
-                                            </div>
-                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
-                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
-                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% else %}
-                                    <!-- Standard 1-Period Lecture -->
-                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center justify-between">
-                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
-                                                    {{ s.subject.code if s.subject else 'CS101' }}
-                                                </span>
-                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
-                                            </div>
-                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
-                                                {{ s.subject.name if s.subject else 'Subject' }}
-                                            </div>
-                                            <div class="text-[10px] text-slate-500 font-medium truncate">
-                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% endif %}
-                                {% else %}
-                                    <!-- Empty Period -->
-                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-300 font-semibold text-[11px]">-</td>
-                                {% endif %}
-                            {% endfor %}
-
-                            <!-- Tea Break (Spans all 6 days vertically) -->
-                            {% if loop.first %}
-                            <td rowspan="{{ matrix|length }}" class="p-1 w-7 bg-amber-50/80 border-r-2 border-slate-300 text-amber-900 font-black text-[9px] uppercase tracking-tighter text-center" style="writing-mode: vertical-rl; text-orientation: mixed;">
-                                <div class="py-6 tracking-widest text-amber-800 flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-mug-hot text-[9px] -rotate-90"></i> TEA BREAK (11:10 - 11:20)
-                                </div>
-                            </td>
-                            {% endif %}
-
-                            <!-- Session 2: Periods 3 & 4 -->
-                            {% for c in row.session_2 %}
-                                {% if c.type == 'slot' and c.slot %}
-                                    {% set s = c.slot %}
-                                    {% if c.span == 2 %}
-                                    <!-- Merged 2-Period Lab Session -->
-                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
-                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
-                                                </span>
-                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
-                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
-                                                </span>
-                                            </div>
-                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
-                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
-                                            </div>
-                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
-                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
-                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% else %}
-                                    <!-- Standard 1-Period Lecture -->
-                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center justify-between">
-                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
-                                                    {{ s.subject.code if s.subject else 'CS101' }}
-                                                </span>
-                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
-                                            </div>
-                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
-                                                {{ s.subject.name if s.subject else 'Subject' }}
-                                            </div>
-                                            <div class="text-[10px] text-slate-500 font-medium truncate">
-                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% endif %}
-                                {% else %}
-                                    <!-- Empty Period -->
-                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-300 font-semibold text-[11px]">-</td>
-                                {% endif %}
-                            {% endfor %}
-
-                            <!-- Lunch Break (Spans all 6 days vertically) -->
-                            {% if loop.first %}
-                            <td rowspan="{{ matrix|length }}" class="p-1 w-8 bg-rose-50/80 border-r-2 border-slate-300 text-rose-900 font-black text-[9px] uppercase tracking-tighter text-center" style="writing-mode: vertical-rl; text-orientation: mixed;">
-                                <div class="py-6 tracking-widest text-rose-800 flex items-center justify-center gap-2">
-                                    <i class="fa-solid fa-utensils text-[9px] -rotate-90"></i> LUNCH BREAK (01:00 - 01:50)
-                                </div>
-                            </td>
-                            {% endif %}
-
-                            <!-- Session 3: Periods 5 & 6 -->
-                            {% for c in row.session_3 %}
-                                {% if c.type == 'slot' and c.slot %}
-                                    {% set s = c.slot %}
-                                    {% if c.span == 2 %}
-                                    <!-- Merged 2-Period Lab Session -->
-                                    <td colspan="2" class="p-2.5 border-r border-slate-300 bg-amber-50/80 hover:bg-amber-100/70 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center gap-1.5">
-                                                <span class="px-1.5 py-0.5 rounded bg-amber-200/80 text-amber-950 font-black font-mono text-[10px] border border-amber-300/80">
-                                                    {{ s.subject.code if s.subject else 'CS201' }} LAB
-                                                </span>
-                                                <span class="text-[9px] font-bold text-amber-800 uppercase tracking-tight flex items-center gap-1">
-                                                    <i class="fa-solid fa-flask text-[8px]"></i> 2-Period Practical
-                                                </span>
-                                            </div>
-                                            <div class="font-extrabold text-slate-900 text-xs truncate max-w-[220px]">
-                                                {{ s.subject.name if s.subject else 'Data Structures Lab' }}
-                                            </div>
-                                            <div class="text-[10px] font-semibold text-slate-600 flex items-center gap-2">
-                                                <span><i class="fa-solid fa-user-tie text-[9px] text-slate-400"></i> {{ s.faculty.name if s.faculty else 'Prof. In-Charge' }}</span>
-                                                <span class="text-amber-900 font-bold"><i class="fa-solid fa-location-dot text-[9px] text-amber-600"></i> {{ s.room }}</span>
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% else %}
-                                    <!-- Standard 1-Period Lecture -->
-                                    <td class="p-2 border-r border-slate-300 hover:bg-blue-50/60 transition text-left">
-                                        <div class="space-y-0.5">
-                                            <div class="flex items-center justify-between">
-                                                <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-black font-mono text-[10px] border border-blue-200">
-                                                    {{ s.subject.code if s.subject else 'CS101' }}
-                                                </span>
-                                                <span class="text-[9px] font-bold text-slate-400">{{ s.room }}</span>
-                                            </div>
-                                            <div class="font-bold text-slate-900 text-[11px] leading-tight line-clamp-1" title="{{ s.subject.name if s.subject else '' }}">
-                                                {{ s.subject.name if s.subject else 'Subject' }}
-                                            </div>
-                                            <div class="text-[10px] text-slate-500 font-medium truncate">
-                                                {{ s.faculty.name if s.faculty else 'Faculty' }}
-                                            </div>
-                                        </div>
-                                    </td>
-                                    {% endif %}
-                                {% else %}
-                                    <!-- Empty Period -->
-                                    <td class="p-2 border-r border-slate-300 bg-slate-50/40 text-center text-slate-400 font-semibold text-[11px]">
-                                        {% if day == 'Saturday' and c.period.id > 4 %}
-                                        <span class="text-[10px] text-slate-400 italic">Off</span>
-                                        {% else %}
-                                        <span class="text-slate-300 font-mono">-</span>
-                                        {% endif %}
-                                    </td>
-                                {% endif %}
-                            {% endfor %}
-                        </tr>
+        <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-xs border-collapse min-w-[960px]" id="timetableGrid">
+                <thead>
+                    <tr class="bg-slate-50 border-b-2 border-slate-200">
+                        <th class="p-3 w-28 border-r-2 border-slate-200 text-left pl-4 text-[10px] font-bold uppercase tracking-widest text-slate-500">Day / Period</th>
+                        {% for p in periods %}
+                        {% if loop.index == 3 %}
+                        <th class="w-8 bg-amber-50/80 border-r-2 border-slate-200 text-amber-700 text-[9px] font-bold" style="writing-mode:vertical-rl; padding: 8px 4px;">
+                            <span style="transform:rotate(180deg); display:inline-block;">☕ TEA</span>
+                        </th>
+                        {% endif %}
+                        {% if loop.index == 5 %}
+                        <th class="w-8 bg-rose-50/80 border-r-2 border-slate-200 text-rose-700 text-[9px] font-bold" style="writing-mode:vertical-rl; padding: 8px 4px;">
+                            <span style="transform:rotate(180deg); display:inline-block;">🍽 LUNCH</span>
+                        </th>
+                        {% endif %}
+                        <th class="p-2.5 border-r border-slate-200 text-center" style="min-width:130px">
+                            <div class="text-[10px] text-slate-400 font-bold uppercase">{{ p.name }}</div>
+                            <div class="font-black text-slate-800">{{ p.time }}</div>
+                        </th>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                    </tr>
+                </thead>
+                <tbody id="gridBody">
+                    {% set days_order = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] %}
+                    {% for day in days_order %}
+                    {% set is_today = (day == today_name) %}
+                    <tr class="border-b border-slate-100 {% if is_today %}bg-indigo-50/20{% endif %}" data-day="{{ day }}">
+                        <!-- Day header -->
+                        <td class="p-3 border-r-2 border-slate-200 font-bold text-slate-800 {% if is_today %}bg-indigo-50/60 text-indigo-900 border-l-4 border-l-indigo-500{% else %}bg-slate-50/50{% endif %}">
+                            <div class="flex items-center justify-between gap-1">
+                                <span class="text-xs">{{ day[:3] }}</span>
+                                {% if is_today %}<span class="px-1 py-0.5 rounded text-[8px] font-black bg-indigo-600 text-white">Today</span>{% endif %}
+                            </div>
+                        </td>
+                        {% for p in periods %}
+                        {% if loop.index == 3 %}
+                        <!-- Tea break column -->
+                        <td class="bg-amber-50/80 border-r-2 border-slate-200"></td>
+                        {% endif %}
+                        {% if loop.index == 5 %}
+                        <!-- Lunch break column -->
+                        <td class="bg-rose-50/80 border-r-2 border-slate-200"></td>
+                        {% endif %}
+                        <!-- Period cell: dynamically filled by JS -->
+                        <td class="border-r border-slate-200 relative group"
+                            data-day="{{ day }}"
+                            data-period="{{ p.id }}"
+                            data-start="{{ p.start }}"
+                            data-end="{{ p.end }}"
+                            ondragover="event.preventDefault(); this.classList.add('drop-target')"
+                            ondragleave="this.classList.remove('drop-target')"
+                            ondrop="handleDrop(event, this)"
+                            style="min-height:72px; min-width:130px">
+                            <div class="cell-inner p-1.5 h-full"></div>
+                            <!-- Empty cell add button -->
+                            <button onclick="openAddSlotModal('{{ day }}', '{{ p.start }}', '{{ p.end }}')"
+                                class="add-slot-btn absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-slate-50/60 text-slate-300 hover:text-indigo-500 rounded text-lg font-thin pointer-events-none group-hover:pointer-events-auto">
+                                <i class="fa-solid fa-plus text-sm"></i>
+                            </button>
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
+    </div>
 
-        <!-- Subject & Faculty Directory Legend -->
-        <div class="space-y-3 pt-2">
-            <div class="text-xs font-extrabold text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-indigo-600"></i> Course Details & Faculty In-Charge Directory
+    <!-- Faculty Workload Panel -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-users text-slate-400 text-xs"></i>
+            <span class="text-xs font-bold text-slate-700">Faculty Workload Distribution</span>
+        </div>
+        <div class="p-4 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3" id="facultyWorkload">
+            {% for fac in faculties %}
+            {% set fac_slots = slots | selectattr('faculty_id', 'equalto', fac.id) | list %}
+            <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1">
+                <div class="flex items-center gap-2">
+                    <div class="w-7 h-7 rounded-lg bg-slate-200 text-slate-700 text-[10px] font-black flex items-center justify-center flex-shrink-0">{{ fac.name[:2]|upper }}</div>
+                    <span class="text-xs font-bold text-slate-800 truncate">{{ fac.name }}</span>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium">{{ fac.designation or 'Faculty' }}</div>
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-semibold text-slate-600">{{ fac_slots|length }} periods/week</span>
+                    <span class="text-[10px] font-bold {% if fac_slots|length > 20 %}text-rose-600{% elif fac_slots|length > 14 %}text-amber-600{% else %}text-emerald-600{% endif %}">
+                        {% if fac_slots|length > 20 %}Overloaded{% elif fac_slots|length > 14 %}Heavy{% else %}Balanced{% endif %}
+                    </span>
+                </div>
+                <!-- Load bar -->
+                <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
+                    <div class="h-full rounded-full {% if fac_slots|length > 20 %}bg-rose-500{% elif fac_slots|length > 14 %}bg-amber-500{% else %}bg-emerald-500{% endif %}"
+                         style="width: {{ [((fac_slots|length) / 24 * 100)|int, 100]|min }}%"></div>
+                </div>
             </div>
-            <div class="overflow-x-auto rounded-2xl border border-slate-200">
-                <table class="w-full text-left text-xs">
-                    <thead class="bg-slate-50 text-slate-600 font-bold border-b border-slate-200 uppercase text-[10px]">
-                        <tr>
-                            <th class="p-2.5 w-12 text-center">#</th>
-                            <th class="p-2.5 w-24">Code</th>
-                            <th class="p-2.5">Course Title</th>
-                            <th class="p-2.5 w-24 text-center">L-T-P</th>
-                            <th class="p-2.5 w-20 text-center">Credits</th>
-                            <th class="p-2.5">Faculty In-Charge</th>
-                            <th class="p-2.5">Designation & Department</th>
-                            <th class="p-2.5">Allotted Venue</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-200 font-medium text-slate-700">
-                        {% for item in legend %}
-                        <tr class="hover:bg-slate-50/80 transition">
-                            <td class="p-2.5 text-center font-bold text-slate-400">{{ loop.index }}</td>
-                            <td class="p-2.5">
-                                <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-800 font-mono font-bold text-xs border border-blue-200">
-                                    {{ item.code }}
-                                </span>
-                            </td>
-                            <td class="p-2.5 font-bold text-slate-900">{{ item.name }}</td>
-                            <td class="p-2.5 text-center font-mono font-bold text-slate-600">{{ item.ltp }}</td>
-                            <td class="p-2.5 text-center font-bold text-purple-700">{{ item.credits }}</td>
-                            <td class="p-2.5 font-bold text-slate-900 flex items-center gap-2">
-                                <div class="w-6 h-6 rounded-full bg-slate-200 text-slate-700 text-[9px] font-black flex items-center justify-center">
-                                    {{ item.faculty_name[:2]|upper }}
-                                </div>
+            {% else %}
+            <div class="col-span-full p-6 text-center text-xs text-slate-400">No faculty members registered.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Course Directory Legend -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm">
+        <div class="px-5 py-3 border-b border-slate-100 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-slate-400 text-xs"></i>
+            <span class="text-xs font-bold text-slate-700">Course &amp; Faculty Directory</span>
+        </div>
+        <div class="overflow-x-auto custom-scroll">
+            <table class="w-full text-left text-xs">
+                <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 text-[10px] uppercase tracking-wider">
+                    <tr>
+                        <th class="p-3 w-10">#</th>
+                        <th class="p-3 w-24">Code</th>
+                        <th class="p-3">Course Title</th>
+                        <th class="p-3 w-20 text-center">Credits</th>
+                        <th class="p-3">Faculty</th>
+                        <th class="p-3">Venue</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 font-medium text-slate-700">
+                    {% for item in legend %}
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="p-3 text-slate-400 font-bold">{{ loop.index }}</td>
+                        <td class="p-3"><span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-mono font-bold text-[10px]">{{ item.code }}</span></td>
+                        <td class="p-3 font-bold text-slate-900">{{ item.name }}</td>
+                        <td class="p-3 text-center font-bold text-slate-600">{{ item.credits }}</td>
+                        <td class="p-3">
+                            <div class="flex items-center gap-2">
+                                <div class="w-6 h-6 rounded-full bg-slate-200 text-slate-600 text-[9px] font-black flex items-center justify-center">{{ item.faculty_name[:2]|upper }}</div>
                                 <span>{{ item.faculty_name }}</span>
-                            </td>
-                            <td class="p-2.5 text-slate-600 text-[11px]">{{ item.faculty_designation }} &bull; {{ item.faculty_dept }}</td>
-                            <td class="p-2.5 font-bold text-blue-700">{{ item.room }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- Institutional Note & Approval Footer -->
-        <div class="pt-4 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-[11px] text-slate-500 gap-2">
-            <div>
-                <span class="font-bold text-slate-700">Audit Status:</span> Conflict-free algorithm checked. All 6 departmental working days verified.
-            </div>
-            <div class="flex items-center gap-6 font-bold text-slate-600">
-                <span>Timetable In-Charge</span>
-                <span>Head of Department</span>
-                <span>Principal / Director</span>
-            </div>
+                            </div>
+                        </td>
+                        <td class="p-3 font-semibold text-slate-600">{{ item.room }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
-<!-- Print Stylesheet Enhancement -->
+<!-- Edit Slot Modal -->
+<div id="editSlotModal" class="fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm hidden items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md">
+        <div class="flex items-center justify-between p-5 border-b border-slate-100">
+            <div>
+                <h3 class="text-sm font-black text-slate-900" id="modalTitle">Edit Slot</h3>
+                <p class="text-[10px] text-slate-400 font-medium" id="modalSubtitle">Update slot details</p>
+            </div>
+            <button onclick="closeModal('editSlotModal')" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-xs"></i>
+            </button>
+        </div>
+        <div class="p-5 space-y-3">
+            <input type="hidden" id="editSlotId">
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Day</label>
+                    <select id="editDay" class="mt-1 w-full text-xs font-semibold border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        {% for d in ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'] %}
+                        <option>{{ d }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Period</label>
+                    <select id="editPeriod" class="mt-1 w-full text-xs font-semibold border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        {% for p in periods %}
+                        <option value="{{ p.start }}" data-end="{{ p.end }}">{{ p.name }} ({{ p.time }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Subject</label>
+                <select id="editSubject" class="mt-1 w-full text-xs font-semibold border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    {% for s in subjects %}
+                    <option value="{{ s.id }}" data-code="{{ s.code }}">{{ s.code }} — {{ s.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Faculty</label>
+                <select id="editFaculty" class="mt-1 w-full text-xs font-semibold border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    {% for f in faculties %}
+                    <option value="{{ f.id }}">{{ f.name }}{% if f.designation %} · {{ f.designation }}{% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Room</label>
+                    <input id="editRoom" type="text" placeholder="e.g. LH-101" class="mt-1 w-full text-xs font-semibold border border-slate-200 rounded-lg px-3 py-2 bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                </div>
+                <div class="flex flex-col justify-end">
+                    <label class="flex items-center gap-2 cursor-pointer pb-2">
+                        <input type="checkbox" id="editIsLab" class="w-4 h-4 rounded accent-indigo-600">
+                        <span class="text-xs font-semibold text-slate-700">Lab / Practical</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Conflict Warning -->
+            <div id="editConflictWarn" class="hidden p-2.5 rounded-xl bg-rose-50 border border-rose-200 text-[11px] text-rose-700 font-semibold flex items-start gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-rose-500 mt-0.5 flex-shrink-0"></i>
+                <span id="editConflictMsg"></span>
+            </div>
+        </div>
+        <div class="flex items-center gap-2 px-5 pb-5">
+            <button onclick="saveSlot()" class="flex-1 px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold transition flex items-center justify-center gap-2" id="saveSlotBtn">
+                <i class="fa-solid fa-floppy-disk"></i> Save Changes
+            </button>
+            <button onclick="deleteCurrentSlot()" id="deleteSlotBtn" class="px-4 py-2 rounded-lg bg-rose-50 hover:bg-rose-100 border border-rose-200 text-rose-700 text-xs font-bold transition flex items-center gap-2">
+                <i class="fa-solid fa-trash text-[11px]"></i> Delete
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toastMsg" class="fixed bottom-5 right-5 z-[9999] hidden">
+    <div class="bg-slate-900 text-white text-xs font-semibold px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2">
+        <i class="fa-solid fa-circle-check text-emerald-400" id="toastIcon"></i>
+        <span id="toastText">Saved</span>
+    </div>
+</div>
+
+<style>
+/* Drag-and-drop cell styles */
+.slot-pill {
+    cursor: grab;
+    user-select: none;
+    border-radius: 10px;
+    padding: 6px 8px;
+    transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+    position: relative;
+}
+.slot-pill:active { cursor: grabbing; opacity: 0.7; transform: scale(0.98); }
+.slot-pill:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+.slot-pill.dragging { opacity: 0.3; }
+
+.drop-target { background-color: rgba(99, 102, 241, 0.06) !important; outline: 2px dashed #6366F1; outline-offset: -2px; }
+.conflict-slot { outline: 2px solid #f43f5e !important; outline-offset: -2px; background-color: rgba(244,63,94,0.05) !important; }
+.add-slot-btn { z-index: 2; }
+
+@media print {
+    header, .print\\:hidden { display:none !important; }
+    #editSlotModal, #toastMsg { display:none !important; }
+    @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+
+<script>
+// ────────────────────────────────────────────────────────────────
+// Slot data from server
+// ────────────────────────────────────────────────────────────────
+const PERIODS = {{ periods | tojson }};
+const SUBJECTS = [];
+
+// Build lookup from server-rendered slot data
+let slotsData = {};
+{% for s in slots %}
+slotsData[{{ s.id }}] = {
+    id: {{ s.id }},
+    day: {{ s.day | tojson }},
+    start_time: {{ s.start_time | tojson }},
+    end_time: {{ s.end_time | tojson }},
+    subject_id: {{ s.subject_id }},
+    subject_name: {{ (s.subject.name if s.subject else '') | tojson }},
+    subject_code: {{ (s.subject.code if s.subject else '') | tojson }},
+    faculty_id: {{ s.faculty_id }},
+    faculty_name: {{ (s.faculty.name if s.faculty else '') | tojson }},
+    room: {{ s.room | tojson }},
+    is_lab: {{ 'true' if s.is_lab else 'false' }},
+};
+{% endfor %}
+
+// ────────────────────────────────────────────────────────────────
+// Render grid from slotsData
+// ────────────────────────────────────────────────────────────────
+function renderGrid() {
+    // Clear all cell-inners
+    document.querySelectorAll('[data-day][data-period] .cell-inner').forEach(el => el.innerHTML = '');
+    document.querySelectorAll('[data-day][data-period]').forEach(el => el.classList.remove('conflict-slot'));
+
+    // Track occupancy for conflict detection: key = "Day|start_time" → {rooms, faculty_ids}
+    const occupancy = {};
+    let conflicts = 0;
+
+    Object.values(slotsData).forEach(slot => {
+        const key = `${slot.day}|${slot.start_time}`;
+        if (!occupancy[key]) occupancy[key] = { rooms: [], faculty: [] };
+        if (occupancy[key].rooms.includes(slot.room) || occupancy[key].faculty.includes(slot.faculty_id)) conflicts++;
+        occupancy[key].rooms.push(slot.room);
+        occupancy[key].faculty.push(slot.faculty_id);
+
+        const cell = document.querySelector(`[data-day="${slot.day}"][data-period]`);
+        // find correct period cell
+        const periodCell = document.querySelector(`[data-day="${slot.day}"][data-start="${slot.start_time}"]`);
+        if (!periodCell) return;
+        const inner = periodCell.querySelector('.cell-inner');
+        const addBtn = periodCell.querySelector('.add-slot-btn');
+        if (addBtn) addBtn.style.display = 'none';
+
+        inner.innerHTML = buildPill(slot);
+    });
+
+    // Update conflict count
+    document.getElementById('kpiConflicts').textContent = conflicts;
+    if (conflicts > 0) {
+        document.getElementById('conflictWarn').classList.remove('hidden');
+        document.getElementById('conflictBadge').classList.add('hidden');
+        document.getElementById('conflictCount').textContent = conflicts;
+    } else {
+        document.getElementById('conflictWarn').classList.add('hidden');
+        document.getElementById('conflictBadge').classList.remove('hidden');
+    }
+
+    // Attach drag events
+    document.querySelectorAll('.slot-pill').forEach(pill => {
+        pill.addEventListener('dragstart', e => {
+            e.dataTransfer.setData('text/plain', pill.dataset.slotId);
+            pill.classList.add('dragging');
+        });
+        pill.addEventListener('dragend', () => pill.classList.remove('dragging'));
+        pill.addEventListener('click', () => openEditModal(parseInt(pill.dataset.slotId)));
+    });
+}
+
+function buildPill(slot) {
+    const isLab = slot.is_lab;
+    const bg = isLab ? 'bg-amber-50 border-amber-200' : 'bg-slate-50 border-slate-200';
+    const codeBg = isLab ? 'bg-amber-200/80 text-amber-900' : 'bg-slate-200 text-slate-700';
+    return `
+    <div class="slot-pill border ${bg} text-left"
+         data-slot-id="${slot.id}"
+         draggable="true">
+        <div class="flex items-center justify-between mb-0.5">
+            <span class="px-1.5 py-0.5 rounded text-[9px] font-black font-mono ${codeBg}">${slot.subject_code}${isLab ? ' LAB' : ''}</span>
+            <span class="text-[9px] text-slate-400 font-medium truncate max-w-[55px]">${slot.room}</span>
+        </div>
+        <div class="text-[11px] font-bold text-slate-800 leading-tight truncate">${slot.subject_name}</div>
+        <div class="text-[9px] text-slate-500 font-medium truncate">${slot.faculty_name}</div>
+    </div>`;
+}
+
+// ────────────────────────────────────────────────────────────────
+// Drag-and-Drop
+// ────────────────────────────────────────────────────────────────
+function handleDrop(event, cell) {
+    event.preventDefault();
+    cell.classList.remove('drop-target');
+    const slotId = parseInt(event.dataTransfer.getData('text/plain'));
+    const newDay = cell.dataset.day;
+    const newStart = cell.dataset.start;
+    const newEnd = cell.dataset.end;
+
+    if (!slotId || !newDay || !newStart) return;
+    const slot = slotsData[slotId];
+    if (!slot) return;
+
+    // Optimistic update
+    const prevDay = slot.day, prevStart = slot.start_time, prevEnd = slot.end_time;
+    slot.day = newDay;
+    slot.start_time = newStart;
+    slot.end_time = newEnd;
+    renderGrid();
+
+    // Persist
+    fetch(`/hod/api/timetable/slot/${slotId}`, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ day: newDay, start_time: newStart, end_time: newEnd })
+    }).then(r => r.json()).then(data => {
+        if (data.ok) {
+            showToast('Slot moved successfully', true);
+        } else {
+            // Rollback
+            slot.day = prevDay; slot.start_time = prevStart; slot.end_time = prevEnd;
+            renderGrid();
+            showToast(data.error || 'Conflict detected — reverted', false);
+        }
+    }).catch(() => {
+        slot.day = prevDay; slot.start_time = prevStart; slot.end_time = prevEnd;
+        renderGrid();
+        showToast('Network error — reverted', false);
+    });
+}
+
+// ────────────────────────────────────────────────────────────────
+// Edit Modal
+// ────────────────────────────────────────────────────────────────
+let currentEditingSlotId = null;
+
+function openEditModal(slotId) {
+    const slot = slotsData[slotId];
+    if (!slot) return;
+    currentEditingSlotId = slotId;
+
+    document.getElementById('modalTitle').textContent = 'Edit Timetable Slot';
+    document.getElementById('modalSubtitle').textContent = `${slot.day} · ${slot.start_time} – ${slot.end_time}`;
+    document.getElementById('editSlotId').value = slotId;
+    document.getElementById('editDay').value = slot.day;
+    document.getElementById('editRoom').value = slot.room;
+    document.getElementById('editIsLab').checked = slot.is_lab;
+    document.getElementById('editConflictWarn').classList.add('hidden');
+    document.getElementById('deleteSlotBtn').classList.remove('hidden');
+
+    // Set period
+    const periodSel = document.getElementById('editPeriod');
+    for (let opt of periodSel.options) { if (opt.value === slot.start_time) { opt.selected = true; break; } }
+
+    // Set subject
+    const subjectSel = document.getElementById('editSubject');
+    for (let opt of subjectSel.options) { if (parseInt(opt.value) === slot.subject_id) { opt.selected = true; break; } }
+
+    // Set faculty
+    const facultySel = document.getElementById('editFaculty');
+    for (let opt of facultySel.options) { if (parseInt(opt.value) === slot.faculty_id) { opt.selected = true; break; } }
+
+    showModal('editSlotModal');
+}
+
+function openAddSlotModal(day = '', start = '', end = '') {
+    currentEditingSlotId = null;
+    document.getElementById('modalTitle').textContent = 'Add New Slot';
+    document.getElementById('modalSubtitle').textContent = day ? `${day} · ${start}` : 'Choose day & period';
+    document.getElementById('editSlotId').value = '';
+    document.getElementById('editDay').value = day || 'Monday';
+    document.getElementById('editRoom').value = 'LH-101';
+    document.getElementById('editIsLab').checked = false;
+    document.getElementById('editConflictWarn').classList.add('hidden');
+    document.getElementById('deleteSlotBtn').classList.add('hidden');
+
+    if (start) {
+        const periodSel = document.getElementById('editPeriod');
+        for (let opt of periodSel.options) { if (opt.value === start) { opt.selected = true; break; } }
+    }
+    showModal('editSlotModal');
+}
+
+async function saveSlot() {
+    const btn = document.getElementById('saveSlotBtn');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+    btn.disabled = true;
+
+    const periodSel = document.getElementById('editPeriod');
+    const selectedPeriodOpt = periodSel.options[periodSel.selectedIndex];
+    const payload = {
+        day: document.getElementById('editDay').value,
+        start_time: selectedPeriodOpt.value,
+        end_time: selectedPeriodOpt.dataset.end,
+        subject_id: document.getElementById('editSubject').value,
+        faculty_id: document.getElementById('editFaculty').value,
+        room: document.getElementById('editRoom').value,
+        is_lab: document.getElementById('editIsLab').checked,
+    };
+
+    const slotId = document.getElementById('editSlotId').value;
+    const isEdit = !!slotId;
+    const url = isEdit ? `/hod/api/timetable/slot/${slotId}` : '/hod/api/timetable/slot';
+    const method = isEdit ? 'PATCH' : 'POST';
+
+    const res = await fetch(url, { method, headers: {'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+    const data = await res.json();
+
+    btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save Changes';
+    btn.disabled = false;
+
+    if (data.ok) {
+        closeModal('editSlotModal');
+        // Reload slots from server for accuracy
+        await reloadSlots();
+        showToast(isEdit ? 'Slot updated!' : 'Slot added!', true);
+    } else {
+        document.getElementById('editConflictWarn').classList.remove('hidden');
+        document.getElementById('editConflictMsg').textContent = data.error || 'Conflict detected.';
+    }
+}
+
+async function deleteCurrentSlot() {
+    if (!currentEditingSlotId) return;
+    if (!confirm('Delete this slot?')) return;
+
+    const res = await fetch(`/hod/api/timetable/slot/${currentEditingSlotId}`, { method: 'DELETE' });
+    const data = await res.json();
+    if (data.ok) {
+        delete slotsData[currentEditingSlotId];
+        closeModal('editSlotModal');
+        renderGrid();
+        showToast('Slot deleted', true);
+    }
+}
+
+async function reloadSlots() {
+    const res = await fetch('/hod/api/timetable/slots');
+    const slots = await res.json();
+    slotsData = {};
+    slots.forEach(s => { slotsData[s.id] = s; });
+    renderGrid();
+}
+
+// ────────────────────────────────────────────────────────────────
+// Utility
+// ────────────────────────────────────────────────────────────────
+function showModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+function closeModal(id) { document.getElementById(id).classList.add('hidden'); document.getElementById(id).classList.remove('flex'); }
+
+let toastTimeout;
+function showToast(msg, success = true) {
+    const el = document.getElementById('toastMsg');
+    document.getElementById('toastText').textContent = msg;
+    const icon = document.getElementById('toastIcon');
+    icon.className = success ? 'fa-solid fa-circle-check text-emerald-400' : 'fa-solid fa-triangle-exclamation text-rose-400';
+    el.classList.remove('hidden');
+    clearTimeout(toastTimeout);
+    toastTimeout = setTimeout(() => el.classList.add('hidden'), 3000);
+}
+
+// Close modal on backdrop click
+document.getElementById('editSlotModal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal('editSlotModal');
+});
+
+// Initial render
+document.addEventListener('DOMContentLoaded', renderGrid);
+</script>
+
+<!-- Print CSS -->
 <style>
 @media print {
-    body {
-        background: #ffffff !important;
-        color: #000000 !important;
-        font-size: 10pt;
-    }
-    header, nav, #desktopTopNav, .print\:hidden {
-        display: none !important;
-    }
-    .min-h-screen {
-        min-height: auto !important;
-    }
-    table {
-        border: 1.5pt solid #000000 !important;
-        width: 100% !important;
-    }
-    th, td {
-        border: 1pt solid #333333 !important;
-        padding: 4pt !important;
-    }
-    @page {
-        size: A4 landscape;
-        margin: 10mm;
-    }
+    header, nav, .print\:hidden { display:none !important; }
+    .bg-white { background: #fff !important; }
+    table { border: 1pt solid #ccc; }
+    th, td { border: 0.5pt solid #ccc; padding: 4pt; }
+    @page { size: A4 landscape; margin: 10mm; }
 }
 </style>
 {% endblock %}

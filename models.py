@@ -198,6 +198,7 @@ class AttendanceRecord(BaseModel):
     status = db.Column(db.String(20), nullable=False) # present, absent, late
     is_proxy_suspect = db.Column(db.Boolean, default=False)
     proxy_reason = db.Column(db.String(200), nullable=True)
+    subject = db.relationship('Subject', backref='attendance_records')
 
 class Exam(BaseModel):
     id = db.Column(db.Integer, primary_key=True)

@@ -1,162 +1,268 @@
 {% extends "base.html" %}
 {% block title %}Faculty Cockpit - Pragati by Kalpkrats{% endblock %}
 {% block content %}
-<div class="space-y-8">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<div class="h-auto lg:h-[calc(100vh-6.5rem)] flex flex-col gap-2.5 sm:gap-3 min-h-0 overflow-hidden">
+
+    <!-- Top Cockpit Bar -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 flex-shrink-0">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">
-                {{ current_user.name }}'s Faculty Cockpit
-            </h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">
-                Teaching Assistant & Department Portal | Today is {{ today_date.strftime('%B %d, %Y') }}.
+            <div class="flex items-center gap-2.5">
+                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                    {{ current_user.name }}'s Faculty Cockpit
+                </h1>
+                <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[11px] border border-slate-200 hidden sm:inline-block">
+                    Faculty Portal
+                </span>
+            </div>
+            <p class="text-xs font-medium text-slate-400 mt-0.5">
+                Dept. of {{ current_user.department or 'Computer Science & Engineering' }} &bull; {{ today_date.strftime('%B %d, %Y') }}
             </p>
         </div>
-        <div class="flex items-center gap-3">
-            <a href="{{ url_for('faculty.calendar') }}" class="px-4 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-200 transition">
-                <i class="fa-solid fa-calendar-days"></i> Academic Calendar
+        <div class="flex items-center gap-2 flex-shrink-0">
+            <a href="{{ url_for('faculty.calendar') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-calendar-days text-[11px]"></i>
+                <span>Calendar</span>
             </a>
-            <a href="{{ url_for('faculty.attendance') }}" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-emerald-200 transition">
-                <i class="fa-solid fa-user-check"></i> Take Today's Attendance
+            <a href="{{ url_for('faculty.attendance') }}" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
+                <i class="fa-solid fa-user-check text-[11px]"></i>
+                <span>Mark Attendance</span>
+            </a>
+            <a href="{{ url_for('faculty.evaluation') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-semibold text-xs flex items-center gap-1.5 transition hidden md:flex">
+                <i class="fa-solid fa-pen-ruler text-[11px]"></i>
+                <span>Auto-Grade</span>
             </a>
         </div>
     </div>
 
-    <!-- Faculty Key Stats (Modern Glassmorphic 21st Style) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <!-- Card 1: Subjects Taught -->
-        <div class="stat-card-glass stat-glow-indigo p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-indigo-700 transition-colors">
-                    Subjects Taught
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-300/40 text-indigo-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <i class="fa-solid fa-book-bookmark text-sm"></i>
+    <!-- 4 Metric Cards Strip -->
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 flex-shrink-0">
+
+        <!-- Subjects Taught -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            <div class="space-y-0.5 relative z-10">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Subjects Taught</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ subjects|length }}</span>
+                    <span class="text-[10px] font-semibold text-slate-400">active</span>
                 </div>
+                <div class="text-[10px] text-slate-400 font-medium">Assigned Curriculum</div>
             </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ subjects|length }}</span>
-                <span class="text-xs font-bold text-indigo-600 flex items-center gap-0.5">
-                    <i class="fa-solid fa-check-double text-[10px]"></i> Active Load
-                </span>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
+                <i class="fa-solid fa-book-bookmark text-xs"></i>
             </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Curriculum Modules</span>
-                <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 font-bold text-[10px]">
-                    Assigned
-                </span>
-            </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 20 Q 25 15, 50 10 T 75 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkIndigo)" />
-                <defs>
-                    <linearGradient id="sparkIndigo" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#6366F1" />
-                        <stop offset="100%" stop-color="#6366F1" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 20 Q 25 15, 50 10 T 75 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkIndigoFac)" />
+                <defs><linearGradient id="sparkIndigoFac" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
 
-        <!-- Card 2: Total Enrolled Students -->
-        <div class="stat-card-glass stat-glow-emerald p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-emerald-700 transition-colors">
-                    Total Students
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-300/40 text-emerald-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <i class="fa-solid fa-users-viewfinder text-sm"></i>
+        <!-- Students -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            <div class="space-y-0.5 relative z-10">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Enrolled Students</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ enrolled_students_count }}</span>
+                    <span class="text-[10px] font-semibold text-slate-400">total</span>
                 </div>
+                <div class="text-[10px] text-slate-400 font-medium">Active Roster</div>
             </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ enrolled_students_count }}</span>
-                <span class="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
-                    <i class="fa-solid fa-circle-check text-[10px]"></i> Verified
-                </span>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
+                <i class="fa-solid fa-users-viewfinder text-xs"></i>
             </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Active Roster</span>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold text-[10px]">
-                    100% Enrolled
-                </span>
-            </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 24 Q 30 18, 55 12 T 80 8 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkEmeraldFac)" />
-                <defs>
-                    <linearGradient id="sparkEmeraldFac" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#10B981" />
-                        <stop offset="100%" stop-color="#10B981" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 24 Q 30 18, 55 12 T 80 8 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkEmeraldFac2)" />
+                <defs><linearGradient id="sparkEmeraldFac2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
 
-        <!-- Card 3: Teaching Copilot Status -->
-        <div class="stat-card-glass stat-glow-purple p-6 group bg-purple-50/15 border-purple-200/70">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-purple-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-purple-600 group-hover:text-purple-800 transition-colors flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-purple-600 animate-ping"></span>
-                    Teaching AI Copilot
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-purple-500/15 border border-purple-300/50 text-purple-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+        <!-- Today's Classes -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            <div class="space-y-0.5 relative z-10">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Today's Classes</div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ today_slots|length }}</span>
+                    <span class="text-[10px] font-semibold text-slate-400">{{ day_name }}</span>
                 </div>
+                <div class="text-[10px] text-slate-400 font-medium">Schedule Synced</div>
             </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-purple-600 tracking-tight">Active</span>
-                <span class="text-xs font-bold text-purple-700 flex items-center gap-1">
-                    <i class="fa-solid fa-bolt text-[10px] text-amber-500"></i> Copilot v2.4
-                </span>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
+                <i class="fa-solid fa-clock text-xs"></i>
             </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-purple-100">
-                <span class="text-purple-800 font-medium">Auto-grading &amp; Quiz AI</span>
-                <span class="px-2 py-0.5 rounded-full bg-purple-100 text-purple-800 font-bold text-[10px]">
-                    Online
-                </span>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 16 L 25 16 L 35 6 L 45 22 L 55 12 L 65 16 L 100 16 L 100 25 L 0 25 Z" fill="url(#sparkAmberFac)" />
+                <defs><linearGradient id="sparkAmberFac" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
+            </svg>
+        </div>
+
+        <!-- AI Copilot -->
+        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            <div class="space-y-0.5 relative z-10">
+                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
+                    <span class="relative flex h-1.5 w-1.5">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-600"></span>
+                    </span>
+                    AI Copilot
+                </div>
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Active</span>
+                    <span class="text-[10px] font-semibold text-slate-400">v2.4</span>
+                </div>
+                <div class="text-[10px] text-slate-400 font-medium">Auto-Grading &amp; Quizzes</div>
             </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 16 L 20 16 L 30 6 L 40 22 L 50 12 L 60 16 L 100 16 L 100 25 L 0 25 Z" fill="url(#sparkPurpleFac)" />
-                <defs>
-                    <linearGradient id="sparkPurpleFac" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#A855F7" />
-                        <stop offset="100%" stop-color="#A855F7" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
+            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all duration-300 relative z-10">
+                <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+            </div>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 24 Q 25 20, 50 14 T 75 8 T 100 3 L 100 25 L 0 25 Z" fill="url(#sparkPurpleFac2)" />
+                <defs><linearGradient id="sparkPurpleFac2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
             </svg>
         </div>
     </div>
 
-    <!-- Assigned Subjects & Course Manager Shortcuts -->
-    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-book-open text-purple-600"></i> My Assigned Courses & Subjects
-        </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {% for subj in subjects %}
-            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3">
+    <!-- Main Workspace -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
+
+        <!-- Left: Assigned Courses -->
+        <div class="lg:col-span-7 flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
+            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
+                        <i class="fa-solid fa-book-open"></i>
+                    </span>
+                    <h3 class="text-sm font-bold text-slate-900 tracking-tight">My Assigned Courses &amp; Subjects</h3>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold border border-slate-200">{{ subjects|length }} Courses</span>
+                    <a href="{{ url_for('faculty.courses') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        Manage All <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1.5 pt-2.5 min-h-0">
+                {% for subj in subjects %}
+                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 group">
+                    <div class="space-y-1 flex-1 min-w-0">
+                        <div class="flex items-center gap-2">
+                            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold font-mono uppercase tracking-wider bg-slate-200 text-slate-700">
+                                {{ subj.code }}
+                            </span>
+                            <span class="text-[10px] font-medium text-slate-400">
+                                Sem {{ subj.semester }} &bull; ID: {{ subj.course_id }}
+                            </span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-indigo-600 transition-colors truncate">{{ subj.name }}</h4>
+                    </div>
+                    <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+                        <a href="{{ url_for('faculty.attendance', subject_id=subj.id) }}"
+                           class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold transition flex items-center gap-1 whitespace-nowrap">
+                            <i class="fa-solid fa-user-check text-[9px]"></i> Attendance
+                        </a>
+                        <a href="{{ url_for('faculty.courses') }}"
+                           class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[11px] font-semibold transition flex items-center gap-1 whitespace-nowrap">
+                            <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Quiz / Notes
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1.5 my-auto">
+                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
+                        <i class="fa-solid fa-chalkboard-user"></i>
+                    </div>
+                    <h4 class="font-bold text-slate-700 text-xs">No Assigned Courses</h4>
+                    <p class="text-[11px] text-slate-400">Contact your HOD for course allocation.</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Right Column -->
+        <div class="lg:col-span-5 flex flex-col h-full gap-3 min-h-0">
+
+            <!-- Today's Teaching Schedule -->
+            <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
+                <div class="flex items-center justify-between pb-2 border-b border-slate-100 flex-shrink-0">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
+                            <i class="fa-solid fa-calendar-day"></i>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Today's Lectures &bull; {{ day_name }}</h3>
+                            <p class="text-[10px] text-slate-400 font-medium">{{ today_date.strftime('%B %d, %Y') }}</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('faculty.calendar') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        Calendar <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    </a>
+                </div>
+
+                <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1 pt-2 min-h-0">
+                    {% for slot in today_slots %}
+                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white hover:border-slate-300 transition-all space-y-1.5 group">
+                        <div class="flex items-center justify-between">
+                            <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-mono text-[10px] font-bold flex items-center gap-1">
+                                <i class="fa-regular fa-clock text-[9px]"></i> {{ slot.start_time }} – {{ slot.end_time }}
+                            </span>
+                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-100 text-slate-500">
+                                {{ 'Lab' if slot.is_lab else 'Lecture' }}
+                            </span>
+                        </div>
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">
+                                    {{ slot.subject.name if slot.subject else 'Class Session' }}
+                                </h5>
+                                <p class="text-[10px] text-slate-400 font-medium truncate flex items-center gap-1">
+                                    <i class="fa-solid fa-location-dot text-[9px]"></i> {{ slot.room or 'Room TBD' }}
+                                </p>
+                            </div>
+                            <a href="{{ url_for('faculty.attendance', subject_id=slot.subject_id) }}" class="text-[10px] font-semibold text-indigo-600 hover:underline flex-shrink-0 self-center">
+                                Mark &rarr;
+                            </a>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="p-4 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-xl border border-dashed border-slate-200 my-auto">
+                        No lectures scheduled for today.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- AI Teaching Copilot Box -->
+            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-3 flex-shrink-0 space-y-2">
                 <div class="flex items-center justify-between">
-                    <span class="font-bold text-slate-900 text-base">{{ subj.name }}</span>
-                    <span class="px-2.5 py-1 rounded-full bg-purple-100 text-purple-800 font-mono text-xs font-bold">{{ subj.code }}</span>
-                </div>
-                <div class="text-xs text-slate-500 font-medium">Course ID: {{ subj.course_id }} | Semester {{ subj.semester }}</div>
-                <div class="pt-2 flex gap-2">
-                    <a href="{{ url_for('faculty.courses') }}" class="px-3.5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-100 transition">
-                        Generate Quiz / Notes
+                    <div class="flex items-center gap-2">
+                        <div class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-white">AI Teaching Assistant</span>
+                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1.5 animate-pulse"></span>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('faculty.evaluation') }}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold transition flex items-center gap-1">
+                        Evaluate <i class="fa-solid fa-arrow-right text-[8px]"></i>
                     </a>
-                    <a href="{{ url_for('faculty.attendance', subject_id=subj.id) }}" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-100 transition">
-                        Mark Attendance
+                </div>
+                <div class="flex items-center gap-1.5 flex-wrap">
+                    <a href="{{ url_for('faculty.courses') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
+                        ⚡ Generate Quiz
+                    </a>
+                    <a href="{{ url_for('faculty.evaluation') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
+                        📝 Auto-Grade
+                    </a>
+                    <a href="{{ url_for('faculty.research') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
+                        🔬 Research
                     </a>
                 </div>
             </div>
-            {% else %}
-            <div class="col-span-2 p-6 text-center text-slate-400 font-medium">
-                No subjects assigned yet. Please contact your HOD.
-            </div>
-            {% endfor %}
+
         </div>
     </div>
 </div>
