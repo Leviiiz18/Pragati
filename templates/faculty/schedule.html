@@ -133,11 +133,19 @@
     </div>
 </div>
 
-<script>
-const MY_FACULTY_ID = Number("{{ current_user.id }}");
-const TODAY = String({{ today_name | tojson }});
+<script id="scheduleConfigData" type="application/json">
+{
+    "faculty_id": {{ current_user.id }},
+    "today": {{ today_name | tojson }},
+    "periods": {{ periods | tojson | safe }}
+}
+</script>
 
-const PERIODS = JSON.parse('{{ periods | tojson | safe }}');
+<script>
+const CONFIG = JSON.parse(document.getElementById('scheduleConfigData').textContent);
+const MY_FACULTY_ID = CONFIG.faculty_id;
+const TODAY = CONFIG.today;
+const PERIODS = CONFIG.periods;
 
 async function loadMySchedule() {
     try {
