@@ -77,6 +77,8 @@ def dashboard():
     
     pending_docs = DocumentRequest.query.filter_by(status='Pending').count()
     upcoming_exams = Exam.query.filter_by(status='Scheduled').count()
+    from datetime import date
+    today_date = date.today()
     
     return render_template('hod/dashboard.html',
                            dept_name=dept_name,
@@ -88,7 +90,8 @@ def dashboard():
                            at_risk_students=at_risk_students,
                            placement_ready=placement_ready,
                            pending_docs=pending_docs,
-                           upcoming_exams=upcoming_exams)
+                           upcoming_exams=upcoming_exams,
+                           today_date=today_date)
 
 @hod_bp.route('/students', methods=['GET', 'POST'])
 def student_management():
@@ -432,9 +435,10 @@ def attendance_analytics():
 def timetable():
     if request.method == 'POST':
         action = request.form.get('action')
-        if action == 'auto_generate':
-            success, msg = AISchedulerService.generate_optimal_timetable()
-            flash(msg, 'success' if success else 'danger')
+        if action == 'clear_all':
+            TimetableSlot.query.delete()
+            db.session.commit()
+            flash('All timetable slots cleared. You can now build the schedule manually from scratch.', 'info')
             
     slots = TimetableSlot.query.order_by(TimetableSlot.day, TimetableSlot.start_time).all()
     subjects = Subject.query.all()

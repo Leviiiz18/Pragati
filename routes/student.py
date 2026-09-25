@@ -135,7 +135,7 @@ def dashboard():
         (Event.target_role == 'all') | 
         (Event.target_role == 'student') | 
         (Event.user_id == current_user.id)
-    ).all()
+    ).order_by(Event.date.asc(), Event.created_at.desc()).all()
 
     return render_template('student/dashboard.html',
                            subjects=subjects,

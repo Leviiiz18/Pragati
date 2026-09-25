@@ -134,10 +134,10 @@
 </div>
 
 <script>
-const MY_FACULTY_ID = {{ current_user.id }};
-const TODAY = {{ today_name | tojson }};
+const MY_FACULTY_ID = Number("{{ current_user.id }}");
+const TODAY = String({{ today_name | tojson }});
 
-const PERIODS = {{ periods | tojson }};
+const PERIODS = JSON.parse('{{ periods | tojson | safe }}');
 
 async function loadMySchedule() {
     try {

@@ -176,8 +176,11 @@ class Event(BaseModel):
     date = db.Column(db.Date, nullable=False)
     created_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     target_role = db.Column(db.String(20), nullable=False) # faculty, student, all, personal
+    category = db.Column(db.String(50), default='notice') # notice, exam, seminar, workshop, deadline, event
+    priority = db.Column(db.String(20), default='normal') # normal, urgent, high
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
     
     subject_rel = db.relationship('Subject', foreign_keys=[subject_id], overlaps="events,subject")
     user_rel = db.relationship('User', foreign_keys=[user_id], overlaps="owner,personal_reminders")

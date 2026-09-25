@@ -58,7 +58,7 @@ class CommandCenterService:
             slots = TimetableSlot.query.all()
             return {
                 'type': 'action_result',
-                'title': 'AI Timetable Optimizer',
+                'title': 'Interactive Timetable Editor',
                 'ai_summary': f"Current active schedule has {len(slots)} conflict-free slots mapped across department labs and classrooms.",
                 'action_url': '/hod/timetable'
             }

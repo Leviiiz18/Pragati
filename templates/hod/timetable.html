@@ -26,10 +26,10 @@
             <button onclick="openAddSlotModal()" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-2 transition">
                 <i class="fa-solid fa-plus"></i> Add Slot
             </button>
-            <form action="{{ url_for('hod.timetable') }}" method="POST" class="inline-block">
-                <input type="hidden" name="action" value="auto_generate">
-                <button type="submit" class="px-3.5 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center gap-2 transition">
-                    <i class="fa-solid fa-rotate"></i> AI Re-Generate
+            <form action="{{ url_for('hod.timetable') }}" method="POST" class="inline-block" onsubmit="return confirm('Clear all current timetable slots to build manually from scratch?');">
+                <input type="hidden" name="action" value="clear_all">
+                <button type="submit" class="px-3.5 py-2 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-xs font-semibold flex items-center gap-2 transition">
+                    <i class="fa-solid fa-eraser text-slate-500"></i> Clear Grid
                 </button>
             </form>
         </div>
@@ -438,8 +438,36 @@ function handleDrop(event, cell) {
     const slot = slotsData[slotId];
     if (!slot) return;
 
-    // Optimistic update
     const prevDay = slot.day, prevStart = slot.start_time, prevEnd = slot.end_time;
+
+    // Check if target cell already has an occupied slot -> Swap positions
+    const targetSlot = Object.values(slotsData).find(s => s.id !== slotId && s.day === newDay && s.start_time === newStart);
+    if (targetSlot) {
+        slot.day = newDay; slot.start_time = newStart; slot.end_time = newEnd;
+        targetSlot.day = prevDay; targetSlot.start_time = prevStart; targetSlot.end_time = prevEnd;
+        renderGrid();
+
+        Promise.all([
+            fetch(`/hod/api/timetable/slot/${slotId}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ day: newDay, start_time: newStart, end_time: newEnd })
+            }),
+            fetch(`/hod/api/timetable/slot/${targetSlot.id}`, {
+                method: 'PATCH',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ day: prevDay, start_time: prevStart, end_time: prevEnd })
+            })
+        ]).then(() => {
+            showToast('Slots swapped successfully', true);
+        }).catch(() => {
+            showToast('Error swapping slots', false);
+            window.location.reload();
+        });
+        return;
+    }
+
+    // Single slot move
     slot.day = newDay;
     slot.start_time = newStart;
     slot.end_time = newEnd;

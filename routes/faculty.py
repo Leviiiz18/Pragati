@@ -69,8 +69,15 @@ def dashboard():
     if not subjects:
         subjects = Subject.query.all()
     today_date = date.today()
-    day_name = today_date.strftime('%A')
-    my_events = Event.query.filter_by(created_by=current_user.id).all()
+    dept_hod_ids = [u.id for u in User.query.filter_by(department=current_user.department, role='hod').all()]
+    principal_ids = [u.id for u in User.query.filter_by(role='principal').all()]
+    broadcast_ids = list(set(dept_hod_ids + principal_ids))
+    
+    my_events = Event.query.filter(
+        (Event.created_by == current_user.id) |
+        (Event.target_role == 'all') |
+        ((Event.target_role == 'faculty') & (Event.created_by.in_(broadcast_ids)))
+    ).order_by(Event.date.asc(), Event.created_at.desc()).all()
     
     today_slots = TimetableSlot.query.filter_by(faculty_id=current_user.id, day=day_name).all()
     if not today_slots:

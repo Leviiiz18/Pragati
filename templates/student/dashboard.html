@@ -247,10 +247,93 @@
                     </div>
                     <h4 class="font-bold text-slate-700 text-xs">No Pending Deadlines</h4>
                     <p class="text-[11px] text-slate-400">All caught up!</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Academic Notice Board & Events Hub -->
+        <div class="lg:col-span-5 flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <span class="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center font-bold text-xs">
+                        <i class="fa-solid fa-bullhorn"></i>
+                    </span>
+                    <div>
+                        <h3 class="text-sm font-bold text-slate-900 tracking-tight">Academic Notice Board</h3>
+                        <p class="text-[10px] text-slate-400 font-medium">Principal &amp; HOD Circulars</p>
+                    </div>
+                </div>
+                <a href="{{ url_for('student.calendar') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                    All <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                </a>
+            </div>
+
+            <!-- Category Filter Pills -->
+            <div class="flex items-center gap-1 overflow-x-auto custom-scroll py-2 flex-shrink-0 text-[10px]">
+                <button onclick="filterStudentNotices('all', this)" class="notice-filter-btn px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition">All</button>
+                <button onclick="filterStudentNotices('exam', this)" class="notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">🎓 Exams</button>
+                <button onclick="filterStudentNotices('seminar', this)" class="notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">💡 Seminars</button>
+                <button onclick="filterStudentNotices('event', this)" class="notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">🏆 Events</button>
+                <button onclick="filterStudentNotices('deadline', this)" class="notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">⏳ Deadlines</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto custom-scroll space-y-2 pr-1 pt-1 min-h-0" id="studentNoticeContainer">
+                {% for ev in events %}
+                <div class="notice-item p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 transition-all space-y-1" data-category="{{ ev.category or 'notice' }}">
+                    <div class="flex items-center justify-between gap-1.5">
+                        <div class="flex items-center gap-1.5">
+                            {% if ev.category == 'exam' %}
+                            <span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-[9px] uppercase tracking-wider">🎓 Exam</span>
+                            {% elif ev.category in ['seminar', 'workshop'] %}
+                            <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 font-bold text-[9px] uppercase tracking-wider">💡 {{ ev.category|upper }}</span>
+                            {% elif ev.category == 'event' %}
+                            <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-800 font-bold text-[9px] uppercase tracking-wider">🏆 Event</span>
+                            {% elif ev.category == 'deadline' %}
+                            <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[9px] uppercase tracking-wider">⏳ Deadline</span>
+                            {% else %}
+                            <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-bold text-[9px] uppercase tracking-wider">📢 Notice</span>
+                            {% endif %}
+
+                            {% if ev.priority == 'urgent' or ev.priority == 'high' %}
+                            <span class="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider animate-pulse">🔥 Urgent</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-[10px] text-slate-400 font-semibold">{{ ev.date.strftime('%b %d') }}</span>
+                    </div>
+
+                    <h4 class="text-xs font-bold text-slate-900 leading-snug">{{ ev.title }}</h4>
+                    {% if ev.description %}
+                    <p class="text-[11px] text-slate-600 line-clamp-2 leading-tight">{{ ev.description }}</p>
+                    {% endif %}
+                    <div class="text-[9px] text-slate-400 font-medium flex items-center justify-between pt-0.5">
+                        <span>Issued by: {{ ev.creator.name if ev.creator else 'Principal / HOD' }}</span>
+                        <span class="capitalize">Target: {{ ev.target_role }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 my-auto">
+                    No active academic notices posted.
                 </div>
                 {% endfor %}
             </div>
         </div>
+
+        <script>
+        function filterStudentNotices(cat, btn) {
+            document.querySelectorAll('.notice-filter-btn').forEach(b => {
+                b.className = 'notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition';
+            });
+            btn.className = 'notice-filter-btn px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition';
+
+            document.querySelectorAll('#studentNoticeContainer .notice-item').forEach(item => {
+                if (cat === 'all' || item.dataset.category === cat) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+        </script>
 
         <!-- Right Column -->
         <div class="lg:col-span-5 flex flex-col h-full gap-3 min-h-0">

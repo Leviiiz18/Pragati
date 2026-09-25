@@ -277,15 +277,109 @@ def get_events():
     return jsonify(results)
 
 
+@events_bp.route('/api/notices/create', methods=['POST'])
+@login_required
+def create_notice():
+    """Endpoint for Principal, HOD, and Faculty to publish categorized academic notices/events."""
+    if current_user.role not in ['principal', 'hod', 'faculty', 'super_admin']:
+        return jsonify({'success': False, 'message': 'Unauthorized to publish notices.'}), 403
+
+    data = request.get_json() or request.form
+    title = data.get('title')
+    description = data.get('description', '')
+    notice_date_str = data.get('date')
+    target_role = data.get('target_role', 'all')
+    category = data.get('category', 'notice') # notice, exam, seminar, workshop, deadline, event
+    priority = data.get('priority', 'normal') # normal, urgent, high
+
+    if not title or not notice_date_str:
+        return jsonify({'success': False, 'message': 'Title and Date are required.'}), 400
+
+    try:
+        notice_date = datetime.strptime(notice_date_str, '%Y-%m-%d').date()
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Invalid date format. Use YYYY-MM-DD.'}), 400
+
+    new_notice = Event(
+        title=title,
+        description=description,
+        date=notice_date,
+        created_by=current_user.id,
+        target_role=target_role,
+        category=category,
+        priority=priority
+    )
+    db.session.add(new_notice)
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': 'Academic notice published successfully!', 'notice_id': new_notice.id})
+
+
+@events_bp.route('/api/notices/feed', methods=['GET'])
+@login_required
+def get_notice_feed():
+    """Fetch sorted, categorized notices for Student & Faculty dashboard notice boards."""
+    role = current_user.role
+    dept = current_user.department
+
+    event_query = Event.query
+
+    if role in ['super_admin', 'principal']:
+        notices = event_query.order_by(Event.date.asc(), Event.created_at.desc()).all()
+    elif role == 'hod':
+        dept_faculty_ids = [u.id for u in User.query.filter_by(department=dept, role='faculty').all()]
+        notices = event_query.filter(
+            (Event.created_by == current_user.id) |
+            (Event.target_role == 'all') |
+            (Event.created_by.in_(dept_faculty_ids))
+        ).order_by(Event.date.asc(), Event.created_at.desc()).all()
+    elif role == 'faculty':
+        dept_hod_ids = [u.id for u in User.query.filter_by(department=dept, role='hod').all()]
+        notices = event_query.filter(
+            ((Event.target_role.in_(['faculty', 'all'])) & (Event.created_by.in_(dept_hod_ids))) |
+            (Event.created_by == current_user.id) |
+            (Event.target_role == 'all')
+        ).order_by(Event.date.asc(), Event.created_at.desc()).all()
+    elif role == 'student':
+        dept_hod_ids = [u.id for u in User.query.filter_by(department=dept, role='hod').all()]
+        enrolled_subject_ids = [e.subject_id for e in current_user.enrollments]
+        notices = event_query.filter(
+            ((Event.target_role.in_(['student', 'all'])) & (Event.created_by.in_(dept_hod_ids))) |
+            ((Event.subject_id.in_(enrolled_subject_ids)) & (Event.target_role.in_(['student', 'all']))) |
+            (Event.target_role == 'all')
+        ).order_by(Event.date.asc(), Event.created_at.desc()).all()
+    else:
+        notices = []
+
+    feed = []
+    for n in notices:
+        creator_name = n.creator.name if n.creator else 'Academic Office'
+        creator_role = n.creator.role.upper() if n.creator else 'ADMIN'
+        feed.append({
+            'id': n.id,
+            'title': n.title,
+            'description': n.description or '',
+            'date': n.date.strftime('%d %b %Y'),
+            'iso_date': n.date.isoformat(),
+            'category': n.category or 'notice',
+            'priority': n.priority or 'normal',
+            'target_role': n.target_role,
+            'creator': f"{creator_name} ({creator_role})"
+        })
+
+    return jsonify(feed)
+
+
 @events_bp.route('/api/events/delete/<int:event_id>', methods=['POST', 'DELETE'])
 @login_required
 def delete_event(event_id):
     ev = Event.query.get_or_404(event_id)
     
     # Permission check: creator, owner, or HOD/admin
-    if ev.created_by == current_user.id or ev.user_id == current_user.id or current_user.role in ['hod', 'super_admin']:
+    if ev.created_by == current_user.id or ev.user_id == current_user.id or current_user.role in ['hod', 'super_admin', 'principal']:
         db.session.delete(ev)
         db.session.commit()
         return jsonify({'success': True, 'message': 'Event deleted successfully.'})
     
     return jsonify({'success': False, 'message': 'Unauthorized to delete this event.'}), 403
+
