@@ -69,6 +69,7 @@ def dashboard():
     if not subjects:
         subjects = Subject.query.all()
     today_date = date.today()
+    day_name = today_date.strftime('%A')
     dept_hod_ids = [u.id for u in User.query.filter_by(department=current_user.department, role='hod').all()]
     principal_ids = [u.id for u in User.query.filter_by(role='principal').all()]
     broadcast_ids = list(set(dept_hod_ids + principal_ids))
