@@ -168,8 +168,8 @@
                 </div>
                 <!-- Load bar -->
                 <div class="w-full h-1 bg-slate-200 rounded-full overflow-hidden">
-                    <div class="h-full rounded-full {% if fac_slots|length > 20 %}bg-rose-500{% elif fac_slots|length > 14 %}bg-amber-500{% else %}bg-emerald-500{% endif %}"
-                         style="width: {{ [((fac_slots|length) / 24 * 100)|int, 100]|min }}%"></div>
+                    <div class="h-full rounded-full load-bar-fill {% if fac_slots|length > 20 %}bg-rose-500{% elif fac_slots|length > 14 %}bg-amber-500{% else %}bg-emerald-500{% endif %}"
+                         data-pct="{{ [((fac_slots|length) / 24 * 100)|int, 100]|min }}"></div>
                 </div>
             </div>
             {% else %}
@@ -329,30 +329,49 @@
 }
 </style>
 
+<div id="timetableServerConfig" style="display:none;" data-periods='{{ periods | tojson }}'>
+    {% for s in slots %}
+    <span class="slot-data"
+          data-id="{{ s.id }}"
+          data-day="{{ s.day }}"
+          data-start-time="{{ s.start_time }}"
+          data-end-time="{{ s.end_time }}"
+          data-subject-id="{{ s.subject_id }}"
+          data-subject-name="{{ s.subject.name if s.subject else '' }}"
+          data-subject-code="{{ s.subject.code if s.subject else '' }}"
+          data-faculty-id="{{ s.faculty_id }}"
+          data-faculty-name="{{ s.faculty.name if s.faculty else '' }}"
+          data-room="{{ s.room or '' }}"
+          data-is-lab="{{ 'true' if s.is_lab else 'false' }}"></span>
+    {% endfor %}
+</div>
+
 <script>
 // ────────────────────────────────────────────────────────────────
 // Slot data from server
 // ────────────────────────────────────────────────────────────────
-const PERIODS = {{ periods | tojson }};
+const serverCfgEl = document.getElementById('timetableServerConfig');
+const PERIODS = JSON.parse(serverCfgEl ? (serverCfgEl.getAttribute('data-periods') || '[]') : '[]');
 const SUBJECTS = [];
 
 // Build lookup from server-rendered slot data
 let slotsData = {};
-{% for s in slots %}
-slotsData[{{ s.id }}] = {
-    id: {{ s.id }},
-    day: {{ s.day | tojson }},
-    start_time: {{ s.start_time | tojson }},
-    end_time: {{ s.end_time | tojson }},
-    subject_id: {{ s.subject_id }},
-    subject_name: {{ (s.subject.name if s.subject else '') | tojson }},
-    subject_code: {{ (s.subject.code if s.subject else '') | tojson }},
-    faculty_id: {{ s.faculty_id }},
-    faculty_name: {{ (s.faculty.name if s.faculty else '') | tojson }},
-    room: {{ s.room | tojson }},
-    is_lab: {{ 'true' if s.is_lab else 'false' }},
-};
-{% endfor %}
+document.querySelectorAll('#timetableServerConfig .slot-data').forEach(el => {
+    const id = parseInt(el.getAttribute('data-id'), 10);
+    slotsData[id] = {
+        id: id,
+        day: el.getAttribute('data-day'),
+        start_time: el.getAttribute('data-start-time'),
+        end_time: el.getAttribute('data-end-time'),
+        subject_id: parseInt(el.getAttribute('data-subject-id'), 10) || null,
+        subject_name: el.getAttribute('data-subject-name') || '',
+        subject_code: el.getAttribute('data-subject-code') || '',
+        faculty_id: parseInt(el.getAttribute('data-faculty-id'), 10) || null,
+        faculty_name: el.getAttribute('data-faculty-name') || '',
+        room: el.getAttribute('data-room') || '',
+        is_lab: el.getAttribute('data-is-lab') === 'true'
+    };
+});
 
 // ────────────────────────────────────────────────────────────────
 // Render grid from slotsData
@@ -630,7 +649,13 @@ document.getElementById('editSlotModal').addEventListener('click', function(e) {
 });
 
 // Initial render
-document.addEventListener('DOMContentLoaded', renderGrid);
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.load-bar-fill').forEach(el => {
+        const pct = el.getAttribute('data-pct');
+        if (pct) el.style.width = pct + '%';
+    });
+    renderGrid();
+});
 </script>
 
 <!-- Print CSS -->

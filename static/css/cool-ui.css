@@ -440,15 +440,32 @@ tbody tr:hover {
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@keyframes beamShimmer {
+  0% {
+    background-position: -200% 0;
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    background-position: 200% 0;
+    opacity: 0.7;
+  }
+}
+
 .stat-card-glass::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 2.5px;
-  background: linear-gradient(90deg, transparent, rgba(168, 85, 247, 0.8), transparent);
-  opacity: 0.8;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(168, 85, 247, 0.4) 20%, rgba(192, 132, 252, 0.95) 50%, rgba(129, 140, 248, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.5s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
 }
 
 .stat-card-glass:hover {
@@ -476,6 +493,155 @@ tbody tr:hover {
 .stat-glow-purple:hover {
   border-color: rgba(168, 85, 247, 0.45);
   box-shadow: 0 20px 35px -10px rgba(168, 85, 247, 0.18), 0 8px 16px -4px rgba(168, 85, 247, 0.08);
+}
+
+/* =========================================================
+   Distinct Color-Specific Glass Card Variants & Beams
+   ========================================================= */
+
+.stat-card-blue {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(239, 246, 255, 0.96) 0%, rgba(248, 250, 252, 0.94) 50%, rgba(235, 245, 255, 0.9) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(147, 197, 253, 0.7) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(59, 130, 246, 0.08), 0 2px 8px -1px rgba(37, 99, 235, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card-blue::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(59, 130, 246, 0.4) 20%, rgba(96, 165, 250, 0.95) 50%, rgba(14, 165, 233, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.2s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
+}
+.stat-card-blue:hover {
+  transform: translateY(-3.5px) scale(1.008);
+  background: linear-gradient(135deg, rgba(235, 244, 255, 0.98) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(224, 242, 254, 0.95) 100%) !important;
+  border-color: rgba(59, 130, 246, 0.85) !important;
+  box-shadow: 0 16px 36px -8px rgba(59, 130, 246, 0.22), 0 6px 14px -2px rgba(37, 99, 235, 0.12) !important;
+}
+
+.stat-card-emerald {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(236, 253, 245, 0.96) 0%, rgba(248, 250, 252, 0.94) 50%, rgba(230, 250, 240, 0.9) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(167, 243, 208, 0.7) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.08), 0 2px 8px -1px rgba(5, 150, 105, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card-emerald::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.4) 20%, rgba(52, 211, 153, 0.95) 50%, rgba(20, 184, 166, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.8s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
+}
+.stat-card-emerald:hover {
+  transform: translateY(-3.5px) scale(1.008);
+  background: linear-gradient(135deg, rgba(228, 253, 241, 0.98) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(220, 252, 231, 0.95) 100%) !important;
+  border-color: rgba(16, 185, 129, 0.85) !important;
+  box-shadow: 0 16px 36px -8px rgba(16, 185, 129, 0.22), 0 6px 14px -2px rgba(5, 150, 105, 0.12) !important;
+}
+
+.stat-card-teal {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(240, 253, 250, 0.96) 0%, rgba(248, 250, 252, 0.94) 50%, rgba(234, 252, 248, 0.9) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(153, 246, 228, 0.7) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(20, 184, 166, 0.08), 0 2px 8px -1px rgba(13, 148, 136, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card-teal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(20, 184, 166, 0.4) 20%, rgba(45, 212, 191, 0.95) 50%, rgba(6, 182, 212, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.4s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
+}
+.stat-card-teal:hover {
+  transform: translateY(-3.5px) scale(1.008);
+  background: linear-gradient(135deg, rgba(230, 252, 248, 0.98) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(220, 250, 245, 0.95) 100%) !important;
+  border-color: rgba(20, 184, 166, 0.85) !important;
+  box-shadow: 0 16px 36px -8px rgba(20, 184, 166, 0.22), 0 6px 14px -2px rgba(13, 148, 136, 0.12) !important;
+}
+
+.stat-card-amber {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(254, 243, 199, 0.6) 0%, rgba(255, 251, 235, 0.94) 50%, rgba(254, 242, 202, 0.5) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(252, 211, 77, 0.7) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(245, 158, 11, 0.08), 0 2px 8px -1px rgba(217, 119, 6, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card-amber::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.4) 20%, rgba(251, 191, 36, 0.95) 50%, rgba(234, 88, 12, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.6s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
+}
+.stat-card-amber:hover {
+  transform: translateY(-3.5px) scale(1.008);
+  background: linear-gradient(135deg, rgba(254, 240, 185, 0.8) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(253, 230, 138, 0.7) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.85) !important;
+  box-shadow: 0 16px 36px -8px rgba(245, 158, 11, 0.22), 0 6px 14px -2px rgba(217, 119, 6, 0.12) !important;
+}
+
+.stat-card-rose {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(255, 241, 242, 0.96) 0%, rgba(255, 245, 245, 0.94) 50%, rgba(254, 226, 226, 0.88) 100%) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(254, 205, 211, 0.7) !important;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 20px -2px rgba(244, 63, 94, 0.08), 0 2px 8px -1px rgba(225, 29, 72, 0.04) !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.stat-card-rose::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent 0%, rgba(244, 63, 94, 0.4) 20%, rgba(251, 113, 133, 0.95) 50%, rgba(225, 29, 72, 0.9) 75%, transparent 100%);
+  background-size: 200% 100%;
+  animation: beamShimmer 3.1s ease-in-out infinite;
+  opacity: 0.95;
+  z-index: 2;
+}
+.stat-card-rose:hover {
+  transform: translateY(-3.5px) scale(1.008);
+  background: linear-gradient(135deg, rgba(255, 228, 230, 0.98) 0%, rgba(255, 255, 255, 0.96) 50%, rgba(254, 205, 211, 0.95) 100%) !important;
+  border-color: rgba(244, 63, 94, 0.85) !important;
+  box-shadow: 0 16px 36px -8px rgba(244, 63, 94, 0.22), 0 6px 14px -2px rgba(225, 29, 72, 0.12) !important;
 }
 
 .stat-glow-amber:hover {
@@ -657,5 +823,586 @@ tbody tr:hover {
   transform: translateY(-0.5px);
   box-shadow: 0 2px 5px rgba(79, 70, 229, 0.18);
 }
+
+/* ======================================================== */
+/* ACADEMIC ATTENDANCE MATRIX & SESSION TILES               */
+/* ======================================================== */
+.session-tile {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+.session-tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px -2px rgba(15, 23, 42, 0.08);
+}
+.session-tile.is-selected {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: 0 8px 20px -3px rgba(99, 102, 241, 0.25);
+}
+
+.session-tile-present {
+  background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
+  border: 1px solid #bbf7d0;
+  color: #166534;
+}
+.session-tile-present:hover {
+  border-color: #86efac;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+}
+
+.session-tile-absent {
+  background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+  border: 1px solid #fecdd3;
+  color: #9f1239;
+  box-shadow: 0 0 0 1px rgba(244, 63, 94, 0.2);
+}
+.session-tile-absent:hover {
+  border-color: #fda4af;
+  background: linear-gradient(135deg, #ffe4e6 0%, #fecdd3 100%);
+}
+
+.session-tile-concern {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  border: 1px solid #fde68a;
+  color: #92400e;
+}
+.session-tile-concern:hover {
+  border-color: #fcd34d;
+}
+
+/* =========================================================
+   Faculty & Teacher Executive Card Architecture (Refined & Elegant)
+   Distinct from the high-saturation student gamer/glass style.
+   Focus: Academic dignity, subtle silk sheen, micro-depth, restrained elevation.
+   ========================================================= */
+
+.teacher-stat-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 1.25rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.25rem;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  transition: transform 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.32s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.32s ease,
+              background-color 0.32s ease;
+  will-change: transform, box-shadow;
+}
+
+.p-4\.5 {
+  padding: 1.125rem !important;
+}
+
+/* Subtle elegant hairline accent on top border */
+.teacher-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--card-accent, #64748b);
+  opacity: 0.35;
+  transition: opacity 0.3s ease, height 0.3s ease;
+  z-index: 1;
+}
+
+/* Smooth elegant silk sheen wave on hover */
+.teacher-stat-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 70%;
+  height: 200%;
+  background: linear-gradient(
+    105deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 80%
+  );
+  transform: rotate(20deg);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  z-index: 2;
+}
+
+.teacher-stat-card:hover {
+  transform: translateY(-3px);
+  background: #ffffff;
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+}
+
+.teacher-stat-card:hover::before {
+  opacity: 0.95;
+  height: 2.5px;
+}
+
+.teacher-stat-card:hover::after {
+  opacity: 1;
+  left: 140%;
+  transition: left 0.85s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s ease;
+}
+
+/* Individual Academic Tone Accents */
+.teacher-card-blue {
+  --card-accent: linear-gradient(90deg, #3b82f6, #60a5fa);
+}
+.teacher-card-blue:hover {
+  border-color: #bfdbfe;
+}
+.teacher-card-blue .teacher-card-icon {
+  background: #f0f7ff;
+  color: #2563eb;
+  border: 1px solid #dbeafe;
+  transition: all 0.28s ease;
+}
+.teacher-card-blue:hover .teacher-card-icon {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-indigo {
+  --card-accent: linear-gradient(90deg, #6366f1, #818cf8);
+}
+.teacher-card-indigo:hover {
+  border-color: #c7d2fe;
+}
+.teacher-card-indigo .teacher-card-icon {
+  background: #f5f3ff;
+  color: #4f46e5;
+  border: 1px solid #e0e7ff;
+  transition: all 0.28s ease;
+}
+.teacher-card-indigo:hover .teacher-card-icon {
+  background: #4f46e5;
+  color: #ffffff;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-emerald {
+  --card-accent: linear-gradient(90deg, #10b981, #34d399);
+}
+.teacher-card-emerald:hover {
+  border-color: #a7f3d0;
+}
+.teacher-card-emerald .teacher-card-icon {
+  background: #f0fdf4;
+  color: #059669;
+  border: 1px solid #bbf7d0;
+  transition: all 0.28s ease;
+}
+.teacher-card-emerald:hover .teacher-card-icon {
+  background: #059669;
+  color: #ffffff;
+  border-color: #059669;
+  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-amber {
+  --card-accent: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.teacher-card-amber:hover {
+  border-color: #fde68a;
+}
+.teacher-card-amber .teacher-card-icon {
+  background: #fffbeb;
+  color: #d97706;
+  border: 1px solid #fef3c7;
+  transition: all 0.28s ease;
+}
+.teacher-card-amber:hover .teacher-card-icon {
+  background: #d97706;
+  color: #ffffff;
+  border-color: #d97706;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-purple {
+  --card-accent: linear-gradient(90deg, #8b5cf6, #a78bfa);
+}
+.teacher-card-purple:hover {
+  border-color: #ddd6fe;
+}
+.teacher-card-purple .teacher-card-icon {
+  background: #faf5ff;
+  color: #7c3aed;
+  border: 1px solid #ede9fe;
+  transition: all 0.28s ease;
+}
+.teacher-card-purple:hover .teacher-card-icon {
+  background: #7c3aed;
+  color: #ffffff;
+  border-color: #7c3aed;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-teal {
+  --card-accent: linear-gradient(90deg, #14b8a6, #2dd4bf);
+}
+.teacher-card-teal:hover {
+  border-color: #99f6e4;
+}
+.teacher-card-teal .teacher-card-icon {
+  background: #f0fdfa;
+  color: #0d9488;
+  border: 1px solid #ccfbf1;
+  transition: all 0.28s ease;
+}
+.teacher-card-teal:hover .teacher-card-icon {
+  background: #0d9488;
+  color: #ffffff;
+  border-color: #0d9488;
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.25);
+  transform: translateY(-1px);
+}
+
+.teacher-card-rose {
+  --card-accent: linear-gradient(90deg, #f43f5e, #fb7185);
+}
+.teacher-card-rose:hover {
+  border-color: #fecdd3;
+}
+.teacher-card-rose .teacher-card-icon {
+  background: #fff1f2;
+  color: #e11d48;
+  border: 1px solid #ffe4e6;
+  transition: all 0.28s ease;
+}
+.teacher-card-rose:hover .teacher-card-icon {
+  background: #e11d48;
+  color: #ffffff;
+  border-color: #e11d48;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25);
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   Executive Course Health Overview Cards (Faculty Attendance)
+   ========================================================= */
+.course-health-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 1.25rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.03), 0 4px 12px -2px rgba(15, 23, 42, 0.03);
+  transition: transform 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              box-shadow 0.28s cubic-bezier(0.2, 0.8, 0.2, 1),
+              border-color 0.28s ease,
+              background-color 0.28s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.course-health-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: var(--course-accent, #64748b);
+  opacity: 0.45;
+  transition: opacity 0.28s ease, height 0.28s ease;
+  z-index: 1;
+}
+
+.course-health-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px -6px rgba(15, 23, 42, 0.08), 0 4px 10px -2px rgba(15, 23, 42, 0.04);
+  border-color: #cbd5e1;
+}
+
+.course-health-card:hover::before {
+  opacity: 1;
+  height: 3px;
+}
+
+/* Status Variations */
+.course-health-healthy {
+  --course-accent: linear-gradient(90deg, #10b981, #34d399);
+}
+.course-health-healthy:hover {
+  border-color: #a7f3d0;
+}
+
+.course-health-watchlist {
+  --course-accent: linear-gradient(90deg, #f59e0b, #fbbf24);
+}
+.course-health-watchlist:hover {
+  border-color: #fde68a;
+}
+
+.course-health-shortage {
+  --course-accent: linear-gradient(90deg, #f43f5e, #fb7185);
+}
+.course-health-shortage:hover {
+  border-color: #fecdd3;
+}
+
+/* Active Selected Course Card */
+.course-health-card.is-active-course {
+  border-color: #2563eb !important;
+  background: linear-gradient(180deg, rgba(239, 246, 255, 0.5) 0%, #ffffff 40%) !important;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15), 0 10px 25px -4px rgba(37, 99, 235, 0.12) !important;
+}
+
+.course-health-card.is-active-course::before {
+  height: 3px;
+  opacity: 1;
+  background: #2563eb !important;
+}
+
+/* =========================================================
+   HOD Executive Department Command Card Architecture
+   Tone: Senior Academic Executive / Department Head
+   Distinct from Student (glow/bubble) and Teacher (silk sheen sweep).
+   Features:
+   - Guaranteed generous padding (no clipped text/corners)
+   - Staggered cascade entrance animation on load
+   - Floating breathing watermark seal with perspective hover expansion
+   - Dual-rail Horizon Light Beam:
+     * Top glowing accent ray expands from center
+     * Bottom solid status indicator expands from center
+   - Radar pulse beacon on the icon badge
+   - Metric number spring elevation
+   - Dynamic ambient aura backdrop shadow
+   - Action footer pill highlight & kinetic arrow
+   ========================================================= */
+
+@keyframes hodCardCascade {
+  0% {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes hodWatermarkBreathe {
+  0%, 100% {
+    transform: rotate(-10deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-7deg) translateY(-5px);
+  }
+}
+
+@keyframes hodBeaconPulse {
+  0% {
+    box-shadow: 0 0 0 0 var(--hod-accent-alpha);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+  }
+}
+
+.hod-stat-card {
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 1.25rem;
+  border: 1px solid #e2e8f0;
+  padding: 1.5rem !important;
+  box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+  will-change: transform, box-shadow;
+  animation: hodCardCascade 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Staggered load delays & palette tokens */
+.hod-card-students {
+  --hod-accent: #2563eb;
+  --hod-accent-alpha: rgba(37, 99, 235, 0.35);
+  --hod-shadow: rgba(37, 99, 235, 0.16);
+  --hod-border-hover: #93c5fd;
+  --hod-pill-bg: #eff6ff;
+  --hod-pill-text: #1d4ed8;
+  animation-delay: 0.05s;
+}
+
+.hod-card-faculty {
+  --hod-accent: #4f46e5;
+  --hod-accent-alpha: rgba(79, 70, 229, 0.35);
+  --hod-shadow: rgba(79, 70, 229, 0.16);
+  --hod-border-hover: #a5b4fc;
+  --hod-pill-bg: #eef2ff;
+  --hod-pill-text: #4338ca;
+  animation-delay: 0.12s;
+}
+
+.hod-card-attendance {
+  --hod-accent: #059669;
+  --hod-accent-alpha: rgba(5, 150, 105, 0.35);
+  --hod-shadow: rgba(5, 150, 105, 0.16);
+  --hod-border-hover: #6ee7b7;
+  --hod-pill-bg: #ecfdf5;
+  --hod-pill-text: #047857;
+  animation-delay: 0.19s;
+}
+
+.hod-card-placement {
+  --hod-accent: #0f172a;
+  --hod-accent-alpha: rgba(15, 23, 42, 0.3);
+  --hod-shadow: rgba(15, 23, 42, 0.14);
+  --hod-border-hover: #94a3b8;
+  --hod-pill-bg: #f8fafc;
+  --hod-pill-text: #0f172a;
+  animation-delay: 0.26s;
+}
+
+/* Top Horizon Luminous Beam (draws out from center on hover) */
+.hod-stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--hod-accent, #0f172a);
+  border-radius: 0 0 3px 3px;
+  transform: translateX(-50%);
+  box-shadow: 0 2px 8px var(--hod-accent-alpha, rgba(15, 23, 42, 0.3));
+  transition: width 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+
+/* Bottom executive indicator bar expanding on hover */
+.hod-stat-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 3px;
+  background: var(--hod-accent, #0f172a);
+  border-radius: 3px 3px 0 0;
+  transform: translateX(-50%);
+  transition: width 0.42s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 2;
+}
+
+/* Subtle watermark seal in background with gentle breathing */
+.hod-stat-card .hod-watermark {
+  position: absolute;
+  right: -0.5rem;
+  bottom: -0.5rem;
+  width: 5.5rem;
+  height: 5.5rem;
+  opacity: 0.045;
+  pointer-events: none;
+  animation: hodWatermarkBreathe 6s ease-in-out infinite;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              opacity 0.4s ease;
+  color: var(--hod-accent, #0f172a);
+  z-index: 0;
+}
+
+/* Icon badge container */
+.hod-stat-card .hod-card-icon {
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 0.75rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+              background-color 0.28s ease,
+              color 0.28s ease,
+              border-color 0.28s ease,
+              box-shadow 0.28s ease;
+}
+
+/* Metric Number Lift */
+.hod-stat-card .hod-metric-value {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.25s ease;
+  display: inline-block;
+}
+
+/* Action button pill on footer */
+.hod-stat-card .hod-action-btn {
+  padding: 0.2rem 0.55rem;
+  border-radius: 0.5rem;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hod-stat-card .hod-action-arrow {
+  display: inline-block;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Hover States */
+.hod-stat-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--hod-border-hover, #cbd5e1);
+  box-shadow: 0 18px 36px -10px var(--hod-shadow, rgba(15, 23, 42, 0.08)), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+}
+
+.hod-stat-card:hover::before {
+  width: 70%;
+}
+
+.hod-stat-card:hover::after {
+  width: 100%;
+}
+
+.hod-stat-card:hover .hod-watermark {
+  opacity: 0.12;
+  transform: scale(1.22) rotate(-2deg);
+  animation-play-state: paused;
+}
+
+.hod-stat-card:hover .hod-card-icon {
+  transform: scale(1.1) rotate(6deg) translateY(-1px);
+  background: var(--hod-accent, #0f172a);
+  color: #ffffff;
+  border-color: var(--hod-accent, #0f172a);
+  box-shadow: 0 4px 14px var(--hod-accent-alpha, rgba(15, 23, 42, 0.2));
+  animation: hodBeaconPulse 1.8s infinite;
+}
+
+.hod-stat-card:hover .hod-metric-value {
+  transform: translateY(-2px);
+}
+
+.hod-stat-card:hover .hod-action-btn {
+  background: var(--hod-pill-bg, #f1f5f9);
+  color: var(--hod-pill-text, #0f172a);
+}
+
+.hod-stat-card:hover .hod-action-arrow {
+  transform: translateX(4px);
+}
+
+
 
 

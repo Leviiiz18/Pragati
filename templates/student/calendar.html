@@ -1,28 +1,31 @@
 {% extends "base.html" %}
-{% block title %}My Academic & Attendance Calendar - Pragati Student{% endblock %}
+{% block title %}My Academic Calendar - Pragati Student{% endblock %}
 
 {% block content %}
 <div class="space-y-6">
     <!-- Header with Quick Action & Attendance Badge -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
         <div>
             <div class="flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase tracking-wider mb-1">
-                <i class="fa-solid fa-calendar-days"></i> Student Hub
+                <i class="fa-solid fa-calendar-days"></i> Student Academic Hub
             </div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">My Academic & Attendance Calendar</h1>
-            <p class="text-sm font-medium text-slate-500 mt-1">Track upcoming exams, course deadlines, your daily attendance logs, and personal study reminders.</p>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">My Academic Calendar</h1>
+            <p class="text-sm font-normal text-slate-500 mt-1">Track upcoming exams, course project deadlines, institution notices, and personal study reminders.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="openStudentReminderModal()" class="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-indigo-200 transition active:scale-95">
+            <a href="{{ url_for('student.attendance') }}" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 transition border border-slate-200">
+                <i class="fa-solid fa-user-check text-slate-600"></i> Attendance Tracker
+            </a>
+            <button onclick="openStudentReminderModal()" class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-xs shadow-indigo-200 transition">
                 <i class="fa-solid fa-plus"></i> Add Personal Reminder
             </button>
         </div>
     </div>
 
-    <!-- Attendance Telemetry Quick Strip (Compact) -->
+    <!-- Attendance Telemetry Quick Strip (Compact Reference) -->
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs border border-emerald-100 flex-shrink-0">
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold text-xs border border-emerald-100 flex-shrink-0">
                 <i class="fa-solid fa-user-check"></i>
             </div>
             <div class="min-w-0">
@@ -31,8 +34,8 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100 flex-shrink-0">
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100 flex-shrink-0">
                 <i class="fa-solid fa-calendar-check"></i>
             </div>
             <div class="min-w-0">
@@ -41,8 +44,8 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs border border-rose-100 flex-shrink-0">
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xs border border-rose-100 flex-shrink-0">
                 <i class="fa-solid fa-user-xmark"></i>
             </div>
             <div class="min-w-0">
@@ -51,8 +54,8 @@
             </div>
         </div>
 
-        <div class="bg-white rounded-xl p-3 border border-slate-200/90 shadow-2xs flex items-center gap-3">
-            <div class="w-8 h-8 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs border border-purple-100 flex-shrink-0">
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold text-xs border border-indigo-100 flex-shrink-0">
                 <i class="fa-solid fa-thumbtack"></i>
             </div>
             <div class="min-w-0">
@@ -62,50 +65,44 @@
         </div>
     </div>
 
-    <!-- Calendar Legend & Compact Filter Strip -->
+    <!-- Calendar Academic Filter Strip -->
     <div class="bg-white rounded-xl px-4 py-2.5 border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
         <div class="flex flex-wrap items-center gap-2 font-semibold text-[11px]">
-            <span class="text-slate-400 uppercase text-[10px] font-bold tracking-wider mr-0.5">Key:</span>
+            <span class="text-slate-400 uppercase text-[10px] font-bold tracking-wider mr-0.5">Filter:</span>
             
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-900 border border-emerald-200 shadow-2xs font-extrabold text-[11px]">
-                <span class="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[8px] font-black"><i class="fa-solid fa-check"></i></span>
-                Attended (Present)
-            </span>
+            <button type="button" onclick="setStudentFilter('all')" id="s-filter-all" class="s-filter-btn active inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition">
+                All Academic Schedule
+            </button>
 
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-rose-50 text-rose-900 border border-rose-200 shadow-2xs font-extrabold text-[11px]">
-                <span class="w-3.5 h-3.5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[8px] font-black"><i class="fa-solid fa-xmark"></i></span>
-                Absent
-            </span>
-
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-50 text-amber-950 border border-amber-300 shadow-2xs font-extrabold text-[11px]">
+            <button type="button" onclick="setStudentFilter('deadline')" id="s-filter-deadline" class="s-filter-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-amber-50 text-amber-950 border border-amber-300 text-xs font-bold transition">
                 <span class="w-3.5 h-3.5 rounded-md bg-amber-500 text-white flex items-center justify-center text-[8px] font-bold"><i class="fa-solid fa-hourglass-half"></i></span>
-                Task Deadline
-            </span>
+                Task Deadlines
+            </button>
 
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-950 border border-indigo-200 shadow-2xs font-extrabold text-[11px]">
-                <span class="w-3.5 h-3.5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[8px] font-bold"><i class="fa-solid fa-thumbtack"></i></span>
-                Personal Reminder
-            </span>
-
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-50 text-purple-950 border border-purple-200 shadow-2xs font-extrabold text-[11px]">
+            <button type="button" onclick="setStudentFilter('exam')" id="s-filter-exam" class="s-filter-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-purple-50 text-purple-950 border border-purple-200 text-xs font-bold transition">
                 <span class="w-3.5 h-3.5 rounded-md bg-purple-600 text-white flex items-center justify-center text-[8px] font-bold"><i class="fa-solid fa-graduation-cap"></i></span>
-                Exam
-            </span>
+                Exams & Quizzes
+            </button>
 
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 text-slate-700 border border-slate-200 shadow-2xs font-bold text-[11px]">
+            <button type="button" onclick="setStudentFilter('reminder')" id="s-filter-reminder" class="s-filter-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-950 border border-indigo-200 text-xs font-bold transition">
+                <span class="w-3.5 h-3.5 rounded-md bg-indigo-600 text-white flex items-center justify-center text-[8px] font-bold"><i class="fa-solid fa-thumbtack"></i></span>
+                Personal Reminders
+            </button>
+
+            <button type="button" onclick="setStudentFilter('notice')" id="s-filter-notice" class="s-filter-btn inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rose-50 text-rose-950 border border-rose-200 text-xs font-bold transition">
                 <span class="w-3.5 h-3.5 rounded-md bg-rose-600 text-white flex items-center justify-center text-[8px] font-bold"><i class="fa-solid fa-bullhorn"></i></span>
-                Notice / Broadcast
-            </span>
+                College Notices
+            </button>
         </div>
 
         <div class="flex items-center gap-2">
-            <button onclick="calendarRefetch()" class="px-2.5 py-1 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition flex items-center gap-1 text-xs font-bold" title="Refresh Calendar">
-                <i class="fa-solid fa-rotate-right text-xs"></i> <span>Refresh</span>
+            <button onclick="calendarRefetch()" class="px-2.5 py-1 text-slate-500 hover:text-indigo-600 rounded-lg hover:bg-slate-100 transition flex items-center gap-1 text-xs font-bold" title="Sync Calendar">
+                <i class="fa-solid fa-rotate-right text-xs"></i> <span>Sync</span>
             </button>
         </div>
     </div>
 
-    <!-- Main Calendar Canvas Card (Compact Sleek Proportions) -->
+    <!-- Main Calendar Canvas Card -->
     <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative">
         <div id="calendar" class="w-full"></div>
     </div>
@@ -200,7 +197,6 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
 <style>
-    /* Sleek, Modern, High-Performance FullCalendar Theme */
     .fc { font-family: inherit; }
     .fc .fc-toolbar { margin-bottom: 0.85rem !important; flex-wrap: wrap; gap: 0.5rem; }
     .fc .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 800 !important; color: #0f172a; letter-spacing: -0.02em; }
@@ -222,10 +218,8 @@
     .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f5f9 !important; }
     .fc-col-header-cell { padding: 0.4rem 0 !important; background: #f8fafc; font-weight: 700; font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0 !important; }
     
-    /* Day Cells with Smooth Subtle Hover */
     .fc-theme-standard .fc-daygrid-day {
         transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
-        position: relative;
     }
     .fc-theme-standard .fc-daygrid-day:not(.fc-day-today):hover {
         background-color: rgba(241, 245, 249, 0.85) !important;
@@ -235,60 +229,23 @@
         background-color: rgba(79, 70, 229, 0.07) !important;
     }
 
-    /* Day Cell Presence & Absence Highlighting (Visually Appealing Day Differentiation) */
-    .fc-theme-standard td.has-present-day {
-        background: linear-gradient(180deg, rgba(236, 253, 245, 0.65) 0%, rgba(255, 255, 255, 0.9) 35%) !important;
-        border-top: 2.5px solid #10b981 !important;
-    }
-    .fc-theme-standard td.has-absent-day {
-        background: linear-gradient(180deg, rgba(254, 242, 242, 0.65) 0%, rgba(255, 255, 255, 0.9) 35%) !important;
-        border-top: 2.5px solid #f43f5e !important;
-    }
-
-    .fc-daygrid-day-frame { min-height: 78px !important; padding: 2px !important; }
-    .fc-daygrid-day-top { flex-direction: row !important; padding: 2px 4px !important; align-items: center !important; }
+    .fc-daygrid-day-frame { min-height: 80px !important; padding: 2px !important; }
+    .fc-daygrid-day-top { flex-direction: row !important; padding: 3px 5px !important; align-items: center !important; }
     .fc-daygrid-day-number { font-size: 0.72rem !important; font-weight: 700 !important; color: #64748b !important; padding: 1px 4px !important; }
-    .fc-day-today { background: rgba(79, 70, 229, 0.04) !important; }
+    .fc-day-today { background: rgba(79, 70, 229, 0.03) !important; }
     .fc-day-today .fc-daygrid-day-number {
         background: #4f46e5;
         color: #ffffff !important;
         border-radius: 9999px;
-        min-width: 1.25rem;
-        height: 1.25rem;
+        min-width: 1.35rem;
+        height: 1.35rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
         font-weight: 800 !important;
     }
 
-    /* Header Day Attendance Status Pill */
-    .day-att-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        padding: 1.5px 5.5px;
-        border-radius: 9999px;
-        font-size: 0.58rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        letter-spacing: 0.02em;
-        line-height: 1;
-        margin-left: auto;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
-        user-select: none;
-    }
-    .day-att-pill.present {
-        background-color: #dcfce7;
-        color: #15803d;
-        border: 1px solid #86efac;
-    }
-    .day-att-pill.absent {
-        background-color: #fee2e2;
-        color: #b91c1c;
-        border: 1px solid #fca5a5;
-    }
-
-    /* Event Badges - Reset FullCalendar borders so custom inner pill controls style */
+    /* Event Badges */
     .fc-daygrid-event {
         margin: 1.5px 0 !important;
         background: transparent !important;
@@ -317,20 +274,69 @@
     .fc-daygrid-more-link:hover {
         background: #e0e7ff !important;
         color: #3730a3 !important;
-        transform: translateY(-0.5px);
-        box-shadow: 0 2px 5px rgba(79, 70, 229, 0.18);
+    }
+
+    .s-filter-btn {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #475569;
+        cursor: pointer;
+    }
+    .s-filter-btn:hover {
+        background-color: #f1f5f9;
+        color: #0f172a;
+    }
+    .s-filter-btn.active {
+        background-color: #1e1b4b !important;
+        border-color: #1e1b4b !important;
+        color: #ffffff !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 </style>
 
 <script>
     let calendarInstance = null;
+    let studentFilter = 'all';
+    let rawStudentEvents = [];
+
+    // Strictly filter out attendance logs from calendar view
+    function filterStudentEvents(events) {
+        // ALWAYS exclude daily attendance presence/absence logs from calendar grid
+        const nonAttendance = events.filter(ev => {
+            const p = ev.extendedProps || {};
+            const src = p.source || '';
+            const cat = p.category || '';
+            return src !== 'attendance' && !cat.startsWith('attendance');
+        });
+
+        if (studentFilter === 'all') return nonAttendance;
+
+        return nonAttendance.filter(ev => {
+            const p = ev.extendedProps || {};
+            const src = p.source || '';
+            const cat = p.category || '';
+            if (studentFilter === 'deadline') return src === 'assignment' || cat === 'deadline';
+            if (studentFilter === 'exam') return src === 'exam' || cat === 'exam';
+            if (studentFilter === 'reminder') return p.target === 'personal' || cat === 'reminder';
+            if (studentFilter === 'notice') return cat === 'notice' || p.creator_role === 'hod';
+            return true;
+        });
+    }
+
+    function setStudentFilter(key) {
+        studentFilter = key;
+        document.querySelectorAll('.s-filter-btn').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(`s-filter-${key}`);
+        if (activeBtn) activeBtn.classList.add('active');
+        if (calendarInstance) calendarInstance.refetchEvents();
+    }
 
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             height: 'auto',
-            contentHeight: 540,
+            contentHeight: 560,
             aspectRatio: 1.75,
             dayMaxEvents: 3,
             headerToolbar: {
@@ -338,51 +344,31 @@
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listMonth'
             },
-            events: '/api/events',
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch('/api/events')
+                    .then(res => res.json())
+                    .then(data => {
+                        rawStudentEvents = data;
+                        const filtered = filterStudentEvents(data);
+                        successCallback(filtered);
+                    })
+                    .catch(err => {
+                        console.error('Error fetching student calendar events:', err);
+                        failureCallback(err);
+                    });
+            },
             eventContent: function(arg) {
                 const p = arg.event.extendedProps || {};
                 const src = p.source || '';
                 const category = p.category || '';
-                const status = (p.status || '').toLowerCase();
                 const rawTitle = arg.event.title || '';
-                const subCode = p.sub_code || '';
 
                 // Clean title string for display
                 let cleanText = rawTitle
                     .replace(/^(✅|❌|⚠️|📝|⏳|📌|📢|🏛️|👨‍🏫)\s*/, '')
                     .replace(/^(Present:\s*|Absent:\s*|Late:\s*|Exam:\s*|Due:\s*|\[EXAM\]\s*|\[NOTICE\]\s*)/i, '');
 
-                // 1. ATTENDANCE: PRESENT (Vibrant Emerald with Checkmark)
-                if (src === 'attendance' && (status === 'present' || category === 'attendance-present')) {
-                    return {
-                        html: `
-                        <div class="flex items-center gap-1.5 w-full py-0.5 px-1.5 rounded-md bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 shadow-2xs transition group" title="Attended Class: ${subCode}">
-                            <span class="w-3.5 h-3.5 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[7.5px] font-black flex-shrink-0 shadow-2xs">
-                                <i class="fa-solid fa-check"></i>
-                            </span>
-                            <span class="truncate font-black text-[10.5px] text-emerald-950 leading-tight">
-                                Present: <strong class="text-emerald-800 font-extrabold">${subCode || cleanText}</strong>
-                            </span>
-                        </div>`
-                    };
-                }
-
-                // 2. ATTENDANCE: ABSENT (Distinct Rose Alert with Cross)
-                if (src === 'attendance' && (status === 'absent' || category === 'attendance-absent')) {
-                    return {
-                        html: `
-                        <div class="flex items-center gap-1.5 w-full py-0.5 px-1.5 rounded-md bg-rose-50 hover:bg-rose-100 border border-rose-300 shadow-2xs transition group" title="Absent: ${subCode}">
-                            <span class="w-3.5 h-3.5 rounded-full bg-rose-600 text-white flex items-center justify-center text-[7.5px] font-black flex-shrink-0 shadow-2xs">
-                                <i class="fa-solid fa-xmark"></i>
-                            </span>
-                            <span class="truncate font-black text-[10.5px] text-rose-950 leading-tight">
-                                Absent: <strong class="text-rose-800 font-extrabold">${subCode || cleanText}</strong>
-                            </span>
-                        </div>`
-                    };
-                }
-
-                // 3. TASK DEADLINES / ASSIGNMENTS (Warm Amber Pill with Hourglass)
+                // 1. TASK DEADLINES / ASSIGNMENTS (Warm Amber Pill with Hourglass)
                 if (src === 'assignment' || category === 'deadline') {
                     return {
                         html: `
@@ -397,7 +383,7 @@
                     };
                 }
 
-                // 4. PERSONAL STUDY REMINDERS (Indigo Sticky Note with Thumbtack)
+                // 2. PERSONAL STUDY REMINDERS (Indigo Sticky Note with Thumbtack)
                 if (p.target === 'personal' || category === 'reminder') {
                     return {
                         html: `
@@ -406,13 +392,13 @@
                                 <i class="fa-solid fa-thumbtack"></i>
                             </span>
                             <span class="truncate font-black text-[10.5px] text-indigo-950 leading-tight">
-                                📌 <span class="font-bold text-indigo-900">${cleanText}</span>
+                                <span class="font-bold text-indigo-900">${cleanText}</span>
                             </span>
                         </div>`
                     };
                 }
 
-                // 5. ACADEMIC EXAMINATIONS (Royal Purple with Graduation Cap)
+                // 3. ACADEMIC EXAMINATIONS (Royal Purple with Graduation Cap)
                 if (src === 'exam' || category === 'exam') {
                     return {
                         html: `
@@ -427,7 +413,7 @@
                     };
                 }
 
-                // 6. DEFAULT / NOTICES & BROADCASTS (Rose/Coral with Megaphone)
+                // 4. DEFAULT / NOTICES & BROADCASTS (Rose/Coral with Megaphone)
                 return {
                     html: `
                     <div class="flex items-center gap-1.5 w-full py-0.5 px-1.5 rounded-md bg-rose-50/80 hover:bg-rose-100 border border-rose-200 shadow-2xs transition group" title="${rawTitle}">
@@ -438,12 +424,6 @@
                     </div>`
                 };
             },
-            eventsSet: function(events) {
-                applyAttendanceDayHighlights();
-            },
-            datesSet: function() {
-                setTimeout(applyAttendanceDayHighlights, 60);
-            },
             eventClick: function(info) {
                 showEventDetails(info.event);
             }
@@ -451,66 +431,9 @@
         calendarInstance.render();
     });
 
-    // Helper: Highlights day cells with attendance presence and absence badges
-    function applyAttendanceDayHighlights() {
-        if (!calendarInstance) return;
-
-        // Clear previous attendance pills and classes
-        document.querySelectorAll('.day-att-pill').forEach(el => el.remove());
-        document.querySelectorAll('.has-present-day, .has-absent-day').forEach(el => {
-            el.classList.remove('has-present-day', 'has-absent-day');
-        });
-
-        // Tally attendance records per date
-        const events = calendarInstance.getEvents();
-        const dateAttendance = {};
-
-        events.forEach(ev => {
-            const p = ev.extendedProps || {};
-            if (p.source === 'attendance') {
-                const dateStr = ev.startStr ? ev.startStr.split('T')[0] : '';
-                if (!dateStr) return;
-
-                if (!dateAttendance[dateStr]) {
-                    dateAttendance[dateStr] = { present: 0, absent: 0, late: 0 };
-                }
-                const st = (p.status || '').toLowerCase();
-                if (st === 'present') dateAttendance[dateStr].present++;
-                else if (st === 'absent') dateAttendance[dateStr].absent++;
-                else dateAttendance[dateStr].late++;
-            }
-        });
-
-        // Apply badges and cell borders
-        Object.keys(dateAttendance).forEach(dateStr => {
-            const counts = dateAttendance[dateStr];
-            const cell = document.querySelector(`td[data-date="${dateStr}"]`);
-            if (cell) {
-                const topEl = cell.querySelector('.fc-daygrid-day-top');
-                if (topEl && !topEl.querySelector('.day-att-pill')) {
-                    const pill = document.createElement('span');
-                    if (counts.absent > 0) {
-                        cell.classList.add('has-absent-day');
-                        pill.className = 'day-att-pill absent';
-                        pill.title = `Attendance: ${counts.absent} Class(es) Absent`;
-                        pill.innerHTML = `<i class="fa-solid fa-xmark"></i> <span class="hidden sm:inline">Absent</span>`;
-                    } else if (counts.present > 0) {
-                        cell.classList.add('has-present-day');
-                        pill.className = 'day-att-pill present';
-                        pill.title = `Attendance: ${counts.present} Class(es) Present`;
-                        pill.innerHTML = `<i class="fa-solid fa-check"></i> <span class="hidden sm:inline">Present</span>`;
-                    }
-                    topEl.appendChild(pill);
-                }
-            }
-        });
-    }
-
     function calendarRefetch() {
         if (calendarInstance) calendarInstance.refetchEvents();
     }
-
-
 
     function openStudentReminderModal() {
         document.getElementById('studentReminderModal').classList.remove('hidden');
@@ -532,8 +455,8 @@
         const props = event.extendedProps || {};
 
         badge.textContent = props.type || 'Calendar Event';
-        badge.style.backgroundColor = `${event.backgroundColor}20`;
-        badge.style.color = event.backgroundColor;
+        badge.style.backgroundColor = `${event.backgroundColor || '#4f46e5'}20`;
+        badge.style.color = event.backgroundColor || '#4f46e5';
 
         title.textContent = event.title;
         dateEl.textContent = event.start ? new Date(event.start).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }) : '';

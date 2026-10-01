@@ -4,96 +4,287 @@
 {% block content %}
 <div class="space-y-6">
     <!-- Header -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
         <div>
             <div class="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
-                <i class="fa-solid fa-calendar-check"></i> Course Management
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                </svg>
+                Faculty Academic Planning & Schedule
             </div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Academic & Subject Calendar</h1>
-            <p class="text-sm font-medium text-slate-500 mt-1">Schedule assignment deadlines, quiz dates, and view department examination broadcasts.</p>
-        </div>
-        <div class="flex items-center gap-3">
-            <button onclick="openFacultyEventModal('deadline')" class="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
-                <i class="fa-solid fa-hourglass-half"></i> Set Course Deadline
-            </button>
-            <button onclick="openFacultyEventModal('personal')" class="px-4 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-emerald-200 transition">
-                <i class="fa-solid fa-thumbtack"></i> Personal Reminder
-            </button>
-        </div>
-    </div>
-
-    <!-- Category Filter Pill Bar & Legend (Compact) -->
-    <div class="bg-white rounded-xl px-3.5 py-2.5 border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div class="flex flex-wrap items-center gap-2 font-semibold text-[11px]">
-            <span class="text-slate-400 uppercase text-[10px] font-bold tracking-wider mr-0.5">Legend:</span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> HOD Notice
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-purple-600"></span> Exam
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-700 border border-blue-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span> Course Deadline
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-sky-600"></span> Attendance Marked
-            </span>
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
-                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Personal Reminder
-            </span>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Academic & Course Calendar</h1>
+            <p class="text-sm font-normal text-slate-500 mt-1">Manage assessment milestones, assignment submission deadlines, academic events, and course schedules.</p>
         </div>
 
-        <div class="flex items-center gap-2">
-            <button onclick="calendarRefetch()" class="p-1.5 text-slate-400 hover:text-blue-600 rounded-lg hover:bg-slate-100 transition" title="Refresh Calendar">
-                <i class="fa-solid fa-rotate-right text-xs"></i>
+        <div class="flex flex-wrap items-center gap-3">
+            <a href="{{ url_for('faculty.attendance') }}" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition border border-slate-200">
+                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                Mark Attendance
+            </a>
+            <button onclick="openFacultyEventModal('deadline')" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-200 transition">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Set Course Deadline
+            </button>
+            <button onclick="openFacultyEventModal('personal')" class="inline-flex items-center gap-2 px-3.5 py-2.5 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold transition border border-indigo-200">
+                <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                </svg>
+                Personal Note
             </button>
         </div>
     </div>
 
-    <!-- Main Calendar Canvas Card (Compact Proportions) -->
-    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs relative">
-        <div id="calendar" class="w-full"></div>
+    <!-- Executive Metric Cards -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Card 1: Assessments & Exams -->
+        <div class="teacher-stat-card teacher-card-purple p-5 rounded-2xl relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Scheduled Exams</p>
+                    <h3 class="text-2xl font-black text-slate-900 mt-1">{{ upcoming_exams|length }}</h3>
+                </div>
+                <div class="teacher-card-icon text-purple-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7v-6m-9-1l9 5 9-5"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <span class="inline-block w-2 h-2 rounded-full bg-purple-500"></span>
+                <span>Active evaluation windows</span>
+            </div>
+        </div>
+
+        <!-- Card 2: Assigned Subjects -->
+        <div class="teacher-stat-card teacher-card-blue p-5 rounded-2xl relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Assigned Courses</p>
+                    <h3 class="text-2xl font-black text-slate-900 mt-1">{{ subjects|length }}</h3>
+                </div>
+                <div class="teacher-card-icon text-blue-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
+                <span>Curriculum tracking active</span>
+            </div>
+        </div>
+
+        <!-- Card 3: Assignment Milestones -->
+        <div class="teacher-stat-card teacher-card-amber p-5 rounded-2xl relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Course Deadlines</p>
+                    <h3 class="text-2xl font-black text-slate-900 mt-1" id="statDeadlineCount">--</h3>
+                </div>
+                <div class="teacher-card-icon text-amber-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Student submissions pending</span>
+            </div>
+        </div>
+
+        <!-- Card 4: Attendance Registry Log Control -->
+        <div class="teacher-stat-card teacher-card-teal p-5 rounded-2xl relative">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Attendance Registry</p>
+                    <h3 class="text-lg font-extrabold text-slate-900 mt-1" id="statAttendanceStatus">Logs Muted</h3>
+                </div>
+                <div class="teacher-card-icon text-teal-600">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+            </div>
+            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                <span class="inline-block w-2 h-2 rounded-full bg-teal-500"></span>
+                <span>Muted on grid for clarity</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Interactive Category Filter Bar -->
+    <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex flex-wrap items-center gap-2">
+            <span class="text-slate-400 uppercase text-[10px] font-bold tracking-wider mr-1">FILTER VIEW:</span>
+
+            <!-- Filter: All -->
+            <button onclick="setFilter('all')" id="filter-btn-all" class="filter-chip active inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs transition">
+                <span>All Academic</span>
+            </button>
+
+            <!-- Filter: Assessments -->
+            <button onclick="setFilter('exam')" id="filter-btn-exam" class="filter-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs transition">
+                <span class="w-2 h-2 rounded-full bg-purple-600"></span>
+                <span>Assessments & Exams</span>
+            </button>
+
+            <!-- Filter: Deadlines -->
+            <button onclick="setFilter('deadline')" id="filter-btn-deadline" class="filter-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs transition">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span>Course Deadlines</span>
+            </button>
+
+            <!-- Filter: Notices -->
+            <button onclick="setFilter('notice')" id="filter-btn-notice" class="filter-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs transition">
+                <span class="w-2 h-2 rounded-full bg-rose-600"></span>
+                <span>Notices & Events</span>
+            </button>
+
+            <!-- Filter: Personal Reminders -->
+            <button onclick="setFilter('reminder')" id="filter-btn-reminder" class="filter-chip inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border font-semibold text-xs transition">
+                <span class="w-2 h-2 rounded-full bg-indigo-600"></span>
+                <span>Personal Notes</span>
+            </button>
+        </div>
+
+        <!-- Attendance Logs Clutter-Free Toggle -->
+        <div class="flex items-center gap-3 border-t sm:border-t-0 pt-2 sm:pt-0 w-full sm:w-auto justify-between sm:justify-end">
+            <label class="inline-flex items-center gap-2 cursor-pointer select-none text-xs font-semibold text-slate-700 bg-slate-50 hover:bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200 transition">
+                <input type="checkbox" id="toggleAttendanceLogs" onchange="toggleAttendanceDisplay()" class="w-4 h-4 rounded text-blue-600 border-slate-300 focus:ring-blue-500 cursor-pointer">
+                <span>Show Attendance Logs</span>
+                <span class="text-[10px] text-slate-400 font-normal">(Muted by default)</span>
+            </label>
+
+            <button onclick="calendarRefetch()" class="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-slate-500 hover:text-blue-600 rounded-lg hover:bg-slate-100 transition text-xs font-semibold" title="Sync Calendar">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
+                </svg>
+                Sync
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Layout: Calendar + Selected Date Agenda Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+        <!-- Main Calendar Canvas (3 Cols on Desktop) -->
+        <div class="lg:col-span-3 bg-white rounded-2xl p-4 sm:p-6 border border-slate-200/90 shadow-2xs relative">
+            <div id="calendar" class="w-full"></div>
+        </div>
+
+        <!-- Selected Date Inspector Sidebar (1 Col on Desktop) -->
+        <div class="space-y-4">
+            <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-2xs space-y-4">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Date Inspector</h2>
+                            <h3 id="inspectorDateDisplay" class="text-sm font-extrabold text-slate-900">Today</h3>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Inspector Items List -->
+                <div id="inspectorItemsList" class="space-y-2.5 max-h-[420px] overflow-y-auto pr-1 text-xs">
+                    <div class="text-center py-8 text-slate-400 font-medium">
+                        Click on any date in the calendar to inspect its academic agenda, deadlines, and logs.
+                    </div>
+                </div>
+
+                <!-- Quick Action on Selected Date -->
+                <div class="pt-3 border-t border-slate-100 space-y-2">
+                    <button onclick="createEventOnSelectedDate()" class="w-full py-2.5 px-3 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-xs shadow-blue-200">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        Add Deadline on this Date
+                    </button>
+                    <a href="{{ url_for('faculty.attendance') }}" class="w-full py-2 px-3 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 font-medium text-xs transition flex items-center justify-center gap-2 border border-slate-200">
+                        <svg class="w-3.5 h-3.5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                        Open Attendance Register
+                    </a>
+                </div>
+            </div>
+
+            <!-- Subject Shortcut Card -->
+            <div class="bg-white rounded-2xl p-4 border border-slate-200/90 shadow-2xs space-y-3">
+                <h4 class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-600"></span>
+                    My Taught Courses
+                </h4>
+                <div class="space-y-1.5">
+                    {% for sub in subjects %}
+                    <div class="flex items-center justify-between p-2 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-800 truncate">{{ sub.name }}</div>
+                            <div class="text-[10px] text-slate-400 font-medium">{{ sub.code }} &bull; Sem {{ sub.semester }}</div>
+                        </div>
+                        <a href="{{ url_for('faculty.courses') }}" class="text-blue-600 hover:text-blue-700 font-semibold text-[11px] ml-2 flex-shrink-0">
+                            View &rarr;
+                        </a>
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-slate-400">No courses assigned yet.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
 <!-- ======================================================== -->
 <!-- FACULTY EVENT CREATION MODAL                             -->
 <!-- ======================================================== -->
-<div id="facultyEventModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fadeIn">
-        <div class="p-6 md:p-8 space-y-6">
+<div id="facultyEventModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden border border-slate-200 animate-fadeIn">
+        <div class="p-6 space-y-5">
             <div class="flex items-center justify-between border-b border-slate-100 pb-4">
                 <div class="flex items-center gap-3">
-                    <div id="facModalIconBox" class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg">
-                        <i class="fa-solid fa-hourglass-half"></i>
+                    <div id="facModalIconBox" class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
                     </div>
                     <div>
-                        <h3 id="facModalTitle" class="text-lg font-extrabold text-slate-900">Add Course Deadline</h3>
+                        <h3 id="facModalTitle" class="text-base font-bold text-slate-900">Add Course Deadline</h3>
                         <p id="facModalSub" class="text-xs text-slate-500 font-medium">Synced automatically to all enrolled students</p>
                     </div>
                 </div>
-                <button onclick="closeFacultyEventModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
+                <button onclick="closeFacultyEventModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
 
             <form action="{{ url_for('faculty.create_event') }}" method="POST" class="space-y-4" id="facultyEventForm">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Task / Deadline Title</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Task / Deadline Title</label>
                     <input type="text" name="title" id="facEventTitleInput" required placeholder="e.g. Lab Project Milestone 2 Submission" 
-                           class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                           class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Due / Event Date</label>
-                        <input type="date" name="date" required 
-                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Due / Event Date</label>
+                        <input type="date" name="date" id="facEventDateInput" required 
+                               class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Scope / Visibility</label>
-                        <select name="target_role" id="facTargetRole" onchange="toggleSubjectRequirement()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
-                            <option value="student">Enrolled Students (Subject-Bound)</option>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Scope / Visibility</label>
+                        <select name="target_role" id="facTargetRole" onchange="toggleSubjectRequirement()" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                            <option value="student">Enrolled Students (Course Deadline)</option>
                             <option value="personal">Personal Reminder (Private to Me)</option>
                         </select>
                     </div>
@@ -101,17 +292,17 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Event Type</label>
-                        <select name="event_type" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
-                            <option value="deadline">⏳ Assignment / Project Deadline</option>
-                            <option value="quiz">📝 Subject Quiz / Class Test</option>
-                            <option value="exam">🎯 Practical / Viva Exam</option>
-                            <option value="announcement">📢 General Course Notice</option>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Event Category</label>
+                        <select name="event_type" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                            <option value="deadline">Deadline / Submission</option>
+                            <option value="quiz">Assessment / Quiz</option>
+                            <option value="exam">Practical / Viva Exam</option>
+                            <option value="announcement">Course Notice</option>
                         </select>
                     </div>
                     <div id="subjectWrapper">
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Target Subject</label>
-                        <select name="subject_id" id="facSubjectSelect" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Target Subject</label>
+                        <select name="subject_id" id="facSubjectSelect" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
                             <option value="">-- Select Enrolled Course --</option>
                             {% for sub in subjects %}
                             <option value="{{ sub.id }}">{{ sub.name }} ({{ sub.code }})</option>
@@ -121,16 +312,16 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Instructions & Submission Notes</label>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Instructions & Submission Notes</label>
                     <textarea name="description" rows="3" placeholder="Provide submission format, grading criteria, or portal instructions..." 
-                              class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition"></textarea>
+                              class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition"></textarea>
                 </div>
 
                 <div class="pt-2 flex items-center justify-end gap-3">
-                    <button type="button" onclick="closeFacultyEventModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">
+                    <button type="button" onclick="closeFacultyEventModal()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
                         Cancel
                     </button>
-                    <button type="submit" id="facModalSubmitBtn" class="px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition">
+                    <button type="submit" id="facModalSubmitBtn" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-200 transition">
                         Publish Deadline
                     </button>
                 </div>
@@ -142,32 +333,37 @@
 <!-- ======================================================== -->
 <!-- EVENT DETAILS POPUP MODAL                                -->
 <!-- ======================================================== -->
-<div id="eventDetailModal" class="hidden fixed inset-0 z-50 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full overflow-hidden border border-slate-200 animate-fadeIn">
-        <div class="p-6 md:p-8 space-y-4">
+<div id="eventDetailModal" class="hidden fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-200 animate-fadeIn">
+        <div class="p-6 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-                <span id="detailBadge" class="px-3 py-1 rounded-full text-xs font-bold"></span>
-                <button onclick="closeEventDetailModal()" class="w-8 h-8 rounded-xl hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
-                    <i class="fa-solid fa-xmark"></i>
+                <span id="detailBadge" class="px-2.5 py-0.5 rounded-full text-xs font-bold"></span>
+                <button onclick="closeEventDetailModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 flex items-center justify-center transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
                 </button>
             </div>
 
             <div>
-                <h3 id="detailTitle" class="text-xl font-extrabold text-slate-900 leading-snug"></h3>
-                <div id="detailDate" class="text-xs font-bold text-slate-500 mt-1 flex items-center gap-1.5">
-                    <i class="fa-solid fa-clock"></i> <span></span>
+                <h3 id="detailTitle" class="text-base font-bold text-slate-900 leading-snug"></h3>
+                <div id="detailDate" class="text-xs font-medium text-slate-500 mt-1 flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                    </svg>
+                    <span></span>
                 </div>
             </div>
 
-            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100 text-xs text-slate-700 leading-relaxed whitespace-pre-line" id="detailDescription">
+            <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 text-xs text-slate-700 leading-relaxed whitespace-pre-line" id="detailDescription">
             </div>
 
-            <div id="detailMeta" class="text-[11px] text-slate-400 font-semibold space-y-1">
+            <div id="detailMeta" class="text-[11px] text-slate-400 font-medium space-y-1">
             </div>
 
             <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
                 <div id="deleteBtnContainer"></div>
-                <button onclick="closeEventDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition ml-auto">
+                <button onclick="closeEventDetailModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition ml-auto">
                     Close
                 </button>
             </div>
@@ -180,18 +376,39 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js'></script>
 
 <style>
-    /* Sleek, Modern, Compact FullCalendar Theme */
+    /* Filter Chip Styling */
+    .filter-chip {
+        background-color: #f8fafc;
+        border-color: #e2e8f0;
+        color: #475569;
+    }
+    .filter-chip:hover {
+        background-color: #f1f5f9;
+        color: #0f172a;
+        border-color: #cbd5e1;
+    }
+    .filter-chip.active {
+        background-color: #0f172a;
+        border-color: #0f172a;
+        color: #ffffff;
+        box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+    }
+    .filter-chip.active span.w-2 {
+        background-color: #ffffff !important;
+    }
+
+    /* FullCalendar Executive Styling */
     .fc { font-family: inherit; }
-    .fc .fc-toolbar { margin-bottom: 0.85rem !important; flex-wrap: wrap; gap: 0.5rem; }
-    .fc .fc-toolbar-title { font-size: 1.1rem !important; font-weight: 800 !important; color: #0f172a; letter-spacing: -0.02em; }
+    .fc .fc-toolbar { margin-bottom: 1rem !important; flex-wrap: wrap; gap: 0.5rem; }
+    .fc .fc-toolbar-title { font-size: 1.15rem !important; font-weight: 800 !important; color: #0f172a; letter-spacing: -0.02em; }
     .fc .fc-button-primary { 
         background-color: #f8fafc !important; 
         border: 1px solid #e2e8f0 !important; 
         color: #475569 !important; 
-        font-weight: 700 !important; 
+        font-weight: 600 !important; 
         font-size: 0.72rem !important; 
         border-radius: 0.65rem !important; 
-        padding: 0.35rem 0.75rem !important; 
+        padding: 0.4rem 0.8rem !important; 
         box-shadow: none !important; 
         transition: all 0.15s ease !important;
     }
@@ -200,120 +417,158 @@
     .fc .fc-button-active { background-color: #2563eb !important; border-color: #2563eb !important; color: #ffffff !important; }
     
     .fc-theme-standard td, .fc-theme-standard th { border-color: #f1f5f9 !important; }
-    .fc-col-header-cell { padding: 0.4rem 0 !important; background: #f8fafc; font-weight: 700; font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0 !important; }
+    .fc-col-header-cell { padding: 0.5rem 0 !important; background: #f8fafc; font-weight: 700; font-size: 0.68rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid #e2e8f0 !important; }
     
-    /* Day Cells with Smooth Subtle Hover */
     .fc-theme-standard .fc-daygrid-day {
-        transition: background-color 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease !important;
+        transition: background-color 0.15s ease, box-shadow 0.15s ease !important;
     }
-    .fc-theme-standard .fc-daygrid-day:not(.fc-day-today):hover {
-        background-color: rgba(241, 245, 249, 0.85) !important;
+    .fc-theme-standard .fc-daygrid-day:hover {
+        background-color: rgba(241, 245, 249, 0.7) !important;
         cursor: pointer;
     }
-    .fc-theme-standard .fc-day-today:hover {
-        background-color: rgba(37, 99, 235, 0.07) !important;
-    }
-    .fc-daygrid-day:hover .fc-daygrid-day-number {
-        color: #0f172a !important;
-        font-weight: 700 !important;
-        transform: scale(1.06);
-        transition: transform 0.15s ease, color 0.15s ease;
+    .fc-theme-standard .fc-daygrid-day.selected-day-cell {
+        background-color: rgba(37, 99, 235, 0.06) !important;
+        outline: 2px solid #2563eb;
+        outline-offset: -2px;
     }
 
-    .fc-daygrid-day-frame { min-height: 70px !important; padding: 2px !important; }
-    .fc-daygrid-day-top { flex-direction: row !important; padding: 2px 4px !important; }
-    .fc-daygrid-day-number { font-size: 0.7rem !important; font-weight: 600 !important; color: #64748b !important; padding: 1px 4px !important; }
-    .fc-day-today { background: rgba(37, 99, 235, 0.03) !important; }
+    .fc-daygrid-day-frame { min-height: 80px !important; padding: 2px !important; }
+    .fc-daygrid-day-top { flex-direction: row !important; padding: 3px 5px !important; }
+    .fc-daygrid-day-number { font-size: 0.72rem !important; font-weight: 600 !important; color: #64748b !important; padding: 1px 4px !important; }
+    .fc-day-today { background: rgba(37, 99, 235, 0.02) !important; }
     .fc-day-today .fc-daygrid-day-number {
         background: #2563eb;
         color: #ffffff !important;
         border-radius: 9999px;
-        min-width: 1.25rem;
-        height: 1.25rem;
+        min-width: 1.35rem;
+        height: 1.35rem;
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700 !important;
+        font-weight: 800 !important;
     }
 
-    /* Event Badges - Clean Pill Design with subtle borders & micro-dots */
     .fc-daygrid-event {
-        margin: 1.5px 0 !important;
-        border-radius: 6px !important;
-        padding: 1.5px 4px !important;
-        font-size: 0.68rem !important;
-        font-weight: 600 !important;
-        cursor: pointer;
-        transition: transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.15s ease, filter 0.15s ease !important;
-        border-width: 1px !important;
+        background: transparent !important;
+        border: none !important;
+        margin: 2px 0 !important;
+        padding: 0 !important;
+        box-shadow: none !important;
     }
-    .fc-daygrid-event:hover {
-        transform: translateY(-1.5px) scale(1.02);
-        box-shadow: 0 4px 10px -1px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
-        z-index: 25 !important;
-        filter: brightness(0.96);
+
+    .cal-exec-marker {
+        transition: transform 0.16s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.16s ease, border-color 0.16s ease !important;
+        will-change: transform, box-shadow;
+    }
+    .cal-exec-marker:hover {
+        transform: translateY(-1px) scale(1.01);
+        box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.12), 0 2px 4px -1px rgba(15, 23, 42, 0.06);
+        border-color: #cbd5e1 !important;
+        z-index: 30 !important;
     }
 
     .fc-daygrid-more-link {
         font-size: 0.68rem !important;
         font-weight: 700 !important;
         color: #2563eb !important;
-        padding: 1px 5px !important;
-        border-radius: 5px !important;
+        padding: 2px 6px !important;
+        border-radius: 6px !important;
         background: #eff6ff !important;
         display: inline-block !important;
         margin-top: 1px !important;
         transition: all 0.15s ease !important;
     }
-    .fc-daygrid-more-link:hover {
-        background: #dbeafe !important;
-        color: #1d4ed8 !important;
-        transform: translateY(-0.5px);
-        box-shadow: 0 2px 5px rgba(37, 99, 235, 0.18);
-    }
 </style>
 
 <script>
     let calendarInstance = null;
+    let rawCalendarEvents = [];
+    let currentFilter = 'all';
+    let showAttendance = false; // Muted by default to avoid clutter
+    let selectedDateStr = new Date().toISOString().split('T')[0];
 
     document.addEventListener('DOMContentLoaded', function() {
         const calendarEl = document.getElementById('calendar');
         calendarInstance = new FullCalendar.Calendar(calendarEl, {
             initialView: 'dayGridMonth',
             height: 'auto',
-            contentHeight: 520,
-            aspectRatio: 1.75,
-            dayMaxEvents: 2,
+            contentHeight: 560,
+            aspectRatio: 1.6,
+            dayMaxEvents: 3,
             headerToolbar: {
                 left: 'prev,next today',
                 center: 'title',
                 right: 'dayGridMonth,timeGridWeek,listMonth'
             },
-            events: '/api/events',
+            events: function(fetchInfo, successCallback, failureCallback) {
+                fetch('/api/events')
+                    .then(res => res.json())
+                    .then(data => {
+                        rawCalendarEvents = data;
+                        updateMetrics(data);
+                        const filtered = filterEvents(data);
+                        successCallback(filtered);
+                        updateDayInspector(selectedDateStr);
+                    })
+                    .catch(err => {
+                        console.error('Error fetching calendar events:', err);
+                        failureCallback(err);
+                    });
+            },
+            dateClick: function(info) {
+                selectedDateStr = info.dateStr;
+                highlightSelectedCell(info.dayEl);
+                updateDayInspector(info.dateStr);
+            },
             eventContent: function(arg) {
                 const p = arg.event.extendedProps || {};
                 const src = p.source || '';
+                const category = p.category || '';
                 const rawTitle = arg.event.title || '';
-                const dot = p.dot_color || arg.event.borderColor || '#2563eb';
+                const subCode = p.sub_code || '';
 
-                let cleanText = rawTitle;
-                if (src === 'attendance_faculty') {
-                    cleanText = rawTitle.replace(/^📋\s*/, '');
-                } else if (src === 'exam') {
-                    cleanText = rawTitle.replace(/^📝\s*Exam:\s*/, '').replace(/^🏛️\s*\[EXAM\]\s*/, '');
-                } else if (src === 'assignment') {
-                    cleanText = rawTitle.replace(/^⏳\s*Due:\s*/, 'Due: ');
-                } else if (p.target === 'personal') {
-                    cleanText = rawTitle.replace(/^📌\s*/, '');
-                } else {
-                    cleanText = rawTitle.replace(/^🏛️\s*(\[EXAM\]|\[NOTICE\])?\s*/, '').replace(/^👨‍🏫\s*(\[DEADLINE\]|\[QUIZ\])?\s*/, '');
+                // Strip leading emojis and redundant bracket prefixes
+                let cleanText = rawTitle
+                    .replace(/^(📋|🎓|📝|⏳|📌|📢|🏛️|👨‍🏫|✓|✕|⚠)\s*/, '')
+                    .replace(/^(Marked:\s*|Roll:\s*|Exam:\s*|Due:\s*|\[EXAM\]\s*|\[NOTICE\]\s*|\[DEADLINE\]\s*|\[TASK\]\s*)/gi, '')
+                    .trim();
+
+                // Executive Linear Bookmark Configuration
+                let accentColor = '#e11d48'; // Notice (Rose)
+                let typeLabel = 'Notice';
+                let codePrefix = subCode ? subCode : '';
+                let iconSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"></path></svg>';
+
+                if (src === 'exam' || category === 'exam') {
+                    accentColor = '#7c3aed'; // Assessment (Purple)
+                    typeLabel = 'Exam';
+                    iconSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7v-6m-9-1l9 5 9-5"></path></svg>';
+                } else if (src === 'assignment' || category === 'deadline') {
+                    accentColor = '#d97706'; // Deadline (Amber)
+                    typeLabel = 'Deadline';
+                    iconSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                } else if (p.target === 'personal' || category === 'reminder') {
+                    accentColor = '#4f46e5'; // Personal Reminder (Indigo)
+                    typeLabel = 'Personal';
+                    iconSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>';
+                } else if (src === 'attendance_faculty' || category === 'attendance') {
+                    accentColor = '#0284c7'; // Attendance (Sky Blue)
+                    typeLabel = 'Roll';
+                    codePrefix = subCode ? subCode : 'Roll';
+                    iconSvg = '<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
                 }
 
                 return {
                     html: `
-                    <div class="flex items-center gap-1.5 w-full py-0.5 px-1 overflow-hidden" title="${rawTitle}">
-                        <span class="w-1.5 h-1.5 rounded-full flex-shrink-0" style="background-color: ${dot};"></span>
-                        <span class="truncate font-semibold text-[11px] leading-tight" style="color: ${arg.event.textColor || '#0f172a'};">${cleanText}</span>
+                    <div class="cal-exec-marker group flex items-center gap-1.5 w-full py-1 px-1.5 rounded-lg bg-white border border-slate-200/90 shadow-2xs hover:shadow-xs transition-all duration-150 overflow-hidden" 
+                         style="border-left: 3.5px solid ${accentColor};" 
+                         title="${cleanText} (${typeLabel})">
+                        <span class="w-3.5 h-3.5 flex items-center justify-center flex-shrink-0" style="color: ${accentColor};">
+                            ${iconSvg}
+                        </span>
+                        <div class="min-w-0 flex-1 truncate font-bold text-[11px] text-slate-800 group-hover:text-slate-950 leading-tight">
+                            ${codePrefix ? `<span class="font-extrabold mr-1 text-[10px]" style="color: ${accentColor};">${codePrefix}:</span>` : ''}<span>${cleanText}</span>
+                        </div>
                     </div>`
                 };
             },
@@ -324,11 +579,129 @@
         calendarInstance.render();
     });
 
+    function filterEvents(events) {
+        return events.filter(ev => {
+            const p = ev.extendedProps || {};
+            const src = p.source || '';
+            const category = p.category || '';
+
+            // Handle Attendance Logs: Always check the toggle
+            if (src === 'attendance_faculty' || category === 'attendance') {
+                if (!showAttendance) return false;
+            }
+
+            // Handle Category Filter Chips
+            if (currentFilter === 'all') return true;
+            if (currentFilter === 'exam') return (src === 'exam' || category === 'exam');
+            if (currentFilter === 'deadline') return (src === 'assignment' || category === 'deadline');
+            if (currentFilter === 'notice') return (category === 'notice' || p.creator_role === 'hod');
+            if (currentFilter === 'reminder') return (p.target === 'personal' || category === 'reminder');
+
+            return true;
+        });
+    }
+
+    function setFilter(filterKey) {
+        currentFilter = filterKey;
+        document.querySelectorAll('.filter-chip').forEach(btn => btn.classList.remove('active'));
+        const activeBtn = document.getElementById(`filter-btn-${filterKey}`);
+        if (activeBtn) activeBtn.classList.add('active');
+        if (calendarInstance) calendarInstance.refetchEvents();
+    }
+
+    function toggleAttendanceDisplay() {
+        const checkbox = document.getElementById('toggleAttendanceLogs');
+        showAttendance = checkbox.checked;
+        const statusEl = document.getElementById('statAttendanceStatus');
+        if (statusEl) {
+            statusEl.textContent = showAttendance ? 'Logs Visible' : 'Logs Muted';
+            statusEl.className = showAttendance ? 'text-lg font-extrabold text-teal-600 mt-1' : 'text-lg font-extrabold text-slate-900 mt-1';
+        }
+        if (calendarInstance) calendarInstance.refetchEvents();
+    }
+
+    function updateMetrics(events) {
+        let deadlines = 0;
+        events.forEach(ev => {
+            const p = ev.extendedProps || {};
+            if (p.source === 'assignment' || p.category === 'deadline') deadlines++;
+        });
+        const deadlineEl = document.getElementById('statDeadlineCount');
+        if (deadlineEl) deadlineEl.textContent = deadlines;
+    }
+
+    function highlightSelectedCell(dayEl) {
+        document.querySelectorAll('.fc-daygrid-day').forEach(el => el.classList.remove('selected-day-cell'));
+        if (dayEl) dayEl.classList.add('selected-day-cell');
+    }
+
+    function updateDayInspector(dateStr) {
+        const dateDisplay = document.getElementById('inspectorDateDisplay');
+        const listEl = document.getElementById('inspectorItemsList');
+
+        const parsedDate = new Date(dateStr + 'T00:00:00');
+        dateDisplay.textContent = parsedDate.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+
+        // Filter events matching this date
+        const dayEvents = rawCalendarEvents.filter(ev => {
+            return (ev.start || '').startsWith(dateStr);
+        });
+
+        if (dayEvents.length === 0) {
+            listEl.innerHTML = `
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-center text-slate-400">
+                    <p class="font-semibold text-slate-500">No scheduled items</p>
+                    <p class="text-[11px] mt-0.5">No exams, deadlines, or logs recorded for this day.</p>
+                </div>`;
+            return;
+        }
+
+        let html = '';
+        dayEvents.forEach(ev => {
+            const p = ev.extendedProps || {};
+            const src = p.source || '';
+            const isAtt = (src === 'attendance_faculty' || p.category === 'attendance');
+
+            let badgeBg = 'bg-blue-50 text-blue-700 border-blue-200';
+            let label = 'Event';
+
+            if (src === 'exam' || p.category === 'exam') {
+                badgeBg = 'bg-purple-50 text-purple-700 border-purple-200';
+                label = 'Exam';
+            } else if (src === 'assignment' || p.category === 'deadline') {
+                badgeBg = 'bg-amber-50 text-amber-800 border-amber-200';
+                label = 'Deadline';
+            } else if (isAtt) {
+                badgeBg = 'bg-sky-50 text-sky-700 border-sky-200';
+                label = 'Roll Marked';
+            } else if (p.target === 'personal') {
+                badgeBg = 'bg-indigo-50 text-indigo-700 border-indigo-200';
+                label = 'Personal';
+            }
+
+            html += `
+            <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/80 hover:bg-slate-100/70 transition space-y-1">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full border ${badgeBg}">${label}</span>
+                    ${p.sub_code ? `<span class="text-[10px] font-bold text-slate-500">${p.sub_code}</span>` : ''}
+                </div>
+                <div class="font-bold text-slate-900 leading-snug">${ev.title.replace(/^(📋|🎓|📝|⏳|📌|📢|🏛️|👨‍🏫|✓|✕|⚠)\s*/, '')}</div>
+                <div class="text-[11px] text-slate-500 line-clamp-2">${ev.description || ''}</div>
+            </div>`;
+        });
+
+        listEl.innerHTML = html;
+    }
+
+    function createEventOnSelectedDate() {
+        openFacultyEventModal('deadline', selectedDateStr);
+    }
+
     function calendarRefetch() {
         if (calendarInstance) calendarInstance.refetchEvents();
     }
 
-    function openFacultyEventModal(type = 'deadline') {
+    function openFacultyEventModal(type = 'deadline', presetDate = null) {
         const modal = document.getElementById('facultyEventModal');
         const titleEl = document.getElementById('facModalTitle');
         const subEl = document.getElementById('facModalSub');
@@ -336,23 +709,30 @@
         const targetRole = document.getElementById('facTargetRole');
         const submitBtn = document.getElementById('facModalSubmitBtn');
         const titleInput = document.getElementById('facEventTitleInput');
+        const dateInput = document.getElementById('facEventDateInput');
+
+        if (presetDate) {
+            dateInput.value = presetDate;
+        } else {
+            dateInput.value = selectedDateStr;
+        }
 
         if (type === 'personal') {
             titleEl.textContent = 'Add Personal Reminder';
             subEl.textContent = 'Private to your account only';
             targetRole.value = 'personal';
-            iconBox.innerHTML = '<i class="fa-solid fa-thumbtack"></i>';
-            iconBox.className = 'w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-lg';
-            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-md shadow-emerald-200 transition';
-            submitBtn.textContent = 'Save Personal Reminder';
-            titleInput.placeholder = 'e.g. Prepare Question Paper for Term 2';
+            iconBox.innerHTML = '<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>';
+            iconBox.className = 'w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 border border-indigo-100';
+            submitBtn.className = 'px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-xs shadow-indigo-200 transition';
+            submitBtn.textContent = 'Save Personal Note';
+            titleInput.placeholder = 'e.g. Prepare Question Paper for Midterm Exam';
         } else {
             titleEl.textContent = 'Add Course Deadline';
             subEl.textContent = 'Synced automatically to all enrolled students';
             targetRole.value = 'student';
-            iconBox.innerHTML = '<i class="fa-solid fa-hourglass-half"></i>';
-            iconBox.className = 'w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center text-lg';
-            submitBtn.className = 'px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition';
+            iconBox.innerHTML = '<svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+            iconBox.className = 'w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 border border-blue-100';
+            submitBtn.className = 'px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-xs shadow-blue-200 transition';
             submitBtn.textContent = 'Publish Deadline';
             titleInput.placeholder = 'e.g. Lab Project Milestone 2 Submission';
         }
@@ -387,8 +767,7 @@
         const props = event.extendedProps || {};
 
         badge.textContent = props.type || 'Calendar Event';
-        badge.style.backgroundColor = `${event.backgroundColor}20`;
-        badge.style.color = event.backgroundColor;
+        badge.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200';
 
         title.textContent = event.title;
         dateEl.textContent = event.start ? new Date(event.start).toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric', year: 'numeric' }) : '';
@@ -403,8 +782,12 @@
         deleteContainer.innerHTML = '';
         if (props.can_delete && props.source === 'event') {
             const delBtn = document.createElement('button');
-            delBtn.className = 'px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs transition border border-rose-200';
-            delBtn.innerHTML = '<i class="fa-solid fa-trash-can mr-1"></i> Delete Event';
+            delBtn.className = 'inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 font-semibold text-xs transition border border-rose-200';
+            delBtn.innerHTML = `
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                </svg>
+                Delete Event`;
             delBtn.onclick = () => deleteEvent(props.db_id || event.id.replace('event_', ''));
             deleteContainer.appendChild(delBtn);
         }

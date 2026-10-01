@@ -1,73 +1,543 @@
 {% extends "base.html" %}
-{% block title %}Smart Attendance Marking - Pragati by Kalpkrats{% endblock %}
+{% block title %}Attendance Management - Pragati Faculty{% endblock %}
+
 {% block content %}
+{% set selected_subject = (subjects | selectattr('id', 'equalto', selected_subject_id) | first) if subjects and selected_subject_id else (subjects[0] if subjects else None) %}
+
 <div class="space-y-6">
-    <div>
-        <h1 class="text-3xl font-extrabold text-slate-900">Smart Attendance Register</h1>
-        <p class="text-sm font-medium text-slate-600 mt-1">Bulk attendance entry with real-time biometric and proxy suspicion detection.</p>
-    </div>
-
-    <!-- Subject Selector -->
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm flex items-center justify-between">
-        <form action="{{ url_for('faculty.attendance') }}" method="GET" class="flex items-center gap-4">
-            <label class="text-xs font-bold text-slate-500 uppercase">Select Subject:</label>
-            <select name="subject_id" onchange="this.form.submit()" class="px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
-                {% for s in subjects %}
-                <option value="{{ s.id }}" {% if s.id == selected_subject_id %}selected{% endif %}>{{ s.name }} ({{ s.code }})</option>
-                {% endfor %}
-            </select>
-        </form>
-        <span class="text-xs text-emerald-600 font-bold flex items-center gap-1.5">
-            <i class="fa-solid fa-shield-check"></i> Biometric Validation Active
-        </span>
-    </div>
-
-    <!-- Attendance Form Table -->
-    {% if selected_subject_id %}
-    <form action="{{ url_for('faculty.attendance') }}" method="POST" class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-        <input type="hidden" name="subject_id" value="{{ selected_subject_id }}">
-        
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div class="text-sm font-bold text-slate-900">Class Roster (Check = Present)</div>
-            <div class="flex items-center gap-3">
-                <input type="date" name="date" value="{{ today_date }}" class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900">
-                <button type="submit" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-bold shadow-md shadow-emerald-200 transition">
-                    Submit Attendance
-                </button>
+    <!-- Header Section -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200/90 shadow-2xs">
+        <div>
+            <div class="flex items-center gap-2 text-xs font-bold text-blue-600 uppercase tracking-wider mb-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                </svg>
+                Academic Operations & Roll Management
             </div>
+            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Attendance Register & Oversight</h1>
+            <p class="text-sm font-normal text-slate-500 mt-1">Record daily session rolls, monitor student attendance thresholds, and identify low-attendance alerts.</p>
         </div>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-700">
-                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-700">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Biometric Validation Active</span>
+            </span>
+            <a href="{{ url_for('faculty.schedule') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition border border-slate-200">
+                <svg class="w-4 h-4 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                View Timetable
+            </a>
+        </div>
+    </div>
+
+    <!-- Section 1: Subject-wise Health Cards ("Which class has attendance issues?") -->
+    <div class="space-y-3">
+        <div class="flex items-center justify-between">
+            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+                Course Attendance Health Overview
+            </h2>
+            <span class="text-xs text-slate-400 font-medium">Click any course card to switch active register</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+            {% for s in subjects %}
+            {% set total_enrolled = s.enrollments | length %}
+            {% set all_recs = s.attendance_records %}
+            {% set total_records = all_recs | length %}
+            {% set present_records = (all_recs | selectattr('status', 'equalto', 'present') | list | length) if total_records > 0 else 0 %}
+            {% set avg_pct = ((present_records / total_records) * 100) | round(1) if total_records > 0 else 85.0 %}
+            {% set is_active = (selected_subject and s.id == selected_subject.id) %}
+            
+            {% set health_class = 'course-health-healthy' if avg_pct >= 80 else ('course-health-watchlist' if avg_pct >= 75 else 'course-health-shortage') %}
+
+            <a href="{{ url_for('faculty.attendance', subject_id=s.id) }}" 
+               class="course-health-card {{ health_class }} {{ 'is-active-course' if is_active else '' }} p-5 group">
+                <!-- Top Row: Course Code & Status Badge -->
+                <div class="flex items-center justify-between gap-2 mb-3">
+                    <span class="px-2.5 py-1 rounded-lg text-xs font-black tracking-wider uppercase {{ 'bg-blue-600 text-white shadow-xs' if is_active else 'bg-slate-100 text-slate-700 border border-slate-200/80' }}">
+                        {{ s.code }}
+                    </span>
+
+                    {% if avg_pct >= 80 %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                        Healthy
+                    </span>
+                    {% elif avg_pct >= 75 %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-700 border border-amber-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                        Watchlist
+                    </span>
+                    {% else %}
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                        <span class="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse"></span>
+                        Shortage Alert
+                    </span>
+                    {% endif %}
+                </div>
+
+                <!-- Course Title & Department -->
+                <div class="space-y-1 mb-4">
+                    <h3 class="text-base font-extrabold text-slate-900 group-hover:text-blue-600 transition truncate leading-snug">{{ s.name }}</h3>
+                    <p class="text-xs text-slate-500 font-medium">{{ s.department }} &bull; Semester {{ s.semester or 'N/A' }}</p>
+                </div>
+
+                <!-- Bottom Metrics & Inset Progress Bar -->
+                <div class="pt-3 border-t border-slate-100 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-1.5 text-slate-500 font-semibold">
+                            <svg class="w-3.5 h-3.5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                            </svg>
+                            <span>{{ total_enrolled }} Enrolled</span>
+                        </div>
+                        <div class="text-xs font-black {{ 'text-rose-600' if avg_pct < 75 else ('text-amber-600' if avg_pct < 80 else 'text-emerald-600') }}">
+                            Avg Roll: {{ avg_pct }}%
+                        </div>
+                    </div>
+
+                    <!-- Clean Inset Progress Bar with Rounded Capsule -->
+                    <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden p-0.5 border border-slate-200/50">
+                        <div class="progress-bar-fill h-full rounded-full transition-all duration-500 {{ 'bg-rose-500' if avg_pct < 75 else ('bg-amber-500' if avg_pct < 80 else 'bg-emerald-500') }}"
+                             data-pct="{{ avg_pct }}"></div>
+                    </div>
+
+                    {% if is_active %}
+                    <div class="pt-1 flex items-center gap-1.5 text-[11px] font-bold text-blue-600">
+                        <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        <span>Currently Selected Register</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            {% else %}
+            <div class="col-span-full p-8 text-center bg-white rounded-2xl border border-slate-200 text-slate-500 text-sm">
+                No assigned subjects found for your profile.
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Section 2: Selected Subject Attendance Register Workspace -->
+    {% if selected_subject %}
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+        <!-- Register Action Bar -->
+        <form action="{{ url_for('faculty.attendance') }}" method="POST" id="attendanceForm" class="p-5 sm:p-6 space-y-6">
+            <input type="hidden" name="subject_id" value="{{ selected_subject.id }}">
+
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-slate-100">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-12 h-12 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0 shadow-2xs">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h2 class="text-xl font-extrabold text-slate-900">{{ selected_subject.name }}</h2>
+                            <span class="px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold uppercase">{{ selected_subject.code }}</span>
+                        </div>
+                        <p class="text-xs text-slate-500 font-medium mt-1">
+                            {{ selected_subject.department }} &bull; Semester {{ selected_subject.semester or 'N/A' }} &bull; <strong class="text-slate-700">{{ students|length }} Enrolled Students</strong>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Session Date & Submit CTA -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2">
+                        <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        <span class="text-xs font-semibold text-slate-500">Session Date:</span>
+                        <input type="date" name="date" id="attDateInput" required class="bg-transparent text-xs font-bold text-slate-900 focus:outline-none cursor-pointer">
+                    </div>
+
+                    <button type="submit" class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs shadow-blue-200 transition">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                        </svg>
+                        Submit Attendance Register
+                    </button>
+                </div>
+            </div>
+
+            <!-- =====================================================================
+                 EXECUTIVE ROLL COMMAND CONSOLE (Built uniquely for Teacher Attendance)
+                 Replaces generic student-style cards with a unified session control hub.
+                 ===================================================================== -->
+            <div class="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 rounded-2xl p-5 text-white shadow-md border border-slate-700/60 relative overflow-hidden">
+                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-5 relative z-10">
+                    
+                    <!-- Left: Quorum Turnout Gauge Dial -->
+                    <div class="flex items-center gap-4 border-b lg:border-b-0 lg:border-r border-slate-700/60 pb-4 lg:pb-0 lg:pr-6 flex-shrink-0">
+                        <div class="w-16 h-16 rounded-2xl bg-slate-800/90 border border-slate-700 flex flex-col items-center justify-center flex-shrink-0">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest text-[9px]">Turnout</span>
+                            <span class="text-xl font-black font-mono text-emerald-400 leading-tight" id="statAttendanceRatio">100%</span>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-extrabold text-white tracking-wide uppercase">Session Quorum</span>
+                                <span id="statQuorumBadge" class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                                    Above 75% Criteria
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-400 mt-0.5">Real-time attendance ratio for today's session</p>
+                        </div>
+                    </div>
+
+                    <!-- Middle: Live Distribution Counts & Segmented Bar -->
+                    <div class="flex-1 space-y-2.5">
+                        <div class="flex flex-wrap items-center justify-between gap-3 text-xs">
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-blue-500"></span>
+                                <span class="text-slate-300 font-semibold">Total Roster:</span>
+                                <span class="font-mono font-extrabold text-white text-sm" id="statTotalStudents">{{ students|length }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
+                                <span class="text-emerald-400 font-semibold">Present:</span>
+                                <span class="font-mono font-extrabold text-emerald-300 text-sm" id="statPresentCount">{{ students|length }}</span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
+                                <span class="text-rose-400 font-semibold">Absent:</span>
+                                <span class="font-mono font-extrabold text-rose-300 text-sm" id="statAbsentCount">0</span>
+                            </div>
+                        </div>
+
+                        <!-- Segmented Roll Progress Bar -->
+                        <div class="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden flex border border-slate-700/80">
+                            <div id="statPresentBar" class="bg-emerald-500 transition-all duration-300 h-full" style="width: 100%;"></div>
+                            <div id="statAbsentBar" class="bg-rose-500 transition-all duration-300 h-full" style="width: 0%;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Quick Batch Actions -->
+                    <div class="flex items-center gap-2.5 border-t lg:border-t-0 lg:border-l border-slate-700/60 pt-4 lg:pt-0 lg:pl-6 flex-shrink-0">
+                        <button type="button" onclick="setAllAttendance(true)" class="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-sm shadow-emerald-900/50">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                            All Present
+                        </button>
+                        <button type="button" onclick="setAllAttendance(false)" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-rose-900/50 text-rose-300 hover:text-white border border-slate-700 hover:border-rose-500/50 font-bold text-xs transition flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                            All Absent
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Table Utility & Search Bar -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
+                <div class="relative max-w-sm w-full">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="rosterSearchInput" onkeyup="filterRosterTable()" placeholder="Search student name or email..." 
+                           class="w-full pl-10 pr-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white transition">
+                </div>
+                <div class="text-xs text-slate-400 font-medium">
+                    Showing <strong class="text-slate-700">{{ students|length }}</strong> enrolled students
+                </div>
+            </div>
+
+            <!-- Student Roster Table -->
+            <div class="overflow-x-auto border border-slate-200/90 rounded-2xl shadow-2xs">
+                <table class="w-full text-left text-xs text-slate-700" id="rosterTable">
+                    <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
+                        <tr>
+                            <th class="p-3.5 w-24 text-center">Session Roll</th>
+                            <th class="p-3.5">Student Name & ID</th>
+                            <th class="p-3.5">Contact Details</th>
+                            <th class="p-3.5 text-center">Semester Compliance</th>
+                            <th class="p-3.5 text-right">Quick Toggle</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 bg-white">
+                        {% for st in students %}
+                        {% set pct = st.attendance_percentage or 85.0 %}
+                        <tr class="hover:bg-slate-50/80 transition roster-row" data-student-name="{{ st.name | lower }}" data-student-email="{{ st.email | lower }}">
+                            <!-- Interactive Status Toggle Button -->
+                            <td class="p-3.5 text-center">
+                                <label class="inline-flex items-center cursor-pointer select-none">
+                                    <input type="checkbox" name="present_students" value="{{ st.id }}" checked 
+                                           class="attendance-checkbox sr-only" onchange="handleCheckboxChange(this)">
+                                    <span class="status-indicator-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-extrabold text-[11px] bg-emerald-50 text-emerald-800 border border-emerald-300 transition shadow-2xs">
+                                        <svg class="w-3 h-3 text-emerald-600 status-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        <span class="status-text">PRESENT</span>
+                                    </span>
+                                </label>
+                            </td>
+
+                            <!-- Student Info with Initials Avatar -->
+                            <td class="p-3.5">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-slate-100 text-slate-700 font-bold flex items-center justify-center text-xs border border-slate-200 flex-shrink-0">
+                                        {{ st.name[:2]|upper }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-extrabold text-slate-900 text-xs">{{ st.name }}</div>
+                                        <div class="text-[11px] text-slate-400 font-mono mt-0.5">{{ st.registration_id or 'ID: NU26STU' ~ st.id }}</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Email / Phone -->
+                            <td class="p-3.5 text-slate-500 font-medium">
+                                <div class="text-xs font-semibold text-slate-700">{{ st.email }}</div>
+                                <div class="text-[11px] text-slate-400 mt-0.5">{{ st.student_phone or 'No phone registered' }}</div>
+                            </td>
+
+                            <!-- Overall Attendance % -->
+                            <td class="p-3.5 text-center">
+                                <div class="inline-flex items-center gap-1.5">
+                                    {% if pct >= 80 %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                        <svg class="w-3 h-3 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                        </svg>
+                                        {{ pct }}%
+                                    </span>
+                                    {% elif pct >= 75 %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-50 text-amber-800 border border-amber-200">
+                                        <svg class="w-3 h-3 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                                        </svg>
+                                        {{ pct }}%
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-rose-50 text-rose-800 border border-rose-200">
+                                        <svg class="w-3 h-3 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                        </svg>
+                                        {{ pct }}% Shortage
+                                    </span>
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <!-- Quick Action Toggle Button -->
+                            <td class="p-3.5 text-right">
+                                <button type="button" onclick="toggleStudentRow(this)" class="px-3 py-1.5 rounded-xl text-[11px] font-bold bg-slate-100 hover:bg-slate-200 text-slate-700 transition border border-slate-200">
+                                    Toggle State
+                                </button>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-400 font-medium">
+                                No students currently enrolled in this subject.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Action Row -->
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2">
+                <span class="text-xs text-slate-500 font-medium">
+                    Changes will record timestamps and notify students marked absent automatically.
+                </span>
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-xs shadow-blue-200 transition">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Confirm & Submit Register
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Section 3: Recent Attendance Activity & Logs -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 sm:p-6">
+        <div class="flex items-center justify-between mb-4">
+            <h3 class="text-xs font-bold text-slate-500 uppercase tracking-wider flex items-center gap-2">
+                <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                Recent Attendance Sessions Recorded
+            </h3>
+            <span class="text-xs text-slate-400 font-medium">Audit logs for {{ selected_subject.name }}</span>
+        </div>
+
+        {% if selected_subject.attendance_records %}
+        <div class="overflow-x-auto border border-slate-200/90 rounded-2xl">
+            <table class="w-full text-left text-xs text-slate-700">
+                <thead class="bg-slate-50 text-slate-500 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200">
                     <tr>
-                        <th class="p-3">Present?</th>
-                        <th class="p-3">Student Name</th>
-                        <th class="p-3">Email</th>
-                        <th class="p-3">Current %</th>
+                        <th class="p-3">Session Date</th>
+                        <th class="p-3">Candidate</th>
+                        <th class="p-3">Recorded Status</th>
+                        <th class="p-3">Dispute / Concern Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200">
-                    {% for st in students %}
-                    <tr class="hover:bg-slate-50 font-medium">
+                <tbody class="divide-y divide-slate-100">
+                    {% for rec in selected_subject.attendance_records | reverse | slice(1) | first %}
+                    <tr class="hover:bg-slate-50/70 transition">
+                        <td class="p-3 font-semibold text-slate-900">
+                            {{ rec.date.strftime('%b %d, %Y') if rec.date else 'N/A' }}
+                        </td>
+                        <td class="p-3 font-medium text-slate-800">
+                            {{ rec.student.name if rec.student else ('Student #' ~ rec.student_id) }}
+                        </td>
                         <td class="p-3">
-                            <input type="checkbox" name="present_students" value="{{ st.id }}" checked class="w-4 h-4 rounded text-emerald-600 bg-slate-50 border-slate-300 focus:ring-emerald-500">
+                            {% if rec.status == 'present' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> PRESENT
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-rose-50 text-rose-700 border border-rose-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-rose-600"></span> ABSENT
+                            </span>
+                            {% endif %}
                         </td>
-                        <td class="p-3 font-bold text-slate-900">{{ st.name }}</td>
-                        <td class="p-3 text-slate-500 text-xs font-medium">{{ st.email }}</td>
-                        <td class="p-3 font-bold {% if st.attendance_percentage < 75 %}text-rose-600{% else %}text-emerald-600{% endif %}">
-                            {{ st.attendance_percentage }}%
+                        <td class="p-3">
+                            {% if rec.concern_status == 'Pending' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-amber-50 text-amber-700 border border-amber-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Dispute Pending
+                            </span>
+                            {% elif rec.concern_status == 'Resolved' %}
+                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span> Resolved
+                            </span>
+                            {% else %}
+                            <span class="text-slate-400 text-[11px]">Normal</span>
+                            {% endif %}
                         </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="p-6 text-center text-slate-400 font-medium">No students enrolled in this subject yet.</td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
-    </form>
+        {% else %}
+        <div class="p-6 text-center text-slate-400 text-xs font-medium bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+            No previous session records recorded for this subject yet.
+        </div>
+        {% endif %}
+    </div>
     {% endif %}
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize progress bar fills cleanly
+        document.querySelectorAll('.progress-bar-fill').forEach(function(el) {
+            var val = el.getAttribute('data-pct');
+            if (val) el.style.width = val + '%';
+        });
+
+        // Default today's date if not set
+        const dateInput = document.getElementById('attDateInput');
+        if (dateInput && !dateInput.value) {
+            const today = new Date().toISOString().split('T')[0];
+            dateInput.value = today;
+        }
+        updateSessionStats();
+    });
+
+    function handleCheckboxChange(cb) {
+        const row = cb.closest('tr');
+        const badge = row.querySelector('.status-indicator-badge');
+        const textSpan = badge.querySelector('.status-text');
+        const icon = badge.querySelector('.status-icon');
+
+        if (cb.checked) {
+            badge.className = 'status-indicator-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-extrabold text-[11px] bg-emerald-50 text-emerald-800 border border-emerald-300 transition shadow-2xs';
+            textSpan.textContent = 'PRESENT';
+            icon.classList.remove('text-rose-600');
+            icon.classList.add('text-emerald-600');
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path>';
+        } else {
+            badge.className = 'status-indicator-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full font-extrabold text-[11px] bg-rose-50 text-rose-800 border border-rose-300 transition shadow-2xs';
+            textSpan.textContent = 'ABSENT';
+            icon.classList.remove('text-emerald-600');
+            icon.classList.add('text-rose-600');
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path>';
+        }
+        updateSessionStats();
+    }
+
+    function toggleStudentRow(btn) {
+        const row = btn.closest('tr');
+        const cb = row.querySelector('.attendance-checkbox');
+        cb.checked = !cb.checked;
+        handleCheckboxChange(cb);
+    }
+
+    function setAllAttendance(isPresent) {
+        const checkboxes = document.querySelectorAll('.attendance-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = isPresent;
+            handleCheckboxChange(cb);
+        });
+    }
+
+    function updateSessionStats() {
+        const checkboxes = document.querySelectorAll('.attendance-checkbox');
+        const total = checkboxes.length;
+        let present = 0;
+        checkboxes.forEach(cb => {
+            if (cb.checked) present++;
+        });
+        const absent = total - present;
+        const pct = total > 0 ? Math.round((present / total) * 100) : 100;
+
+        const totalEl = document.getElementById('statTotalStudents');
+        const presEl = document.getElementById('statPresentCount');
+        const absEl = document.getElementById('statAbsentCount');
+        const ratioEl = document.getElementById('statAttendanceRatio');
+        const presentBar = document.getElementById('statPresentBar');
+        const absentBar = document.getElementById('statAbsentBar');
+        const quorumBadge = document.getElementById('statQuorumBadge');
+
+        if (totalEl) totalEl.textContent = total;
+        if (presEl) presEl.textContent = present;
+        if (absEl) absEl.textContent = absent;
+        if (ratioEl) ratioEl.textContent = pct + '%';
+
+        if (presentBar && absentBar) {
+            presentBar.style.width = pct + '%';
+            absentBar.style.width = (100 - pct) + '%';
+        }
+
+        if (quorumBadge) {
+            if (pct >= 75) {
+                quorumBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30';
+                quorumBadge.textContent = 'Above 75% Criteria';
+            } else {
+                quorumBadge.className = 'px-2 py-0.5 rounded-full text-[10px] font-bold bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse';
+                quorumBadge.textContent = 'Below 75% Criteria';
+            }
+        }
+    }
+
+    function filterRosterTable() {
+        const query = document.getElementById('rosterSearchInput').value.toLowerCase().trim();
+        const rows = document.querySelectorAll('.roster-row');
+        rows.forEach(row => {
+            const name = row.getAttribute('data-student-name') || '';
+            const email = row.getAttribute('data-student-email') || '';
+            if (name.includes(query) || email.includes(query)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+</script>
 {% endblock %}
