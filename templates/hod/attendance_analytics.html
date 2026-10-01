@@ -1,53 +1,252 @@
 {% extends "base.html" %}
-{% block title %}Attendance Analytics & Proxy AI - Pragati by Kalpkrats{% endblock %}
+{% block title %}Department Attendance Analytics - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
-    <div>
-        <h1 class="text-3xl font-extrabold text-slate-900">Attendance Analytics & AI Proxy Detection</h1>
-        <p class="text-sm font-medium text-slate-600 mt-1">Department attendance heatmaps, biometric anomaly alerts, and monthly trends.</p>
+
+    <!-- Compute Real Aggregated Department Stats -->
+    {% set total_stu = students|length %}
+    {% set dept_avg_att = (students|sum(attribute='attendance_percentage') / [total_stu, 1]|max)|round(1) if total_stu > 0 else 0 %}
+    {% set compliant_students = students|selectattr('attendance_percentage', 'ge', 75)|list %}
+    {% set compliant_pct = ((compliant_students|length / [total_stu, 1]|max) * 100)|round(1) if total_stu > 0 else 0 %}
+    {% set low_att_students = students|selectattr('attendance_percentage', 'lt', 75)|list %}
+
+    <!-- 1. EXECUTIVE HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+        <div>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Department Attendance Analytics
+                    </h1>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                    Dept. Overview
+                </span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 mt-1">
+                Institutional roll attendance governance &bull; Semester distribution, debarment monitoring, and compliance rates.
+            </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <span class="px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-slate-700 text-xs font-semibold">
+                Mandatory Threshold: <strong class="text-slate-900 font-bold">&ge;75.0%</strong>
+            </span>
+        </div>
     </div>
 
-    <!-- Analytics Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
-        <div class="bg-white p-6 rounded-3xl border border-amber-200 bg-amber-50/50 shadow-sm">
-            <div class="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Proxy Suspicion Flags</div>
-            <div class="text-3xl font-black text-amber-600">{{ proxy_anomalies }}</div>
-            <div class="text-xs text-amber-800 font-bold mt-1">Pattern anomalies under review</div>
+    <!-- 2. HIGH-LEVEL DEPARTMENT ATTENDANCE METRICS (4-Col Grid) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+
+        <!-- Overall Attendance -->
+        <div class="p-4.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Department Attendance
+            </div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-slate-900 tracking-tight">{{ dept_avg_att }}%</span>
+                <span class="text-xs font-semibold {% if dept_avg_att >= 75 %}text-emerald-700{% else %}text-rose-600{% endif %}">
+                    {{ "Compliant" if dept_avg_att >= 75 else "Action Required" }}
+                </span>
+            </div>
+            <div class="mt-3 w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                <div class="h-full rounded-full progress-bar-fill {% if dept_avg_att >= 80 %}bg-emerald-600{% elif dept_avg_att >= 75 %}bg-indigo-600{% else %}bg-rose-500{% endif %}"
+                     data-pct="{{ [dept_avg_att, 100]|min }}"></div>
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Overall Dept Attendance</div>
-            <div class="text-3xl font-black text-emerald-600">88.4%</div>
-            <div class="text-xs text-emerald-600 font-bold mt-1">+2.1% higher than last sem</div>
+
+        <!-- Compliance Rate -->
+        <div class="p-4.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Threshold Compliance
+            </div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-slate-900 tracking-tight">{{ compliant_pct }}%</span>
+                <span class="text-xs font-semibold text-slate-500">of students</span>
+            </div>
+            <div class="mt-2 text-xs text-slate-500">
+                <strong class="text-slate-800">{{ compliant_students|length }}</strong> / {{ total_stu }} students &ge; 75%
+            </div>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Mandatory Threshold Compliance</div>
-            <div class="text-3xl font-black text-blue-600">92%</div>
-            <div class="text-xs text-slate-500 font-semibold mt-1">Students above 75% cutoff</div>
+
+        <!-- Debarment Concern -->
+        <div class="p-4.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Low Attendance Risk
+            </div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black {% if low_att_students|length > 0 %}text-rose-600{% else %}text-slate-900{% endif %} tracking-tight">
+                    {{ low_att_students|length }}
+                </span>
+                <span class="text-xs font-semibold text-slate-500">students</span>
+            </div>
+            <div class="mt-2 text-xs text-slate-500">
+                Breaching 75% examination cutoff
+            </div>
+        </div>
+
+        <!-- Critical Debarment (<70%) -->
+        <div class="p-4.5 bg-white rounded-2xl border border-slate-200/90 shadow-xs">
+            <div class="text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Severe Defaulters (&lt;70%)
+            </div>
+            <div class="flex items-baseline gap-2">
+                <span class="text-3xl font-black text-slate-900 tracking-tight">{{ proxy_anomalies }}</span>
+                <span class="text-xs font-semibold text-slate-500">critical</span>
+            </div>
+            <div class="mt-2 text-xs text-slate-500">
+                Requires mandatory parental notice
+            </div>
         </div>
     </div>
 
-    <!-- Attendance Heatmap Simulation -->
-    <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
-        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-fire text-amber-600"></i> Department Subject Attendance Heatmap
-        </h3>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center text-xs font-bold">
-            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
-                Data Structures<br><span class="text-xl font-black text-emerald-700">94%</span>
+    <!-- 3. ATTENDANCE BY CLASS / SEMESTER -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-5">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3.5">
+            <div>
+                <h2 class="text-sm font-bold text-slate-900">Attendance Distribution by Semester</h2>
+                <p class="text-[11px] text-slate-400">Class-level aggregate attendance rates compared against the 75% institutional standard</p>
             </div>
-            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
-                Database Systems<br><span class="text-xl font-black text-emerald-700">91%</span>
+            <span class="text-xs font-semibold text-slate-500">
+                8 Academic Semesters
+            </span>
+        </div>
+
+        <!-- Semester Progress Indicators Grid -->
+        <div class="space-y-4">
+            {% for sem_num in range(1, 9) %}
+            {% set sem_stu = students|selectattr('semester', 'equalto', sem_num)|list %}
+            {% set sem_cnt = sem_stu|length %}
+            {% set sem_avg = (sem_stu|sum(attribute='attendance_percentage') / [sem_cnt, 1]|max)|round(1) if sem_cnt > 0 else 0 %}
+            {% set sem_low = sem_stu|selectattr('attendance_percentage', 'lt', 75)|list|length %}
+
+            <div class="p-3.5 rounded-xl bg-slate-50/70 border border-slate-200/80 hover:bg-white hover:border-slate-300 transition-all space-y-2">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                    <div class="flex items-center gap-2.5">
+                        <span class="px-2.5 py-1 rounded-md bg-slate-900 text-white font-mono font-bold text-xs">
+                            Semester {{ sem_num }}
+                        </span>
+                        <span class="font-semibold text-slate-700">
+                            {{ sem_cnt }} Enrolled Student{% if sem_cnt != 1 %}s{% endif %}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center gap-4 text-xs">
+                        {% if sem_cnt > 0 %}
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-slate-500">Average:</span>
+                            <span class="font-bold text-sm {% if sem_avg >= 75 %}text-slate-900{% else %}text-rose-600{% endif %}">
+                                {{ sem_avg }}%
+                            </span>
+                        </div>
+                        <div class="text-slate-400">&bull;</div>
+                        <div class="flex items-center gap-1">
+                            <span class="text-slate-500">Defaulters:</span>
+                            <span class="font-bold {% if sem_low > 0 %}text-rose-600{% else %}text-emerald-700{% endif %}">
+                                {{ sem_low }}
+                            </span>
+                        </div>
+                        {% else %}
+                        <span class="text-slate-400 font-normal">No active students</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Visual Bar Indicator -->
+                <div class="relative w-full h-2.5 rounded-full bg-slate-200/80 overflow-hidden">
+                    {% if sem_cnt > 0 %}
+                    <div class="h-full rounded-full progress-bar-fill transition-all duration-300 {% if sem_avg >= 80 %}bg-emerald-600{% elif sem_avg >= 75 %}bg-indigo-600{% else %}bg-rose-500{% endif %}"
+                         data-pct="{{ [sem_avg, 100]|min }}"></div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-900">
-                Operating Systems<br><span class="text-xl font-black text-amber-700">79%</span>
-            </div>
-            <div class="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-900">
-                Computer Networks<br><span class="text-xl font-black text-rose-700">71%</span>
-            </div>
-            <div class="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900">
-                AI & Machine Learning<br><span class="text-xl font-black text-emerald-700">96%</span>
-            </div>
+            {% endfor %}
         </div>
     </div>
+
+    <!-- 4. ACTIONABLE: STUDENTS WITH LOW ATTENDANCE (DEBARMENT INTERVENTION TABLE) -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3.5">
+            <div>
+                <h2 class="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                    Students Below Mandatory 75% Attendance Cutoff
+                </h2>
+                <p class="text-[11px] text-slate-400">Department candidates at risk of examination debarment requiring HOD intervention</p>
+            </div>
+            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold bg-rose-50 text-rose-700 border border-rose-200">
+                {{ low_att_students|length }} Flagged
+            </span>
+        </div>
+
+        {% if low_att_students|length > 0 %}
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs text-slate-700 min-w-[650px]">
+                <thead class="text-[11px] uppercase bg-slate-50/80 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                    <tr>
+                        <th class="py-2.5 px-4">Student ID</th>
+                        <th class="py-2.5 px-4">Student Name</th>
+                        <th class="py-2.5 px-4">Program &amp; Sem</th>
+                        <th class="py-2.5 px-4">Attendance Rate</th>
+                        <th class="py-2.5 px-4">Deficit Below 75%</th>
+                        <th class="py-2.5 px-4 text-right">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for s in low_att_students %}
+                    <tr class="hover:bg-slate-50/70 transition-colors">
+                        <td class="py-3 px-4 font-mono font-bold text-slate-800">
+                            {{ s.registration_id or ('NU23UCA' ~ ('%03d'|format(s.id))) }}
+                        </td>
+                        <td class="py-3 px-4 font-bold text-slate-900">
+                            {{ s.name }}
+                        </td>
+                        <td class="py-3 px-4">
+                            {{ s.course_code or 'UCA' }} &bull; Sem {{ s.semester }}
+                        </td>
+                        <td class="py-3 px-4">
+                            <span class="font-bold text-rose-600 text-xs">{{ s.attendance_percentage }}%</span>
+                        </td>
+                        <td class="py-3 px-4 text-slate-500 font-medium">
+                            -{{ (75.0 - s.attendance_percentage)|round(1) }}% deficit
+                        </td>
+                        <td class="py-3 px-4 text-right">
+                            <a href="{{ url_for('hod.student_management') }}"
+                               class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold transition inline-block">
+                                Review &rarr;
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="py-10 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200 space-y-1.5">
+            <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-sm">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                </svg>
+            </div>
+            <div class="text-xs font-bold text-slate-700">100% Attendance Compliance</div>
+            <p class="text-[11px] text-slate-400">All registered students currently maintain an attendance record at or above the 75% threshold.</p>
+        </div>
+        {% endif %}
+    </div>
+
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.progress-bar-fill').forEach(function(el) {
+        const pct = el.getAttribute('data-pct');
+        if (pct) el.style.width = pct + '%';
+    });
+});
+</script>
 {% endblock %}

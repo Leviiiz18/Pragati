@@ -259,7 +259,7 @@ def get_events():
                 code = subj.code if subj else f"SUB{log.subject_id}"
                 results.append({
                     'id': f"fac_att_{log.date}_{log.subject_id}",
-                    'title': f"📋 Marked: {code} ({log.total_records} students)",
+                    'title': f"📋 Roll: {code} ({log.total_records} students)",
                     'start': log.date.isoformat(),
                     'description': f"Attendance registered for {subj.name if subj else code} with {log.total_records} student records.",
                     'backgroundColor': '#f0f9ff', # Sky Tint
@@ -268,6 +268,10 @@ def get_events():
                     'allDay': True,
                     'extendedProps': {
                         'source': 'attendance_faculty',
+                        'category': 'attendance',
+                        'sub_code': code,
+                        'sub_name': subj.name if subj else code,
+                        'total_records': log.total_records,
                         'type': 'Attendance Registry',
                         'dot_color': '#0284c7',
                         'can_delete': False

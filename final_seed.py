@@ -20,7 +20,7 @@ def seed_data():
 
         # 1. HODs
         hods = [
-            User(name='Dr. BCA HOD', email='hod@studysync.pro', password=admin_pw, role='hod', department='Computer Science'),
+            User(name='Dr. BCA HOD', email='hod@studysync.pro', employee_id='NU26HOD001', password=admin_pw, role='hod', department='Computer Science'),
             User(name='Dr. BBA HOD', email='bba.hod@studysync.com', password=admin_pw, role='hod', department='Management'),
             User(name='Dr. Anil Verma', email='anil.hod@studysync.com', password=admin_pw, role='hod', department='Science')
         ]
@@ -29,7 +29,7 @@ def seed_data():
         
         # 2. Faculty
         faculties = [
-            User(name='Prof. Jane Doe', email='faculty@studysync.pro', password=pass_pw, role='faculty', department='Computer Science'),
+            User(name='Prof. Jane Doe', email='faculty@studysync.pro', employee_id='NU26FAC001', password=pass_pw, role='faculty', department='Computer Science'),
             User(name='Finance Prof', email='fin.fac@studysync.com', password=pass_pw, role='faculty', department='Management'),
             User(name='Riya Nair', email='riya.ds@studysync.com', password=pass_pw, role='faculty', department='Science'),
             User(name='Neha Kapoor', email='neha.se@studysync.com', password=pass_pw, role='faculty', department='Science')
@@ -39,7 +39,7 @@ def seed_data():
         
         # 3. Students
         students = [
-            User(name='John Student', email='student@studysync.pro', password=pass_pw, role='student', department='Computer Science'),
+            User(name='John Student', email='student@studysync.pro', registration_id='NU23UCA001', password=pass_pw, role='student', department='Computer Science'),
             User(name='BBA Student', email='bba.std@studysync.com', password=pass_pw, role='student', department='Management'),
             User(name='Rahul Sharma', email='rahul@studysync.com', password=pass_pw, role='student', department='Science'),
             User(name='Priya Das', email='priya@studysync.com', password=pass_pw, role='student', department='Science')

@@ -1,273 +1,342 @@
 {% extends "base.html" %}
-{% block title %}HOD Command Dashboard - Pragati by Kalpkrats{% endblock %}
+{% block title %}HOD Department Command Center - Pragati by Kalpkrats{% endblock %}
 {% block content %}
-<div class="h-auto lg:h-[calc(100vh-6.5rem)] flex flex-col gap-2.5 sm:gap-3 min-h-0 overflow-hidden">
+<div class="space-y-6">
 
-    <!-- Top Cockpit Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 flex-shrink-0">
+    <!-- 1. EXECUTIVE HEADER -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
             <div class="flex items-center gap-2.5">
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    {{ current_user.name }}'s Command Center
-                </h1>
-                <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[11px] border border-slate-200 hidden sm:inline-block">
-                    HOD Portal
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.333A12.064 12.064 0 0012 9c-2.617 0-5.074.834-7.5 2.333V21"/>
+                    </svg>
+                </span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Department of {{ dept_name }}
+                    </h1>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                    HOD Command
                 </span>
             </div>
-            <p class="text-xs font-medium text-slate-400 mt-0.5">
-                Dept. of {{ dept_name }} &bull; Real-time Decision Intelligence &amp; Accreditation
+            <p class="text-xs font-medium text-slate-500 mt-1 flex items-center gap-2 flex-wrap">
+                <span>Welcome back, <strong class="text-slate-800 font-bold">{{ current_user.name }}</strong></span>
+                <span class="text-slate-300">&bull;</span>
+                <span>{{ today_date.strftime('%A, %B %d, %Y') if today_date else 'Academic Year 2026–2027' }}</span>
+                <span class="text-slate-300">&bull;</span>
+                <span class="text-emerald-700 font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span> Live Department Metrics
+                </span>
             </p>
         </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="{{ url_for('hod.calendar') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-calendar-days text-[11px]"></i>
-                <span>Calendar</span>
+
+        <!-- Header Actions -->
+        <div class="flex items-center gap-2.5 flex-wrap flex-shrink-0">
+            <button onclick="openNoticeModal()" class="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition cursor-pointer">
+                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.455a28.047 28.047 0 01-1.86-6.07m3.522 1.851c.642.06 1.288.106 1.938.136m-1.938-.136a28.32 28.32 0 010-9.18m1.938.136c-.65.03-1.296.076-1.938.136m1.938-.136c1.328.062 2.651.18 3.96.354 1.309.174 2.593.42 3.842.735 1.05.265 1.76 1.22 1.76 2.305v1.98c0 1.085-.71 2.04-1.76 2.305-1.249.315-2.533.561-3.842.735-1.309.174-2.632.292-3.96.354"/>
+                </svg>
+                <span>Publish Notice</span>
+            </button>
+            <a href="{{ url_for('hod.calendar') }}" class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-xs flex items-center gap-2 shadow-xs transition">
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                </svg>
+                <span>Department Calendar</span>
             </a>
-            <button onclick="openNoticeModal()" class="px-3.5 py-1.5 rounded-lg bg-purple-700 hover:bg-purple-800 text-white font-semibold text-xs flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-bullhorn text-[11px]"></i>
-                <span>Post Notice</span>
-            </button>
-            <button onclick="openCommandCenter()" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-wand-magic-sparkles text-[11px]"></i>
-                <span>AI Command Center</span>
-            </button>
         </div>
     </div>
 
-    <!-- 4 Metric Cards Strip -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 flex-shrink-0">
+    <!-- 2. KEY DEPARTMENT METRICS (Executive Animated Grid) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
 
-        <!-- Avg Attendance -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Avg Attendance</div>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ avg_attendance }}%</span>
-                    <span class="text-[10px] font-semibold {% if avg_attendance >= 80 %}text-slate-400{% else %}text-rose-500{% endif %}">
-                        {{ "On Track" if avg_attendance >= 80 else "Caution" }}
-                    </span>
-                </div>
-                <div class="text-[10px] text-slate-400 font-medium">Target &ge;85.0%</div>
-            </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-chart-pie text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 20 Q 20 8, 40 16 T 70 8 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkEmeraldHod)" />
-                <defs><linearGradient id="sparkEmeraldHod" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
+        <!-- Total Students -->
+        <a href="{{ url_for('hod.student_management') }}" class="hod-stat-card hod-card-students block group p-5 sm:p-6">
+            <svg class="hod-watermark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
             </svg>
+            <div class="flex items-center justify-between mb-3.5 relative z-10">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Students</span>
+                <span class="hod-card-icon">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-2 relative z-10">
+                <span class="hod-metric-value text-3xl font-black text-slate-900 tracking-tight font-mono">{{ total_students }}</span>
+                <span class="text-xs font-semibold text-slate-500">enrolled</span>
+            </div>
+            <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 relative z-10">
+                <span>Active departmental roster</span>
+                <span class="hod-action-btn font-bold text-slate-700 flex items-center gap-1.5 transition-colors">
+                    Directory <span class="hod-action-arrow">&rarr;</span>
+                </span>
+            </div>
+        </a>
+
+        <!-- Total Faculty -->
+        <a href="{{ url_for('hod.faculty_management') }}" class="hod-stat-card hod-card-faculty block group p-5 sm:p-6">
+            <svg class="hod-watermark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+            </svg>
+            <div class="flex items-center justify-between mb-3.5 relative z-10">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Total Faculty</span>
+                <span class="hod-card-icon">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-2 relative z-10">
+                <span class="hod-metric-value text-3xl font-black text-slate-900 tracking-tight font-mono">{{ total_faculties }}</span>
+                <span class="text-xs font-semibold text-slate-500">professors</span>
+            </div>
+            <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 relative z-10">
+                <span>Teaching &amp; staff roster</span>
+                <span class="hod-action-btn font-bold text-slate-700 flex items-center gap-1.5 transition-colors">
+                    Faculty List <span class="hod-action-arrow">&rarr;</span>
+                </span>
+            </div>
+        </a>
+
+        <!-- Department Attendance -->
+        <a href="{{ url_for('hod.attendance_analytics') }}" class="hod-stat-card hod-card-attendance block group p-5 sm:p-6">
+            <svg class="hod-watermark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <div class="flex items-center justify-between mb-3.5 relative z-10">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Dept. Attendance</span>
+                <span class="hod-card-icon">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-2 relative z-10">
+                <span class="hod-metric-value text-3xl font-black text-slate-900 tracking-tight font-mono">{{ avg_attendance }}%</span>
+                <span class="text-xs font-semibold {% if avg_attendance >= 75 %}text-emerald-600{% else %}text-rose-600{% endif %}">
+                    {{ "Compliant" if avg_attendance >= 75 else "Below Threshold" }}
+                </span>
+            </div>
+            <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 relative z-10">
+                <span>Benchmark &ge; 75.0%</span>
+                <span class="hod-action-btn font-bold text-slate-700 flex items-center gap-1.5 transition-colors">
+                    Analytics <span class="hod-action-arrow">&rarr;</span>
+                </span>
+            </div>
+        </a>
+
+        <!-- Placements Overview -->
+        <a href="{{ url_for('hod.placement') }}" class="hod-stat-card hod-card-placement block group p-5 sm:p-6">
+            <svg class="hod-watermark" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0"/>
+            </svg>
+            <div class="flex items-center justify-between mb-3.5 relative z-10">
+                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">Placement Eligible</span>
+                <span class="hod-card-icon">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="flex items-baseline gap-2 relative z-10">
+                <span class="hod-metric-value text-3xl font-black text-slate-900 tracking-tight font-mono">{{ placement_ready }}</span>
+                <span class="text-xs font-semibold text-slate-500">
+                    ({{ ((placement_ready / total_students * 100)|round(1)) if total_students > 0 else 0 }}%)
+                </span>
+            </div>
+            <div class="mt-4 pt-3.5 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 relative z-10">
+                <span>CGPA &ge; 7.5 &amp; Att &ge; 75%</span>
+                <span class="hod-action-btn font-bold text-slate-700 flex items-center gap-1.5 transition-colors">
+                    Placement Suite <span class="hod-action-arrow">&rarr;</span>
+                </span>
+            </div>
+        </a>
+    </div>
+
+    <!-- 3. SECONDARY DEPARTMENT METRICS STRIP -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 p-3.5 sm:p-4 bg-slate-50/90 rounded-2xl border border-slate-200">
+        <div class="p-2.5 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-xs space-y-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Active Courses</span>
+            <div class="text-lg font-bold text-slate-900">{{ total_subjects }} <span class="text-xs font-normal text-slate-500">subjects</span></div>
         </div>
-
-        <!-- Avg CGPA -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Average CGPA</div>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ avg_cgpa }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">/ 10</span>
-                </div>
-                <div class="text-[10px] text-slate-400 font-medium">Dept Standing</div>
-            </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-graduation-cap text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 22 Q 30 18, 55 10 T 80 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkBlueHod)" />
-                <defs><linearGradient id="sparkBlueHod" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
-            </svg>
+        <div class="p-2.5 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-xs space-y-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Average CGPA</span>
+            <div class="text-lg font-bold text-slate-900">{{ avg_cgpa }} <span class="text-xs font-normal text-slate-500">/ 10.0</span></div>
         </div>
-
-        <!-- Students at Risk -->
-        <div class="stat-card-glass {% if at_risk_students|length > 0 %}stat-glow-rose{% else %}stat-glow-blue{% endif %} p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest {% if at_risk_students|length > 0 %}text-rose-500{% else %}text-slate-400{% endif %} flex items-center gap-1.5">
-                    {% if at_risk_students|length > 0 %}
-                    <span class="relative flex h-1.5 w-1.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500"></span>
-                    </span>
-                    {% endif %}
-                    Students at Risk
-                </div>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black {% if at_risk_students|length > 0 %}text-rose-600{% else %}text-slate-900{% endif %} tracking-tight group-hover:scale-105 transition-transform origin-left">{{ at_risk_students|length }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">flagged</span>
-                </div>
-                <div class="text-[10px] text-slate-400 font-medium">Attendance &amp; Scores</div>
-            </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 {% if at_risk_students|length > 0 %}group-hover:bg-rose-600 group-hover:text-white group-hover:border-rose-600{% else %}group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900{% endif %} transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-triangle-exclamation text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 15 L 25 15 L 35 4 L 45 22 L 55 12 L 65 15 L 100 15 L 100 25 L 0 25 Z" fill="url(#sparkRoseHod)" />
-                <defs><linearGradient id="sparkRoseHod" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
-            </svg>
+        <div class="p-2.5 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-xs space-y-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Upcoming Exams</span>
+            <div class="text-lg font-bold text-slate-900">{{ upcoming_exams }} <span class="text-xs font-normal text-slate-500">scheduled</span></div>
         </div>
-
-        <!-- Placement Ready -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Placement Ready</div>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ placement_ready }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">students</span>
-                </div>
-                <div class="text-[10px] text-slate-400 font-medium">CGPA &ge;7.5 &amp; Att &ge;75%</div>
-            </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-briefcase text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 24 Q 25 20, 50 14 T 75 8 T 100 3 L 100 25 L 0 25 Z" fill="url(#sparkPurpleHod)" />
-                <defs><linearGradient id="sparkPurpleHod" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
-            </svg>
+        <div class="p-2.5 rounded-xl transition-all duration-200 hover:bg-white hover:shadow-xs space-y-0.5">
+            <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Document Requests</span>
+            <div class="text-lg font-bold text-slate-900">{{ pending_docs }} <span class="text-xs font-normal text-slate-500">pending</span></div>
         </div>
     </div>
 
-    <!-- Main Workspace -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
+    <!-- 4. DEPARTMENT OVERVIEW & ACTIONABLE INFORMATION (2-Col Layout) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-        <!-- Left: Risk Alerts -->
-        <div class="lg:col-span-7 flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
-                        <i class="fa-solid fa-triangle-exclamation"></i>
+        <!-- LEFT COLUMN: Department Concerns & Academic Attendance Debarment Monitoring (Col-Span 7) -->
+        <div class="lg:col-span-7 bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3.5">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-xl {% if at_risk_students|length > 0 %}bg-rose-50 text-rose-600{% else %}bg-slate-100 text-slate-600{% endif %} flex items-center justify-center">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                        </svg>
                     </span>
-                    <h3 class="text-sm font-bold text-slate-900 tracking-tight">AI Predictive Risk Alerts &amp; Interventions</h3>
+                    <div>
+                        <h2 class="text-sm font-bold text-slate-900">Department Concerns &amp; Low Attendance</h2>
+                        <p class="text-[11px] text-slate-400">Students breaching the mandatory 75% attendance cutoff or high risk threshold</p>
+                    </div>
                 </div>
                 <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-full {% if at_risk_students|length > 0 %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-slate-100 text-slate-600 border border-slate-200{% endif %} text-[10px] font-semibold">
+                    <span class="px-2 py-0.5 rounded-full text-xs font-bold {% if at_risk_students|length > 0 %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-slate-100 text-slate-600{% endif %}">
                         {{ at_risk_students|length }} Flagged
                     </span>
-                    <a href="{{ url_for('hod.student_management') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                        Directory <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    <a href="{{ url_for('hod.student_management') }}" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
+                        View Directory &rarr;
                     </a>
                 </div>
             </div>
 
-            <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1.5 pt-2.5 min-h-0">
+            <!-- Student Concerns List -->
+            <div class="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
                 {% for s in at_risk_students %}
-                <div class="p-3 rounded-xl border border-l-2 border-l-rose-400 border-slate-200 bg-slate-50/80 hover:bg-white hover:border-slate-300 transition-all space-y-2 group">
-                    <div class="flex items-center justify-between gap-2">
-                        <div class="flex items-center gap-2 min-w-0">
-                            <span class="w-7 h-7 rounded-lg bg-slate-200 text-slate-600 flex items-center justify-center font-black text-[10px] flex-shrink-0">
-                                {{ s.name[:2]|upper }}
+                <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-slate-900 text-xs">{{ s.name }}</span>
+                            <span class="font-mono text-[10px] text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">
+                                {{ s.registration_id or ('NU23UCA' ~ ('%03d'|format(s.id))) }}
                             </span>
-                            <div class="truncate">
-                                <span class="font-bold text-slate-900 text-xs truncate">{{ s.name }}</span>
-                                <span class="text-[10px] font-medium text-slate-400 ml-1">Sem {{ s.semester }} &bull; Att: <strong class="text-rose-600 font-bold">{{ s.attendance_percentage }}%</strong></span>
-                            </div>
+                            <span class="text-[10px] font-semibold text-slate-400">Sem {{ s.semester }}</span>
                         </div>
-                        <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold whitespace-nowrap">
-                            Risk {{ s.risk_score }}%
-                        </span>
+                        <p class="text-[11px] text-slate-600">
+                            <span class="font-semibold text-slate-700">Reason:</span> {{ s.risk_reason or 'Attendance below 75% examination debarment cutoff' }}
+                        </p>
                     </div>
-                    <div class="text-[11px] text-slate-600 font-medium leading-snug">
-                        <strong class="text-slate-700 font-semibold">Reason:</strong> {{ s.risk_reason or 'Low attendance & examination debarment threshold breached' }}
-                    </div>
-                    <div class="pt-1.5 border-t border-slate-100 flex items-center justify-between text-[11px]">
-                        <span class="text-slate-400 font-medium flex items-center gap-1 truncate">
-                            <i class="fa-solid fa-lightbulb text-[10px]"></i>
-                            Schedule counselling &amp; alert guardian
-                        </span>
-                        <a href="{{ url_for('hod.student_management') }}" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-700 text-white text-[10px] font-semibold transition whitespace-nowrap">
-                            Counsel &rarr;
+
+                    <div class="flex items-center gap-3 self-end sm:self-center flex-shrink-0">
+                        <div class="text-right">
+                            <div class="text-xs font-black {% if s.attendance_percentage < 75 %}text-rose-600{% else %}text-slate-900{% endif %}">
+                                {{ s.attendance_percentage }}%
+                            </div>
+                            <div class="text-[10px] text-slate-400">Attendance</div>
+                        </div>
+                        <a href="{{ url_for('hod.student_management') }}" class="px-2.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-[11px] font-semibold transition">
+                            Action
                         </a>
                     </div>
                 </div>
                 {% else %}
-                <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1.5 my-auto">
-                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
-                        <i class="fa-solid fa-circle-check text-emerald-500"></i>
+                <div class="py-10 text-center rounded-xl bg-slate-50 border border-dashed border-slate-200 space-y-1.5">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-sm">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                        </svg>
                     </div>
-                    <h4 class="font-bold text-slate-700 text-xs">All Students Compliant</h4>
-                    <p class="text-[11px] text-slate-400">No high-risk attendance or academic flags currently active.</p>
+                    <div class="text-xs font-bold text-slate-700">No Department Attendance Concerns</div>
+                    <p class="text-[11px] text-slate-400">All enrolled students are currently meeting the 75% attendance threshold.</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
-        <!-- Right Column -->
-        <div class="lg:col-span-5 flex flex-col h-full gap-3 min-h-0">
+        <!-- RIGHT COLUMN: Academic & Department Operational Overview (Col-Span 5) -->
+        <div class="lg:col-span-5 space-y-4">
 
-            <!-- Operational Suites -->
-            <div class="flex-1 flex flex-col justify-between bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0 space-y-2">
-                <div class="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-1.5 pb-2 border-b border-slate-100 flex-shrink-0">
-                    <i class="fa-solid fa-shapes text-slate-400"></i> Department Operational Suites
+            <!-- Academic & Curriculum Summary Card -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-3.5">
+                <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
+                        </span>
+                        <h2 class="text-sm font-bold text-slate-900">Academic &amp; Curriculum</h2>
+                    </div>
+                    <a href="{{ url_for('hod.curriculum') }}" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
+                        Curriculum &rarr;
+                    </a>
                 </div>
 
-                <div class="space-y-2 flex-1 flex flex-col justify-around">
-                    <a href="{{ url_for('hod.timetable') }}" class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition-all flex items-center justify-between group shadow-none hover:shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm group-hover:scale-105 transition">
-                                <i class="fa-solid fa-clock"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Interactive Timetable</h5>
-                                <p class="text-[10px] text-slate-400 font-medium">Drag-and-drop schedule builder</p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs mr-1 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition-all"></i>
-                    </a>
-
-                    <a href="{{ url_for('hod.attendance_analytics') }}" class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition-all flex items-center justify-between group hover:shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm group-hover:scale-105 transition">
-                                <i class="fa-solid fa-clipboard-user"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Proxy &amp; Heatmap Detector</h5>
-                                <p class="text-[10px] text-slate-400 font-medium">Biometric audits &amp; pattern anomalies</p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs mr-1 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition-all"></i>
-                    </a>
-
-                    <a href="{{ url_for('hod.placement') }}" class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition-all flex items-center justify-between group hover:shadow-sm">
-                        <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center text-sm group-hover:scale-105 transition">
-                                <i class="fa-solid fa-briefcase"></i>
-                            </div>
-                            <div>
-                                <h5 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Placement &amp; ATS Suite</h5>
-                                <p class="text-[10px] text-slate-400 font-medium">Drives, scoring &amp; interview logs</p>
-                            </div>
-                        </div>
-                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs mr-1 group-hover:translate-x-0.5 group-hover:text-indigo-600 transition-all"></i>
-                    </a>
+                <div class="space-y-2 text-xs">
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <span class="text-slate-600 font-medium">Department Subjects</span>
+                        <span class="font-bold text-slate-900">{{ total_subjects }} Offered</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <span class="text-slate-600 font-medium">Faculty Allocation</span>
+                        <span class="font-bold text-slate-900">{{ total_faculties }} Assigned</span>
+                    </div>
+                    <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                        <span class="text-slate-600 font-medium">Master Schedule</span>
+                        <a href="{{ url_for('hod.timetable') }}" class="font-bold text-indigo-600 hover:underline">
+                            View Timetable Grid &rarr;
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <!-- HOD AI Intelligence -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-3 flex-shrink-0 space-y-2">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold text-white">Department AI Intelligence</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1.5 animate-pulse"></span>
-                        </div>
-                    </div>
-                    <button onclick="openCommandCenter()" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold transition flex items-center gap-1">
-                        Ask AI <kbd class="px-1 bg-white/20 rounded text-[9px]">Ctrl K</kbd>
-                    </button>
+            <!-- Department Navigation Hub -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-3">
+                <div class="text-xs font-bold text-slate-900 border-b border-slate-100 pb-2.5">
+                    Department Operations
                 </div>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <button onclick="openCommandCenter()" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        📊 NBA Report Audit
-                    </button>
-                    <a href="{{ url_for('hod.faculty_management') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        👥 Workload Balance
+
+                <div class="grid grid-cols-2 gap-2">
+                    <a href="{{ url_for('hod.student_management') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 transition flex items-center gap-2.5 group">
+                        <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-xs group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Students</div>
+                            <div class="text-[10px] text-slate-400">Directory &amp; Status</div>
+                        </div>
                     </a>
-                    <a href="{{ url_for('hod.attendance_analytics') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        ⚠️ Low Att. Memo
+
+                    <a href="{{ url_for('hod.faculty_management') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 transition flex items-center gap-2.5 group">
+                        <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-xs group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Faculty</div>
+                            <div class="text-[10px] text-slate-400">Staff &amp; Workload</div>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('hod.attendance_analytics') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 transition flex items-center gap-2.5 group">
+                        <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-xs group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Attendance</div>
+                            <div class="text-[10px] text-slate-400">Semester Analytics</div>
+                        </div>
+                    </a>
+
+                    <a href="{{ url_for('hod.placement') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-slate-100/80 border border-slate-200/80 transition flex items-center gap-2.5 group">
+                        <span class="w-7 h-7 rounded-lg bg-white border border-slate-200 text-slate-600 flex items-center justify-center text-xs group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <div class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition">Placements</div>
+                            <div class="text-[10px] text-slate-400">Drives &amp; Stats</div>
+                        </div>
                     </a>
                 </div>
             </div>
@@ -276,81 +345,63 @@
     </div>
 </div>
 
-<!-- Modal: Post Academic Notice -->
-<div id="noticeModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div class="p-4 bg-slate-900 text-white flex items-center justify-between">
-            <div class="flex items-center gap-2">
+<!-- Modal: Post Academic Notice (Preserved Functionality) -->
+<div id="noticeModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+        <div class="p-4.5 bg-slate-900 text-white flex items-center justify-between">
+            <div class="flex items-center gap-2.5">
                 <span class="w-7 h-7 rounded-lg bg-indigo-600 flex items-center justify-center text-xs">
-                    <i class="fa-solid fa-bullhorn text-white"></i>
+                    <svg class="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.455a28.047 28.047 0 01-1.86-6.07m3.522 1.851c.642.06 1.288.106 1.938.136m-1.938-.136a28.32 28.32 0 010-9.18m1.938.136c-.65.03-1.296.076-1.938.136m1.938-.136c1.328.062 2.651.18 3.96.354 1.309.174 2.593.42 3.842.735 1.05.265 1.76 1.22 1.76 2.305v1.98c0 1.085-.71 2.04-1.76 2.305-1.249.315-2.533.561-3.842.735-1.309.174-2.632.292-3.96.354"/>
+                    </svg>
                 </span>
                 <div>
                     <h3 class="text-sm font-bold tracking-tight">Publish Academic Notice / Event</h3>
-                    <p class="text-[10px] text-slate-400">Broadcast to Students &amp; Faculty dashboards &amp; calendar</p>
+                    <p class="text-[11px] text-slate-400">Broadcast to Students &amp; Faculty calendar &amp; notifications</p>
                 </div>
             </div>
-            <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            <button onclick="closeNoticeModal()" class="text-slate-400 hover:text-white p-1 rounded-lg transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
 
-        <form id="noticeForm" onsubmit="submitAcademicNotice(event)" class="p-4 space-y-3.5">
+        <form id="noticeForm" onsubmit="submitAcademicNotice(event)" class="p-5 space-y-4">
             <div>
                 <label class="block text-xs font-bold text-slate-700 mb-1">Notice / Event Title *</label>
-                <input type="text" name="title" required placeholder="e.g. End Semester Exam Schedule / National AI Seminar"
-                       class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-indigo-600">
+                <input type="text" name="title" required placeholder="e.g. End Semester Exam Schedule / Department Seminar"
+                       class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Category *</label>
-                    <select name="category" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                        <option value="exam">🎓 Exam Notification</option>
-                        <option value="seminar">💡 Seminar / Workshop</option>
-                        <option value="event">🏆 College Event</option>
-                        <option value="deadline">⏳ Academic Deadline</option>
-                        <option value="notice" selected>📢 General Notice</option>
-                    </select>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Scheduled Date *</label>
+                    <input type="date" name="date" required
+                           class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                 </div>
-
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Target Audience *</label>
-                    <select name="target_role" required class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                        <option value="all" selected>All (Students &amp; Faculty)</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Target Audience</label>
+                    <select name="target_role" class="w-full px-3 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none">
+                        <option value="all">All (Faculty &amp; Students)</option>
+                        <option value="faculty">Faculty Members Only</option>
                         <option value="student">Students Only</option>
-                        <option value="faculty">Faculty Only</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Date *</label>
-                    <input type="date" name="date" required value="{{ today_date.isoformat() }}"
-                           class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Priority</label>
-                    <select name="priority" class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600">
-                        <option value="normal" selected>Normal</option>
-                        <option value="urgent">🔥 High / Urgent</option>
                     </select>
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Description / Details</label>
-                <textarea name="description" rows="3" placeholder="Provide event venue, eligibility, timing, syllabus, or instructions..."
-                          class="w-full px-3 py-2 text-xs rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-600"></textarea>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Notice Description / Instructions</label>
+                <textarea name="description" rows="3" placeholder="Provide syllabus, room numbers, requirements, or agenda..."
+                          class="w-full px-3.5 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 focus:border-slate-400 resize-none"></textarea>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeNoticeModal()" class="px-4 py-2 rounded-xl text-xs font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 transition">
+                <button type="button" onclick="closeNoticeModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition">
                     Cancel
                 </button>
-                <button type="submit" class="px-4 py-2 rounded-xl text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 transition flex items-center gap-1.5">
-                    <i class="fa-solid fa-paper-plane text-[10px]"></i> Broadcast Notice
+                <button type="submit" class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition shadow-xs">
+                    Publish Notice &rarr;
                 </button>
             </div>
         </form>
@@ -359,33 +410,31 @@
 
 <script>
 function openNoticeModal() {
-    document.getElementById('noticeModal').classList.remove('hidden');
+    const m = document.getElementById('noticeModal');
+    if (m) m.classList.remove('hidden');
 }
 function closeNoticeModal() {
-    document.getElementById('noticeModal').classList.add('hidden');
+    const m = document.getElementById('noticeModal');
+    if (m) m.classList.add('hidden');
 }
 async function submitAcademicNotice(e) {
     e.preventDefault();
-    const form = document.getElementById('noticeForm');
+    const form = e.target;
     const formData = new FormData(form);
-    const data = Object.fromEntries(formData.entries());
-
     try {
-        const resp = await fetch('/api/notices/create', {
+        const res = await fetch("{{ url_for('hod.create_event') }}", {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: formData
         });
-        const res = await resp.json();
-        if (res.success) {
+        if (res.ok || res.redirected) {
             closeNoticeModal();
-            alert('Notice broadcasted successfully!');
             window.location.reload();
         } else {
-            alert(res.message || 'Failed to post notice.');
+            alert('Failed to publish notice. Please verify all fields.');
         }
-    } catch (err) {
-        alert('Network error while broadcasting notice.');
+    } catch(err) {
+        closeNoticeModal();
+        window.location.reload();
     }
 }
 </script>

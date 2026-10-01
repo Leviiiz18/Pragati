@@ -1,71 +1,113 @@
 {% extends "base.html" %}
-{% block title %}Accreditation & Compliance Reports - Pragati by Kalpkrats{% endblock %}
+{% block title %}Department Accreditation Framework - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
-    <div>
-        <h1 class="text-3xl font-extrabold text-slate-900">Accreditation & Institutional Compliance</h1>
-        <p class="text-sm font-medium text-slate-600 mt-1">Generate compliance metrics for NAAC, NBA, AICTE, and UGC directly using AI.</p>
-    </div>
 
-    <!-- Accreditation Cards Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">NAAC Readiness</div>
-            <div class="text-3xl font-black text-slate-900">Grade A++</div>
-            <div class="text-xs text-emerald-600 font-bold">Score 3.68 / 4.0</div>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <div class="text-xs font-bold text-purple-600 uppercase tracking-wider">NBA Level-1 Accreditation</div>
-            <div class="text-3xl font-black text-slate-900">92.4%</div>
-            <div class="text-xs text-purple-700 font-bold">Criteria 1, 2, 5 compliant</div>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <div class="text-xs font-bold text-teal-600 uppercase tracking-wider">AICTE Faculty-Student Ratio</div>
-            <div class="text-3xl font-black text-slate-900">1 : 15</div>
-            <div class="text-xs text-emerald-600 font-bold">Optimal standard met</div>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-2">
-            <div class="text-xs font-bold text-amber-600 uppercase tracking-wider">UGC Academic Audit</div>
-            <div class="text-3xl font-black text-slate-900">Clear</div>
-            <div class="text-xs text-slate-500 font-semibold">Last audited: July 2026</div>
+    <!-- 1. HEADER (Minimal) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
+        <div>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/>
+                    </svg>
+                </span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Department Accreditation &amp; Compliance
+                    </h1>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                    Framework Preview
+                </span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 mt-1">
+                Institutional audit criteria and compliance documentation architecture.
+            </p>
         </div>
     </div>
 
-    <!-- AI Natural Language Report Prompt -->
-    <div class="bg-white p-6 rounded-3xl border border-purple-200 shadow-sm space-y-4">
-        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-wand-magic-sparkles text-purple-600"></i> AI Natural Language Report Generator
-        </h3>
-        <p class="text-xs font-medium text-slate-500">Type any custom report query without applying manual filters.</p>
-        
-        <div class="flex gap-3">
-            <input type="text" id="reportQueryInput" placeholder="e.g. 'Generate report of all students below 75% attendance'" class="flex-1 px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white shadow-inner">
-            <button onclick="generateCustomReport()" class="px-5 py-3 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition">
-                Generate Report
-            </button>
-        </div>
-
-        <div id="reportOutput" class="hidden p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 space-y-2">
+    <!-- 2. STATUS NOTE -->
+    <div class="p-4.5 rounded-2xl bg-slate-50 border border-slate-200 flex items-start gap-3">
+        <svg class="w-5 h-5 text-slate-500 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+        </svg>
+        <div class="text-xs text-slate-600 leading-relaxed">
+            <span class="font-bold text-slate-900">Institutional Notice:</span> Full accreditation reporting workflows (NBA / NAAC criterion audits) are scheduled for deployment ahead of the upcoming institutional audit cycle. The framework below structures the metrics and documentation to be collected.
         </div>
     </div>
+
+    <!-- 3. ACCREDITATION CRITERIA FRAMEWORK (Structured Blueprint) -->
+    <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+        <div class="border-b border-slate-100 pb-3">
+            <h2 class="text-sm font-bold text-slate-900">Accreditation Evidence &amp; Compliance Modules</h2>
+            <p class="text-[11px] text-slate-400">Structured compliance categories defined for departmental quality governance</p>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
+
+            <!-- 1. Accreditation Overview -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">1</span>
+                    <h3 class="text-xs font-bold text-slate-900">Accreditation Overview</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Department vision, mission, program educational objectives (PEOs), and outcome metrics.</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Framework Configured</div>
+            </div>
+
+            <!-- 2. Academic Metrics -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">2</span>
+                    <h3 class="text-xs font-bold text-slate-900">Academic Metrics</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Curriculum design, course outcomes (COs), syllabus attainment, and examination pass percentages.</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Automated from SIS</div>
+            </div>
+
+            <!-- 3. Faculty Metrics -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">3</span>
+                    <h3 class="text-xs font-bold text-slate-900">Faculty Metrics</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Faculty-to-student ratio (FSR), cadre ratio, research publications, and faculty development (FDP).</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Aggregated from Faculty Portal</div>
+            </div>
+
+            <!-- 4. Student Metrics -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">4</span>
+                    <h3 class="text-xs font-bold text-slate-900">Student Metrics</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Total enrollment ({{ total_students }} active students), graduation rates, academic performance, and higher studies.</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Live Roster Connected</div>
+            </div>
+
+            <!-- 5. Infrastructure -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">5</span>
+                    <h3 class="text-xs font-bold text-slate-900">Infrastructure</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Classrooms, computing laboratories, software licensing compliance, and technical facilities.</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Scheduled for Audit</div>
+            </div>
+
+            <!-- 6. Documentation & Evidence -->
+            <div class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 space-y-1.5">
+                <div class="flex items-center gap-2">
+                    <span class="w-6 h-6 rounded-md bg-slate-900 text-white flex items-center justify-center text-[10px] font-bold">6</span>
+                    <h3 class="text-xs font-bold text-slate-900">Compliance &amp; Evidence</h3>
+                </div>
+                <p class="text-[11px] text-slate-500">Self-Assessment Reports (SAR), committee meeting minutes, student feedback, and continuous improvement.</p>
+                <div class="pt-1 text-[10px] font-semibold text-slate-400">Status: Repository Staging</div>
+            </div>
+
+        </div>
+    </div>
+
 </div>
-
-<script>
-async function generateCustomReport() {
-    const q = document.getElementById('reportQueryInput').value;
-    if(!q) return;
-    const out = document.getElementById('reportOutput');
-    out.classList.remove('hidden');
-    out.innerHTML = `<span class="text-purple-600 font-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> Generating natural language report...</span>`;
-    
-    const res = await fetch('/api/ai/command', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({query: q})
-    });
-    const data = await res.json();
-    out.innerHTML = `<div class="font-bold text-slate-900 text-sm">${data.title}</div><div class="text-slate-700 font-medium">${data.ai_summary}</div>`;
-}
-</script>
-{% block scripts %}{% endblock %}
 {% endblock %}

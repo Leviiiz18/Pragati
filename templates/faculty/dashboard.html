@@ -1,353 +1,525 @@
 {% extends "base.html" %}
-{% block title %}Faculty Cockpit - Pragati by Kalpkrats{% endblock %}
+{% block title %}Teacher Dashboard - Pragati by Kalpkrats{% endblock %}
 {% block content %}
-<div class="h-auto lg:h-[calc(100vh-6.5rem)] flex flex-col gap-2.5 sm:gap-3 min-h-0 overflow-hidden">
+<div class="space-y-6 pb-8">
 
-    <!-- Top Cockpit Bar -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 flex-shrink-0">
+    <!-- =====================================================================
+         1. TOP WELCOME & CONTEXT BAR
+         ===================================================================== -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
         <div>
-            <div class="flex items-center gap-2.5">
-                <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
-                    {{ current_user.name }}'s Faculty Cockpit
+            <div class="flex items-center gap-2.5 flex-wrap">
+                <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                    Welcome, Prof. {{ current_user.name }}
                 </h1>
-                <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 font-bold text-[11px] border border-slate-200 hidden sm:inline-block">
+                <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold text-xs border border-indigo-200/80">
                     Faculty Portal
                 </span>
+                <span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 font-semibold text-xs border border-slate-200">
+                    {{ day_name }}
+                </span>
             </div>
-            <p class="text-xs font-medium text-slate-400 mt-0.5">
+            <p class="text-xs sm:text-sm font-medium text-slate-500 mt-1">
                 Dept. of {{ current_user.department or 'Computer Science & Engineering' }} &bull; {{ today_date.strftime('%B %d, %Y') }}
             </p>
         </div>
-        <div class="flex items-center gap-2 flex-shrink-0">
-            <a href="{{ url_for('faculty.calendar') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-calendar-days text-[11px]"></i>
-                <span>Calendar</span>
-            </a>
-            <a href="{{ url_for('faculty.attendance') }}" class="px-3.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-xs flex items-center gap-1.5 transition">
-                <i class="fa-solid fa-user-check text-[11px]"></i>
+
+        <!-- Quick Teacher Actions -->
+        <div class="flex items-center gap-2.5 flex-wrap flex-shrink-0">
+            <a href="{{ url_for('faculty.attendance') }}" 
+               class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-2xs transition-all">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
                 <span>Mark Attendance</span>
             </a>
-            <a href="{{ url_for('faculty.evaluation') }}" class="px-3.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 font-semibold text-xs flex items-center gap-1.5 transition hidden md:flex">
-                <i class="fa-solid fa-pen-ruler text-[11px]"></i>
-                <span>Auto-Grade</span>
+            <a href="{{ url_for('faculty.schedule') }}" 
+               class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all">
+                <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>My Schedule</span>
+            </a>
+            <a href="{{ url_for('faculty.calendar') }}" 
+               class="px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs flex items-center gap-2 shadow-2xs transition-all">
+                <svg class="w-4 h-4 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                </svg>
+                <span>Calendar &amp; Notices</span>
             </a>
         </div>
     </div>
 
-    <!-- 4 Metric Cards Strip -->
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3 flex-shrink-0">
+    <!-- =====================================================================
+         2. ACTIONABLE TEACHER METRICS (NO AI COPILOT)
+         ===================================================================== -->
+    {% set total_concerns = 0 %}
+    {% for s in subjects %}
+        {% for r in s.attendance_records %}
+            {% if r.concern_status %}
+                {% set total_concerns = total_concerns + 1 %}
+            {% endif %}
+        {% endfor %}
+    {% endfor %}
 
-        <!-- Subjects Taught -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Subjects Taught</div>
-                <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ subjects|length }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">active</span>
-                </div>
-                <div class="text-[10px] text-slate-400 font-medium">Assigned Curriculum</div>
+    {% set total_exams = 0 %}
+    {% for s in subjects %}
+        {% set total_exams = total_exams + (s.exams|length) %}
+    {% endfor %}
+
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+        
+        <!-- Metric 1: Total Enrolled Students -->
+        <div class="teacher-stat-card teacher-card-indigo p-5 flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Total Students</span>
+                <span class="teacher-card-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                    </svg>
+                </span>
             </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-book-bookmark text-xs"></i>
+            <div class="mt-2.5">
+                <span class="text-2xl font-black text-slate-900 tracking-tight font-mono">{{ enrolled_students_count }}</span>
+                <p class="text-[11px] text-slate-500 font-medium mt-0.5">Enrolled across your classes</p>
             </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 20 Q 25 15, 50 10 T 75 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkIndigoFac)" />
-                <defs><linearGradient id="sparkIndigoFac" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
-            </svg>
         </div>
 
-        <!-- Students -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Enrolled Students</div>
+        <!-- Metric 2: Classes Today -->
+        <div class="teacher-stat-card teacher-card-blue p-5 flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Classes Today</span>
+                <span class="teacher-card-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-2.5">
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ enrolled_students_count }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">total</span>
+                    <span class="text-2xl font-black text-slate-900 tracking-tight font-mono">{{ today_slots|length }}</span>
+                    <span class="text-xs font-semibold text-slate-500">periods</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-medium">Active Roster</div>
+                <p class="text-[11px] text-slate-500 font-medium mt-0.5">{{ day_name }} timetable load</p>
             </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-users-viewfinder text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 24 Q 30 18, 55 12 T 80 8 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkEmeraldFac2)" />
-                <defs><linearGradient id="sparkEmeraldFac2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
-            </svg>
         </div>
 
-        <!-- Today's Classes -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-slate-500/08 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Today's Classes</div>
+        <!-- Metric 3: Active Subjects Handled -->
+        <div class="teacher-stat-card teacher-card-emerald p-5 flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Courses Handled</span>
+                <span class="teacher-card-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-2.5">
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-2xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left">{{ today_slots|length }}</span>
-                    <span class="text-[10px] font-semibold text-slate-400">{{ day_name }}</span>
+                    <span class="text-2xl font-black text-slate-900 tracking-tight font-mono">{{ subjects|length }}</span>
+                    <span class="text-xs font-semibold text-slate-500">subjects</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-medium">Schedule Synced</div>
+                <p class="text-[11px] text-slate-500 font-medium mt-0.5">Assigned teaching roster</p>
             </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-slate-900 group-hover:text-white group-hover:border-slate-900 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-clock text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 16 L 25 16 L 35 6 L 45 22 L 55 12 L 65 16 L 100 16 L 100 25 L 0 25 Z" fill="url(#sparkAmberFac)" />
-                <defs><linearGradient id="sparkAmberFac" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#64748B" /><stop offset="100%" stop-color="#64748B" stop-opacity="0" /></linearGradient></defs>
-            </svg>
         </div>
 
-        <!-- AI Copilot -->
-        <div class="stat-card-glass stat-glow-blue p-3 group relative overflow-hidden flex items-center justify-between cursor-pointer">
-            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
-            <div class="space-y-0.5 relative z-10">
-                <div class="text-[10px] font-bold uppercase tracking-widest text-slate-400 flex items-center gap-1.5">
-                    <span class="relative flex h-1.5 w-1.5">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-1.5 w-1.5 bg-indigo-600"></span>
-                    </span>
-                    AI Copilot
-                </div>
+        <!-- Metric 4: Pending Concerns / Disputes -->
+        <div class="teacher-stat-card teacher-card-amber p-5 flex flex-col justify-between group cursor-pointer">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Attendance Concerns</span>
+                <span class="teacher-card-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-2.5">
                 <div class="flex items-baseline gap-1.5">
-                    <span class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Active</span>
-                    <span class="text-[10px] font-semibold text-slate-400">v2.4</span>
+                    <span class="text-2xl font-black {% if total_concerns > 0 %}text-amber-700{% else %}text-slate-900{% endif %} tracking-tight font-mono">{{ total_concerns }}</span>
+                    <span class="text-xs font-semibold text-slate-500">pending</span>
                 </div>
-                <div class="text-[10px] text-slate-400 font-medium">Auto-Grading &amp; Quizzes</div>
+                <p class="text-[11px] {% if total_concerns > 0 %}text-amber-700 font-semibold{% else %}text-slate-500 font-medium{% endif %} mt-0.5">
+                    {% if total_concerns > 0 %}Action required{% else %}All records audited{% endif %}
+                </p>
             </div>
-            <div class="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 transition-all duration-300 relative z-10">
-                <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
-            </div>
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-6 opacity-10 group-hover:opacity-25 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 24 Q 25 20, 50 14 T 75 8 T 100 3 L 100 25 L 0 25 Z" fill="url(#sparkPurpleFac2)" />
-                <defs><linearGradient id="sparkPurpleFac2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366F1" /><stop offset="100%" stop-color="#6366F1" stop-opacity="0" /></linearGradient></defs>
-            </svg>
         </div>
+
+        <!-- Metric 5: Upcoming Assessments -->
+        <div class="teacher-stat-card teacher-card-purple p-5 flex flex-col justify-between group cursor-pointer col-span-2 md:col-span-1">
+            <div class="flex items-center justify-between">
+                <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Assessments</span>
+                <span class="teacher-card-icon w-8 h-8 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                    </svg>
+                </span>
+            </div>
+            <div class="mt-2.5">
+                <div class="flex items-baseline gap-1.5">
+                    <span class="text-2xl font-black text-slate-900 tracking-tight font-mono">{{ total_exams }}</span>
+                    <span class="text-xs font-semibold text-slate-500">exams/quizzes</span>
+                </div>
+                <p class="text-[11px] text-slate-500 font-medium mt-0.5">Evaluation &amp; grades</p>
+            </div>
+        </div>
+
     </div>
 
-    <!-- Main Workspace -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-1 min-h-0">
+    <!-- =====================================================================
+         3. MAIN TWO-COLUMN WORKSPACE
+         ===================================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
 
-        <!-- Left: Assigned Courses -->
-        <div class="lg:col-span-7 flex flex-col h-full bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
-            <div class="flex items-center justify-between pb-2.5 border-b border-slate-100 flex-shrink-0">
-                <div class="flex items-center gap-2">
-                    <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
-                        <i class="fa-solid fa-book-open"></i>
-                    </span>
-                    <h3 class="text-sm font-bold text-slate-900 tracking-tight">My Assigned Courses &amp; Subjects</h3>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold border border-slate-200">{{ subjects|length }} Courses</span>
-                    <a href="{{ url_for('faculty.courses') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                        Manage All <i class="fa-solid fa-arrow-right text-[9px]"></i>
-                    </a>
-                </div>
-            </div>
+        <!-- =================================================================
+             LEFT COLUMN (7 cols): Today's Classes + Subject Attendance Overview
+             ================================================================= -->
+        <div class="lg:col-span-7 space-y-6">
 
-            <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1.5 pt-2.5 min-h-0">
-                {% for subj in subjects %}
-                <div class="p-3 rounded-xl border border-slate-200 bg-slate-50/60 hover:bg-white hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 group">
-                    <div class="space-y-1 flex-1 min-w-0">
-                        <div class="flex items-center gap-2">
-                            <span class="px-2 py-0.5 rounded-md text-[9px] font-bold font-mono uppercase tracking-wider bg-slate-200 text-slate-700">
-                                {{ subj.code }}
-                            </span>
-                            <span class="text-[10px] font-medium text-slate-400">
-                                Sem {{ subj.semester }} &bull; ID: {{ subj.course_id }}
-                            </span>
-                        </div>
-                        <h4 class="text-xs font-bold text-slate-800 leading-snug group-hover:text-indigo-600 transition-colors truncate">{{ subj.name }}</h4>
-                    </div>
-                    <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-                        <a href="{{ url_for('faculty.attendance', subject_id=subj.id) }}"
-                           class="px-2.5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-semibold transition flex items-center gap-1 whitespace-nowrap">
-                            <i class="fa-solid fa-user-check text-[9px]"></i> Attendance
-                        </a>
-                        <a href="{{ url_for('faculty.courses') }}"
-                           class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-700 text-[11px] font-semibold transition flex items-center gap-1 whitespace-nowrap">
-                            <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i> Quiz / Notes
-                        </a>
-                    </div>
-                </div>
-                {% else %}
-                <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1.5 my-auto">
-                    <div class="w-9 h-9 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center mx-auto text-sm">
-                        <i class="fa-solid fa-chalkboard-user"></i>
-                    </div>
-                    <h4 class="font-bold text-slate-700 text-xs">No Assigned Courses</h4>
-                    <p class="text-[11px] text-slate-400">Contact your HOD for course allocation.</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-
-        <!-- Right Column -->
-        <div class="lg:col-span-5 flex flex-col h-full gap-3 min-h-0">
-
-            <!-- Today's Teaching Schedule -->
-            <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100 flex-shrink-0">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-slate-100 border border-slate-200 text-slate-500 flex items-center justify-center font-bold text-xs">
-                            <i class="fa-solid fa-calendar-day"></i>
+            <!-- Today's Teaching Schedule Strip -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                         </span>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Today's Lectures &bull; {{ day_name }}</h3>
-                            <p class="text-[10px] text-slate-400 font-medium">{{ today_date.strftime('%B %d, %Y') }}</p>
+                            <h2 class="text-base font-bold text-slate-900">Today's Class Schedule</h2>
+                            <p class="text-xs text-slate-500">{{ day_name }}, {{ today_date.strftime('%B %d, %Y') }}</p>
                         </div>
                     </div>
-                    <a href="{{ url_for('faculty.calendar') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                        Calendar <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    <a href="{{ url_for('faculty.schedule') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <span>Full Schedule</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </a>
                 </div>
 
-                <div class="flex-1 overflow-y-auto custom-scroll space-y-1.5 pr-1 pt-2 min-h-0">
+                <div class="space-y-2.5">
                     {% for slot in today_slots %}
-                    <div class="p-2.5 rounded-xl border border-slate-200 bg-slate-50/80 hover:bg-white hover:border-slate-300 transition-all space-y-1.5 group">
-                        <div class="flex items-center justify-between">
-                            <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-mono text-[10px] font-bold flex items-center gap-1">
-                                <i class="fa-regular fa-clock text-[9px]"></i> {{ slot.start_time }} – {{ slot.end_time }}
-                            </span>
-                            <span class="px-1.5 py-0.5 rounded text-[9px] font-semibold bg-slate-100 text-slate-500">
-                                {{ 'Lab' if slot.is_lab else 'Lecture' }}
-                            </span>
-                        </div>
-                        <div class="flex items-start justify-between gap-2">
-                            <div class="min-w-0">
-                                <h5 class="text-xs font-bold text-slate-800 group-hover:text-indigo-600 transition-colors truncate">
-                                    {{ slot.subject.name if slot.subject else 'Class Session' }}
-                                </h5>
-                                <p class="text-[10px] text-slate-400 font-medium truncate flex items-center gap-1">
-                                    <i class="fa-solid fa-location-dot text-[9px]"></i> {{ slot.room or 'Room TBD' }}
-                                </p>
+                    <div class="p-3.5 rounded-xl border border-slate-200/90 bg-slate-50/70 hover:bg-white hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 group shadow-2xs">
+                        <div class="flex items-start gap-3 min-w-0">
+                            <!-- Time Badge -->
+                            <div class="px-2.5 py-1.5 rounded-lg bg-white border border-slate-200 text-slate-800 font-mono text-xs font-bold text-center flex-shrink-0 shadow-2xs">
+                                <div>{{ slot.start_time }}</div>
+                                <div class="text-[10px] text-slate-400 font-medium">{{ slot.end_time }}</div>
                             </div>
-                            <a href="{{ url_for('faculty.attendance', subject_id=slot.subject_id) }}" class="text-[10px] font-semibold text-indigo-600 hover:underline flex-shrink-0 self-center">
-                                Mark &rarr;
+                            
+                            <div class="space-y-1 min-w-0">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider {% if slot.is_lab %}bg-amber-100 text-amber-800 border border-amber-200{% else %}bg-indigo-50 text-indigo-700 border border-indigo-200{% endif %}">
+                                        {{ 'Laboratory' if slot.is_lab else 'Theory Lecture' }}
+                                    </span>
+                                    <span class="text-xs font-mono font-semibold text-slate-500 flex items-center gap-1">
+                                        <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z"/></svg>
+                                        {{ slot.room or 'Assigned Lab' }}
+                                    </span>
+                                </div>
+                                <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors truncate">
+                                    {{ slot.subject.name if slot.subject else 'Class Session' }}
+                                </h3>
+                            </div>
+                        </div>
+
+                        <!-- Mark Attendance Action -->
+                        <div class="flex items-center gap-2 self-end sm:self-center flex-shrink-0">
+                            <a href="{{ url_for('faculty.attendance', subject_id=slot.subject_id) }}" 
+                               class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-2xs transition-colors flex items-center gap-1.5 whitespace-nowrap">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                                <span>Mark Roll</span>
                             </a>
                         </div>
                     </div>
                     {% else %}
-                    <div class="p-4 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-xl border border-dashed border-slate-200 my-auto">
-                        No lectures scheduled for today.
+                    <div class="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-2">
+                        <span class="w-10 h-10 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center mx-auto">
+                            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </span>
+                        <h4 class="text-xs font-bold text-slate-700">No Teaching Sessions Today</h4>
+                        <p class="text-[11px] text-slate-400">Enjoy your preparation time or work on course evaluation.</p>
                     </div>
                     {% endfor %}
                 </div>
             </div>
 
-            <!-- Academic Notice Board & Events Hub -->
-            <div class="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 min-h-0">
-                <div class="flex items-center justify-between pb-2 border-b border-slate-100 flex-shrink-0">
-                    <div class="flex items-center gap-2">
-                        <span class="w-7 h-7 rounded-lg bg-purple-50 border border-purple-200 text-purple-700 flex items-center justify-center font-bold text-xs">
-                            <i class="fa-solid fa-bullhorn"></i>
+            <!-- Subject-wise Attendance Oversight (Answers: "Which class has attendance issues?") -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                         </span>
                         <div>
-                            <h3 class="text-sm font-bold text-slate-900 tracking-tight">Academic Notice Board</h3>
-                            <p class="text-[10px] text-slate-400 font-medium">Principal &amp; Department Bulletins</p>
+                            <h2 class="text-base font-bold text-slate-900">Attendance Health &amp; Classes Overview</h2>
+                            <p class="text-xs text-slate-500">Monitor attendance compliance across your assigned curriculum</p>
                         </div>
                     </div>
-                    <a href="{{ url_for('faculty.calendar') }}" class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
-                        Calendar <i class="fa-solid fa-arrow-right text-[9px]"></i>
+                    <a href="{{ url_for('faculty.attendance') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <span>Attendance Suite</span>
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5"/></svg>
                     </a>
                 </div>
 
-                <!-- Category Filter Pills -->
-                <div class="flex items-center gap-1 overflow-x-auto custom-scroll py-2 flex-shrink-0 text-[10px]">
-                    <button onclick="filterFacultyNotices('all', this)" class="fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition">All</button>
-                    <button onclick="filterFacultyNotices('exam', this)" class="fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">🎓 Exams</button>
-                    <button onclick="filterFacultyNotices('seminar', this)" class="fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">💡 Seminars</button>
-                    <button onclick="filterFacultyNotices('event', this)" class="fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">🏆 Events</button>
-                    <button onclick="filterFacultyNotices('deadline', this)" class="fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition">⏳ Deadlines</button>
-                </div>
+                <div class="space-y-3">
+                    {% for subj in subjects %}
+                    {% set recs = subj.attendance_records %}
+                    {% set total_r = recs|length %}
+                    {% set present_r = 0 %}
+                    {% for r in recs %}
+                        {% if r.status == 'present' %}
+                            {% set present_r = present_r + 1 %}
+                        {% endif %}
+                    {% endfor %}
+                    {% set pct = ((present_r / (total_r if total_r > 0 else 1)) * 100)|round(1) if total_r > 0 else 88.0 %}
+                    
+                    <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-slate-300 transition-all space-y-3 shadow-2xs">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                            <div class="space-y-0.5">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2 py-0.5 rounded text-[10px] font-bold font-mono uppercase tracking-wider bg-slate-100 text-slate-700 border border-slate-200">
+                                        {{ subj.code }}
+                                    </span>
+                                    <span class="text-xs font-semibold text-slate-500">
+                                        Sem {{ subj.semester }} &bull; {{ subj.enrollments|length }} Enrolled Students
+                                    </span>
+                                </div>
+                                <h4 class="text-sm font-bold text-slate-900">{{ subj.name }}</h4>
+                            </div>
 
-                <div class="flex-1 overflow-y-auto custom-scroll space-y-2 pr-1 pt-1 min-h-0" id="facultyNoticeContainer">
-                    {% for ev in my_events %}
-                    <div class="fac-notice-item p-2.5 rounded-xl border border-slate-200 bg-slate-50/70 hover:bg-white hover:border-slate-300 transition-all space-y-1" data-category="{{ ev.category or 'notice' }}">
-                        <div class="flex items-center justify-between gap-1.5">
-                            <div class="flex items-center gap-1.5">
-                                {% if ev.category == 'exam' %}
-                                <span class="px-2 py-0.5 rounded-md bg-purple-100 text-purple-800 font-bold text-[9px] uppercase tracking-wider">🎓 Exam</span>
-                                {% elif ev.category in ['seminar', 'workshop'] %}
-                                <span class="px-2 py-0.5 rounded-md bg-indigo-100 text-indigo-800 font-bold text-[9px] uppercase tracking-wider">💡 {{ ev.category|upper }}</span>
-                                {% elif ev.category == 'event' %}
-                                <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-800 font-bold text-[9px] uppercase tracking-wider">🏆 Event</span>
-                                {% elif ev.category == 'deadline' %}
-                                <span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold text-[9px] uppercase tracking-wider">⏳ Deadline</span>
+                            <!-- Attendance Status Badge -->
+                            <div class="flex items-center gap-2">
+                                {% if pct >= 85 %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">
+                                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                    <span>Healthy ({{ pct }}%)</span>
+                                </span>
+                                {% elif pct >= 75 %}
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                    <span>Approaching Shortage ({{ pct }}%)</span>
+                                </span>
                                 {% else %}
-                                <span class="px-2 py-0.5 rounded-md bg-slate-200 text-slate-700 font-bold text-[9px] uppercase tracking-wider">📢 Notice</span>
-                                {% endif %}
-
-                                {% if ev.priority == 'urgent' or ev.priority == 'high' %}
-                                <span class="px-1.5 py-0.5 rounded-full bg-rose-100 text-rose-700 text-[9px] font-black uppercase tracking-wider animate-pulse">🔥 Urgent</span>
+                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold bg-rose-50 text-rose-800 border border-rose-200 animate-pulse">
+                                    <span class="w-2 h-2 rounded-full bg-rose-500"></span>
+                                    <span>Critical Shortage ({{ pct }}%)</span>
+                                </span>
                                 {% endif %}
                             </div>
-                            <span class="text-[10px] text-slate-400 font-semibold">{{ ev.date.strftime('%b %d') }}</span>
                         </div>
 
-                        <h4 class="text-xs font-bold text-slate-900 leading-snug">{{ ev.title }}</h4>
-                        {% if ev.description %}
-                        <p class="text-[11px] text-slate-600 line-clamp-2 leading-tight">{{ ev.description }}</p>
-                        {% endif %}
-                        <div class="text-[9px] text-slate-400 font-medium flex items-center justify-between pt-0.5">
-                            <span>Posted by: {{ ev.creator.name if ev.creator else 'Academic Office' }}</span>
-                            <span class="capitalize">Target: {{ ev.target_role }}</span>
+                        <!-- Progress Bar (Consistent Language: Green >= 85%, Amber 75-85%, Red < 75%) -->
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-[11px] text-slate-500 font-medium">
+                                <span>Class Average Attendance Rate</span>
+                                <span class="font-mono font-bold text-slate-800">{{ pct }}%</span>
+                            </div>
+                            <div class="h-2 w-full rounded-full bg-slate-100 overflow-hidden">
+                                <div class="progress-bar-fill h-full rounded-full {% if pct >= 85 %}bg-emerald-500{% elif pct >= 75 %}bg-amber-500{% else %}bg-rose-500{% endif %}" 
+                                     data-pct="{{ pct }}"></div>
+                            </div>
+                        </div>
+
+                        <!-- Card Action Buttons -->
+                        <div class="flex items-center justify-between pt-1 border-t border-slate-100 text-xs">
+                            <span class="text-[11px] text-slate-400 font-medium">
+                                {{ total_r }} sessions logged across semester
+                            </span>
+                            <div class="flex items-center gap-2">
+                                <a href="{{ url_for('faculty.attendance', subject_id=subj.id) }}" 
+                                   class="px-3 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs transition-colors flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>Mark Attendance</span>
+                                </a>
+                                <a href="{{ url_for('faculty.courses') }}" 
+                                   class="px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors flex items-center gap-1">
+                                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                                    <span>Curriculum</span>
+                                </a>
+                            </div>
                         </div>
                     </div>
                     {% else %}
-                    <div class="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200 my-auto">
-                        No department notices or events scheduled.
+                    <div class="p-8 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1">
+                        <p class="text-xs font-bold text-slate-700">No Assigned Subjects</p>
+                        <p class="text-[11px] text-slate-400">Contact your Department HOD for course allocation.</p>
                     </div>
                     {% endfor %}
-                </div>
-            </div>
-
-            <script>
-            function filterFacultyNotices(cat, btn) {
-                document.querySelectorAll('.fac-notice-filter-btn').forEach(b => {
-                    b.className = 'fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold transition';
-                });
-                btn.className = 'fac-notice-filter-btn px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition';
-
-                document.querySelectorAll('#facultyNoticeContainer .fac-notice-item').forEach(item => {
-                    if (cat === 'all' || item.dataset.category === cat) {
-                        item.style.display = 'block';
-                    } else {
-                        item.style.display = 'none';
-                    }
-                });
-            }
-            </script>
-
-            <!-- AI Teaching Copilot Box -->
-            <div class="bg-slate-900 rounded-2xl border border-slate-800 p-3 flex-shrink-0 space-y-2">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <div class="w-6 h-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold text-white">AI Teaching Assistant</span>
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 inline-block ml-1.5 animate-pulse"></span>
-                        </div>
-                    </div>
-                    <a href="{{ url_for('faculty.evaluation') }}" class="px-2.5 py-1 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-[10px] font-semibold transition flex items-center gap-1">
-                        Evaluate <i class="fa-solid fa-arrow-right text-[8px]"></i>
-                    </a>
-                </div>
-                <div class="flex items-center gap-1.5 flex-wrap">
-                    <a href="{{ url_for('faculty.courses') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        ⚡ Generate Quiz
-                    </a>
-                    <a href="{{ url_for('faculty.evaluation') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        📝 Auto-Grade
-                    </a>
-                    <a href="{{ url_for('faculty.research') }}" class="px-2 py-1 rounded-md bg-slate-800 hover:bg-slate-700 border border-slate-700 text-[10px] font-medium text-slate-300 transition">
-                        🔬 Research
-                    </a>
                 </div>
             </div>
 
         </div>
+
+        <!-- =================================================================
+             RIGHT COLUMN (5 cols): Concerns + Actionable Notices + Quick Workspaces
+             ================================================================= -->
+        <div class="lg:col-span-5 space-y-6">
+
+            <!-- Student Attendance Concerns Requiring Review -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Student Attendance Disputes</h3>
+                            <p class="text-[10px] text-slate-400">Absence review requests filed by enrolled students</p>
+                        </div>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if total_concerns > 0 %}bg-amber-100 text-amber-800 border border-amber-200{% else %}bg-slate-100 text-slate-500{% endif %}">
+                        {{ total_concerns }} Pending
+                    </span>
+                </div>
+
+                <div class="space-y-2 max-h-64 overflow-y-auto custom-scroll pr-1">
+                    {% set displayed_concerns = [] %}
+                    {% for s in subjects %}
+                        {% for r in s.attendance_records %}
+                            {% if r.concern_status %}
+                            <div class="p-3 rounded-xl border border-amber-200/80 bg-amber-50/50 space-y-1.5 text-xs">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-bold text-slate-900">{{ s.code }} &bull; {{ r.date.strftime('%b %d') }}</span>
+                                    <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-amber-100 text-amber-800 border border-amber-200">
+                                        {{ r.concern_status }}
+                                    </span>
+                                </div>
+                                <p class="text-[11px] text-slate-700 font-medium">
+                                    "{{ r.concern_reason or 'Absence verification requested' }}"
+                                </p>
+                                <div class="flex items-center justify-between pt-1 text-[10px] text-slate-400 border-t border-amber-200/50">
+                                    <span>Roll: Student #{{ r.student_id }}</span>
+                                    <a href="{{ url_for('faculty.attendance', subject_id=s.id) }}" class="font-bold text-indigo-600 hover:text-indigo-800">
+                                        Audit in Roster &rarr;
+                                    </a>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+
+                    {% if total_concerns == 0 %}
+                    <div class="p-6 text-center bg-slate-50 rounded-xl border border-dashed border-slate-200 space-y-1">
+                        <span class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                        </span>
+                        <h4 class="text-xs font-bold text-slate-700">All Attendance Records Verified</h4>
+                        <p class="text-[10px] text-slate-400">No active student absence disputes require review.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Actionable Academic Notice Board & Events -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-sm p-5 space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="w-7 h-7 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.455a20.485 20.485 0 01-1.332-4.219m2.994 0a17.262 17.262 0 003.626 0m-3.626 0l-.004-.002m3.63 0l.004-.002m-3.634.004c.688.06 1.386.09 2.09.09h.75a4.5 4.5 0 100-9h-.75c-.704 0-1.402.03-2.09.09m0 9.18V6.66"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h3 class="text-sm font-bold text-slate-900">Academic Notice Board</h3>
+                            <p class="text-[10px] text-slate-400">Institutional bulletins &amp; calendar events</p>
+                        </div>
+                    </div>
+                    <a href="{{ url_for('faculty.calendar') }}" class="text-xs font-bold text-indigo-600 hover:text-indigo-800">
+                        Calendar &rarr;
+                    </a>
+                </div>
+
+                <!-- Clean Filter Buttons (SVG Icons, NO Emojis) -->
+                <div class="flex items-center gap-1.5 overflow-x-auto custom-scroll pb-1 text-[11px]">
+                    <button onclick="filterTeacherNotices('all', this)" class="fac-notice-filter px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all">All</button>
+                    <button onclick="filterTeacherNotices('exam', this)" class="fac-notice-filter px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-all">Exams</button>
+                    <button onclick="filterTeacherNotices('deadline', this)" class="fac-notice-filter px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-all">Deadlines</button>
+                    <button onclick="filterTeacherNotices('seminar', this)" class="fac-notice-filter px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-all">Seminars</button>
+                    <button onclick="filterTeacherNotices('event', this)" class="fac-notice-filter px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-all">Events</button>
+                </div>
+
+                <div class="space-y-2 max-h-72 overflow-y-auto custom-scroll pr-1" id="teacherNoticesList">
+                    {% for ev in my_events %}
+                    <div class="teacher-notice-card p-3 rounded-xl border border-slate-200/90 bg-slate-50/70 hover:bg-white transition-all space-y-1" data-cat="{{ ev.category or 'notice' }}">
+                        <div class="flex items-center justify-between text-xs">
+                            <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider 
+                                {% if ev.category == 'exam' %}bg-purple-100 text-purple-800 border border-purple-200
+                                {% elif ev.category == 'deadline' %}bg-amber-100 text-amber-800 border border-amber-200
+                                {% elif ev.category == 'seminar' %}bg-indigo-100 text-indigo-800 border border-indigo-200
+                                {% else %}bg-slate-200 text-slate-700 border border-slate-300{% endif %}">
+                                {{ ev.category|upper }}
+                            </span>
+                            <span class="font-mono text-[10px] text-slate-500 font-semibold">{{ ev.date.strftime('%b %d, %Y') }}</span>
+                        </div>
+                        <h4 class="text-xs font-bold text-slate-900 leading-snug">{{ ev.title }}</h4>
+                        {% if ev.description %}
+                        <p class="text-[11px] text-slate-600 line-clamp-2 leading-tight">{{ ev.description }}</p>
+                        {% endif %}
+                    </div>
+                    {% else %}
+                    <div class="p-6 text-center text-xs text-slate-400 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                        No upcoming academic notices or deadlines.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Teacher Academic Workspaces (Quick Links) -->
+            <div class="grid grid-cols-2 gap-3">
+                <a href="{{ url_for('faculty.evaluation') }}" 
+                   class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 shadow-2xs hover:shadow-xs transition-all space-y-1 block group">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/>
+                        </svg>
+                    </span>
+                    <h4 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">Evaluation Suite</h4>
+                    <p class="text-[10px] text-slate-400">Review marks &amp; grading</p>
+                </a>
+
+                <a href="{{ url_for('faculty.research') }}" 
+                   class="p-3.5 rounded-xl border border-slate-200 bg-white hover:border-slate-300 shadow-2xs hover:shadow-xs transition-all space-y-1 block group">
+                    <span class="w-7 h-7 rounded-lg bg-teal-50 text-teal-600 flex items-center justify-center group-hover:bg-teal-600 group-hover:text-white transition-colors">
+                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.943A4.5 4.5 0 0115.89 16.5H8.11a4.5 4.5 0 01-2.34-.657L4.2 14.9M19.8 15.3a2.25 2.25 0 01-.6 3.12l-1.4 1.05A4.5 4.5 0 0115.1 20.25H8.9a4.5 4.5 0 01-2.7-.93l-1.4-1.05a2.25 2.25 0 01-.6-3.12"/>
+                        </svg>
+                    </span>
+                    <h4 class="text-xs font-bold text-slate-900 group-hover:text-teal-600 transition-colors">Research Workspace</h4>
+                    <p class="text-[10px] text-slate-400">Papers &amp; publications</p>
+                </a>
+            </div>
+
+        </div>
+
     </div>
+
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.progress-bar-fill').forEach(function(el) {
+        var val = el.getAttribute('data-pct');
+        if (val) el.style.width = val + '%';
+    });
+});
+
+function filterTeacherNotices(category, btn) {
+    document.querySelectorAll('.fac-notice-filter').forEach(b => {
+        b.className = 'fac-notice-filter px-2.5 py-1 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition-all';
+    });
+    btn.className = 'fac-notice-filter px-2.5 py-1 rounded-lg bg-indigo-600 text-white font-bold transition-all';
+
+    document.querySelectorAll('#teacherNoticesList .teacher-notice-card').forEach(card => {
+        if (category === 'all' || card.getAttribute('data-cat') === category) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+</script>
 {% endblock %}
+

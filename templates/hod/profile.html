@@ -203,7 +203,7 @@
                     <i class="fa-solid fa-rotate text-blue-600"></i> Turn Over
                 </button>
                 <span class="text-slate-300">|</span>
-                <button onclick="copyEmpId('{{ current_user.employee_id or ('NU26HOD' ~ ('%03d'|format(current_user.id))) }}')" class="flex items-center gap-1.5 hover:text-indigo-600 transition">
+                <button onclick="copyEmpId(this.getAttribute('data-empid'))" data-empid="{{ current_user.employee_id or ('NU26HOD' ~ ('%03d'|format(current_user.id))) }}" class="flex items-center gap-1.5 hover:text-indigo-600 transition">
                     <i class="fa-solid fa-copy text-indigo-600"></i> Copy ID
                 </button>
                 <span class="text-slate-300">|</span>

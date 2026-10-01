@@ -197,11 +197,18 @@ class AttendanceRecord(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     subject_id = db.Column(db.Integer, db.ForeignKey('subject.id'), nullable=False)
+    slot_id = db.Column(db.Integer, db.ForeignKey('timetable_slot.id'), nullable=True)
     date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), nullable=False) # present, absent, late
     is_proxy_suspect = db.Column(db.Boolean, default=False)
     proxy_reason = db.Column(db.String(200), nullable=True)
+    concern_status = db.Column(db.String(50), nullable=True) # None, Pending, Under Review, Resolved, Rejected
+    concern_reason = db.Column(db.Text, nullable=True)
+    concern_doc = db.Column(db.String(300), nullable=True)
+    concern_created_at = db.Column(db.DateTime, nullable=True)
+
     subject = db.relationship('Subject', backref='attendance_records')
+    slot = db.relationship('TimetableSlot', backref='attendance_records')
 
 class Exam(BaseModel):
     id = db.Column(db.Integer, primary_key=True)

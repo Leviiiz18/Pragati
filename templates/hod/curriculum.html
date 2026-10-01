@@ -1,226 +1,321 @@
 {% extends "base.html" %}
-{% block title %}Curriculum & Syllabus Governance - Pragati by Kalpkrats{% endblock %}
+{% block title %}Department Curriculum - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+
+    <!-- 1. ACADEMIC CURRICULUM HEADER -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">Curriculum & Syllabus Governance</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Bifurcated view by Semester, Assigned Faculty, and Syllabus Completion Status.</p>
+            <div class="flex items-center gap-2.5">
+                <span class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-slate-900 text-white shadow-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
+                </span>
+                <div>
+                    <h1 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">
+                        Department Academic Curriculum
+                    </h1>
+                </div>
+                <span class="px-2.5 py-0.5 rounded-md bg-slate-100 text-slate-700 font-bold text-xs border border-slate-200">
+                    {{ current_user.department or 'Computer Science' }}
+                </span>
+            </div>
+            <p class="text-xs font-medium text-slate-500 mt-1">
+                Program structure &bull; Semester-wise courses, credit allocations, and faculty assignments.
+            </p>
         </div>
-        <button onclick="document.getElementById('addSubjectModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
-            <i class="fa-solid fa-plus"></i> Add New Subject
+
+        <button onclick="document.getElementById('addSubjectModal').classList.remove('hidden')"
+                class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs flex items-center gap-2 shadow-xs transition cursor-pointer self-start sm:self-auto">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6m6-6v12"/>
+            </svg>
+            <span>Add Course / Subject</span>
         </button>
     </div>
 
-    <!-- Curriculum Metrics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Total Curriculum Subjects</div>
-            <div class="text-3xl font-black text-slate-900">{{ subjects|length }}</div>
-            <div class="mt-2 text-xs text-blue-600 font-bold">Active in Department</div>
+    <!-- 2. HIERARCHICAL NAVIGATOR: Department → Program → Semester -->
+    <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-xs space-y-4">
+        
+        <!-- Hierarchy Breadcrumb Indicator -->
+        <div class="flex items-center gap-2 text-xs font-semibold text-slate-500 overflow-x-auto pb-1">
+            <span class="text-slate-900 font-bold flex items-center gap-1.5 flex-shrink-0">
+                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.333A12.064 12.064 0 0012 9c-2.617 0-5.074.834-7.5 2.333V21"/>
+                </svg>
+                Dept: {{ current_user.department or 'Computer Science' }}
+            </span>
+            <span class="text-slate-300">&rarr;</span>
+            <span class="text-slate-700 flex-shrink-0">Program Degree</span>
+            <span class="text-slate-300">&rarr;</span>
+            <span class="text-slate-700 flex-shrink-0">Academic Semester</span>
+            <span class="text-slate-300">&rarr;</span>
+            <span class="text-slate-700 flex-shrink-0">Courses &amp; Faculty</span>
         </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Approved Syllabi</div>
-            <div class="text-3xl font-black text-emerald-600">
-                {{ subjects|selectattr('syllabus_status', 'equalto', 'Approved')|list|length }}
-            </div>
-            <div class="mt-2 text-xs text-emerald-600 font-bold">Compliant with Standards</div>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Pending / Revision Needed</div>
-            <div class="text-3xl font-black text-amber-600">
-                {{ subjects|rejectattr('syllabus_status', 'equalto', 'Approved')|list|length }}
-            </div>
-            <div class="mt-2 text-xs text-amber-700 font-bold">Requires HOD Sign-off</div>
-        </div>
-        <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
-            <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Avg Syllabus Completion</div>
-            <div class="text-3xl font-black text-purple-600">76.5%</div>
-            <div class="mt-2 text-xs text-purple-700 font-bold">Faculty Teaching Progress</div>
-        </div>
-    </div>
 
-    <!-- BIFURCATION FILTERS BAR -->
-    <div class="bg-white rounded-3xl p-5 border border-slate-200 shadow-sm space-y-4">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-100 pb-4">
+        <!-- Filter Controls -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+            
+            <!-- Program Selector -->
             <div class="flex items-center gap-2">
-                <i class="fa-solid fa-filter text-blue-600"></i>
-                <span class="text-sm font-extrabold text-slate-900">Curriculum Bifurcation & Filters</span>
+                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Program:</label>
+                <select id="programFilter" onchange="applyCurriculumFilters()"
+                        class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-400">
+                    <option value="all">All Department Programs</option>
+                    {% for c in courses %}
+                    <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                    {% endfor %}
+                </select>
             </div>
 
-            <!-- Faculty / Teacher Filter -->
-            <div class="flex items-center gap-3">
-                <label class="text-xs font-bold text-slate-600 whitespace-nowrap">Filter by Teacher:</label>
-                <select id="facultyFilter" onchange="applyCurriculumFilters()" class="px-3.5 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500">
-                    <option value="all">All Faculty Members</option>
+            <!-- Faculty Assignment Filter -->
+            <div class="flex items-center gap-2">
+                <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Faculty:</label>
+                <select id="curriculumFacultyFilter" onchange="applyCurriculumFilters()"
+                        class="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-slate-400">
+                    <option value="all">All Faculty</option>
                     {% for f in faculties %}
-                    <option value="{{ f.id }}">{{ f.name }} ({{ f.designation or 'Faculty' }})</option>
+                    <option value="{{ f.id }}">{{ f.name }}</option>
                     {% endfor %}
                 </select>
             </div>
         </div>
 
-        <!-- Semester Tabs Bifurcation -->
-        <div class="flex items-center gap-2 overflow-x-auto pb-1">
-            <button onclick="setSemFilter('all')" id="semTab-all" class="sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-md shadow-blue-200 transition">
-                All Semesters
+        <!-- Semester Tabs -->
+        <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 border-t border-slate-100">
+            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">Semester:</span>
+            <button type="button" onclick="setCurriculumSemFilter('all')" id="semTab-all"
+                    class="curriculum-sem-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white shadow-2xs transition whitespace-nowrap">
+                All Semesters ({{ subjects|length }})
             </button>
             {% for sem_num in range(1, 9) %}
-            <button onclick="setSemFilter('{{ sem_num }}')" id="semTab-{{ sem_num }}" class="sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition">
-                Semester {{ sem_num }}
+            {% set sem_subjects = subjects|selectattr('semester', 'equalto', sem_num)|list %}
+            <button type="button" onclick="setCurriculumSemFilter('{{ sem_num }}')" id="semTab-{{ sem_num }}"
+                    class="curriculum-sem-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+                Sem {{ sem_num }} ({{ sem_subjects|length }})
             </button>
             {% endfor %}
         </div>
     </div>
 
-    <!-- Subjects & Syllabus Cards Grid -->
-    <div id="subjectsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {% for s in subjects %}
-        <div class="subject-card bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between"
-             data-sem="{{ s.semester }}"
-             data-faculty="{{ s.faculty_id or 0 }}"
-             data-status="{{ s.syllabus_status or 'Approved' }}">
-            <div class="space-y-3">
-                <div class="flex items-start justify-between gap-3">
-                    <div>
-                        <div class="flex items-center gap-2">
-                            <span class="px-2.5 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-mono font-bold">{{ s.code }}</span>
-                            <span class="px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-700 text-xs font-bold">Sem {{ s.semester }}</span>
-                            <span class="px-2.5 py-0.5 rounded-lg bg-purple-50 text-purple-700 border border-purple-200 text-xs font-bold">{{ s.credits or 4 }} Credits</span>
-                        </div>
-                        <h3 class="text-lg font-extrabold text-slate-900 mt-2">{{ s.name }}</h3>
-                        <p class="text-xs text-slate-500 font-medium mt-0.5">Assigned Teacher: <strong class="text-slate-800">{{ s.faculty.name if s.faculty else 'Unassigned' }}</strong></p>
-                    </div>
-
-                    <!-- Syllabus Review Status Badge -->
-                    <span class="px-3 py-1.5 rounded-2xl text-xs font-bold shrink-0 
-                        {% if s.syllabus_status == 'Approved' %} bg-emerald-100 text-emerald-800 border border-emerald-200
-                        {% elif s.syllabus_status == 'Revision Requested' %} bg-rose-100 text-rose-800 border border-rose-200
-                        {% else %} bg-amber-100 text-amber-800 border border-amber-200 {% endif %}">
-                        <i class="fa-solid {% if s.syllabus_status == 'Approved' %}fa-circle-check{% elif s.syllabus_status == 'Revision Requested' %}fa-triangle-exclamation{% else %}fa-clock{% endif %} mr-1"></i>
-                        {{ s.syllabus_status or 'Approved' }}
+    <!-- 3. CURRICULUM COURSES DIRECTORY (Structured by Semester) -->
+    {% if subjects|length > 0 %}
+    <div class="space-y-6" id="curriculumSemestersContainer">
+        {% for sem_num in range(1, 9) %}
+        {% set sem_courses = subjects|selectattr('semester', 'equalto', sem_num)|list %}
+        <div class="semester-section bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden"
+             data-sem="{{ sem_num }}">
+            
+            <!-- Semester Section Header -->
+            <div class="px-5 py-3.5 bg-slate-50/80 border-b border-slate-200 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <span class="px-2.5 py-1 rounded-md bg-slate-900 text-white text-xs font-bold font-mono">
+                        Semester {{ sem_num }}
+                    </span>
+                    <span class="text-xs font-bold text-slate-800">
+                        {{ sem_courses|length }} Course{% if sem_courses|length != 1 %}s{% endif %} Offered
+                    </span>
+                    <span class="text-slate-300">&bull;</span>
+                    <span class="text-xs text-slate-500 font-medium">
+                        Total Credits: {{ sem_courses|sum(attribute='credits') }}
                     </span>
                 </div>
+            </div>
 
-                <!-- Teaching Progress Bar -->
-                <div class="space-y-1">
-                    <div class="flex items-center justify-between text-xs font-bold">
-                        <span class="text-slate-600">Syllabus Covered by Teacher:</span>
-                        <span class="text-blue-600">{{ s.completion_percentage or 75.0 }}%</span>
-                    </div>
-                    <div class="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
-                        <div class="h-full bg-blue-600 rounded-full" style="width: {{ s.completion_percentage or 75.0 }}%"></div>
-                    </div>
-                </div>
+            {% if sem_courses|length > 0 %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700 min-w-[700px]">
+                    <thead class="text-[11px] uppercase bg-slate-100/60 text-slate-500 border-b border-slate-200/80 font-bold tracking-wider">
+                        <tr>
+                            <th class="py-2.5 px-4">Course Code</th>
+                            <th class="py-2.5 px-4">Course Title</th>
+                            <th class="py-2.5 px-4">Credits</th>
+                            <th class="py-2.5 px-4">Assigned Faculty</th>
+                            <th class="py-2.5 px-4">Syllabus Status</th>
+                            <th class="py-2.5 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for s in sem_courses %}
+                        <tr class="curriculum-subject-row hover:bg-slate-50/70 transition-colors"
+                            data-sem="{{ s.semester }}"
+                            data-course-id="{{ s.course_id or 0 }}"
+                            data-faculty-id="{{ s.faculty_id or 0 }}">
+                            
+                            <!-- Course Code -->
+                            <td class="py-3 px-4 font-mono font-bold text-slate-900">
+                                <span class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800 text-[11px]">
+                                    {{ s.code }}
+                                </span>
+                            </td>
 
-                <!-- Executive Summary / Notes -->
-                <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium space-y-1">
-                    <div class="font-bold text-slate-900 flex items-center justify-between">
-                        <span>HOD Review Notes & Scope:</span>
-                    </div>
-                    <p>{{ s.syllabus_summary or 'Covers fundamental concepts, practical lab assignments, and continuous assessments.' }}</p>
-                </div>
+                            <!-- Title -->
+                            <td class="py-3 px-4">
+                                <div class="font-bold text-slate-900 text-xs">{{ s.name }}</div>
+                                <div class="text-[11px] text-slate-400">
+                                    {{ s.course.name if s.course else 'Department Core' }} &bull; {{ s.modules|length }} Modules
+                                </div>
+                            </td>
 
-                <!-- Modules & Units Accordion -->
-                <div class="space-y-2 pt-1">
-                    <div class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center justify-between">
-                        <span>Syllabus Modules ({{ s.modules|length }})</span>
-                        <button onclick="openAddModuleModal({{ s.id }}, '{{ s.name|escape }}')" class="text-blue-600 hover:text-blue-700 text-xs font-bold flex items-center gap-1">
-                            <i class="fa-solid fa-plus-circle"></i> Add Unit
-                        </button>
-                    </div>
-                    <div class="space-y-1.5 max-h-36 overflow-y-auto">
-                        {% for mod in s.modules %}
-                        <div class="p-2.5 rounded-xl bg-slate-100 text-xs font-semibold text-slate-800 flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <i class="fa-solid fa-book-open text-blue-600 text-xs"></i>
-                                <span>{{ mod.title }}</span>
-                            </div>
-                            <span class="text-[10px] px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200 font-bold">Active</span>
-                        </div>
-                        {% else %}
-                        <div class="p-3 text-center text-xs text-slate-400 font-medium bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                            No modules added yet. Click "+ Add Unit" to define syllabus.
-                        </div>
+                            <!-- Credits -->
+                            <td class="py-3 px-4">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 font-bold text-slate-700 text-xs">
+                                    {{ s.credits or 4 }} Credits
+                                </span>
+                            </td>
+
+                            <!-- Assigned Faculty -->
+                            <td class="py-3 px-4">
+                                {% if s.faculty %}
+                                <div class="flex items-center gap-2">
+                                    <span class="w-6 h-6 rounded-full bg-slate-100 text-slate-700 font-bold text-[10px] flex items-center justify-center">
+                                        {{ s.faculty.name[:2]|upper }}
+                                    </span>
+                                    <div>
+                                        <div class="font-semibold text-slate-800 text-xs">{{ s.faculty.name }}</div>
+                                        <div class="text-[10px] text-slate-400">{{ s.faculty.designation or 'Faculty' }}</div>
+                                    </div>
+                                </div>
+                                {% else %}
+                                <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                                    Unassigned
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Course / Syllabus Status -->
+                            <td class="py-3 px-4">
+                                {% set stat = s.syllabus_status or 'Approved' %}
+                                {% if stat == 'Approved' %}
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Approved
+                                </span>
+                                {% elif stat == 'Revision Requested' %}
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> Under Revision
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Pending Review
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3 px-4 text-right">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <!-- Delete Subject -->
+                                    <form action="{{ url_for('hod.curriculum') }}" method="POST" class="inline"
+                                          onsubmit="return confirm('Remove course {{ s.code }} ({{ s.name }}) from curriculum?');">
+                                        <input type="hidden" name="action" value="delete_subject">
+                                        <input type="hidden" name="subject_id" value="{{ s.id }}">
+                                        <button type="submit" title="Remove Course"
+                                                class="p-1.5 rounded-lg bg-rose-50 hover:bg-rose-100 text-rose-600 transition">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                            </svg>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
                         {% endfor %}
-                    </div>
-                </div>
+                    </tbody>
+                </table>
             </div>
-
-            <!-- Footer Action Controls -->
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
-                <button onclick="openReviewModal({{ s.id }}, '{{ s.name|escape }}', '{{ s.syllabus_status }}', '{{ s.syllabus_summary|escape }}')" class="px-4 py-2 rounded-xl bg-blue-50 hover:bg-blue-600 text-blue-700 hover:text-white text-xs font-bold border border-blue-200 transition shadow-sm flex items-center gap-1.5">
-                    <i class="fa-solid fa-clipboard-check"></i> Review & Audit Syllabus
-                </button>
-
-                <form action="{{ url_for('hod.curriculum') }}" method="POST" class="inline" onsubmit="return confirm('Remove subject {{ s.name }} ({{ s.code }}) from curriculum?');">
-                    <input type="hidden" name="subject_id" value="{{ s.id }}">
-                    <input type="hidden" name="action" value="delete_subject">
-                    <button type="submit" title="Delete Subject" class="w-8 h-8 rounded-xl bg-rose-50 hover:bg-rose-600 text-rose-600 hover:text-white flex items-center justify-center border border-rose-200 transition shadow-sm">
-                        <i class="fa-solid fa-trash-can text-xs"></i>
-                    </button>
-                </form>
+            {% else %}
+            <div class="py-8 text-center text-slate-400 text-xs">
+                No courses currently scheduled for Semester {{ sem_num }}.
             </div>
-        </div>
-        {% else %}
-        <div class="col-span-2 p-8 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 font-medium">
-            No subjects configured in curriculum. Click "+ Add New Subject" to begin.
+            {% endif %}
         </div>
         {% endfor %}
     </div>
+    {% else %}
+    <!-- Intentional Empty State if No Curriculum Data Available -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-12 text-center space-y-3">
+        <div class="w-12 h-12 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto text-xl">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+            </svg>
+        </div>
+        <h3 class="text-sm font-bold text-slate-800">No Curriculum Data Available</h3>
+        <p class="text-xs text-slate-500 max-w-sm mx-auto">
+            No subjects or courses have been registered for this department yet. Add subjects to define the curriculum structure.
+        </p>
+        <button onclick="document.getElementById('addSubjectModal').classList.remove('hidden')"
+                class="px-4 py-2 rounded-xl bg-slate-900 text-white font-semibold text-xs transition inline-flex items-center gap-1.5 shadow-xs">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M18 12H6m6-6v12"/>
+            </svg>
+            Add First Course
+        </button>
+    </div>
+    {% endif %}
 </div>
 
-<!-- Modal 1: Add New Subject -->
-<div id="addSubjectModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="w-full max-w-xl bg-white rounded-3xl border border-slate-200 p-6 md:p-8 space-y-6 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+<!-- 4. ADD NEW SUBJECT MODAL (Preserved Functionality) -->
+<div id="addSubjectModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-lg bg-white rounded-2xl border border-slate-200 shadow-2xl p-6 space-y-4 max-h-[90vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div>
-                <h3 class="text-xl font-extrabold text-slate-900">Add New Curriculum Subject</h3>
-                <p class="text-xs text-slate-500 font-medium">Define subject name, course allocation, semester, and assigned teacher.</p>
+                <h3 class="text-sm font-bold text-slate-900">Add Course to Curriculum</h3>
+                <p class="text-xs text-slate-400">Enroll new subject into department program schedule.</p>
             </div>
-            <button onclick="document.getElementById('addSubjectModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            <button onclick="document.getElementById('addSubjectModal').classList.add('hidden')"
+                    class="text-slate-400 hover:text-slate-700 p-1 rounded-lg transition">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
         </div>
 
         <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
-            <input type="hidden" name="action" value="add_subject">
+            <input type="hidden" name="action" value="add">
 
-            <div class="grid grid-cols-2 gap-4">
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Course Title *</label>
+                <input type="text" name="name" required placeholder="e.g. Operating Systems / Algorithms"
+                       class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Subject Name *</label>
-                    <input type="text" name="name" placeholder="e.g. Advanced Artificial Intelligence" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Course Code *</label>
+                    <input type="text" name="code" required placeholder="e.g. CS302"
+                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 uppercase focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Subject Code *</label>
-                    <input type="text" name="code" placeholder="e.g. CS401" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 uppercase focus:outline-none focus:border-blue-500">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Credits *</label>
+                    <input type="number" name="credits" value="4" min="1" max="8" required
+                           class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10">
                 </div>
             </div>
 
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Degree Course *</label>
-                    <select name="course_id" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Program *</label>
+                    <select name="course_id" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none">
                         {% for c in courses %}
-                        <option value="{{ c.id }}">{{ c.name }} ({{ c.code }})</option>
+                        <option value="{{ c.id }}">{{ c.code }} - {{ c.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Semester *</label>
-                    <select name="semester" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
-                        {% for sem_num in range(1, 9) %}
-                        <option value="{{ sem_num }}">Semester {{ sem_num }}</option>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Semester *</label>
+                    <select name="semester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none">
+                        {% for s in range(1, 9) %}
+                        <option value="{{ s }}">Semester {{ s }}</option>
                         {% endfor %}
                     </select>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Credits *</label>
-                    <input type="number" name="credits" min="1" max="6" value="4" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
                 </div>
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Assigned Faculty / Teacher *</label>
-                <select name="faculty_id" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                <label class="block text-xs font-bold text-slate-700 mb-1">Assigned Faculty</label>
+                <select name="faculty_id" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:bg-white focus:outline-none">
+                    <option value="">Leave Unassigned</option>
                     {% for f in faculties %}
                     <option value="{{ f.id }}">{{ f.name }} ({{ f.designation or 'Faculty' }})</option>
                     {% endfor %}
@@ -228,131 +323,75 @@
             </div>
 
             <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Executive Syllabus Scope & Description</label>
-                <textarea name="syllabus_summary" rows="2" placeholder="Brief outline of syllabus modules and learning outcomes..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Syllabus Summary / Description</label>
+                <textarea name="syllabus_summary" rows="2" placeholder="Course objectives, prerequisites, and learning outcomes..."
+                          class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-slate-900/10 resize-none"></textarea>
             </div>
 
-            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
-                <button type="button" onclick="document.getElementById('addSubjectModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
-                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Add Subject to Curriculum</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal 2: Review Syllabus -->
-<div id="reviewSyllabusModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="w-full max-w-lg bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-                <h3 class="text-xl font-extrabold text-slate-900">Syllabus Review & Audit</h3>
-                <p id="reviewSubjName" class="text-xs text-blue-600 font-bold mt-0.5"></p>
-            </div>
-            <button onclick="document.getElementById('reviewSyllabusModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
-
-        <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
-            <input type="hidden" name="action" value="review_syllabus">
-            <input type="hidden" id="reviewSubjId" name="subject_id">
-
-            <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Approval Status *</label>
-                <select id="reviewStatus" name="syllabus_status" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
-                    <option value="Approved">Approved (Syllabus Compliant)</option>
-                    <option value="Revision Requested">Revision Requested (Needs Changes)</option>
-                    <option value="Pending Review">Pending Review</option>
-                </select>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">HOD Review Comments & Feedback Notes</label>
-                <textarea id="reviewFeedback" name="feedback" rows="3" placeholder="Enter review feedback or compliance instructions..." class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
-            </div>
-
-            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
-                <button type="button" onclick="document.getElementById('reviewSyllabusModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
-                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Save Syllabus Review</button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- Modal 3: Add Module Unit -->
-<div id="addModuleModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-3xl border border-slate-200 p-6 space-y-6 shadow-2xl">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-                <h3 class="text-lg font-extrabold text-slate-900">Add Syllabus Module / Unit</h3>
-                <p id="modSubjName" class="text-xs text-blue-600 font-bold mt-0.5"></p>
-            </div>
-            <button onclick="document.getElementById('addModuleModal').classList.add('hidden')" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
-        </div>
-
-        <form action="{{ url_for('hod.curriculum') }}" method="POST" class="space-y-4">
-            <input type="hidden" name="action" value="add_module">
-            <input type="hidden" id="modSubjId" name="subject_id">
-
-            <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Module / Unit Title *</label>
-                <input type="text" name="title" placeholder="e.g. Unit 2: Trees, Graphs & Dynamic Programming" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
-            </div>
-
-            <div class="flex justify-end gap-3 pt-2 border-t border-slate-100">
-                <button type="button" onclick="document.getElementById('addModuleModal').classList.add('hidden')" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
-                <button type="submit" class="px-6 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-200 transition">Save Module</button>
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="document.getElementById('addSubjectModal').classList.add('hidden')"
+                        class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="px-5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs transition shadow-xs">
+                    Save Course &rarr;
+                </button>
             </div>
         </form>
     </div>
 </div>
 
 <script>
-let currentSemFilter = 'all';
+let currentCurriculumSem = 'all';
 
-function setSemFilter(sem) {
-    currentSemFilter = sem;
-    document.querySelectorAll('.sem-tab').forEach(tab => {
-        tab.className = 'sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 hover:bg-slate-200 transition';
+function setCurriculumSemFilter(sem) {
+    currentCurriculumSem = sem;
+    document.querySelectorAll('.curriculum-sem-tab').forEach(tab => {
+        tab.className = 'curriculum-sem-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap';
     });
-    const activeTab = document.getElementById(`semTab-${sem}`);
+    const activeTab = document.getElementById('semTab-' + sem);
     if (activeTab) {
-        activeTab.className = 'sem-tab px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white shadow-md shadow-blue-200 transition';
+        activeTab.className = 'curriculum-sem-tab px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-white shadow-2xs transition whitespace-nowrap';
     }
     applyCurriculumFilters();
 }
 
 function applyCurriculumFilters() {
-    const selectedTeacher = document.getElementById('facultyFilter').value;
-    const cards = document.querySelectorAll('.subject-card');
+    const selectedProg = document.getElementById('programFilter').value;
+    const selectedFac = document.getElementById('curriculumFacultyFilter').value;
 
-    cards.forEach(card => {
-        const cardSem = card.getAttribute('data-sem');
-        const cardTeacher = card.getAttribute('data-faculty');
+    const sections = document.querySelectorAll('.semester-section');
 
-        const matchesSem = (currentSemFilter === 'all' || cardSem === currentSemFilter);
-        const matchesTeacher = (selectedTeacher === 'all' || cardTeacher === selectedTeacher);
+    sections.forEach(sec => {
+        const secSem = sec.getAttribute('data-sem');
+        const rows = sec.querySelectorAll('.curriculum-subject-row');
+        let visibleRows = 0;
 
-        if (matchesSem && matchesTeacher) {
-            card.style.display = 'flex';
+        rows.forEach(row => {
+            const rowCourseId = row.getAttribute('data-course-id');
+            const rowFacId = row.getAttribute('data-faculty-id');
+
+            const matchesProg = (selectedProg === 'all' || rowCourseId === selectedProg);
+            const matchesFac = (selectedFac === 'all' || rowFacId === selectedFac);
+
+            if (matchesProg && matchesFac) {
+                row.style.display = '';
+                visibleRows++;
+            } else {
+                row.style.display = 'none';
+            }
+        });
+
+        // Hide entire semester section if semester filter doesn't match or has 0 visible rows
+        if ((currentCurriculumSem === 'all' || currentCurriculumSem === secSem) && visibleRows > 0) {
+            sec.style.display = '';
+        } else if (currentCurriculumSem !== 'all' && currentCurriculumSem === secSem) {
+            sec.style.display = '';
         } else {
-            card.style.display = 'none';
+            sec.style.display = 'none';
         }
     });
-}
-
-function openReviewModal(id, name, status, summary) {
-    document.getElementById('reviewSubjId').value = id;
-    document.getElementById('reviewSubjName').innerText = name;
-    document.getElementById('reviewStatus').value = status || 'Approved';
-    document.getElementById('reviewFeedback').value = summary || '';
-    document.getElementById('reviewSyllabusModal').classList.remove('hidden');
-    document.getElementById('reviewSyllabusModal').classList.add('flex');
-}
-
-function openAddModuleModal(id, name) {
-    document.getElementById('modSubjId').value = id;
-    document.getElementById('modSubjName').innerText = name;
-    document.getElementById('addModuleModal').classList.remove('hidden');
-    document.getElementById('addModuleModal').classList.add('flex');
 }
 </script>
 {% endblock %}

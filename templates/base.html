@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <!-- 21st & Modern UI Stylesheet -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/cool-ui.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/cool-ui.css') }}?v=2.2">
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; }
@@ -81,7 +81,7 @@
         {% if current_user.is_authenticated %}
         <!-- Top Navigation Header (Sticky, Full-Width) -->
         <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-2xs">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="w-full px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between h-16 gap-2 lg:gap-4">
                     
                     <!-- Left: Pragati Brand Identity -->
@@ -105,113 +105,164 @@
                         {% endif %}
 
                         {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
-                        <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-compass text-slate-400"></i>
+                        <a href="{{ url_for('hod.dashboard') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'hod.dashboard' %}bg-slate-900 text-white font-bold shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('hod.student_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-user-graduate text-slate-400"></i>
+
+                        <a href="{{ url_for('hod.student_management') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'hod.student_management' %}bg-slate-900 text-white font-bold shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                            </svg>
                             <span>Students</span>
                         </a>
-                        <a href="{{ url_for('hod.faculty_management') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-chalkboard-user text-indigo-600"></i>
+
+                        <a href="{{ url_for('hod.faculty_management') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'hod.faculty_management' %}bg-slate-900 text-white font-bold shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.436 60.436 0 00-.491 6.347A48.627 48.627 0 0112 20.904a48.627 48.627 0 018.232-4.41 60.46 60.46 0 00-.491-6.347m-15.482 0a50.57 50.57 0 00-2.658-.813A59.905 59.905 0 0112 3.493a59.902 59.902 0 0110.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.697 50.697 0 0112 13.489a50.702 50.702 0 017.74-3.342M6.75 15a.75.75 0 100-1.5.75.75 0 000 1.5zm0 0v-3.675A55.378 55.378 0 0112 8.443m-7.007 11.55A5.981 5.981 0 006.75 15.75v-1.5"/>
+                            </svg>
                             <span>Faculty</span>
                         </a>
-                        <a href="{{ url_for('hod.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-days text-rose-600"></i>
+
+                        <a href="{{ url_for('hod.calendar') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'hod.calendar' %}bg-slate-900 text-white font-bold shadow-2xs{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                            </svg>
                             <span>Calendar</span>
                         </a>
 
                         <!-- HOD All Modules Menu (Click Only) -->
                         <div class="relative flex-shrink-0" id="hodModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
-                                <i class="fa-solid fa-shapes text-slate-500 text-xs group-hover:rotate-12 transition-transform"></i>
-                                <span class="whitespace-nowrap">All Modules</span>
-                                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
+                            <button type="button" onclick="toggleNavModules(event)" 
+                                    class="top-nav-link flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
+                                <svg class="w-3.5 h-3.5 text-slate-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                                </svg>
+                                <span>Modules</span>
+                                <svg class="w-3 h-3 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
+                                </svg>
                             </button>
                             <div id="hodModulesDropdown" class="absolute left-0 top-full pt-2 w-80 sm:w-96 hidden z-50 transition-all duration-150">
                                 <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
-                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Department Operations</div>
+                                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-0.5">Department Operations</div>
                                     <div class="space-y-1">
-                                        <a href="{{ url_for('hod.curriculum') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-book-bookmark text-indigo-500 w-4 text-center"></i>
-                                            <span>Curriculum & Syllabus</span>
+                                        <a href="{{ url_for('hod.curriculum') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                                            </svg>
+                                            <span>Curriculum &amp; Syllabus</span>
                                         </a>
-                                        <a href="{{ url_for('hod.attendance_analytics') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-clipboard-user text-indigo-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.attendance_analytics') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
                                             <span>Attendance Analytics</span>
                                         </a>
-                                        <a href="{{ url_for('hod.timetable') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-clock text-indigo-500 w-4 text-center"></i>
+                                        <a href="{{ url_for('hod.timetable') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
                                             <span>Timetable</span>
                                         </a>
                                     </div>
                                     <div class="border-t border-slate-100 my-1.5"></div>
-                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Placements & Compliance</div>
+                                    <div class="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 py-0.5">Placements &amp; Compliance</div>
                                     <div class="space-y-1">
-                                        <a href="{{ url_for('hod.placement') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-briefcase text-indigo-500 w-4 text-center"></i>
-                                            <span>Placement Suite</span>
+                                        <a href="{{ url_for('hod.placement') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387"/>
+                                            </svg>
+                                            <span>Placement Overview</span>
                                         </a>
-                                        <a href="{{ url_for('hod.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-file-signature text-indigo-500 w-4 text-center"></i>
-                                            <span>Certificates & OCR</span>
+                                        <a href="{{ url_for('hod.documents') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                                            </svg>
+                                            <span>Certificate Requests</span>
                                         </a>
-                                        <a href="{{ url_for('hod.reports') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-file-contract text-indigo-500 w-4 text-center"></i>
-                                            <span>NAAC / NBA Reports</span>
+                                        <a href="{{ url_for('hod.reports') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:text-slate-900 transition">
+                                            <svg class="w-4 h-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/>
+                                            </svg>
+                                            <span>Accreditation Framework</span>
                                         </a>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         {% endif %}
-
                         {% if current_user.role == 'faculty' %}
-                        <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-compass text-slate-400"></i>
+                        <!-- Unified Coherent Teacher Navigation (SVG Only, Clear Active States) -->
+                        <a href="{{ url_for('faculty.dashboard') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.dashboard' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                            </svg>
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-book-open text-slate-400"></i>
-                            <span>Courses</span>
-                        </a>
-                        <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-check text-slate-400"></i>
+
+                        <a href="{{ url_for('faculty.attendance') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.attendance' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
                             <span>Attendance</span>
                         </a>
-                        <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-calendar-days text-slate-400"></i>
-                            <span>Calendar</span>
-                        </a>
-                        <a href="{{ url_for('faculty.schedule') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-clock text-indigo-600"></i>
-                            <span>My Schedule</span>
+
+                        <a href="{{ url_for('faculty.schedule') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.schedule' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Schedule</span>
                         </a>
 
-                        <!-- Faculty All Modules Menu (Click Only) -->
-                        <div class="relative flex-shrink-0" id="facultyModulesContainer">
-                            <button type="button" onclick="toggleNavModules(event)" class="top-nav-link flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition shadow-2xs group whitespace-nowrap flex-shrink-0">
-                                <i class="fa-solid fa-shapes text-slate-500 text-xs group-hover:rotate-12 transition-transform"></i>
-                                <span class="whitespace-nowrap">All Modules</span>
-                                <i class="fa-solid fa-chevron-down text-[9px] text-slate-400"></i>
-                            </button>
-                            <div id="facultyModulesDropdown" class="absolute left-0 top-full pt-2 w-72 hidden z-50 transition-all duration-150">
-                                <div class="rounded-2xl border border-slate-200 shadow-2xl p-4 space-y-2 ring-1 ring-black/5" style="background-color: #ffffff !important;">
-                                    <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 py-0.5">Faculty Academic Tools</div>
-                                    <div class="space-y-1">
-                                        <a href="{{ url_for('faculty.evaluation') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-pen-ruler text-indigo-500 w-4 text-center"></i>
-                                            <span>Evaluation & Auto-Grade</span>
-                                        </a>
-                                        <a href="{{ url_for('faculty.research') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                            <i class="fa-solid fa-microscope text-indigo-500 w-4 text-center"></i>
-                                            <span>Research & Patents</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <a href="{{ url_for('faculty.courses') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint in ['faculty.courses', 'faculty.course_detail', 'faculty.module_detail'] %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                            </svg>
+                            <span>Courses</span>
+                        </a>
+
+                        <a href="{{ url_for('faculty.calendar') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.calendar' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                            </svg>
+                            <span>Calendar</span>
+                        </a>
+
+                        <a href="{{ url_for('faculty.evaluation') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.evaluation' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/>
+                            </svg>
+                            <span>Evaluation</span>
+                        </a>
+
+                        <a href="{{ url_for('faculty.research') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.research' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.943A4.5 4.5 0 0115.89 16.5H8.11a4.5 4.5 0 01-2.34-.657L4.2 14.9M19.8 15.3a2.25 2.25 0 01-.6 3.12l-1.4 1.05A4.5 4.5 0 0115.1 20.25H8.9a4.5 4.5 0 01-2.7-.93l-1.4-1.05a2.25 2.25 0 01-.6-3.12"/>
+                            </svg>
+                            <span>Research</span>
+                        </a>
+
+                        <a href="{{ url_for('faculty.profile') }}" 
+                           class="top-nav-link flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition-all {% if request.endpoint == 'faculty.profile' %}bg-indigo-600 text-white shadow-2xs font-bold{% else %}text-slate-600 hover:text-slate-900 hover:bg-slate-100{% endif %}">
+                            <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                            </svg>
+                            <span>Profile</span>
+                        </a>
                         {% endif %}
 
                         {% if current_user.role == 'student' %}
@@ -450,29 +501,53 @@
                 {% endif %}
 
                 {% if current_user.role == 'faculty' %}
-                <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-table-columns text-slate-400"></i>
-                    <span>My Cockpit</span>
+                <a href="{{ url_for('faculty.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.dashboard' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
+                    </svg>
+                    <span>Dashboard</span>
                 </a>
-                <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-user-check text-slate-400"></i>
-                    <span>Mark Attendance</span>
+                <a href="{{ url_for('faculty.attendance') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.attendance' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>Attendance</span>
                 </a>
-                <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-calendar-days text-indigo-600"></i>
+                <a href="{{ url_for('faculty.schedule') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.schedule' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <span>My Schedule</span>
+                </a>
+                <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint in ['faculty.courses', 'faculty.course_detail', 'faculty.module_detail'] %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
+                    <span>Courses</span>
+                </a>
+                <a href="{{ url_for('faculty.calendar') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.calendar' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+                    </svg>
                     <span>Academic Calendar</span>
                 </a>
-                <a href="{{ url_for('faculty.courses') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-book-open text-slate-400"></i>
-                    <span>Course Materials & Quiz AI</span>
+                <a href="{{ url_for('faculty.evaluation') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.evaluation' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.836c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m8.9-4.414c.376.023.75.05 1.124.08 1.131.094 1.976 1.057 1.976 2.192V16.5A2.25 2.25 0 0118 18.75h-2.25m-7.5-10.5H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V18.75m-7.5-10.5h6.375c.621 0 1.125.504 1.125 1.125v9.375m-8.25-3l1.5 1.5 3-3.75"/>
+                    </svg>
+                    <span>Evaluation</span>
                 </a>
-                <a href="{{ url_for('faculty.evaluation') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-pen-ruler text-slate-400"></i>
-                    <span>Evaluation & Auto-Grade</span>
+                <a href="{{ url_for('faculty.research') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.research' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.943A4.5 4.5 0 0115.89 16.5H8.11a4.5 4.5 0 01-2.34-.657L4.2 14.9M19.8 15.3a2.25 2.25 0 01-.6 3.12l-1.4 1.05A4.5 4.5 0 0115.1 20.25H8.9a4.5 4.5 0 01-2.7-.93l-1.4-1.05a2.25 2.25 0 01-.6-3.12"/>
+                    </svg>
+                    <span>Research</span>
                 </a>
-                <a href="{{ url_for('faculty.research') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-microscope text-slate-400"></i>
-                    <span>Research & Patents</span>
+                <a href="{{ url_for('faculty.profile') }}" class="top-nav-link flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold {% if request.endpoint == 'faculty.profile' %}bg-indigo-600 text-white font-bold{% else %}text-slate-700 hover:bg-slate-100{% endif %}">
+                    <svg class="w-4 h-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+                    </svg>
+                    <span>Profile</span>
                 </a>
                 {% endif %}
 
@@ -530,8 +605,8 @@
         </header>
         {% endif %}
 
-        <!-- Main Content Area: Centered, Spacious & Free from Sidebar Squishing -->
-        <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-4 lg:p-5 cool-canvas-bg transition-all flex flex-col">
+        <!-- Main Content Area: Full-Width, Spacious & Free from Sidebar Squishing -->
+        <main class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-6 cool-canvas-bg transition-all flex flex-col">
             {% with messages = get_flashed_messages(with_categories=true) %}
               {% if messages %}
                 <div class="mb-6 space-y-3">

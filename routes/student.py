@@ -314,7 +314,15 @@ def fees():
 
     fee_rec = FeeRecord.query.filter_by(student_id=current_user.id).first()
     if not fee_rec:
-        fee_rec = FeeRecord(student_id=current_user.id, semester=current_user.semester, total_amount=75000.0, paid_amount=75000.0, due_date=current_user.dob or '2026-08-31', status='Paid')
+        fee_due = date(2026, 8, 31)
+        if hasattr(current_user, 'dob') and isinstance(current_user.dob, date):
+            fee_due = current_user.dob
+        elif hasattr(current_user, 'dob') and isinstance(current_user.dob, str) and current_user.dob:
+            try:
+                fee_due = datetime.strptime(current_user.dob, '%Y-%m-%d').date()
+            except Exception:
+                fee_due = date(2026, 8, 31)
+        fee_rec = FeeRecord(student_id=current_user.id, semester=current_user.semester or 1, total_amount=75000.0, paid_amount=75000.0, due_date=fee_due, status='Paid')
         db.session.add(fee_rec)
         db.session.commit()
         
@@ -348,26 +356,171 @@ def ai_tutor():
 
     return render_template('student/ai_tutor.html', subjects=subjects)
 
+def format_time_12h(time_str):
+    if not time_str:
+        return "10:00 AM"
+    try:
+        parts = time_str.split(':')
+        h = int(parts[0])
+        m = parts[1] if len(parts) > 1 else "00"
+        period = "AM" if h < 12 else "PM"
+        h_12 = h if h <= 12 else h - 12
+        if h_12 == 0:
+            h_12 = 12
+        return f"{h_12:02d}:{m} {period}"
+    except Exception:
+        return time_str
+
 @student_bp.route('/attendance')
 def attendance():
     auto_enroll_student_if_needed()
     enrollments = Enrollment.query.filter_by(student_id=current_user.id).all()
     subject_attendance = []
     
+    total_all_classes = 0
+    total_all_present = 0
+    total_all_absent = 0
+    total_all_concerns = 0
+
     for e in enrollments:
-        records = AttendanceRecord.query.filter_by(student_id=current_user.id, subject_id=e.subject_id).all()
+        records = AttendanceRecord.query.filter_by(
+            student_id=current_user.id, 
+            subject_id=e.subject_id
+        ).order_by(AttendanceRecord.date.desc()).all()
+        
         total = len(records)
         present = sum(1 for r in records if r.status == 'present')
+        absent = total - present
         pct = round((present / max(1, total)) * 100, 1) if total > 0 else 85.0
+        
+        # Calculate shortage metrics
+        classes_needed = 0
+        safe_margin = 0
+        if pct < 75:
+            classes_needed = max(1, (3 * total - 4 * present))
+            status_level = 'critical'
+            status_label = 'Shortage Alert (<75%)'
+        elif pct < 85:
+            safe_margin = max(0, int((present - 0.75 * total) / 0.75))
+            status_level = 'warning'
+            status_label = 'Approaching Shortage'
+        else:
+            safe_margin = max(0, int((present - 0.75 * total) / 0.75))
+            status_level = 'healthy'
+            status_label = 'Healthy Attendance'
+
+        # Process individual class records with timetable connection
+        record_list = []
+        concerns_count = 0
+        for r in records:
+            slot = r.slot
+            start_str = slot.start_time if slot else "10:00"
+            end_str = slot.end_time if slot else "11:00"
+            time_formatted = f"{format_time_12h(start_str)} – {format_time_12h(end_str)}"
+            room_name = slot.room if slot else "Classroom 204"
+            period_name = "Laboratory Session" if (slot and slot.is_lab) else "Lecture Session"
+            
+            if r.concern_status:
+                concerns_count += 1
+                
+            record_list.append({
+                'id': r.id,
+                'date': r.date.strftime('%Y-%m-%d'),
+                'formatted_date': r.date.strftime('%d %b %Y'),
+                'day': r.date.strftime('%A'),
+                'time': time_formatted,
+                'period': period_name,
+                'room': room_name,
+                'is_lab': slot.is_lab if slot else False,
+                'faculty': e.subject.faculty.name if e.subject.faculty else 'Department Faculty',
+                'status': r.status,
+                'concern_status': r.concern_status,
+                'concern_reason': r.concern_reason or '',
+                'concern_doc': r.concern_doc or '',
+                'concern_created_at': r.concern_created_at.strftime('%d %b %Y, %I:%M %p') if r.concern_created_at else ''
+            })
+
+        total_all_classes += total
+        total_all_present += present
+        total_all_absent += absent
+        total_all_concerns += concerns_count
+
         subject_attendance.append({
+            'subject_id': e.subject.id,
             'subject_name': e.subject.name,
             'code': e.subject.code,
-            'total': total or 20,
-            'present': present or 17,
-            'percentage': pct
+            'faculty_name': e.subject.faculty.name if e.subject.faculty else 'Department Faculty',
+            'total': total,
+            'present': present,
+            'absent': absent,
+            'percentage': pct,
+            'status_level': status_level,
+            'status_label': status_label,
+            'classes_needed': classes_needed,
+            'safe_margin': safe_margin,
+            'concerns_count': concerns_count,
+            'records': record_list
         })
+
+    overall_stats = {
+        'total_classes': total_all_classes,
+        'present': total_all_present,
+        'absent': total_all_absent,
+        'concerns': total_all_concerns,
+        'overall_pct': round((total_all_present / max(1, total_all_classes)) * 100, 1) if total_all_classes > 0 else 85.0
+    }
+
+    return render_template(
+        'student/attendance.html',
+        subject_attendance=subject_attendance,
+        overall_stats=overall_stats
+    )
+
+@student_bp.route('/attendance/concern', methods=['POST'])
+def raise_attendance_concern():
+    record_id = request.form.get('record_id', type=int)
+    reason = request.form.get('reason', '').strip()
+    
+    if not record_id or not reason:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'status': 'error', 'message': 'Attendance record ID and explanation reason are required.'}), 400
+        flash('Attendance record and explanation reason are required.', 'danger')
+        return redirect(url_for('student.attendance'))
         
-    return render_template('student/attendance.html', subject_attendance=subject_attendance)
+    record = AttendanceRecord.query.get_or_404(record_id)
+    if record.student_id != current_user.id:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+            return jsonify({'status': 'error', 'message': 'Unauthorized record access.'}), 403
+        flash('Unauthorized record access.', 'danger')
+        return redirect(url_for('student.attendance'))
+        
+    # Handle optional supporting document upload
+    uploaded_file = request.files.get('supporting_doc')
+    doc_path = None
+    if uploaded_file and uploaded_file.filename != '':
+        filename = secure_filename(f"concern_{current_user.id}_{record.id}_{uploaded_file.filename}")
+        upload_folder = os.path.join(current_app.root_path, 'static', 'uploads', 'attendance_concerns')
+        os.makedirs(upload_folder, exist_ok=True)
+        uploaded_file.save(os.path.join(upload_folder, filename))
+        doc_path = f"/static/uploads/attendance_concerns/{filename}"
+
+    record.concern_status = 'Pending'
+    record.concern_reason = reason
+    if doc_path:
+        record.concern_doc = doc_path
+    record.concern_created_at = datetime.utcnow()
+    db.session.commit()
+    
+    flash('Attendance review concern submitted successfully to the faculty / department office.', 'success')
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest' or request.is_json:
+        return jsonify({
+            'status': 'success',
+            'message': 'Attendance concern submitted for faculty/admin review.',
+            'record_id': record.id,
+            'concern_status': 'Pending',
+            'concern_reason': reason
+        })
+    return redirect(url_for('student.attendance'))
 
 @student_bp.route('/career', methods=['GET', 'POST'])
 def career():
