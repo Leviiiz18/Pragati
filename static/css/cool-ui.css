@@ -758,21 +758,114 @@ tbody tr:hover {
   );
 }
 
-/* Print Stylesheet for ID Card */
+/* ======================================================== */
+/* GLOBAL COMPREHENSIVE & ROBUST PRINT SUITE                */
+/* ======================================================== */
 @media print {
-  body * {
-    visibility: hidden;
+  /* 1. Hide Web Application Navigation, Sidebar, Floating Controls, and Action Buttons */
+  header, 
+  nav, 
+  #desktopTopNav, 
+  #mobileTopNav, 
+  #commandModal, 
+  #notifDropdown,
+  #notifDropdownContainer,
+  .print\:hidden,
+  .no-print,
+  button,
+  .btn,
+  .top-nav-link,
+  .notice-filter-btn {
+    display: none !important;
   }
-  #printableIdCard, #printableIdCard * {
+
+  /* 2. Page & Typography Base Clean Setup */
+  html, body {
+    background: #ffffff !important;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    font-size: 10.5pt !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    visibility: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Ensure body children are visible by default */
+  body * {
     visibility: visible;
   }
-  #printableIdCard {
-    position: absolute;
-    left: 50%;
-    top: 50px;
-    transform: translateX(-50%);
+
+  /* 3. Main Container Layout Reset */
+  main, 
+  .cool-canvas-bg, 
+  .min-h-screen, 
+  .w-full, 
+  .max-w-7xl {
+    max-width: 100% !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
     box-shadow: none !important;
-    border: 1px solid #ccc !important;
+    border: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* 4. Table & Matrix Print Formatting */
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tfoot {
+    display: table-footer-group !important;
+  }
+
+  th, td {
+    border-color: #cbd5e1 !important;
+  }
+
+  /* 5. Document Cards & Page Breaks */
+  .bg-white, .cool-card, .stat-card-glass, .rounded-3xl, .rounded-2xl {
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+
+  /* 6. Scoped ID Card Single Target Mode (Triggered only when printing Smart ID Card) */
+  body.print-id-card-only * {
+    visibility: hidden !important;
+  }
+  body.print-id-card-only #printableIdCard,
+  body.print-id-card-only #printableIdCard * {
+    visibility: visible !important;
+  }
+  body.print-id-card-only #printableIdCard {
+    position: absolute !important;
+    left: 50% !important;
+    top: 60px !important;
+    transform: translateX(-50%) !important;
+    margin: 0 auto !important;
+    box-shadow: none !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+
+  @page {
+    margin: 10mm;
   }
 }
 

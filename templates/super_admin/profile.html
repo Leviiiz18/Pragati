@@ -12,7 +12,7 @@
             <p class="text-sm font-medium text-slate-600 mt-1">Institutional executive authority credentials, university chancellor/principal ID, and administration records.</p>
         </div>
         <div class="flex items-center gap-3">
-            <button onclick="window.print()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
+            <button onclick="printIdCard()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
                 <i class="fa-solid fa-print text-purple-600"></i> Print / Save ID
             </button>
             <button onclick="flipAdminIdCard()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-purple-200 transition active:scale-95">
@@ -246,6 +246,17 @@
 </div>
 
 <script>
+    function printIdCard() {
+        document.body.classList.add('print-id-card-only');
+        window.print();
+        setTimeout(() => {
+            document.body.classList.remove('print-id-card-only');
+        }, 1000);
+    }
+    window.addEventListener('afterprint', () => {
+        document.body.classList.remove('print-id-card-only');
+    });
+
     function flipAdminIdCard() {
         const flipper = document.getElementById('adminCardFlipper');
         if (flipper) {

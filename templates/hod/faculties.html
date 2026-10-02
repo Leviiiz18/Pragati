@@ -2,14 +2,19 @@
 {% block title %}Faculty Roster & HR Governance - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
             <h1 class="text-3xl font-extrabold text-slate-900">Faculty Roster & HR Onboarding</h1>
             <p class="text-sm font-medium text-slate-600 mt-1">Onboard academic staff with system-generated Employee IDs, qualifications, research portfolios, and payroll accounts.</p>
         </div>
-        <button onclick="document.getElementById('addFacultyModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
-            <i class="fa-solid fa-user-plus"></i> Onboard New Faculty
-        </button>
+        <div class="flex items-center gap-2 print:hidden">
+            <button onclick="window.print()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-2xs transition">
+                <i class="fa-solid fa-print"></i> Print Roster
+            </button>
+            <button onclick="document.getElementById('addFacultyModal').classList.remove('hidden')" class="px-5 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-blue-200 transition">
+                <i class="fa-solid fa-user-plus"></i> Onboard New Faculty
+            </button>
+        </div>
     </div>
 
     <!-- Faculty Roster Table -->
