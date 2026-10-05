@@ -39,11 +39,53 @@
         opacity: 0.28;
     }
 
+    /* Subtle Floating Animations for Showcase */
+    @keyframes subtleFloat {
+        0%, 100% {
+            transform: translateY(0px);
+            box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.10), 0 0 0 1px rgba(226, 232, 240, 0.85);
+        }
+        50% {
+            transform: translateY(-6px);
+            box-shadow: 0 28px 48px -12px rgba(79, 70, 229, 0.16), 0 0 0 1px rgba(226, 232, 240, 0.95);
+        }
+    }
+    .animate-subtle-float {
+        animation: subtleFloat 5s ease-in-out infinite;
+    }
+
+    @keyframes pulseBadge {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+    .animate-badge-pulse {
+        animation: pulseBadge 3.5s ease-in-out infinite;
+    }
+
+    @keyframes waveFloat {
+        0%, 100% { transform: translateY(0) scaleY(1); opacity: 0.12; }
+        50% { transform: translateY(-4px) scaleY(1.04); opacity: 0.18; }
+    }
+    .animate-wave-mesh {
+        animation: waveFloat 6s ease-in-out infinite;
+    }
+
     /* Glassmorphic Floating Preview Card */
     .glass-preview-card {
-        background: rgba(255, 255, 255, 0.9);
+        background: rgba(255, 255, 255, 0.92);
         backdrop-filter: blur(16px);
-        box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.85);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    /* Interactive Showcase Chips */
+    .showcase-chip {
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .showcase-chip:hover {
+        transform: translateY(-2px);
+        background-color: #FFFFFF !important;
+        border-color: #C7D2FE !important;
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.12);
     }
 
     /* Role Selector Card Active/Inactive */
@@ -105,89 +147,90 @@
     <div class="reference-master-card w-full max-w-[1100px] min-h-[660px] bg-white rounded-[32px] sm:rounded-[36px] overflow-hidden flex flex-col lg:flex-row relative z-10">
 
         <!-- ---------------------------------------------------- -->
-        <!-- LEFT COLUMN: PRODUCT SHOWCASE HERO                   -->
+        <!-- LEFT COLUMN: STAGNANT PRODUCT SHOWCASE HERO          -->
         <!-- ---------------------------------------------------- -->
         <div class="w-full lg:w-[48%] bg-[#F9FAFB] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-slate-200/80 overflow-hidden">
             
             <!-- Halftone Dot Texture Background -->
             <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
 
-            <!-- Waveform / Circuit SVG Graphic Mesh -->
-            <svg class="absolute inset-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 500 500">
+            <!-- Waveform / Circuit SVG Graphic Mesh with Ambient Float Animation -->
+            <svg class="absolute inset-0 w-full h-full animate-wave-mesh pointer-events-none" viewBox="0 0 500 500">
                 <path d="M 0,250 Q 125,180 250,250 T 500,250" fill="none" stroke="#4F46E5" stroke-width="2"/>
                 <path d="M 0,270 Q 125,200 250,270 T 500,270" fill="none" stroke="#0F172A" stroke-width="1.5" stroke-dasharray="4 4"/>
                 <path d="M 0,230 Q 125,160 250,230 T 500,230" fill="none" stroke="#7C3AED" stroke-width="1.5"/>
             </svg>
 
-            <!-- Top Left: Logo & Product Name -->
+            <!-- Top Left: Clean Logo & ERP Badge -->
             <div class="relative z-10 flex items-center justify-between">
-                <div class="flex items-center gap-2.5">
+                <div class="flex items-center gap-2">
                     <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=3" 
-                         alt="Pragati" 
-                         class="h-7 sm:h-8 w-auto object-contain">
-                    <span class="text-sm font-black tracking-wider text-slate-900 uppercase">PRAGATI</span>
+                         alt="Pragati by Kalpkrats" 
+                         class="h-8 sm:h-9 w-auto object-contain">
                 </div>
 
-                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
-                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-600 shadow-2xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     ERP V2.6
                 </div>
             </div>
 
-            <!-- Floating Preview Widget (Matching Reference Glass Card) -->
+            <!-- Floating Stagnant Preview Widget with Gentle Subtle Float -->
             <div class="relative z-10 my-auto py-6">
+                
                 <!-- Floating mini badge top-left -->
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700">
-                        <span class="material-symbols-outlined text-[16px] text-indigo-600">school</span>
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700 animate-badge-pulse">
+                        <span class="material-symbols-outlined text-[17px] text-indigo-600">school</span>
                     </div>
                     <div class="w-6 h-[2px] bg-indigo-500 rounded-full"></div>
                 </div>
 
-                <!-- Glassmorphic Preview Card -->
-                <div class="glass-preview-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/80">
-                    <!-- Tab Pills -->
+                <!-- Stagnant Glassmorphic Preview Card (Does Not Change With Selection) -->
+                <div class="glass-preview-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/80 animate-subtle-float">
+                    
+                    <!-- Stagnant Tab Pills -->
                     <div class="flex items-center gap-2 mb-4">
-                        <button type="button" onclick="switchShowcaseTab('student')" id="previewTabStudent" class="px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs">
+                        <div class="px-3.5 py-1.5 rounded-xl text-xs font-bold flex items-center gap-1.5 bg-slate-900 text-white shadow-xs">
                             <span class="material-symbols-outlined text-[14px]">school</span>
                             Student OS
-                        </button>
-                        <button type="button" onclick="switchShowcaseTab('faculty')" id="previewTabFaculty" class="px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                        </div>
+                        <div class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 bg-slate-100/70 border border-slate-200/60">
                             <span class="material-symbols-outlined text-[14px]">psychology</span>
                             Faculty Hub
-                        </button>
+                        </div>
                     </div>
 
-                    <!-- Dynamic Description Text -->
-                    <p id="showcaseText" class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed mb-4">
+                    <!-- Description Text -->
+                    <p class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed mb-4">
                         Unlock unified collegiate intelligence with real-time attendance analytics, automated grading, AI tutor assistance, and personalized career roadmaps.
                     </p>
 
-                    <!-- Feature Tags / Chips -->
-                    <div id="showcaseChips" class="flex flex-wrap items-center gap-2">
-                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-indigo-600">check_circle</span>
+                    <!-- Feature Tags / Interactive Hover Chips -->
+                    <div class="flex flex-wrap items-center gap-2">
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                            <span class="material-symbols-outlined text-[14px] text-indigo-600">check_circle</span>
                             Attendance
-                        </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-indigo-600">auto_stories</span>
+                        </div>
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                            <span class="material-symbols-outlined text-[14px] text-indigo-600">auto_stories</span>
                             Study Notes
-                        </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-indigo-600">smart_toy</span>
+                        </div>
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                            <span class="material-symbols-outlined text-[14px] text-indigo-600">smart_toy</span>
                             AI Tutor
-                        </span>
-                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                            <span class="material-symbols-outlined text-[13px] text-indigo-600">grade</span>
+                        </div>
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                            <span class="material-symbols-outlined text-[14px] text-indigo-600">grade</span>
                             GPA Analytics
-                        </span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Floating mini badge bottom-right -->
                 <div class="flex items-center justify-end gap-2 mt-3 mr-4">
                     <div class="w-6 h-[2px] bg-slate-400 rounded-full"></div>
-                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-xs font-bold text-slate-800">
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-xs font-bold text-slate-800 animate-badge-pulse" style="animation-delay: 1.5s;">
                         AI
                     </div>
                 </div>
@@ -538,7 +581,7 @@
     let selectedRole = 'student';
 
     // ----------------------------------------------------
-    // 1. Role Selector Handler
+    // 1. Role Selector Handler (Right form only)
     // ----------------------------------------------------
     function setUserRole(role, defaultEmail, defaultPass) {
         selectedRole = role;
@@ -563,81 +606,10 @@
         // Update hidden role in signup
         const signupRole = document.getElementById('signupRoleInput');
         if (signupRole) signupRole.value = role;
-
-        // Switch showcase tab
-        switchShowcaseTab(role === 'faculty' ? 'faculty' : 'student');
     }
 
     // ----------------------------------------------------
-    // 2. Showcase Widget Tab Switcher
-    // ----------------------------------------------------
-    function switchShowcaseTab(tab) {
-        const tabStudent = document.getElementById('previewTabStudent');
-        const tabFaculty = document.getElementById('previewTabFaculty');
-        const textEl = document.getElementById('showcaseText');
-        const chipsEl = document.getElementById('showcaseChips');
-
-        if (tab === 'faculty') {
-            if (tabFaculty) {
-                tabFaculty.className = 'px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs';
-            }
-            if (tabStudent) {
-                tabStudent.className = 'px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100';
-            }
-            if (textEl) {
-                textEl.textContent = 'Manage university courses, record 1-click class attendance, track student risk analytics, and publish academic research.';
-            }
-            if (chipsEl) {
-                chipsEl.innerHTML = `
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">book</span>
-                        Course Manager
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">co_present</span>
-                        Attendance
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">science</span>
-                        Research
-                    </span>
-                `;
-            }
-        } else {
-            if (tabStudent) {
-                tabStudent.className = 'px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs';
-            }
-            if (tabFaculty) {
-                tabFaculty.className = 'px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100';
-            }
-            if (textEl) {
-                textEl.textContent = 'Unlock unified collegiate intelligence with real-time attendance analytics, automated grading, AI tutor assistance, and personalized career roadmaps.';
-            }
-            if (chipsEl) {
-                chipsEl.innerHTML = `
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">check_circle</span>
-                        Attendance
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">auto_stories</span>
-                        Study Notes
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">smart_toy</span>
-                        AI Tutor
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[13px] text-indigo-600">grade</span>
-                        GPA Analytics
-                    </span>
-                `;
-            }
-        }
-    }
-
-    // ----------------------------------------------------
-    // 3. Toggle Mode (Sign In <=> Sign Up)
+    // 2. Toggle Mode (Sign In <=> Sign Up)
     // ----------------------------------------------------
     function toggleAuthMode() {
         setAuthMode(currentMode === 'signin' ? 'signup' : 'signin');
@@ -681,7 +653,7 @@
     });
 
     // ----------------------------------------------------
-    // 4. Password Visibility Toggle
+    // 3. Password Visibility Toggle
     // ----------------------------------------------------
     function togglePasswordVisibility(inputId, iconId) {
         const input = document.getElementById(inputId);
@@ -698,7 +670,7 @@
     }
 
     // ----------------------------------------------------
-    // 5. Submit Handlers
+    // 4. Submit Handlers
     // ----------------------------------------------------
     window.showPragatiLoader = function(msg = 'Authenticating credentials...') {
         const loader = document.getElementById('pragatiGlobalLoader');
@@ -732,7 +704,7 @@
     }
 
     // ----------------------------------------------------
-    // 6. SSO Handlers
+    // 5. SSO Handlers
     // ----------------------------------------------------
     function handleSsoClick(provider, userVal, passVal, e) {
         showPragatiLoader(`Connecting with ${provider}...`);
