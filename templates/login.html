@@ -9,42 +9,42 @@
 
 <style>
     :root {
-        --teal-dark: #1E3F3B;
-        --teal-primary: #285B55;
-        --teal-hover: #1D4641;
-        --pill-bg: #EDF3F4;
+        --indigo-dark: #1E1B4B;
+        --indigo-primary: #4F46E5;
+        --indigo-hover: #4338CA;
+        --pill-bg: #F1F5F9;
     }
 
     body {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #F0F4F6;
+        background: #F8FAFC;
     }
 
-    /* Page Split Background Canvas */
+    /* Page Split Background Canvas (Signature Indigo / Midnight Theme) */
     .login-split-canvas {
-        background: linear-gradient(135deg, #EEF2F5 0%, #E6ECEF 48%, #1D3D39 48.05%, #142B28 100%);
+        background: linear-gradient(135deg, #F8FAFC 0%, #EEF2FF 48%, #1E1B4B 48.05%, #0F172A 100%);
     }
 
     @media (max-width: 768px) {
         .login-split-canvas {
-            background: linear-gradient(180deg, #EEF2F5 0%, #EEF2F5 60%, #17322E 100%);
+            background: linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 60%, #1E1B4B 100%);
         }
     }
 
     /* Floating Login Master Card */
     .login-card-shadow {
-        box-shadow: 0 25px 60px -15px rgba(15, 45, 40, 0.22), 0 0 1px 1px rgba(255, 255, 255, 0.6) inset;
+        box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.25), 0 0 1px 1px rgba(255, 255, 255, 0.7) inset;
     }
 
     /* Input Focus Glowing Styling */
     .pill-input-box {
         transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-        background-color: #EDF3F4;
+        background-color: #F1F5F9;
     }
     .pill-input-box:focus-within {
         background-color: #FFFFFF !important;
-        border-color: #285B55 !important;
-        box-shadow: 0 0 0 3.5px rgba(40, 91, 85, 0.16);
+        border-color: #4F46E5 !important;
+        box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.16);
         transform: translateY(-1px);
     }
 
@@ -53,7 +53,7 @@
         background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}?v={{ range(1000, 9999) | random }}");
         background-size: cover;
         background-position: center;
-        filter: blur(16px) brightness(0.92);
+        filter: blur(14px) brightness(0.95);
         transform: scale(1.18);
     }
 
@@ -63,8 +63,8 @@
     }
     .social-sso-btn:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(40, 91, 85, 0.12);
-        border-color: #CBD5E1;
+        box-shadow: 0 6px 14px rgba(79, 70, 229, 0.12);
+        border-color: #C7D2FE;
     }
 
     /* Fast demo badge hover */
@@ -73,14 +73,14 @@
     }
     .demo-role-pill:hover {
         transform: translateY(-1.5px);
-        background-color: #E2ECEB;
-        border-color: #285B55;
-        color: #1D4641;
+        background-color: #EEF2FF;
+        border-color: #A5B4FC;
+        color: #4338CA;
     }
     .demo-role-pill.active-pill {
-        background-color: #285B55 !important;
+        background-color: #4F46E5 !important;
         color: #FFFFFF !important;
-        border-color: #285B55 !important;
+        border-color: #4F46E5 !important;
     }
 
     /* Pragati Minimal Animated Loader Keyframes */
@@ -94,8 +94,8 @@
     }
 
     @keyframes emblemBreathe {
-        0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 12px rgba(40, 91, 85, 0.2)); }
-        50% { transform: scale(1.06); filter: drop-shadow(0 8px 22px rgba(40, 91, 85, 0.4)); }
+        0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 12px rgba(79, 70, 229, 0.2)); }
+        50% { transform: scale(1.06); filter: drop-shadow(0 8px 22px rgba(79, 70, 229, 0.4)); }
     }
     .animate-emblem-breathe {
         animation: emblemBreathe 2.2s ease-in-out infinite;
@@ -175,7 +175,7 @@
                             onclick="selectDemoRole('student', 'student@studysync.pro', 'password123', event)"
                             class="social-sso-btn w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-2xs hover:border-slate-300 text-slate-700 transition"
                             title="Student Demo">
-                        <i class="fa-solid fa-graduation-cap text-xs text-[#285B55]"></i>
+                        <i class="fa-solid fa-graduation-cap text-xs text-[#4F46E5]"></i>
                     </button>
 
                     <!-- Fast Faculty/Admin Demo -->
@@ -183,7 +183,7 @@
                             onclick="selectDemoRole('hod', 'hod@studysync.pro', 'admin123', event)"
                             class="social-sso-btn w-10 h-10 rounded-full border border-slate-200 bg-white flex items-center justify-center shadow-2xs hover:border-slate-300 text-slate-700 transition"
                             title="HOD / Admin Demo">
-                        <i class="fa-solid fa-shield-halved text-xs text-[#285B55]"></i>
+                        <i class="fa-solid fa-shield-halved text-xs text-[#4F46E5]"></i>
                     </button>
                 </div>
 
@@ -200,7 +200,7 @@
                       <div class="p-2.5 rounded-xl flex items-center gap-2 text-xs border
                         {% if category == 'danger' or category == 'error' %} bg-rose-50 border-rose-200 text-rose-800
                         {% elif category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800
-                        {% else %} bg-blue-50 border-blue-200 text-blue-800 {% endif %}">
+                        {% else %} bg-indigo-50 border-indigo-200 text-indigo-800 {% endif %}">
                           <i class="fa-solid fa-circle-exclamation text-xs"></i>
                           <span class="font-bold">{{ message }}</span>
                       </div>
@@ -215,14 +215,14 @@
                     <!-- Email / ID Input Pill -->
                     <div class="pill-input-box relative flex items-center rounded-full border border-slate-200/80 px-4 py-3 text-left">
                         <input type="text" 
-                               id="campus_id" 
-                               name="campus_id" 
-                               required 
-                               autocomplete="username"
-                               placeholder="Email Address" 
-                               oninput="handleIdInputChange(this)"
-                               class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pl-1">
-                        <span id="roleDetectedChip" class="hidden text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#E2ECEB] text-[#1D4641] transition-all">
+                                id="campus_id" 
+                                name="campus_id" 
+                                required 
+                                autocomplete="username"
+                                placeholder="Email Address" 
+                                oninput="handleIdInputChange(this)"
+                                class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pl-1">
+                        <span id="roleDetectedChip" class="hidden text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EEF2FF] text-[#4338CA] border border-indigo-100 transition-all">
                             Auto
                         </span>
                     </div>
@@ -230,12 +230,12 @@
                     <!-- Password Input Pill -->
                     <div class="pill-input-box relative flex items-center rounded-full border border-slate-200/80 px-4 py-3 text-left">
                         <input type="password" 
-                               id="password" 
-                               name="password" 
-                               required 
-                               autocomplete="current-password"
-                               placeholder="Password" 
-                               class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pl-1 pr-6">
+                                id="password" 
+                                name="password" 
+                                required 
+                                autocomplete="current-password"
+                                placeholder="Password" 
+                                class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pl-1 pr-6">
                         
                         <button type="button" 
                                 onclick="togglePasswordVisibility()" 
@@ -247,7 +247,7 @@
 
                     <!-- Forgot Password Link -->
                     <div class="pt-1">
-                        <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-xs text-slate-400 hover:text-slate-700 font-medium transition">
+                        <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-xs text-slate-400 hover:text-indigo-600 font-medium transition">
                             Forget your password?
                         </a>
                     </div>
@@ -256,7 +256,7 @@
                     <div class="pt-2">
                         <button type="submit" 
                                 id="loginSubmitBtn"
-                                class="w-auto min-w-[140px] px-10 py-3 rounded-full bg-[#285B55] hover:bg-[#1D4641] active:scale-95 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-[#285B55]/20 transition-all cursor-pointer inline-flex items-center justify-center gap-2">
+                                class="w-auto min-w-[140px] px-10 py-3 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] active:scale-95 text-white font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-indigo-500/25 transition-all cursor-pointer inline-flex items-center justify-center gap-2">
                             <span id="btnSpinner" class="hidden">
                                 <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
                             </span>
@@ -269,15 +269,15 @@
                 <div class="mt-5 pt-4 border-t border-slate-100 flex items-center justify-center gap-1.5 flex-wrap">
                     <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider mr-1">Demo:</span>
                     <button type="button" onclick="selectDemoRole('student', 'student@studysync.pro', 'password123', event)" 
-                            id="roleBtnStudent" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F4F7F8] border border-slate-200 text-[11px] font-bold text-slate-600">
+                            id="roleBtnStudent" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F8FAFC] border border-slate-200 text-[11px] font-bold text-slate-600">
                         Student
                     </button>
                     <button type="button" onclick="selectDemoRole('faculty', 'faculty@studysync.pro', 'password123', event)" 
-                            id="roleBtnFaculty" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F4F7F8] border border-slate-200 text-[11px] font-bold text-slate-600">
+                            id="roleBtnFaculty" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F8FAFC] border border-slate-200 text-[11px] font-bold text-slate-600">
                         Faculty
                     </button>
                     <button type="button" onclick="selectDemoRole('hod', 'hod@studysync.pro', 'admin123', event)" 
-                            id="roleBtnHod" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F4F7F8] border border-slate-200 text-[11px] font-bold text-slate-600">
+                            id="roleBtnHod" class="demo-role-pill px-2.5 py-1 rounded-full bg-[#F8FAFC] border border-slate-200 text-[11px] font-bold text-slate-600">
                         HOD
                     </button>
                 </div>
@@ -297,12 +297,12 @@
             <!-- Blurred Background Layer -->
             <div class="blurred-showcase-bg absolute inset-0 z-0"></div>
 
-            <!-- Deep Emerald / Teal Color Tint Overlay -->
-            <div class="absolute inset-0 bg-gradient-to-tr from-[#163330]/90 via-[#1B3E39]/80 to-[#102624]/90 z-10"></div>
+            <!-- Deep Indigo / Midnight Blue Tint Overlay -->
+            <div class="absolute inset-0 bg-gradient-to-tr from-[#0F172A]/85 via-[#1E1B4B]/75 to-[#312E81]/80 z-10"></div>
 
-            <!-- Warm Bokeh Flare Light Accent (Matches Reference Image) -->
-            <div class="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-orange-500/20 blur-3xl z-10 pointer-events-none"></div>
-            <div class="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-teal-400/20 blur-3xl z-10 pointer-events-none"></div>
+            <!-- Glowing Indigo / Purple Bokeh Flare Accents -->
+            <div class="absolute -top-12 -right-12 w-64 h-64 rounded-full bg-purple-500/25 blur-3xl z-10 pointer-events-none"></div>
+            <div class="absolute -bottom-12 -left-12 w-64 h-64 rounded-full bg-indigo-400/25 blur-3xl z-10 pointer-events-none"></div>
 
             <!-- Central Content -->
             <div class="relative z-20 max-w-[300px] space-y-4">
@@ -316,7 +316,7 @@
                 <div class="pt-2">
                     <button type="button" 
                             onclick="selectDemoRole('student', 'student@studysync.pro', 'password123', event)"
-                            class="px-8 py-2.5 rounded-full border border-white/90 text-white hover:bg-white hover:text-[#1D4641] active:scale-95 text-xs font-bold transition-all shadow-sm backdrop-blur-xs cursor-pointer">
+                            class="px-8 py-2.5 rounded-full border border-white/90 text-white hover:bg-white hover:text-[#1E1B4B] active:scale-95 text-xs font-bold transition-all shadow-sm backdrop-blur-xs cursor-pointer">
                         Sign Up
                     </button>
                 </div>
@@ -346,9 +346,9 @@
             <svg class="absolute inset-0 w-full h-full animate-spin-smooth" viewBox="0 0 160 160">
                 <defs>
                     <linearGradient id="pragatiSpinnerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#285B55" stop-opacity="0.1" />
-                        <stop offset="50%" stop-color="#285B55" />
-                        <stop offset="100%" stop-color="#18D9D2" />
+                        <stop offset="0%" stop-color="#4F46E5" stop-opacity="0.1" />
+                        <stop offset="50%" stop-color="#4F46E5" />
+                        <stop offset="100%" stop-color="#818CF8" />
                     </linearGradient>
                 </defs>
                 <circle cx="80" cy="80" r="70" 
@@ -376,8 +376,8 @@
         </p>
 
         <div class="flex items-center gap-1.5 mt-3">
-            <div class="w-2 h-2 rounded-full bg-[#285B55] animate-bounce-dot" style="animation-delay: 0s;"></div>
-            <div class="w-2 h-2 rounded-full bg-[#18D9D2] animate-bounce-dot" style="animation-delay: 0.18s;"></div>
+            <div class="w-2 h-2 rounded-full bg-[#4F46E5] animate-bounce-dot" style="animation-delay: 0s;"></div>
+            <div class="w-2 h-2 rounded-full bg-[#818CF8] animate-bounce-dot" style="animation-delay: 0.18s;"></div>
             <div class="w-2 h-2 rounded-full bg-slate-400 animate-bounce-dot" style="animation-delay: 0.36s;"></div>
         </div>
     </div>
