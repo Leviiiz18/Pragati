@@ -112,8 +112,15 @@
         0%, 80%, 100% { transform: translateY(0) scale(0.9); opacity: 0.45; }
         40% { transform: translateY(-7px) scale(1.18); opacity: 1; }
     }
-    .animate-bounce-dot {
-        animation: bounceDot 1.4s ease-in-out infinite;
+    /* Hide Scrollbars Everywhere */
+    html, body, div, form, * {
+        scrollbar-width: none !important;
+        -ms-overflow-style: none !important;
+    }
+    ::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
     }
 </style>
 
@@ -123,17 +130,17 @@
     <!-- ---------------------------------------------------- -->
     <!-- LEFT COLUMN: AUTHENTICATION FORM (48% Full Height)   -->
     <!-- ---------------------------------------------------- -->
-    <div class="w-full lg:w-[48%] xl:w-[45%] h-full bg-white p-6 sm:p-10 lg:p-12 xl:p-16 flex flex-col justify-between relative z-20 overflow-y-auto">
+    <div class="w-full lg:w-[48%] xl:w-[45%] h-full bg-white p-6 sm:p-8 lg:p-10 xl:p-14 flex flex-col justify-between relative z-20 overflow-hidden">
         
         <!-- Top Brand Logo -->
-        <div class="text-left mb-4">
+        <div class="text-left pt-1">
             <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=5" 
                  alt="Pragati by KalpKrafts" 
                  class="h-8 sm:h-9 w-auto object-contain">
         </div>
 
         <!-- Form Body Centered -->
-        <div class="w-full max-w-[370px] mx-auto my-auto py-4">
+        <div class="w-full max-w-[360px] mx-auto my-auto py-2">
 
             <!-- Flash Notifications -->
             {% with messages = get_flashed_messages(with_categories=true) %}
