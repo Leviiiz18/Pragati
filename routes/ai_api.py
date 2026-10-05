@@ -21,10 +21,13 @@ def command_center_api():
 @ai_api_bp.route('/api/ai/tutor', methods=['POST'])
 @login_required
 def tutor_api():
-    data = request.get_json() or {}
-    prompt = data.get('prompt', '')
-    answer = AIEngine.generate_completion(prompt, system_message="You are an AI Tutor providing institutional assistance.")
-    return jsonify({'status': 'success', 'answer': answer})
+    # Feature Lock & Institutional Restriction Policy
+    return jsonify({
+        'status': 'restricted',
+        'locked': True,
+        'message': 'AI Academic Mentor is currently locked under institutional policy. Clearance from the Dean of Academics / HOD is required.',
+        'answer': '🔒 Feature Restricted: This AI Mentor module is currently undergoing departmental curriculum calibration. Access is restricted under institutional guidelines.'
+    }), 403
 
 @ai_api_bp.route('/api/notifications/mark-read/<int:notif_id>', methods=['POST'])
 @login_required

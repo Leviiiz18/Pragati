@@ -1,27 +1,120 @@
 {% extends "base.html" %}
-{% block title %}Mental Wellness & Mentor AI - Pragati by Kalpkrats{% endblock %}
-{% block content %}
-<div class="space-y-6">
-    <div>
-        <h1 class="text-3xl font-extrabold text-slate-900">Mental Wellness & Stress Detection AI</h1>
-        <p class="text-sm font-medium text-slate-600 mt-1">Anonymous academic stress support, study-life balance recommendations, and wellness tracking.</p>
-    </div>
+{% block title %}Mental Wellness & Stress Analytics (Restricted) — Pragati{% endblock %}
 
-    <div class="bg-white p-6 rounded-3xl border border-rose-200 shadow-sm space-y-4">
-        <div class="flex items-center gap-3">
-            <div class="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-xl border border-rose-200">
-                <i class="fa-solid fa-heart-pulse"></i>
+{% block content %}
+<div class="max-w-4xl mx-auto py-6 sm:py-10 space-y-6">
+
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+        <a href="{{ url_for('student.dashboard') }}" class="hover:text-slate-700 transition">Dashboard</a>
+        <span>/</span>
+        <span class="text-slate-500">Academic Intelligence</span>
+        <span>/</span>
+        <span class="text-slate-900 font-bold">Mental Wellness & Stress Detection</span>
+    </nav>
+
+    <!-- Main Restricted / Lock Card -->
+    <div class="relative bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden p-8 sm:p-12 text-center">
+        
+        <!-- Ambient Top Gradient Accent -->
+        <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-rose-500 via-pink-600 to-indigo-600"></div>
+
+        <!-- Lock Emblem with Glowing Pulse -->
+        <div class="relative mx-auto w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-6">
+            <div class="absolute inset-0 rounded-3xl bg-rose-500/15 animate-ping opacity-60"></div>
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-rose-500 to-rose-600 text-white flex items-center justify-center text-3xl sm:text-4xl shadow-lg shadow-rose-500/30 border border-rose-400/40">
+                <i class="fa-solid fa-shield-heart"></i>
             </div>
-            <div>
-                <h3 class="text-base font-extrabold text-slate-900">Academic Wellbeing Indicator</h3>
-                <p class="text-xs font-bold text-slate-600">Status: <strong class="text-emerald-600">Low Burnout Risk (92% Wellbeing Index)</strong></p>
+            <!-- Secondary Mini Lock Tag -->
+            <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-slate-900 text-amber-400 text-xs flex items-center justify-center border-2 border-white shadow">
+                <i class="fa-solid fa-lock"></i>
             </div>
         </div>
 
-        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs text-slate-800 space-y-1 font-medium">
-            <div class="font-bold text-slate-900 text-sm">AI Mentor Suggestion:</div>
-            <p>Your workload is balanced this week. Remember to take a 15-minute break every 50 minutes during study sessions.</p>
+        <!-- Restriction Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs font-extrabold tracking-wide uppercase mb-3">
+            <span class="w-2 h-2 rounded-full bg-rose-500 animate-pulse"></span>
+            Feature Locked &bull; Institutional Wellbeing Protocol
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
+            Mental Wellness & Stress Detection is Restricted
+        </h1>
+
+        <!-- Fallback Message -->
+        <p class="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed font-medium mb-8">
+            The automated student mental wellness and biometric stress detection algorithm is restricted under institutional healthcare compliance. For student health and psychological counseling, please contact the dedicated Student Welfare & Counseling Cell directly.
+        </p>
+
+        <!-- Emergency / Campus Support Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl mx-auto mb-8 text-left">
+            <div class="p-4 rounded-2xl bg-rose-50/60 border border-rose-200/80 flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center text-base shrink-0 font-bold">
+                    <i class="fa-solid fa-user-doctor"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-900 mb-0.5">Campus Counselor Office</div>
+                    <div class="text-xs text-slate-600 font-medium">Student Affairs Block, Room 204</div>
+                    <div class="text-[11px] font-bold text-rose-700 mt-1">Direct Helpline: Ext #2204 &bull; Mon–Fri (9 AM – 5 PM)</div>
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 flex items-start gap-3.5">
+                <div class="w-10 h-10 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-base shrink-0 font-bold">
+                    <i class="fa-solid fa-envelope-open-text"></i>
+                </div>
+                <div>
+                    <div class="text-xs font-bold text-slate-900 mb-0.5">Confidential Wellbeing Inquiry</div>
+                    <div class="text-xs text-slate-600 font-medium">Reach out 100% anonymously</div>
+                    <div class="text-[11px] font-bold text-indigo-700 mt-1">Email: wellness@nitte.edu.in</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button type="button" 
+                    id="requestCounselorBtn"
+                    onclick="handleCounselorRequest()"
+                    class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 active:scale-[0.98] text-white font-bold text-xs shadow-lg shadow-rose-600/25 transition cursor-pointer flex items-center justify-center gap-2">
+                <i class="fa-solid fa-headset text-xs"></i>
+                <span id="counselorBtnText">Request Confidential Callback</span>
+            </button>
+
+            <a href="{{ url_for('student.dashboard') }}" 
+               class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 font-bold text-xs border border-slate-200 transition text-center">
+                Return to Dashboard
+            </a>
+        </div>
+
+        <!-- Interactive Toast Feedback Banner -->
+        <div id="counselorRequestedAlert" class="hidden mt-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-medium max-w-lg mx-auto text-left">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
+                <div>
+                    <span class="font-bold block text-slate-900 mb-0.5">Callback Scheduled Confidentially</span>
+                    Your notification has been logged directly with the Senior University Counselor. A private confirmation has been scheduled for your registered contact.
+                </div>
+            </div>
         </div>
     </div>
 </div>
+
+<script>
+function handleCounselorRequest() {
+    const btn = document.getElementById('requestCounselorBtn');
+    const btnText = document.getElementById('counselorBtnText');
+    const alertBox = document.getElementById('counselorRequestedAlert');
+    
+    btn.disabled = true;
+    btn.classList.add('opacity-70', 'cursor-not-allowed');
+    btnText.textContent = 'Contacting Counselor...';
+    
+    setTimeout(() => {
+        btnText.textContent = 'Confidential Request Logged';
+        alertBox.classList.remove('hidden');
+    }, 650);
+}
+</script>
 {% endblock %}

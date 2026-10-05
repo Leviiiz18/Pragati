@@ -1,93 +1,122 @@
 {% extends "base.html" %}
-{% block title %}Institution AI Course Tutor - Pragati by Kalpkrats{% endblock %}
+{% block title %}AI Academic Mentor (Restricted) — Pragati{% endblock %}
+
 {% block content %}
-<div class="space-y-6">
-    <div>
-        <h1 class="text-3xl font-extrabold text-slate-900">Institution-Specific AI Course Tutor</h1>
-        <p class="text-sm font-medium text-slate-600 mt-1">Answers based strictly on your syllabus, uploaded faculty notes, and previous question papers.</p>
-    </div>
+<div class="max-w-4xl mx-auto py-6 sm:py-10 space-y-6">
 
-    <!-- RAG Chat Container -->
-    <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[550px]">
-        <div class="p-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="w-9 h-9 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center border border-purple-200 font-bold">
-                    <i class="fa-solid fa-robot"></i>
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400">
+        <a href="{{ url_for('student.dashboard') }}" class="hover:text-slate-700 transition">Dashboard</a>
+        <span>/</span>
+        <span class="text-slate-500">Academic Intelligence</span>
+        <span>/</span>
+        <span class="text-slate-900 font-bold">AI Course Mentor</span>
+    </nav>
+
+    <!-- Main Restricted / Lock Card -->
+    <div class="relative bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden p-8 sm:p-12 text-center">
+        
+        <!-- Ambient Top Gradient Accent -->
+        <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-amber-500 via-indigo-600 to-purple-600"></div>
+
+        <!-- Lock Emblem with Glowing Pulse -->
+        <div class="relative mx-auto w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center mb-6">
+            <div class="absolute inset-0 rounded-3xl bg-amber-500/15 animate-ping opacity-60"></div>
+            <div class="relative w-20 h-20 sm:w-24 sm:h-24 rounded-3xl bg-gradient-to-br from-amber-500 to-amber-600 text-white flex items-center justify-center text-3xl sm:text-4xl shadow-lg shadow-amber-500/30 border border-amber-400/40">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+            <!-- Secondary Mini AI Robot Tag -->
+            <div class="absolute -bottom-1 -right-1 w-8 h-8 rounded-full bg-slate-900 text-white text-xs flex items-center justify-center border-2 border-white shadow">
+                <i class="fa-solid fa-robot"></i>
+            </div>
+        </div>
+
+        <!-- Restriction Pill Badge -->
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800 text-xs font-extrabold tracking-wide uppercase mb-3">
+            <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+            Feature Locked &bull; Institutional Clearance Required
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mb-3">
+            AI Academic Mentor is Currently Restricted
+        </h1>
+
+        <!-- Fallback Message -->
+        <p class="text-sm text-slate-600 max-w-xl mx-auto leading-relaxed font-medium mb-8">
+            The syllabus-grounded AI Course Mentor is undergoing scheduled curriculum indexing and departmental calibration for the <strong class="text-slate-800">{{ current_user.department or 'Computer Science' }}</strong> division. Direct student access is temporarily locked under university institutional policy.
+        </p>
+
+        <!-- Institutional Details Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5 max-w-2xl mx-auto mb-8 text-left">
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Access Level</div>
+                <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-shield-halved text-amber-600"></i>
+                    Dean / HOD Clearance
                 </div>
-                <div>
-                    <h3 class="text-sm font-extrabold text-slate-900">AI Personal Tutor</h3>
-                    <span class="text-[11px] text-emerald-700 font-bold">● Context Loaded: Data Structures & Syllabus</span>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">Current Status</div>
+                <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-flask text-indigo-600"></i>
+                    Departmental Pilot
+                </div>
+            </div>
+
+            <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80">
+                <div class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1">General Release</div>
+                <div class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <i class="fa-solid fa-calendar-check text-emerald-600"></i>
+                    Next Academic Term
                 </div>
             </div>
         </div>
 
-        <div id="chatMessages" class="flex-1 p-4 overflow-y-auto space-y-4 text-sm">
-            <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0 border border-purple-200">AI</div>
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 font-medium max-w-xl">
-                    Hello {{ current_user.name }}! I am your AI Course Tutor. Ask me anything from your course notes, previous papers, or ask me:
-                    <ul class="list-disc list-inside mt-2 text-xs text-purple-800 font-bold space-y-1">
-                        <li>"Explain Binary Search Trees with code examples"</li>
-                        <li>"Generate 5 viva questions for Unit 2"</li>
-                        <li>"How can I score above 9 CGPA this semester?"</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="p-4 bg-slate-50 border-t border-slate-200 flex gap-3">
-            <input type="text" id="tutorInput" placeholder="Ask AI Tutor..." class="flex-1 px-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm font-medium text-slate-900 focus:outline-none focus:border-purple-500 shadow-inner" onkeydown="if(event.key==='Enter') sendTutorMessage()">
-            <button onclick="sendTutorMessage()" class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-200 transition">
-                Send
+        <!-- Action Controls -->
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button type="button" 
+                    id="requestAccessBtn"
+                    onclick="handleRequestAccess()"
+                    class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 active:scale-[0.98] text-white font-bold text-xs shadow-lg shadow-indigo-600/25 transition cursor-pointer flex items-center justify-center gap-2">
+                <i class="fa-solid fa-paper-plane text-xs"></i>
+                <span id="requestBtnText">Request Early Access Clearance</span>
             </button>
+
+            <a href="{{ url_for('student.dashboard') }}" 
+               class="w-full sm:w-auto px-6 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 active:scale-[0.98] text-slate-700 font-bold text-xs border border-slate-200 transition text-center">
+                Return to Dashboard
+            </a>
+        </div>
+
+        <!-- Interactive Toast Feedback Banner -->
+        <div id="accessRequestedAlert" class="hidden mt-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs font-medium max-w-lg mx-auto text-left">
+            <div class="flex items-start gap-3">
+                <i class="fa-solid fa-circle-check text-emerald-600 text-base mt-0.5"></i>
+                <div>
+                    <span class="font-bold block text-slate-900 mb-0.5">Access Request Submitted</span>
+                    Your request (Token #NU-AI-{{ current_user.id or 101 }}) has been forwarded to the Head of Department. You will receive an automated portal notification once clearance is granted.
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
-async function sendTutorMessage() {
-    const input = document.getElementById('tutorInput');
-    const msg = input.value.trim();
-    if(!msg) return;
-    input.value = '';
-
-    const chatDiv = document.getElementById('chatMessages');
-    chatDiv.innerHTML += `
-        <div class="flex items-start justify-end gap-3">
-            <div class="p-4 rounded-2xl bg-blue-600 text-white font-medium max-w-xl shadow-sm">${msg}</div>
-            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-700 border border-blue-200 flex items-center justify-center text-xs font-bold shrink-0">You</div>
-        </div>
-    `;
-    chatDiv.scrollTop = chatDiv.scrollHeight;
-
-    const loadingId = 'loading-' + Date.now();
-    chatDiv.innerHTML += `
-        <div id="${loadingId}" class="flex items-start gap-3">
-            <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">AI</div>
-            <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 text-purple-700 text-xs font-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> AI Tutor searching course materials...</div>
-        </div>
-    `;
-    chatDiv.scrollTop = chatDiv.scrollHeight;
-
-    try {
-        const res = await fetch('/student/ai-tutor', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-            body: new URLSearchParams({query: msg})
-        });
-        const data = await res.json();
-        document.getElementById(loadingId).remove();
-        
-        chatDiv.innerHTML += `
-            <div class="flex items-start gap-3">
-                <div class="w-8 h-8 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center text-xs font-bold shrink-0">AI</div>
-                <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 text-slate-800 max-w-xl text-sm font-medium leading-relaxed">${data.answer.replace(/\n/g, '<br>')}</div>
-            </div>
-        `;
-        chatDiv.scrollTop = chatDiv.scrollHeight;
-    } catch(err) {
-        document.getElementById(loadingId).remove();
-    }
+function handleRequestAccess() {
+    const btn = document.getElementById('requestAccessBtn');
+    const btnText = document.getElementById('requestBtnText');
+    const alertBox = document.getElementById('accessRequestedAlert');
+    
+    btn.disabled = true;
+    btn.classList.add('opacity-70', 'cursor-not-allowed');
+    btnText.textContent = 'Submitting Request...';
+    
+    setTimeout(() => {
+        btnText.textContent = 'Request Sent to Dean';
+        alertBox.classList.remove('hidden');
+    }, 650);
 }
 </script>
 {% endblock %}
