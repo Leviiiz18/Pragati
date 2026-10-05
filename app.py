@@ -10,6 +10,21 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
 
+    # ProxyFix ensures correct client IP and HTTPS protocol behind Render's reverse proxy
+    from werkzeug.middleware.proxy_fix import ProxyFix
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
+
+    # OWASP Security Headers
+    @app.after_request
+    def apply_security_headers(response):
+        response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        if request.is_secure or os.environ.get('RENDER') == 'true':
+            response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        return response
+
     db.init_app(app)
     bcrypt = Bcrypt(app)
     login_manager = LoginManager(app)

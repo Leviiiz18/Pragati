@@ -1,4 +1,6 @@
 import random
+import time
+from collections import defaultdict
 from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, current_user, login_required
 from models import db, User
@@ -6,6 +8,25 @@ from flask_bcrypt import Bcrypt
 
 auth_bp = Blueprint('auth', __name__)
 bcrypt = Bcrypt()
+
+# Brute-force protection: IP-based tracking of failed attempts
+_login_attempts = defaultdict(list)
+MAX_LOGIN_ATTEMPTS = 5
+LOCKOUT_WINDOW_SECONDS = 300  # 5 minutes
+
+def is_ip_rate_limited(ip):
+    now = time.time()
+    # Retain attempts only within the lockout window
+    recent = [t for t in _login_attempts[ip] if now - t < LOCKOUT_WINDOW_SECONDS]
+    _login_attempts[ip] = recent
+    return len(recent) >= MAX_LOGIN_ATTEMPTS
+
+def record_failed_attempt(ip):
+    _login_attempts[ip].append(time.time())
+
+def clear_attempts(ip):
+    if ip in _login_attempts:
+        del _login_attempts[ip]
 
 def get_role_redirect(role):
     if role in ['super_admin', 'principal']:
@@ -23,22 +44,40 @@ def login():
         return redirect(get_role_redirect(current_user.role))
             
     if request.method == 'POST':
+        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
+        if client_ip and ',' in client_ip:
+            client_ip = client_ip.split(',')[0].strip()
+
+        # Check for active rate limit
+        if client_ip and is_ip_rate_limited(client_ip):
+            flash('Too many failed attempts. For security, access from your network is temporarily paused for 5 minutes.', 'danger')
+            return render_template('login.html'), 429
+
         login_input = (request.form.get('campus_id') or request.form.get('email') or '').strip()
-        password = request.form.get('password')
+        password = request.form.get('password') or ''
+        
         user = User.query.filter(
             (User.email == login_input) | 
             (User.registration_id == login_input) | 
             (User.employee_id == login_input)
         ).first()
         
-        if user and (bcrypt.check_password_hash(user.password, password) or password == 'admin123' or password == 'password123'):
+        # Strict cryptographic hash verification
+        if user and user.password and bcrypt.check_password_hash(user.password, password):
+            clear_attempts(client_ip)
             login_user(user)
             next_page = request.args.get('next')
             if next_page:
                 return redirect(next_page)
             return redirect(get_role_redirect(user.role))
         else:
-            flash('Invalid credentials. Please verify your Campus ID / Email and password.', 'danger')
+            record_failed_attempt(client_ip)
+            attempts_made = len(_login_attempts[client_ip])
+            remaining = MAX_LOGIN_ATTEMPTS - attempts_made
+            if remaining > 0:
+                flash(f'Invalid credentials. Please verify your Campus ID / Email and password. ({remaining} attempts left before 5-minute lockout)', 'danger')
+            else:
+                flash('Invalid credentials. Maximum attempts exceeded. Access paused for 5 minutes.', 'danger')
             
     mode = request.args.get('mode', 'signin')
     return render_template('login.html', initial_mode=mode)
