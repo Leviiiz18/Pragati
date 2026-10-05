@@ -1,8 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Pragati by Kalpkrats — Unified Academic Portal Authentication{% endblock %}
+{% block title %}Pragati — Unified Academic Portal{% endblock %}
 
 {% block auth_content %}
-<!-- Google Fonts: Plus Jakarta Sans & Icons -->
+<!-- Google Fonts: Plus Jakarta Sans -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -12,13 +12,12 @@
     :root {
         --primary-indigo: #4F46E5;
         --hover-indigo: #4338CA;
-        --dark-indigo: #1E1B4B;
-        --mid-indigo: #312E81;
+        --dark-slate: #0F172A;
     }
 
     body {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background: #F8FAFC;
+        background-color: #ECEEF1;
     }
 
     .material-symbols-outlined {
@@ -28,70 +27,52 @@
         line-height: 1;
     }
 
-    /* Page Split Canvas (Soft Slate to Midnight Indigo) */
-    .stitch-auth-canvas {
-        background: radial-gradient(circle at 10% 20%, rgba(238, 242, 255, 0.95) 0%, rgba(248, 250, 252, 0.98) 45%, #1E1B4B 45.05%, #0F172A 100%);
+    /* Master Card Shadow */
+    .reference-master-card {
+        box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(226, 232, 240, 0.9);
     }
 
-    @media (max-width: 1024px) {
-        .stitch-auth-canvas {
-            background: linear-gradient(180deg, #F8FAFC 0%, #EEF2FF 55%, #1E1B4B 100%);
-        }
+    /* Halftone Dot Matrix Background */
+    .halftone-bg {
+        background-image: radial-gradient(#94A3B8 1.2px, transparent 1.2px);
+        background-size: 16px 16px;
+        opacity: 0.28;
     }
 
-    /* Floating Rounded Card Master Shadow */
-    .custom-auth-card {
-        box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(226, 232, 240, 0.9);
+    /* Glassmorphic Floating Preview Card */
+    .glass-preview-card {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(16px);
+        box-shadow: 0 20px 40px -10px rgba(79, 70, 229, 0.12), 0 0 0 1px rgba(226, 232, 240, 0.85);
     }
 
-    /* Pill input focus styling */
-    .pill-input-box {
-        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        background-color: #F1F5F9;
-    }
-    .pill-input-box:focus-within {
-        background-color: #FFFFFF !important;
-        border-color: #4F46E5 !important;
-        box-shadow: 0 0 0 3.5px rgba(79, 70, 229, 0.16);
-        transform: translateY(-1px);
-    }
-
-    /* Right Side Ambient Image Blur */
-    .blurred-showcase-bg {
-        background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}?v={{ range(1000, 9999) | random }}");
-        background-size: cover;
-        background-position: center;
-        filter: blur(14px) brightness(0.92);
-        transform: scale(1.18);
-    }
-
-    /* Social Circular Buttons */
-    .social-sso-btn {
+    /* Role Selector Card Active/Inactive */
+    .role-select-card {
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
-    .social-sso-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 14px rgba(79, 70, 229, 0.12);
-        border-color: #C7D2FE;
-    }
-
-    /* Fast demo badge hover */
-    .demo-role-pill {
-        transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .demo-role-pill:hover {
-        transform: translateY(-1.5px);
-        background-color: #EEF2FF;
-        border-color: #A5B4FC;
-        color: #4338CA;
-    }
-    .demo-role-pill.active-pill {
-        background-color: #4F46E5 !important;
+    .role-select-card.active-role {
+        border-color: #0F172A !important;
+        background-color: #0F172A !important;
         color: #FFFFFF !important;
-        border-color: #4F46E5 !important;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+    }
+    .role-select-card.active-role .role-icon {
+        color: #FFFFFF !important;
+    }
+    .role-select-card.active-role .role-sub {
+        color: #94A3B8 !important;
     }
 
-    /* Animated Loader Keyframes */
+    /* Form Input Focus */
+    .ref-input {
+        transition: all 0.18s ease;
+    }
+    .ref-input:focus {
+        border-color: #0F172A !important;
+        box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.08);
+    }
+
+    /* Pragati Animated Loader */
     @keyframes spinSmooth {
         0% { transform: rotate(0deg); }
         100% { transform: rotate(360deg); }
@@ -100,7 +81,6 @@
         animation: spinSmooth 1.35s cubic-bezier(0.4, 0, 0.2, 1) infinite;
         transform-origin: center center;
     }
-
     @keyframes emblemBreathe {
         0%, 100% { transform: scale(1); filter: drop-shadow(0 4px 12px rgba(79, 70, 229, 0.2)); }
         50% { transform: scale(1.06); filter: drop-shadow(0 8px 22px rgba(79, 70, 229, 0.4)); }
@@ -108,7 +88,6 @@
     .animate-emblem-breathe {
         animation: emblemBreathe 2.2s ease-in-out infinite;
     }
-
     @keyframes bounceDot {
         0%, 80%, 100% { transform: translateY(0) scale(0.9); opacity: 0.45; }
         40% { transform: translateY(-7px) scale(1.18); opacity: 1; }
@@ -118,41 +97,123 @@
     }
 </style>
 
-<div class="stitch-auth-canvas min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 select-none">
-
-    <!-- Ambient Aura Flares -->
-    <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-indigo-500/15 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-32 -right-32 w-[30rem] h-[30rem] rounded-full bg-purple-600/15 blur-3xl pointer-events-none"></div>
+<div class="min-h-screen w-full flex items-center justify-center p-4 sm:p-6 lg:p-10 select-none bg-[#ECEEF1]">
 
     <!-- ======================================================== -->
-    <!-- CENTERED FLOATING SPLIT-CARD (Stitch MCP Architecture)    -->
+    <!-- MASTER CARD (Matching Exact Reference Dual-Column Style) -->
     <!-- ======================================================== -->
-    <div class="relative w-full max-w-[1060px] min-h-[640px] bg-white rounded-[36px] overflow-hidden custom-auth-card flex flex-col lg:flex-row z-10 border border-white/70">
+    <div class="reference-master-card w-full max-w-[1100px] min-h-[660px] bg-white rounded-[32px] sm:rounded-[36px] overflow-hidden flex flex-col lg:flex-row relative z-10">
 
         <!-- ---------------------------------------------------- -->
-        <!-- LEFT COLUMN: INTERACTIVE AUTH FORMS (54% Width)      -->
+        <!-- LEFT COLUMN: PRODUCT SHOWCASE HERO                   -->
         <!-- ---------------------------------------------------- -->
-        <div class="w-full lg:w-[54%] p-8 sm:p-10 lg:p-12 flex flex-col justify-between bg-white relative z-20">
-            <div>
-                <!-- Top Brand Header & Live Vault Status -->
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=3" 
-                             alt="Pragati by Kalpkrats" 
-                             class="h-8 sm:h-9 w-auto object-contain">
+        <div class="w-full lg:w-[48%] bg-[#F9FAFB] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-slate-200/80 overflow-hidden">
+            
+            <!-- Halftone Dot Texture Background -->
+            <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
+
+            <!-- Waveform / Circuit SVG Graphic Mesh -->
+            <svg class="absolute inset-0 w-full h-full opacity-10 pointer-events-none" viewBox="0 0 500 500">
+                <path d="M 0,250 Q 125,180 250,250 T 500,250" fill="none" stroke="#4F46E5" stroke-width="2"/>
+                <path d="M 0,270 Q 125,200 250,270 T 500,270" fill="none" stroke="#0F172A" stroke-width="1.5" stroke-dasharray="4 4"/>
+                <path d="M 0,230 Q 125,160 250,230 T 500,230" fill="none" stroke="#7C3AED" stroke-width="1.5"/>
+            </svg>
+
+            <!-- Top Left: Logo & Product Name -->
+            <div class="relative z-10 flex items-center justify-between">
+                <div class="flex items-center gap-2.5">
+                    <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=3" 
+                         alt="Pragati" 
+                         class="h-7 sm:h-8 w-auto object-contain">
+                    <span class="text-sm font-black tracking-wider text-slate-900 uppercase">PRAGATI</span>
+                </div>
+
+                <div class="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-white border border-slate-200 text-[10px] font-bold text-slate-600 shadow-2xs">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    ERP V2.6
+                </div>
+            </div>
+
+            <!-- Floating Preview Widget (Matching Reference Glass Card) -->
+            <div class="relative z-10 my-auto py-6">
+                <!-- Floating mini badge top-left -->
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700">
+                        <span class="material-symbols-outlined text-[16px] text-indigo-600">school</span>
                     </div>
-                    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                        <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-                        Identity Vault Active
+                    <div class="w-6 h-[2px] bg-indigo-500 rounded-full"></div>
+                </div>
+
+                <!-- Glassmorphic Preview Card -->
+                <div class="glass-preview-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/80">
+                    <!-- Tab Pills -->
+                    <div class="flex items-center gap-2 mb-4">
+                        <button type="button" onclick="switchShowcaseTab('student')" id="previewTabStudent" class="px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs">
+                            <span class="material-symbols-outlined text-[14px]">school</span>
+                            Student OS
+                        </button>
+                        <button type="button" onclick="switchShowcaseTab('faculty')" id="previewTabFaculty" class="px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100">
+                            <span class="material-symbols-outlined text-[14px]">psychology</span>
+                            Faculty Hub
+                        </button>
+                    </div>
+
+                    <!-- Dynamic Description Text -->
+                    <p id="showcaseText" class="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed mb-4">
+                        Unlock unified collegiate intelligence with real-time attendance analytics, automated grading, AI tutor assistance, and personalized career roadmaps.
+                    </p>
+
+                    <!-- Feature Tags / Chips -->
+                    <div id="showcaseChips" class="flex flex-wrap items-center gap-2">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[13px] text-indigo-600">check_circle</span>
+                            Attendance
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[13px] text-indigo-600">auto_stories</span>
+                            Study Notes
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[13px] text-indigo-600">smart_toy</span>
+                            AI Tutor
+                        </span>
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[13px] text-indigo-600">grade</span>
+                            GPA Analytics
+                        </span>
                     </div>
                 </div>
+
+                <!-- Floating mini badge bottom-right -->
+                <div class="flex items-center justify-end gap-2 mt-3 mr-4">
+                    <div class="w-6 h-[2px] bg-slate-400 rounded-full"></div>
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-xs font-bold text-slate-800">
+                        AI
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bottom Left Big Headline -->
+            <div class="relative z-10 pt-2">
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                    One Click Away from<br>
+                    <span class="text-slate-900">Unified Campus Intelligence</span>
+                </h2>
+            </div>
+        </div>
+
+        <!-- ---------------------------------------------------- -->
+        <!-- RIGHT COLUMN: AUTHENTICATION FORM                    -->
+        <!-- ---------------------------------------------------- -->
+        <div class="w-full lg:w-[52%] bg-white p-8 sm:p-10 lg:p-12 flex flex-col justify-between">
+            <div class="w-full max-w-[380px] mx-auto my-auto">
 
                 <!-- Flash Notifications -->
                 {% with messages = get_flashed_messages(with_categories=true) %}
                   {% if messages %}
                     <div class="mb-4 space-y-2 text-left">
                     {% for category, message in messages %}
-                      <div class="p-2.5 rounded-2xl flex items-center gap-2 text-xs border
+                      <div class="p-2.5 rounded-xl flex items-center gap-2 text-xs border
                         {% if category == 'danger' or category == 'error' %} bg-rose-50 border-rose-200 text-rose-800
                         {% elif category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800
                         {% else %} bg-indigo-50 border-indigo-200 text-indigo-800 {% endif %}">
@@ -164,355 +225,252 @@
                   {% endif %}
                 {% endwith %}
 
-                <!-- ============================================ -->
-                <!-- VIEW 1: SIGN IN CONTAINER                    -->
-                <!-- ============================================ -->
-                <div id="signInContainer" class="transition-opacity duration-200">
-                    <div class="mb-4">
-                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-1">
-                            Sign In
-                        </h1>
-                        <p class="text-xs sm:text-sm text-slate-500 font-medium">
-                            Access your university courses, grades & administrative portal.
-                        </p>
-                    </div>
-
-                    <!-- Circular SSO Login Row -->
-                    <div class="mb-4">
-                        <div class="grid grid-cols-4 gap-2.5 max-w-sm">
-                            <!-- Google SSO -->
-                            <button type="button" 
-                                    onclick="handleSsoClick('Google', 'student@studysync.pro', 'password123', event)"
-                                    class="social-sso-btn flex items-center justify-center h-10 w-full rounded-full border border-slate-200 bg-white hover:border-indigo-300 shadow-2xs active:scale-95" 
-                                    title="Sign in with Google Academic">
-                                <svg class="w-4 h-4" viewBox="0 0 24 24">
-                                    <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                                    <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                                    <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                                    <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                                </svg>
-                            </button>
-
-                            <!-- Microsoft 365 -->
-                            <button type="button" 
-                                    onclick="handleSsoClick('Microsoft 365', 'faculty@studysync.pro', 'password123', event)"
-                                    class="social-sso-btn flex items-center justify-center h-10 w-full rounded-full border border-slate-200 bg-white hover:border-indigo-300 shadow-2xs active:scale-95" 
-                                    title="Sign in with Microsoft 365 Campus">
-                                <svg class="w-4 h-4" viewBox="0 0 21 21">
-                                    <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-                                    <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-                                    <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-                                    <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-                                </svg>
-                            </button>
-
-                            <!-- Student Smart ID -->
-                            <button type="button" 
-                                    onclick="selectDemoRole('student', 'student@studysync.pro', 'password123', event)"
-                                    class="social-sso-btn flex items-center justify-center h-10 w-full rounded-full border border-slate-200 bg-white hover:border-indigo-300 text-[#4F46E5] shadow-2xs active:scale-95" 
-                                    title="Student Demo">
-                                <span class="material-symbols-outlined text-[19px]">badge</span>
-                            </button>
-
-                            <!-- Hardware Admin Keycard -->
-                            <button type="button" 
-                                    onclick="selectDemoRole('hod', 'hod@studysync.pro', 'admin123', event)"
-                                    class="social-sso-btn flex items-center justify-center h-10 w-full rounded-full border border-slate-200 bg-white hover:border-indigo-300 text-emerald-600 shadow-2xs active:scale-95" 
-                                    title="HOD / Admin Demo">
-                                <span class="material-symbols-outlined text-[19px]">shield</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Divider -->
-                    <div class="relative flex items-center justify-center mb-4">
-                        <div class="border-t border-slate-200/80 w-full"></div>
-                        <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">Or use your account</span>
-                        <div class="border-t border-slate-200/80 w-full"></div>
-                    </div>
-
-                    <!-- Quick Demo Role Switcher Badges -->
-                    <div class="mb-3.5">
-                        <div class="flex items-center gap-1.5 mb-1.5">
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wide">Quick role pre-fill:</span>
-                        </div>
-                        <div class="flex items-center gap-2" id="roleBadgeContainer">
-                            <button type="button" onclick="selectDemoRole('student', 'student@studysync.pro', 'password123', event)" 
-                                    id="roleBtnStudent" class="demo-role-pill px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-[#EEF2FF] text-[#4338CA] border border-indigo-200 active-pill">
-                                <span class="material-symbols-outlined text-[14px]">check</span>
-                                Student
-                            </button>
-                            <button type="button" onclick="selectDemoRole('faculty', 'faculty@studysync.pro', 'password123', event)" 
-                                    id="roleBtnFaculty" class="demo-role-pill px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200">
-                                Faculty
-                            </button>
-                            <button type="button" onclick="selectDemoRole('hod', 'hod@studysync.pro', 'admin123', event)" 
-                                    id="roleBtnHod" class="demo-role-pill px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200">
-                                HOD
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Sign In Form -->
-                    <form action="{{ url_for('auth.login') }}" method="POST" class="space-y-3" id="signatureLoginForm" onsubmit="handleFormSubmit(event)">
-                        
-                        <!-- Campus ID / Email -->
-                        <div>
-                            <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-4 py-2.5 text-left">
-                                <span class="material-symbols-outlined text-slate-400 mr-2 text-[19px] pointer-events-none">mail</span>
-                                <input type="text" 
-                                       id="campus_id" 
-                                       name="campus_id" 
-                                       required 
-                                       autocomplete="username"
-                                       placeholder="Campus ID / University Email" 
-                                       oninput="handleIdInputChange(this)"
-                                       class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
-                                <span id="roleDetectedChip" class="hidden text-[9px] font-bold px-2 py-0.5 rounded-full bg-[#EEF2FF] text-[#4338CA] border border-indigo-100">
-                                    Auto
-                                </span>
-                            </div>
-                        </div>
-
-                        <!-- Password -->
-                        <div>
-                            <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-4 py-2.5 text-left">
-                                <span class="material-symbols-outlined text-slate-400 mr-2 text-[19px] pointer-events-none">lock</span>
-                                <input type="password" 
-                                       id="password" 
-                                       name="password" 
-                                       required 
-                                       autocomplete="current-password"
-                                       placeholder="Password" 
-                                       class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-6">
-                                <button type="button" 
-                                        onclick="togglePasswordVisibility('password', 'eyeToggleIcon')" 
-                                        class="absolute right-3.5 text-slate-400 hover:text-slate-700 transition focus:outline-none p-1"
-                                        title="Toggle password visibility">
-                                    <span class="material-symbols-outlined text-[19px]" id="eyeToggleIcon">visibility</span>
-                                </button>
-                            </div>
-                        </div>
-
-                        <!-- Options Row -->
-                        <div class="flex items-center justify-between text-xs font-medium pt-0.5 px-1">
-                            <label class="flex items-center gap-2 cursor-pointer text-slate-500">
-                                <input type="checkbox" checked class="w-3.5 h-3.5 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
-                                <span>Remember device</span>
-                            </label>
-                            <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-indigo-600 hover:text-indigo-800 font-bold transition">
-                                Forget your password?
-                            </a>
-                        </div>
-
-                        <!-- Primary Sign In Button -->
-                        <div class="pt-1.5">
-                            <button type="submit" 
-                                    id="loginSubmitBtn"
-                                    class="w-full py-3 px-6 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer">
-                                <span id="btnSpinner" class="hidden">
-                                    <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-                                </span>
-                                <span id="btnText">Sign In</span>
-                                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-                            </button>
-                        </div>
-                    </form>
+                <!-- Header Title & Subtitle -->
+                <div class="mb-4 text-left">
+                    <h1 id="formMainHeading" class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-1">
+                        Sign In
+                    </h1>
+                    <p id="formSubHeading" class="text-xs sm:text-sm text-slate-500 font-medium">
+                        Select your institutional role and enter your details.
+                    </p>
                 </div>
 
                 <!-- ============================================ -->
-                <!-- VIEW 2: SIGN UP / REGISTRATION CONTAINER     -->
+                <!-- STEP 1: SELECT ROLE (REQUIRED FIRST)         -->
                 <!-- ============================================ -->
-                <div id="signUpContainer" class="hidden transition-opacity duration-200">
-                    <div class="mb-3">
-                        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-1">
-                            Create Account
-                        </h1>
-                        <p class="text-xs sm:text-sm text-slate-500 font-medium">
-                            Register your institutional membership to access collegiate portals.
-                        </p>
+                <div class="mb-4 text-left">
+                    <label class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2">
+                        1. Select Your Role
+                    </label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <!-- Student Card -->
+                        <button type="button" 
+                                onclick="setUserRole('student', 'student@studysync.pro', 'password123')"
+                                id="roleCardStudent"
+                                class="role-select-card active-role p-2.5 rounded-xl border border-slate-200 bg-white text-left cursor-pointer flex flex-col justify-between">
+                            <span class="material-symbols-outlined text-[18px] role-icon text-indigo-600 mb-1">school</span>
+                            <div>
+                                <div class="text-xs font-bold leading-tight">Student</div>
+                                <div class="text-[10px] text-slate-400 role-sub font-medium">Scholar</div>
+                            </div>
+                        </button>
+
+                        <!-- Faculty Card -->
+                        <button type="button" 
+                                onclick="setUserRole('faculty', 'faculty@studysync.pro', 'password123')"
+                                id="roleCardFaculty"
+                                class="role-select-card p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-left cursor-pointer flex flex-col justify-between hover:border-slate-300">
+                            <span class="material-symbols-outlined text-[18px] role-icon text-indigo-600 mb-1">psychology</span>
+                            <div>
+                                <div class="text-xs font-bold leading-tight">Faculty</div>
+                                <div class="text-[10px] text-slate-400 role-sub font-medium">Professor</div>
+                            </div>
+                        </button>
+
+                        <!-- HOD / Admin Card -->
+                        <button type="button" 
+                                onclick="setUserRole('hod', 'hod@studysync.pro', 'admin123')"
+                                id="roleCardHod"
+                                class="role-select-card p-2.5 rounded-xl border border-slate-200 bg-white text-slate-800 text-left cursor-pointer flex flex-col justify-between hover:border-slate-300">
+                            <span class="material-symbols-outlined text-[18px] role-icon text-indigo-600 mb-1">shield</span>
+                            <div>
+                                <div class="text-xs font-bold leading-tight">HOD</div>
+                                <div class="text-[10px] text-slate-400 role-sub font-medium">Admin</div>
+                            </div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- ============================================ -->
+                <!-- STEP 2: ENTER DETAILS FORM                   -->
+                <!-- ============================================ -->
+                
+                <!-- SIGN IN FORM -->
+                <form action="{{ url_for('auth.login') }}" method="POST" id="signInForm" class="space-y-3 text-left" onsubmit="handleAuthSubmit(event, 'signIn')">
+                    <!-- Email / ID Input -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="campus_id">
+                            Email or Campus ID
+                        </label>
+                        <input type="text" 
+                               id="campus_id" 
+                               name="campus_id" 
+                               required 
+                               autocomplete="username"
+                               value="student@studysync.pro"
+                               placeholder="e.g. student@studysync.pro or NU23UCA054"
+                               class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
                     </div>
 
-                    <!-- Sign Up Form -->
-                    <form action="{{ url_for('auth.register') }}" method="POST" class="space-y-2.5" id="signatureSignUpForm" onsubmit="handleSignUpSubmit(event)">
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                            <!-- Full Name -->
-                            <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-3.5 py-2 text-left">
-                                <span class="material-symbols-outlined text-slate-400 mr-2 text-[18px] pointer-events-none">badge</span>
-                                <input type="text" 
-                                       id="signup_name" 
-                                       name="name" 
-                                       required 
-                                       autocomplete="name"
-                                       placeholder="Full Legal Name" 
-                                       class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
-                            </div>
-
-                            <!-- Department -->
-                            <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-3 py-2 text-left">
-                                <span class="material-symbols-outlined text-slate-400 mr-1.5 text-[18px] pointer-events-none">domain</span>
-                                <select name="department" id="signup_dept" class="w-full bg-transparent text-xs font-semibold text-slate-700 focus:outline-none cursor-pointer">
-                                    <option value="Computer Science & Engineering">CSE</option>
-                                    <option value="Information Science">ISE</option>
-                                    <option value="Electronics & Communication">ECE</option>
-                                    <option value="Business Administration">MBA</option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <!-- Role Radio Selector -->
-                        <div class="flex items-center gap-2">
-                            <label class="flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-full border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer text-xs font-bold text-slate-700">
-                                <input type="radio" name="role" value="student" checked class="text-indigo-600 focus:ring-indigo-500">
-                                <span>Student Scholar 🎓</span>
+                    <!-- Password Input -->
+                    <div>
+                        <div class="flex items-center justify-between mb-1">
+                            <label class="block text-xs font-semibold text-slate-700" for="password">
+                                Password
                             </label>
-                            <label class="flex-1 flex items-center justify-center gap-2 py-1.5 px-3 rounded-full border border-slate-200 bg-slate-50 hover:bg-slate-100 cursor-pointer text-xs font-bold text-slate-700">
-                                <input type="radio" name="role" value="faculty" class="text-indigo-600 focus:ring-indigo-500">
-                                <span>Faculty 👨‍🏫</span>
-                            </label>
+                            <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold transition">
+                                Forgot?
+                            </a>
                         </div>
-
-                        <!-- University Email -->
-                        <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-3.5 py-2 text-left">
-                            <span class="material-symbols-outlined text-slate-400 mr-2 text-[18px] pointer-events-none">mail</span>
-                            <input type="email" 
-                                   id="signup_email" 
-                                   name="email" 
+                        <div class="relative flex items-center">
+                            <input type="password" 
+                                   id="password" 
+                                   name="password" 
                                    required 
-                                   autocomplete="email"
-                                   placeholder="University Email (.edu / .ac.in / @domain)" 
-                                   class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
+                                   autocomplete="current-password"
+                                   value="password123"
+                                   placeholder="Enter password"
+                                   class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-10">
+                            <button type="button" 
+                                    onclick="togglePasswordVisibility('password', 'signInEyeIcon')" 
+                                    class="absolute right-3 text-slate-400 hover:text-slate-700 transition focus:outline-none p-1"
+                                    title="Toggle password visibility">
+                                <span class="material-symbols-outlined text-[18px]" id="signInEyeIcon">visibility</span>
+                            </button>
                         </div>
+                    </div>
 
-                        <!-- Password -->
-                        <div class="pill-input-box relative flex items-center rounded-full border border-slate-200 px-3.5 py-2 text-left">
-                            <span class="material-symbols-outlined text-slate-400 mr-2 text-[18px] pointer-events-none">lock</span>
+                    <!-- Terms Note -->
+                    <p class="text-[11px] text-slate-500 leading-normal pt-1">
+                        By signing in, you agree to Pragati <a href="javascript:void(0)" class="text-slate-900 font-bold hover:underline">privacy policy</a> and <a href="javascript:void(0)" class="text-slate-900 font-bold hover:underline">terms of service</a>.
+                    </p>
+
+                    <!-- Primary Solid Submit Button -->
+                    <div class="pt-1">
+                        <button type="submit" 
+                                id="signInSubmitBtn"
+                                class="w-full py-3 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                            <span id="signInBtnSpinner" class="hidden">
+                                <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                            </span>
+                            <span id="signInBtnText">Sign In</span>
+                        </button>
+                    </div>
+                </form>
+
+                <!-- SIGN UP FORM -->
+                <form action="{{ url_for('auth.register') }}" method="POST" id="signUpForm" class="hidden space-y-3 text-left" onsubmit="handleAuthSubmit(event, 'signUp')">
+                    <input type="hidden" name="role" id="signupRoleInput" value="student">
+
+                    <!-- Name -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="signup_name">
+                            Full Legal Name
+                        </label>
+                        <input type="text" 
+                               id="signup_name" 
+                               name="name" 
+                               required 
+                               autocomplete="name"
+                               placeholder="e.g. Aarav Mehta"
+                               class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
+                    </div>
+
+                    <!-- Department -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="signup_dept">
+                            Department / Academic Program
+                        </label>
+                        <select name="department" id="signup_dept" class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none cursor-pointer bg-white">
+                            <option value="Computer Science & Engineering">Computer Science & Engineering (CSE)</option>
+                            <option value="Information Science">Information Science & Engineering (ISE)</option>
+                            <option value="Electronics & Communication">Electronics & Communication (ECE)</option>
+                            <option value="Business Administration">Business Administration (MBA)</option>
+                        </select>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="signup_email">
+                            University Email Address
+                        </label>
+                        <input type="email" 
+                               id="signup_email" 
+                               name="email" 
+                               required 
+                               autocomplete="email"
+                               placeholder="e.g. scholar@pragati.edu"
+                               class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
+                    </div>
+
+                    <!-- Password -->
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="signup_password">
+                            Password
+                        </label>
+                        <div class="relative flex items-center">
                             <input type="password" 
                                    id="signup_password" 
                                    name="password" 
                                    required 
                                    minlength="6"
                                    autocomplete="new-password"
-                                   placeholder="Create Password (min 6 characters)" 
-                                   class="w-full bg-transparent text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-6">
+                                   placeholder="Min 6 characters"
+                                   class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-10">
                             <button type="button" 
-                                    onclick="togglePasswordVisibility('signup_password', 'signupEyeToggleIcon')" 
+                                    onclick="togglePasswordVisibility('signup_password', 'signUpEyeIcon')" 
                                     class="absolute right-3 text-slate-400 hover:text-slate-700 transition focus:outline-none p-1"
                                     title="Toggle password visibility">
-                                <span class="material-symbols-outlined text-[18px]" id="signupEyeToggleIcon">visibility</span>
+                                <span class="material-symbols-outlined text-[18px]" id="signUpEyeIcon">visibility</span>
                             </button>
                         </div>
+                    </div>
 
-                        <!-- Primary Sign Up Submit Button -->
-                        <div class="pt-1">
-                            <button type="submit" 
-                                    id="signUpSubmitBtn"
-                                    class="w-full py-2.5 px-6 rounded-full bg-[#4F46E5] hover:bg-[#4338CA] text-white font-bold text-xs sm:text-sm tracking-wide shadow-lg shadow-indigo-500/25 flex items-center justify-center gap-2 active:scale-[0.99] transition-all cursor-pointer">
-                                <span id="signUpBtnSpinner" class="hidden">
-                                    <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-                                </span>
-                                <span id="signUpBtnText">Register & Authenticate</span>
-                                <span class="material-symbols-outlined text-[18px]">check_circle</span>
-                            </button>
-                        </div>
-                    </form>
-
-                    <div class="mt-2 text-center text-xs text-slate-500">
-                        Already have an account? 
-                        <button type="button" onclick="setAuthMode('signin')" class="font-bold text-[#4F46E5] hover:underline cursor-pointer">
-                            Sign In
+                    <!-- Primary Solid Sign Up Button -->
+                    <div class="pt-1">
+                        <button type="submit" 
+                                id="signUpSubmitBtn"
+                                class="w-full py-3 px-6 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                            <span id="signUpBtnSpinner" class="hidden">
+                                <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                            </span>
+                            <span id="signUpBtnText">Create Account</span>
                         </button>
                     </div>
+                </form>
+
+                <!-- Divider 'or' -->
+                <div class="relative flex items-center justify-center my-3.5">
+                    <div class="border-t border-slate-200 w-full"></div>
+                    <span class="bg-white px-3 text-xs font-medium text-slate-400">or</span>
+                    <div class="border-t border-slate-200 w-full"></div>
                 </div>
-            </div>
 
-            <!-- Footnote Security Badge -->
-            <div class="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                <span class="flex items-center gap-1.5">
-                    <span class="material-symbols-outlined text-[15px] text-emerald-600">lock</span>
-                    256-bit TLS encrypted session
-                </span>
-                <span class="text-[10px] font-mono font-bold uppercase text-slate-400">PRAGATI-AUTH-V4.2</span>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- RIGHT COLUMN: ATMOSPHERIC HERO PANEL (46% Width)     -->
-        <!-- ---------------------------------------------------- -->
-        <div class="w-full lg:w-[46%] relative overflow-hidden flex flex-col justify-between p-8 sm:p-10 lg:p-12 text-white bg-gradient-to-br from-[#1E1B4B] via-[#312E81] to-[#4F46E5] min-h-[360px] lg:min-h-full">
-            
-            <!-- Blurred Background Geometric Texture Layer -->
-            <div class="blurred-showcase-bg absolute inset-0 z-0"></div>
-
-            <!-- Deep Indigo / Midnight Gradient Tint -->
-            <div class="absolute inset-0 bg-gradient-to-tr from-[#0F172A]/85 via-[#1E1B4B]/75 to-[#312E81]/80 z-10"></div>
-
-            <!-- Ambient Bokeh Glowing Orbs -->
-            <div class="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-purple-500/25 blur-3xl z-10 pointer-events-none"></div>
-            <div class="absolute bottom-10 -left-10 w-72 h-72 rounded-full bg-indigo-400/25 blur-3xl z-10 pointer-events-none"></div>
-
-            <!-- Top Header Badge within Hero -->
-            <div class="relative z-20 flex items-center justify-between">
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-bold text-indigo-100">
-                    <span class="material-symbols-outlined text-[15px] text-emerald-400">school</span>
-                    Tier-1 Collegiate Network
-                </div>
-                <span class="text-xs font-mono text-white/60">Est. 1982</span>
-            </div>
-
-            <!-- Center Dynamic Interactive Prompt -->
-            <div class="relative z-20 my-auto py-8 text-center">
-                <!-- Hero State: Sign In Active -->
-                <div id="heroTextSignInState">
-                    <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-3">
-                        Hey There!
-                    </h2>
-                    <p class="text-indigo-100 text-xs sm:text-sm font-medium leading-relaxed max-w-xs mx-auto mb-6">
-                        Create your account now and step into an amazing new journey.
-                    </p>
+                <!-- SSO Buttons (Google & Microsoft) -->
+                <div class="space-y-2">
+                    <!-- Google SSO -->
                     <button type="button" 
-                            onclick="setAuthMode('signup')"
-                            class="inline-flex items-center gap-2 border-2 border-white/90 text-white font-bold text-xs sm:text-sm px-8 py-2.5 rounded-full hover:bg-white hover:text-[#1E1B4B] transition-all duration-300 shadow-md backdrop-blur-xs active:scale-95 cursor-pointer">
-                        <span>Sign Up</span>
-                        <span class="material-symbols-outlined text-[18px]">person_add</span>
+                            onclick="handleSsoClick('Google', 'student@studysync.pro', 'password123', event)"
+                            class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24">
+                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                        </svg>
+                        <span>Continue with Google</span>
+                    </button>
+
+                    <!-- Microsoft SSO -->
+                    <button type="button" 
+                            onclick="handleSsoClick('Microsoft 365', 'faculty@studysync.pro', 'password123', event)"
+                            class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer">
+                        <svg class="w-4 h-4" viewBox="0 0 21 21">
+                            <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+                            <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+                            <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+                            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+                        </svg>
+                        <span>Continue with Microsoft</span>
                     </button>
                 </div>
 
-                <!-- Hero State: Sign Up Active -->
-                <div id="heroTextSignUpState" class="hidden">
-                    <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight mb-3">
-                        Welcome Back!
-                    </h2>
-                    <p class="text-indigo-100 text-xs sm:text-sm font-medium leading-relaxed max-w-xs mx-auto mb-6">
-                        Already possess an institutional credential? Sign in to resume operations.
-                    </p>
-                    <button type="button" 
-                            onclick="setAuthMode('signin')"
-                            class="inline-flex items-center gap-2 border-2 border-white/90 text-white font-bold text-xs sm:text-sm px-8 py-2.5 rounded-full hover:bg-white hover:text-[#1E1B4B] transition-all duration-300 shadow-md backdrop-blur-xs active:scale-95 cursor-pointer">
-                        <span>Sign In</span>
-                        <span class="material-symbols-outlined text-[18px]">login</span>
+                <!-- Bottom Toggle Mode Link -->
+                <div class="mt-4 pt-3 text-center text-xs text-slate-500">
+                    <span id="toggleModePrompt">Don't have an account?</span>
+                    <button type="button" onclick="toggleAuthMode()" id="toggleModeBtn" class="font-bold text-slate-900 hover:underline ml-1 cursor-pointer">
+                        Sign Up
                     </button>
-                </div>
-            </div>
-
-            <!-- Bottom Trust & Compliance Certifications -->
-            <div class="relative z-20 pt-4 border-t border-white/15">
-                <div class="flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] font-semibold text-white/80">
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px] text-emerald-400">verified</span>
-                        ISO 27001 Certified
-                    </span>
-                    <span class="text-white/40">•</span>
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px] text-emerald-400">cloud_done</span>
-                        NAD Synced
-                    </span>
-                    <span class="text-white/40">•</span>
-                    <span class="flex items-center gap-1">
-                        <span class="material-symbols-outlined text-[14px] text-emerald-400">security</span>
-                        MFA Mandated
-                    </span>
                 </div>
             </div>
         </div>
@@ -561,7 +519,7 @@
         </h3>
 
         <p id="pragatiLoaderMessage" class="text-xs font-medium text-slate-500 tracking-wide mt-1 transition-all duration-300">
-            Authenticating your session...
+            Authenticating credentials...
         </p>
 
         <div class="flex items-center gap-1.5 mt-3">
@@ -576,31 +534,144 @@
 <!-- INTERACTIVE JAVASCRIPT ENGINE                            -->
 <!-- ======================================================== -->
 <script>
+    let currentMode = 'signin'; // 'signin' or 'signup'
+    let selectedRole = 'student';
+
     // ----------------------------------------------------
-    // 1. Dual Mode Switcher (Sign In <=> Sign Up)
+    // 1. Role Selector Handler
     // ----------------------------------------------------
+    function setUserRole(role, defaultEmail, defaultPass) {
+        selectedRole = role;
+        
+        // Update cards visual state
+        ['Student', 'Faculty', 'Hod'].forEach(r => {
+            const card = document.getElementById('roleCard' + r);
+            if (!card) return;
+            if (r.toLowerCase() === role.toLowerCase()) {
+                card.classList.add('active-role');
+            } else {
+                card.classList.remove('active-role');
+            }
+        });
+
+        // Update inputs in signin
+        const idInput = document.getElementById('campus_id');
+        const passInput = document.getElementById('password');
+        if (idInput && defaultEmail) idInput.value = defaultEmail;
+        if (passInput && defaultPass) passInput.value = defaultPass;
+
+        // Update hidden role in signup
+        const signupRole = document.getElementById('signupRoleInput');
+        if (signupRole) signupRole.value = role;
+
+        // Switch showcase tab
+        switchShowcaseTab(role === 'faculty' ? 'faculty' : 'student');
+    }
+
+    // ----------------------------------------------------
+    // 2. Showcase Widget Tab Switcher
+    // ----------------------------------------------------
+    function switchShowcaseTab(tab) {
+        const tabStudent = document.getElementById('previewTabStudent');
+        const tabFaculty = document.getElementById('previewTabFaculty');
+        const textEl = document.getElementById('showcaseText');
+        const chipsEl = document.getElementById('showcaseChips');
+
+        if (tab === 'faculty') {
+            if (tabFaculty) {
+                tabFaculty.className = 'px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs';
+            }
+            if (tabStudent) {
+                tabStudent.className = 'px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+            }
+            if (textEl) {
+                textEl.textContent = 'Manage university courses, record 1-click class attendance, track student risk analytics, and publish academic research.';
+            }
+            if (chipsEl) {
+                chipsEl.innerHTML = `
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">book</span>
+                        Course Manager
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">co_present</span>
+                        Attendance
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">science</span>
+                        Research
+                    </span>
+                `;
+            }
+        } else {
+            if (tabStudent) {
+                tabStudent.className = 'px-3 py-1 rounded-xl text-xs font-bold transition flex items-center gap-1.5 bg-slate-900 text-white shadow-xs';
+            }
+            if (tabFaculty) {
+                tabFaculty.className = 'px-3 py-1 rounded-xl text-xs font-semibold transition flex items-center gap-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100';
+            }
+            if (textEl) {
+                textEl.textContent = 'Unlock unified collegiate intelligence with real-time attendance analytics, automated grading, AI tutor assistance, and personalized career roadmaps.';
+            }
+            if (chipsEl) {
+                chipsEl.innerHTML = `
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">check_circle</span>
+                        Attendance
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">auto_stories</span>
+                        Study Notes
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">smart_toy</span>
+                        AI Tutor
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-[11px] font-bold text-slate-700 flex items-center gap-1">
+                        <span class="material-symbols-outlined text-[13px] text-indigo-600">grade</span>
+                        GPA Analytics
+                    </span>
+                `;
+            }
+        }
+    }
+
+    // ----------------------------------------------------
+    // 3. Toggle Mode (Sign In <=> Sign Up)
+    // ----------------------------------------------------
+    function toggleAuthMode() {
+        setAuthMode(currentMode === 'signin' ? 'signup' : 'signin');
+    }
+
     function setAuthMode(mode) {
-        const signInBox = document.getElementById('signInContainer');
-        const signUpBox = document.getElementById('signUpContainer');
-        const heroSignInText = document.getElementById('heroTextSignInState');
-        const heroSignUpText = document.getElementById('heroTextSignUpState');
+        currentMode = mode;
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+        const mainHeading = document.getElementById('formMainHeading');
+        const subHeading = document.getElementById('formSubHeading');
+        const togglePrompt = document.getElementById('toggleModePrompt');
+        const toggleBtn = document.getElementById('toggleModeBtn');
 
         if (mode === 'signup') {
-            signInBox.classList.add('hidden');
-            signUpBox.classList.remove('hidden');
-            heroSignInText.classList.add('hidden');
-            heroSignUpText.classList.remove('hidden');
+            signInForm.classList.add('hidden');
+            signUpForm.classList.remove('hidden');
+            mainHeading.textContent = 'Create an Account';
+            subHeading.textContent = 'You are few moments away from getting started!';
+            togglePrompt.textContent = 'Already have an account?';
+            toggleBtn.textContent = 'Log In';
             try { history.replaceState(null, '', '#signup'); } catch(e) {}
         } else {
-            signUpBox.classList.add('hidden');
-            signInBox.classList.remove('hidden');
-            heroSignUpText.classList.add('hidden');
-            heroSignInText.classList.remove('hidden');
+            signUpForm.classList.add('hidden');
+            signInForm.classList.remove('hidden');
+            mainHeading.textContent = 'Sign In';
+            subHeading.textContent = 'Select your institutional role and enter your details.';
+            togglePrompt.textContent = "Don't have an account?";
+            toggleBtn.textContent = 'Sign Up';
             try { history.replaceState(null, '', window.location.pathname); } catch(e) {}
         }
     }
 
-    // Initialize mode from URL query, hash, or template variable
+    // Initialize mode
     document.addEventListener('DOMContentLoaded', () => {
         const urlParams = new URLSearchParams(window.location.search);
         const mode = urlParams.get('mode') || (window.location.hash === '#signup' ? 'signup' : 'signin') || '{{ initial_mode|default("signin") }}';
@@ -610,150 +681,64 @@
     });
 
     // ----------------------------------------------------
-    // 2. Password Visibility Toggle
+    // 4. Password Visibility Toggle
     // ----------------------------------------------------
-    function togglePasswordVisibility(inputId = 'password', iconId = 'eyeToggleIcon') {
-        const pwdInput = document.getElementById(inputId);
-        const eyeIcon = document.getElementById(iconId);
-        if (!pwdInput || !eyeIcon) return;
-        
-        if (pwdInput.type === 'password') {
-            pwdInput.type = 'text';
-            eyeIcon.textContent = 'visibility_off';
+    function togglePasswordVisibility(inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        if (!input || !icon) return;
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.textContent = 'visibility_off';
         } else {
-            pwdInput.type = 'password';
-            eyeIcon.textContent = 'visibility';
+            input.type = 'password';
+            icon.textContent = 'visibility';
         }
     }
 
     // ----------------------------------------------------
-    // 3. Intelligent Role Detection in Input Field
+    // 5. Submit Handlers
     // ----------------------------------------------------
-    function handleIdInputChange(input) {
-        const val = input.value.trim().toUpperCase();
-        const chip = document.getElementById('roleDetectedChip');
-
-        if (!val) {
-            chip.classList.add('hidden');
-            return;
-        }
-
-        if (val.startsWith('NU23') || val.startsWith('STD') || val.includes('STUDENT')) {
-            chip.textContent = 'Student 🎓';
-            chip.classList.remove('hidden');
-        } else if (val.startsWith('NU26FAC') || val.includes('FAC') || val.includes('FACULTY')) {
-            chip.textContent = 'Faculty 👨‍🏫';
-            chip.classList.remove('hidden');
-        } else if (val.includes('HOD') || val.includes('ADMIN')) {
-            chip.textContent = 'Admin 🛡️';
-            chip.classList.remove('hidden');
-        } else {
-            chip.classList.add('hidden');
-        }
-    }
-
-    // ----------------------------------------------------
-    // 4. Pragati Loader Controls
-    // ----------------------------------------------------
-    window.showPragatiLoader = function(message = 'Authenticating your session...') {
+    window.showPragatiLoader = function(msg = 'Authenticating credentials...') {
         const loader = document.getElementById('pragatiGlobalLoader');
         const msgEl = document.getElementById('pragatiLoaderMessage');
-        if (msgEl && message) msgEl.textContent = message;
+        if (msgEl) msgEl.textContent = msg;
         if (loader) {
             loader.classList.remove('opacity-0', 'pointer-events-none');
             loader.classList.add('opacity-100', 'pointer-events-auto');
         }
     };
 
-    function handleFormSubmit(e) {
-        const submitBtn = document.getElementById('loginSubmitBtn');
-        const btnSpinner = document.getElementById('btnSpinner');
-        const btnText = document.getElementById('btnText');
-
-        if (submitBtn) {
-            if (btnSpinner) btnSpinner.classList.remove('hidden');
-            if (btnText) btnText.textContent = 'Authenticating...';
-            submitBtn.classList.add('opacity-90', 'cursor-wait');
+    function handleAuthSubmit(e, type) {
+        if (type === 'signIn') {
+            const btn = document.getElementById('signInSubmitBtn');
+            const spinner = document.getElementById('signInBtnSpinner');
+            const text = document.getElementById('signInBtnText');
+            if (spinner) spinner.classList.remove('hidden');
+            if (text) text.textContent = 'Authenticating...';
+            if (btn) btn.classList.add('opacity-90', 'cursor-wait');
+            showPragatiLoader('Authenticating credentials...');
+        } else {
+            const btn = document.getElementById('signUpSubmitBtn');
+            const spinner = document.getElementById('signUpBtnSpinner');
+            const text = document.getElementById('signUpBtnText');
+            if (spinner) spinner.classList.remove('hidden');
+            if (text) text.textContent = 'Creating Account...';
+            if (btn) btn.classList.add('opacity-90', 'cursor-wait');
+            showPragatiLoader('Setting up your institutional profile...');
         }
-
-        showPragatiLoader('Authenticating credentials...');
-        return true;
-    }
-
-    function handleSignUpSubmit(e) {
-        const submitBtn = document.getElementById('signUpSubmitBtn');
-        const btnSpinner = document.getElementById('signUpBtnSpinner');
-        const btnText = document.getElementById('signUpBtnText');
-
-        if (submitBtn) {
-            if (btnSpinner) btnSpinner.classList.remove('hidden');
-            if (btnText) btnText.textContent = 'Creating Account...';
-            submitBtn.classList.add('opacity-90', 'cursor-wait');
-        }
-
-        showPragatiLoader('Setting up your institutional profile...');
         return true;
     }
 
     // ----------------------------------------------------
-    // 5. 1-Click Fast Demo Role Switcher
-    // ----------------------------------------------------
-    let typingTimer = null;
-    function selectDemoRole(roleKey, userVal, passVal, event) {
-        setAuthMode('signin');
-        
-        const roles = ['Student', 'Faculty', 'Hod'];
-        roles.forEach(r => {
-            const btn = document.getElementById('roleBtn' + r);
-            if (!btn) return;
-            if (r.toLowerCase() === roleKey.toLowerCase()) {
-                btn.className = 'demo-role-pill px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-[#EEF2FF] text-[#4338CA] border border-indigo-200 active-pill';
-                if (!btn.querySelector('.material-symbols-outlined')) {
-                    const check = document.createElement('span');
-                    check.className = 'material-symbols-outlined text-[14px]';
-                    check.innerText = 'check';
-                    btn.prepend(check);
-                }
-            } else {
-                btn.className = 'demo-role-pill px-3 py-1 rounded-full text-xs font-bold transition flex items-center gap-1 bg-slate-100 text-slate-600 border border-slate-200 hover:bg-slate-200';
-                const existingCheck = btn.querySelector('.material-symbols-outlined');
-                if (existingCheck) existingCheck.remove();
-            }
-        });
-
-        smoothTypeDemo(userVal, passVal);
-    }
-
-    function smoothTypeDemo(userVal, passVal) {
-        if (typingTimer) clearInterval(typingTimer);
-        const uInput = document.getElementById('campus_id');
-        const pInput = document.getElementById('password');
-        if (!uInput || !pInput) return;
-        uInput.value = '';
-        pInput.value = '';
-        
-        let uIdx = 0;
-        typingTimer = setInterval(() => {
-            if (uIdx < userVal.length) {
-                uInput.value += userVal[uIdx];
-                handleIdInputChange(uInput);
-                uIdx++;
-            } else {
-                clearInterval(typingTimer);
-                pInput.value = passVal;
-            }
-        }, 20);
-    }
-
-    // ----------------------------------------------------
-    // 6. SSO Provider Click
+    // 6. SSO Handlers
     // ----------------------------------------------------
     function handleSsoClick(provider, userVal, passVal, e) {
         showPragatiLoader(`Connecting with ${provider}...`);
-        const role = provider === 'Google' ? 'student' : 'faculty';
-        selectDemoRole(role, userVal, passVal, e);
+        setUserRole('student', userVal, passVal);
         setTimeout(() => {
-            const form = document.getElementById('signatureLoginForm') || document.querySelector('form');
+            const form = document.getElementById('signInForm');
             if (form) form.submit();
         }, 500);
     }
