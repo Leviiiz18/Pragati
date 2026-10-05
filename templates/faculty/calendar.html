@@ -38,81 +38,49 @@
         </div>
     </div>
 
-    <!-- Executive Metric Cards -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <!-- Faculty Telemetry Strip (Matching Student Calendar style) -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <!-- Card 1: Assessments & Exams -->
-        <div class="teacher-stat-card teacher-card-purple p-5 rounded-2xl relative">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Scheduled Exams</p>
-                    <h3 class="text-2xl font-black text-slate-900 mt-1">{{ upcoming_exams|length }}</h3>
-                </div>
-                <div class="teacher-card-icon text-purple-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 7v-6m-9-1l9 5 9-5"></path>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold text-xs border border-purple-100 flex-shrink-0">
+                <i class="fa-solid fa-graduation-cap"></i>
             </div>
-            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                <span class="inline-block w-2 h-2 rounded-full bg-purple-500"></span>
-                <span>Active evaluation windows</span>
+            <div class="min-w-0">
+                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">Scheduled Exams</div>
+                <div class="text-base font-black text-purple-600 leading-tight">{{ upcoming_exams|length }} <span class="text-[10px] font-medium text-slate-400">active</span></div>
             </div>
         </div>
 
         <!-- Card 2: Assigned Subjects -->
-        <div class="teacher-stat-card teacher-card-blue p-5 rounded-2xl relative">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Assigned Courses</p>
-                    <h3 class="text-2xl font-black text-slate-900 mt-1">{{ subjects|length }}</h3>
-                </div>
-                <div class="teacher-card-icon text-blue-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xs border border-blue-100 flex-shrink-0">
+                <i class="fa-solid fa-book-open"></i>
             </div>
-            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                <span class="inline-block w-2 h-2 rounded-full bg-blue-500"></span>
-                <span>Curriculum tracking active</span>
+            <div class="min-w-0">
+                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">Assigned Courses</div>
+                <div class="text-base font-black text-blue-600 leading-tight">{{ subjects|length }} <span class="text-[10px] font-medium text-slate-400">courses</span></div>
             </div>
         </div>
 
         <!-- Card 3: Assignment Milestones -->
-        <div class="teacher-stat-card teacher-card-amber p-5 rounded-2xl relative">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Course Deadlines</p>
-                    <h3 class="text-2xl font-black text-slate-900 mt-1" id="statDeadlineCount">--</h3>
-                </div>
-                <div class="teacher-card-icon text-amber-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold text-xs border border-amber-100 flex-shrink-0">
+                <i class="fa-solid fa-hourglass-half"></i>
             </div>
-            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                <span class="inline-block w-2 h-2 rounded-full bg-amber-500"></span>
-                <span>Student submissions pending</span>
+            <div class="min-w-0">
+                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">Course Deadlines</div>
+                <div class="text-base font-black text-amber-600 leading-tight"><span id="statDeadlineCount">0</span> <span class="text-[10px] font-medium text-slate-400">pending</span></div>
             </div>
         </div>
 
         <!-- Card 4: Attendance Registry Log Control -->
-        <div class="teacher-stat-card teacher-card-teal p-5 rounded-2xl relative">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">Attendance Registry</p>
-                    <h3 class="text-lg font-extrabold text-slate-900 mt-1" id="statAttendanceStatus">Logs Muted</h3>
-                </div>
-                <div class="teacher-card-icon text-teal-600">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                </div>
+        <div class="bg-white rounded-xl p-3.5 border border-slate-200/90 shadow-2xs flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-teal-50 text-teal-600 flex items-center justify-center font-bold text-xs border border-teal-100 flex-shrink-0">
+                <i class="fa-solid fa-user-check"></i>
             </div>
-            <div class="mt-3 flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                <span class="inline-block w-2 h-2 rounded-full bg-teal-500"></span>
-                <span>Muted on grid for clarity</span>
+            <div class="min-w-0">
+                <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider truncate">Attendance Registry</div>
+                <div class="text-base font-black text-slate-900 leading-tight" id="statAttendanceStatus">Logs Muted</div>
             </div>
         </div>
     </div>
@@ -618,7 +586,7 @@
         const statusEl = document.getElementById('statAttendanceStatus');
         if (statusEl) {
             statusEl.textContent = showAttendance ? 'Logs Visible' : 'Logs Muted';
-            statusEl.className = showAttendance ? 'text-lg font-extrabold text-teal-600 mt-1' : 'text-lg font-extrabold text-slate-900 mt-1';
+            statusEl.className = showAttendance ? 'text-base font-black text-teal-600 leading-tight' : 'text-base font-black text-slate-900 leading-tight';
         }
         if (calendarInstance) calendarInstance.refetchEvents();
     }
