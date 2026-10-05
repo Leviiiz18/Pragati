@@ -5,12 +5,15 @@
 <div class="max-w-4xl mx-auto py-6 sm:py-10 space-y-6">
 
     <!-- Breadcrumbs -->
-    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400">
-        <a href="{{ url_for('student.dashboard') }}" class="hover:text-slate-700 transition">Dashboard</a>
-        <span>/</span>
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
+        <a href="{{ url_for('student.dashboard') }}" class="hover:text-[#1D4ED8] transition flex items-center gap-1.5">
+            <i class="fa-solid fa-house text-[11px]"></i>
+            <span>Dashboard</span>
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
         <span class="text-slate-400">Academic Intelligence</span>
-        <span>/</span>
-        <span class="text-slate-700 font-bold">AI Course Mentor</span>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-slate-800 font-bold">AI Course Mentor</span>
     </nav>
 
     <!-- Main Coming Soon Card (Grey Stylings) -->

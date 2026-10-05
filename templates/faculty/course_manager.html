@@ -2,6 +2,18 @@
 {% block title %}Course Materials & Quiz AI - Pragati by Kalpkrats{% endblock %}
 {% block content %}
 <div class="space-y-6">
+    <!-- Breadcrumb -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
+        <a href="{{ url_for('faculty.dashboard') }}" class="hover:text-[#1D4ED8] transition flex items-center gap-1.5">
+            <i class="fa-solid fa-house text-[11px]"></i>
+            <span>Dashboard</span>
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <a href="{{ url_for('faculty.courses') }}" class="hover:text-[#1D4ED8] transition">Curriculum</a>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-slate-800 font-bold">AI Course Manager & Copilot</span>
+    </nav>
+
     <div>
         <h1 class="text-3xl font-extrabold text-slate-900">Course Materials & Teaching AI Copilot</h1>
         <p class="text-sm font-medium text-slate-600 mt-1">Generate quizzes, summarize notes, and auto-classify Bloom's taxonomy levels.</p>

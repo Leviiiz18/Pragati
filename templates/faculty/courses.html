@@ -1,7 +1,18 @@
 {% extends "base.html" %}
 {% block title %}Faculty Course Management - Pragati by Kalpkrats{% endblock %}
 {% block content %}
-<div class="space-y-6">
+<div class="space-y-5">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400" aria-label="Breadcrumb">
+        <a href="{{ url_for('faculty.dashboard') }}" class="hover:text-[#1D4ED8] transition flex items-center gap-1.5">
+            <i class="fa-solid fa-house text-[11px]"></i>
+            <span>Faculty Portal</span>
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-slate-400">Curriculum</span>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-slate-800 font-bold">Assigned Courses & Modules</span>
+    </nav>
     <div class="flex items-center justify-between">
         <div>
             <h1 class="text-3xl font-extrabold text-slate-900">Faculty Course & Module Desk</h1>
