@@ -1,202 +1,397 @@
 {% extends "base.html" %}
-{% block title %}My Personal Study Notes & Vault - Pragati by Kalpkrats{% endblock %}
+{% block title %}Academic Notes Vault & Study Dossier — Pragati{% endblock %}
+
 {% block content %}
-<div class="space-y-6">
-    <div class="flex flex-wrap items-center justify-between gap-4">
+<div class="space-y-6 max-w-7xl mx-auto py-2">
+
+    <!-- Header & Authoring Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">Personal Academic Notes Vault</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Upload PDFs, images, capture textbook photos via Camera, or draw on the Whiteboard Canvas.</p>
+            <div class="flex items-center gap-2">
+                <span class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+                <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-400">Student Academic Repository</span>
+            </div>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight mt-1">
+                Academic Dossier & Study Vault
+            </h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-500 mt-1 max-w-2xl">
+                Structured repository for lecture notes, theorem derivations, lab observations, textbook scans, and whiteboard diagrams.
+            </p>
         </div>
 
-        <div class="flex items-center gap-3">
-            <button onclick="openNoteModal('text')" class="px-4 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs flex items-center gap-2 shadow-md transition">
-                <i class="fa-solid fa-plus"></i> New Note / File Upload
+        <!-- Studio Triggers -->
+        <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap">
+            <button onclick="openNoteModal('text')" 
+                    class="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-[0.98] text-white font-bold text-xs flex items-center gap-2 shadow-sm transition cursor-pointer">
+                <i class="fa-solid fa-pen-nib text-slate-300"></i>
+                <span>Author Study Note</span>
             </button>
-            <button onclick="openNoteModal('camera')" class="px-4 py-2.5 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white font-extrabold text-xs flex items-center gap-2 shadow-md transition">
-                <i class="fa-solid fa-camera"></i> Live Camera Snapshot
+            <button onclick="openNoteModal('camera')" 
+                    class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 font-bold text-xs border border-slate-200 shadow-2xs transition cursor-pointer flex items-center gap-2">
+                <i class="fa-solid fa-camera text-slate-500"></i>
+                <span>Scan Textbook</span>
             </button>
-            <button onclick="openNoteModal('scribble')" class="px-4 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs flex items-center gap-2 shadow-md transition">
-                <i class="fa-solid fa-pen-ruler"></i> Scribble Whiteboard
+            <button onclick="openNoteModal('scribble')" 
+                    class="px-3.5 py-2.5 rounded-xl bg-white hover:bg-slate-50 active:scale-[0.98] text-slate-700 font-bold text-xs border border-slate-200 shadow-2xs transition cursor-pointer flex items-center gap-2">
+                <i class="fa-solid fa-pen-ruler text-slate-500"></i>
+                <span>Whiteboard</span>
             </button>
         </div>
     </div>
 
-    <!-- Notes Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Notes Repository Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
         {% for n in notes %}
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4 flex flex-col justify-between hover:shadow-md transition">
-            <div class="space-y-3">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <span class="px-2.5 py-0.5 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-[10px] font-bold">
-                            {{ n.category or 'General Notes' }}
+        <div class="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between hover:shadow-md hover:border-slate-300 transition duration-200 group">
+            <div class="space-y-3.5">
+                <!-- Card Header: Subject Code & Classification Badge -->
+                <div class="flex items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <span class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-800 text-[10px] font-mono font-bold border border-slate-200">
+                            {{ n.subject.code if n.subject else 'GENERAL' }}
                         </span>
-                        {% if n.attachment_type and n.attachment_type != 'Text' %}
-                        <span class="px-2 py-0.5 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold flex items-center gap-1">
-                            {% if n.attachment_type == 'Camera Snapshot' %}<i class="fa-solid fa-camera"></i>
-                            {% elif n.attachment_type == 'Whiteboard Scribble' %}<i class="fa-solid fa-pen-ruler"></i>
-                            {% elif n.attachment_type == 'Image' %}<i class="fa-solid fa-image"></i>
-                            {% else %}<i class="fa-solid fa-file-pdf"></i>{% endif %}
-                            {{ n.attachment_type }}
+                        <span class="px-2 py-0.5 rounded-md bg-slate-50 text-slate-600 text-[10px] font-semibold border border-slate-200/80">
+                            {{ n.category or 'Lecture Notes' }}
                         </span>
-                        {% endif %}
                     </div>
 
-                    <span class="text-[10px] text-slate-400 font-bold">
-                        {{ n.created_at.strftime('%b %d, %Y') if n.created_at else 'Jul 26, 2026' }}
+                    <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap">
+                        {{ n.created_at.strftime('%d %b %Y') if n.created_at else 'Active' }}
                     </span>
                 </div>
 
-                <h3 class="text-base font-extrabold text-slate-900 leading-snug">{{ n.title }}</h3>
+                <!-- Note Title -->
+                <h3 class="text-sm sm:text-base font-extrabold text-slate-900 tracking-tight leading-snug group-hover:text-indigo-600 transition">
+                    {{ n.title }}
+                </h3>
                 
+                <!-- Content Preview -->
                 {% if n.content %}
-                <p class="text-xs text-slate-700 font-medium whitespace-pre-line leading-relaxed">{{ n.content }}</p>
+                <div class="text-xs text-slate-600 font-normal leading-relaxed line-clamp-4 bg-slate-50/70 p-3 rounded-xl border border-slate-100 whitespace-pre-line font-sans">
+                    {{ n.content }}
+                </div>
                 {% endif %}
 
-                <!-- Attachment Rendering (Image / Scribble / Camera Snapshot / PDF) -->
+                <!-- Attachment Rendering -->
                 {% if n.attachment_path %}
                     {% if n.attachment_type in ['Image', 'Camera Snapshot', 'Whiteboard Scribble'] or n.attachment_path.startswith('data:image') %}
-                    <div class="rounded-2xl overflow-hidden border border-slate-200 bg-slate-50 relative group">
-                        <img src="{{ n.attachment_path }}" alt="Note Attachment" class="w-full h-48 object-cover group-hover:scale-105 transition duration-300">
-                        <a href="{{ n.attachment_path }}" target="_blank" class="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white font-bold text-xs transition">
-                            <i class="fa-solid fa-magnifying-glass-plus mr-1"></i> View Full Image
+                    <div class="rounded-xl overflow-hidden border border-slate-200 bg-slate-950 relative group/img aspect-video">
+                        <img src="{{ n.attachment_path }}" alt="Note Attachment" class="w-full h-full object-contain group-hover/img:scale-105 transition duration-300">
+                        <a href="{{ n.attachment_path }}" target="_blank" class="absolute inset-0 bg-slate-950/60 opacity-0 group-hover/img:opacity-100 flex items-center justify-center text-white font-bold text-xs gap-1.5 transition backdrop-blur-xs">
+                            <i class="fa-solid fa-arrow-up-right-from-square text-xs"></i> View Full Resolution
                         </a>
                     </div>
                     {% elif n.attachment_type == 'PDF' or n.attachment_path.endswith('.pdf') %}
-                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-between text-xs">
-                        <div class="flex items-center gap-2">
-                            <i class="fa-solid fa-file-pdf text-rose-600 text-base"></i>
-                            <span class="font-bold text-slate-800 truncate max-w-[150px]">PDF Document</span>
+                    <div class="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between text-xs">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <i class="fa-solid fa-file-pdf text-rose-600 text-lg flex-shrink-0"></i>
+                            <div class="min-w-0">
+                                <div class="font-bold text-slate-800 text-xs truncate">Academic Appendix PDF</div>
+                                <div class="text-[10px] text-slate-400">Attached Course Reference</div>
+                            </div>
                         </div>
-                        <a href="{{ n.attachment_path }}" download class="px-3 py-1 bg-blue-600 hover:bg-blue-700 text-white font-bold text-[11px] rounded-xl">
-                            <i class="fa-solid fa-download"></i> Download
+                        <a href="{{ n.attachment_path }}" download class="px-2.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] rounded-lg transition">
+                            <i class="fa-solid fa-download text-[10px]"></i>
                         </a>
                     </div>
                     {% endif %}
                 {% endif %}
             </div>
 
-            <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <span class="text-slate-500 font-semibold">Subject: <strong class="text-slate-800">{{ n.subject.code if n.subject else 'General' }}</strong></span>
-                <form action="{{ url_for('student.notes') }}" method="POST" class="inline" onsubmit="return confirm('Delete this note?');">
+            <!-- Card Footer: Subject Detail & Delete Action -->
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                <span class="text-[11px] text-slate-500 font-medium truncate max-w-[170px]" title="{{ n.subject.name if n.subject else 'General Studies' }}">
+                    {{ n.subject.name if n.subject else 'General Studies' }}
+                </span>
+                <form action="{{ url_for('student.notes') }}" method="POST" class="inline" onsubmit="return confirm('Permanently remove this note from your academic vault?');">
                     <input type="hidden" name="action" value="delete_note">
                     <input type="hidden" name="note_id" value="{{ n.id }}">
-                    <button type="submit" class="text-slate-400 hover:text-rose-600 font-bold flex items-center gap-1 transition">
-                        <i class="fa-solid fa-trash-can text-xs"></i> Delete
+                    <button type="submit" class="text-slate-400 hover:text-rose-600 font-bold text-[11px] flex items-center gap-1 transition p-1 cursor-pointer" title="Delete Note">
+                        <i class="fa-solid fa-trash-can text-[11px]"></i>
+                        <span>Delete</span>
                     </button>
                 </form>
             </div>
         </div>
         {% else %}
-        <div class="col-span-3 p-12 text-center bg-white rounded-3xl border border-slate-200 text-slate-400 font-medium space-y-3">
-            <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center mx-auto text-xl font-bold">
-                <i class="fa-solid fa-note-sticky"></i>
+        <!-- Empty State -->
+        <div class="col-span-full py-16 px-6 text-center bg-white rounded-3xl border border-dashed border-slate-200 text-slate-400 space-y-4">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-500 flex items-center justify-center mx-auto text-2xl">
+                <i class="fa-solid fa-book-bookmark"></i>
             </div>
-            <div>No personal notes stored in your vault. Click one of the buttons above to save text, photos, PDFs, or whiteboard scribbles.</div>
+            <div class="max-w-md mx-auto">
+                <h4 class="text-base font-bold text-slate-800">No Academic Notes Found</h4>
+                <p class="text-xs text-slate-500 mt-1">Author your first structured lecture note, upload textbook slides, or draw derivations using the Whiteboard studio above.</p>
+            </div>
+            <button onclick="openNoteModal('text')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-xl shadow-xs transition">
+                + Author First Note
+            </button>
         </div>
         {% endfor %}
     </div>
 </div>
 
-<!-- Modal: Comprehensive Personal Note Creation (Text, File Upload, Camera Snapshot, Whiteboard Scribble) -->
-<div id="addNoteModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden items-center justify-center p-4">
-    <div class="w-full max-w-2xl bg-white rounded-3xl border border-slate-200 p-6 md:p-8 space-y-6 shadow-2xl overflow-y-auto max-h-[90vh]">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-4">
-            <div>
-                <h3 class="text-xl font-extrabold text-slate-900">Add Personal Study Note</h3>
-                <p class="text-xs text-slate-500 font-medium">Text, File Upload, Camera Photo Capture, or Scribble Whiteboard</p>
+<!-- ========================================================================= -->
+<!-- ACADEMIC NOTE AUTHORING STUDIO (MODERN & PROFESSIONAL EXPANSIVE MODAL)    -->
+<!-- ========================================================================= -->
+<div id="addNoteModal" class="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-md hidden items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="w-full max-w-4xl bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] my-auto">
+        
+        <!-- Studio Header Bar -->
+        <div class="px-6 py-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-indigo-500/20 text-indigo-400 border border-indigo-400/30 flex items-center justify-center text-sm">
+                    <i class="fa-solid fa-feather-pointed"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm sm:text-base font-extrabold text-white tracking-tight">Academic Note Authoring Studio</h3>
+                    <p class="text-[11px] text-slate-400 font-medium">Curriculum-linked Dossier Entry &bull; Markdown & Formula Enabled</p>
+                </div>
             </div>
-            <button onclick="closeNoteModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-xl"></i></button>
-        </div>
-
-        <!-- Creation Mode Tabs -->
-        <div class="flex border-b border-slate-200 gap-2">
-            <button id="tab-btn-text" onclick="switchTab('text')" class="px-4 py-2 text-xs font-bold border-b-2 border-amber-500 text-amber-800 flex items-center gap-1.5">
-                <i class="fa-solid fa-file-pen"></i> Text & File Upload
-            </button>
-            <button id="tab-btn-camera" onclick="switchTab('camera')" class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1.5">
-                <i class="fa-solid fa-camera"></i> Live Camera Photo
-            </button>
-            <button id="tab-btn-scribble" onclick="switchTab('scribble')" class="px-4 py-2 text-xs font-bold text-slate-500 hover:text-slate-900 flex items-center gap-1.5">
-                <i class="fa-solid fa-pen-ruler"></i> Scribble Whiteboard
+            
+            <button type="button" onclick="closeNoteModal()" class="w-8 h-8 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white flex items-center justify-center transition focus:outline-none">
+                <i class="fa-solid fa-xmark text-sm"></i>
             </button>
         </div>
 
-        <form id="noteForm" action="{{ url_for('student.notes') }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+        <!-- Studio Mode Switcher Tabs -->
+        <div class="px-6 pt-3 bg-slate-50/80 border-b border-slate-200 flex items-center gap-2 flex-shrink-0 overflow-x-auto">
+            <button type="button" 
+                    id="tab-btn-text" 
+                    onclick="switchTab('text')" 
+                    class="px-3.5 py-2 text-xs font-bold border-b-2 border-slate-900 text-slate-900 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-align-left text-slate-700"></i>
+                <span>Structured Notes & Markdown</span>
+            </button>
+            
+            <button type="button" 
+                    id="tab-btn-camera" 
+                    onclick="switchTab('camera')" 
+                    class="px-3.5 py-2 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-camera text-slate-400"></i>
+                <span>Document Scanner (Live Camera)</span>
+            </button>
+            
+            <button type="button" 
+                    id="tab-btn-scribble" 
+                    onclick="switchTab('scribble')" 
+                    class="px-3.5 py-2 text-xs font-bold border-b-2 border-transparent text-slate-500 hover:text-slate-800 flex items-center gap-2 transition cursor-pointer">
+                <i class="fa-solid fa-pen-ruler text-slate-400"></i>
+                <span>Engineering Whiteboard & Diagrams</span>
+            </button>
+        </div>
+
+        <!-- Studio Scrollable Content Area -->
+        <form id="noteForm" action="{{ url_for('student.notes') }}" method="POST" enctype="multipart/form-data" class="flex-1 overflow-y-auto p-6 space-y-5">
             <input type="hidden" name="action" value="add_note">
             <input type="hidden" id="drawingDataInput" name="drawing_data">
             <input type="hidden" id="attachmentTypeInput" name="attachment_type" value="Text">
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Metadata Row: Course Select & Classification -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Select Subject</label>
-                    <select name="subject_id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Course Unit / Subject *
+                    </label>
+                    <select name="subject_id" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-slate-900 transition">
                         {% for s in subjects %}
-                        <option value="{{ s.id }}">{{ s.code }} - {{ s.name }}</option>
+                        <option value="{{ s.id }}">[{{ s.code }}] {{ s.name }}</option>
                         {% endfor %}
                     </select>
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Category</label>
-                    <select id="categorySelect" name="category" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none">
-                        <option value="Lecture Notes">Lecture Notes</option>
-                        <option value="Textbook Photo">Textbook Photo</option>
-                        <option value="Whiteboard Scribble">Whiteboard Scribble</option>
-                        <option value="Formula Sheet">Formula Sheet</option>
-                        <option value="Exam Revision">Exam Revision</option>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Dossier Classification
+                    </label>
+                    <select id="categorySelect" name="category" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs sm:text-sm font-bold text-slate-800 focus:outline-none focus:bg-white focus:border-slate-900 transition">
+                        <option value="Lecture Notes">Lecture Notes & Transcripts</option>
+                        <option value="Formula Derivation">Mathematical / Formula Derivation</option>
+                        <option value="Lab Experiment & Code">Lab Observations & Code Snippets</option>
+                        <option value="Textbook Reference">Textbook Photo & Reference Scan</option>
+                        <option value="Whiteboard Diagram">Whiteboard & Diagram Annotation</option>
+                        <option value="Exam Revision Summary">Exam Revision Key Points</option>
                     </select>
                 </div>
             </div>
 
+            <!-- Note Title Input -->
             <div>
-                <label class="block text-xs font-bold text-slate-600 mb-1">Note Title *</label>
-                <input type="text" name="title" placeholder="e.g. Unit 3 Diagram & Notes" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    Note Title *
+                </label>
+                <input type="text" 
+                       id="noteTitleInput"
+                       name="title" 
+                       placeholder="e.g., Module 3: Dynamic Programming & Bellman-Ford Complexity Analysis" 
+                       required 
+                       class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:outline-none focus:bg-white focus:border-slate-900 transition">
             </div>
 
-            <!-- TAB 1: Text & File Upload -->
+            <!-- TAB 1: Structured Academic Text & File References -->
             <div id="tab-content-text" class="space-y-4">
+                
+                <!-- Professional Markdown / Academic Formatting Toolbar -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Content / Written Notes</label>
-                    <textarea name="content" rows="3" placeholder="Write personal study notes..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500"></textarea>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+                            Academic Content / Notes Body
+                        </label>
+                        <div class="text-[11px] text-slate-400 font-medium" id="wordCountLabel">
+                            0 words &bull; 0 min read
+                        </div>
+                    </div>
+
+                    <!-- Toolbar -->
+                    <div class="flex items-center gap-1 p-1 bg-slate-100/90 border border-slate-200 rounded-t-xl overflow-x-auto">
+                        <button type="button" onclick="insertFormat('**', '**')" class="px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Bold (Ctrl+B)">
+                            <strong>B</strong>
+                        </button>
+                        <button type="button" onclick="insertFormat('*', '*')" class="px-2.5 py-1 text-xs font-serif italic text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Italic (Ctrl+I)">
+                            <em>I</em>
+                        </button>
+                        <div class="w-px h-4 bg-slate-300 mx-1"></div>
+                        <button type="button" onclick="insertFormat('# ', '')" class="px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Heading 1">
+                            H1
+                        </button>
+                        <button type="button" onclick="insertFormat('## ', '')" class="px-2.5 py-1 text-xs font-bold text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Heading 2">
+                            H2
+                        </button>
+                        <div class="w-px h-4 bg-slate-300 mx-1"></div>
+                        <button type="button" onclick="insertFormat('- ', '')" class="px-2.5 py-1 text-xs text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Bullet List">
+                            <i class="fa-solid fa-list-ul"></i>
+                        </button>
+                        <button type="button" onclick="insertFormat('1. ', '')" class="px-2.5 py-1 text-xs text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Numbered List">
+                            <i class="fa-solid fa-list-ol"></i>
+                        </button>
+                        <button type="button" onclick="insertFormat('```\n', '\n```')" class="px-2.5 py-1 text-xs font-mono text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Code Block">
+                            &lt;/&gt;
+                        </button>
+                        <button type="button" onclick="insertFormat('$$ ', ' $$')" class="px-2.5 py-1 text-xs font-serif text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Formula / LaTeX">
+                            &Sigma;
+                        </button>
+                        <button type="button" onclick="insertFormat('> ', '')" class="px-2.5 py-1 text-xs text-slate-700 hover:bg-white hover:shadow-xs rounded transition" title="Blockquote">
+                            <i class="fa-solid fa-quote-left"></i>
+                        </button>
+                        <div class="w-px h-4 bg-slate-300 mx-1"></div>
+                        <button type="button" onclick="insertTimestamp()" class="px-2.5 py-1 text-[11px] font-semibold text-slate-600 hover:bg-white hover:shadow-xs rounded transition" title="Insert Academic Date Tag">
+                            <i class="fa-regular fa-clock mr-1"></i> Timestamp
+                        </button>
+                    </div>
+
+                    <!-- Main Textarea -->
+                    <textarea id="noteContentArea" 
+                              name="content" 
+                              rows="6" 
+                              oninput="updateWordCount()"
+                              placeholder="Write lecture notes, key theoretical concepts, proof steps, or code syntax..." 
+                              class="w-full px-4 py-3 bg-white border border-t-0 border-slate-200 rounded-b-xl text-xs sm:text-sm font-normal text-slate-800 leading-relaxed placeholder:text-slate-400 focus:outline-none focus:border-slate-900 transition font-sans"></textarea>
                 </div>
 
+                <!-- Academic Document / Reference Upload Area -->
                 <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Upload File (PDF, PNG, JPG, Doc)</label>
-                    <input type="file" name="file" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none">
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                        Attach Reference File (PDF Slides, Diagram PNG/JPG, Handout)
+                    </label>
+                    <div class="relative border-2 border-dashed border-slate-200 hover:border-slate-400 rounded-xl p-4 bg-slate-50/60 hover:bg-slate-50 transition text-center cursor-pointer flex flex-col items-center justify-center">
+                        <input type="file" 
+                               id="noteFileInput"
+                               name="file" 
+                               onchange="handleFileSelect(event)"
+                               class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                        <i class="fa-solid fa-cloud-arrow-up text-slate-400 text-xl mb-1"></i>
+                        <span class="text-xs font-bold text-slate-700" id="fileUploadLabel">Click or drag & drop lecture PDF / image here</span>
+                        <span class="text-[10px] text-slate-400 mt-0.5">Supports PDF, PNG, JPG, DOCX (Max 25 MB)</span>
+                    </div>
                 </div>
             </div>
 
-            <!-- TAB 2: Live WebRTC Camera -->
+            <!-- TAB 2: Live WebRTC Camera Document Scanner -->
             <div id="tab-content-camera" class="hidden space-y-4 text-center">
-                <div class="relative bg-slate-900 rounded-2xl overflow-hidden aspect-video flex items-center justify-center">
+                <div class="relative bg-slate-950 rounded-2xl overflow-hidden aspect-video flex items-center justify-center border border-slate-800 shadow-inner">
                     <video id="cameraVideo" autoplay playsinline class="w-full h-full object-cover"></video>
                     <canvas id="cameraCanvas" class="hidden w-full h-full object-cover"></canvas>
+                    
+                    <!-- Scanner Viewfinder Overlay -->
+                    <div id="viewfinderOverlay" class="absolute inset-8 border border-white/40 rounded-xl pointer-events-none flex flex-col justify-between p-3">
+                        <div class="flex justify-between">
+                            <span class="w-4 h-4 border-t-2 border-l-2 border-indigo-400"></span>
+                            <span class="w-4 h-4 border-t-2 border-r-2 border-indigo-400"></span>
+                        </div>
+                        <div class="text-center">
+                            <span class="px-2.5 py-1 rounded bg-black/60 text-white/80 text-[10px] font-mono uppercase tracking-wider">Align Textbook / Blackboard Page</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="w-4 h-4 border-b-2 border-l-2 border-indigo-400"></span>
+                            <span class="w-4 h-4 border-b-2 border-r-2 border-indigo-400"></span>
+                        </div>
+                    </div>
                 </div>
+
                 <div class="flex items-center justify-center gap-3">
-                    <button type="button" onclick="startCamera()" class="px-4 py-2 bg-slate-800 text-white rounded-xl text-xs font-bold"><i class="fa-solid fa-video mr-1"></i> Start Camera</button>
-                    <button type="button" onclick="capturePhoto()" class="px-5 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold shadow-md"><i class="fa-solid fa-camera mr-1"></i> Capture Snapshot</button>
+                    <button type="button" onclick="startCamera()" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold border border-slate-200 transition">
+                        <i class="fa-solid fa-arrows-rotate mr-1.5"></i> Restart Camera
+                    </button>
+                    <button type="button" onclick="capturePhoto()" class="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold shadow-md transition flex items-center gap-2">
+                        <i class="fa-solid fa-camera text-slate-300"></i> Capture Document Page
+                    </button>
                 </div>
             </div>
 
             <!-- TAB 3: Scribble Whiteboard Canvas -->
-            <div id="tab-content-scribble" class="hidden space-y-4">
-                <div class="flex items-center justify-between bg-slate-100 p-3 rounded-2xl text-xs font-bold">
+            <div id="tab-content-scribble" class="hidden space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-3 bg-slate-100 p-2.5 rounded-xl text-xs font-semibold border border-slate-200">
                     <div class="flex items-center gap-3">
-                        <label class="flex items-center gap-1">Color: <input type="color" id="penColor" value="#2563eb" class="w-6 h-6 rounded cursor-pointer border-0"></label>
-                        <label class="flex items-center gap-1">Width: <input type="range" id="penWidth" min="1" max="15" value="3" class="w-20"></label>
+                        <!-- Color Palette -->
+                        <div class="flex items-center gap-1.5">
+                            <span class="text-[11px] text-slate-500 font-bold uppercase">Ink:</span>
+                            <button type="button" onclick="setPenColor('#0F172A')" class="w-5 h-5 rounded-full bg-slate-900 ring-2 ring-slate-400 transition"></button>
+                            <button type="button" onclick="setPenColor('#1D4ED8')" class="w-5 h-5 rounded-full bg-blue-700 hover:scale-110 transition"></button>
+                            <button type="button" onclick="setPenColor('#DC2626')" class="w-5 h-5 rounded-full bg-rose-600 hover:scale-110 transition"></button>
+                            <button type="button" onclick="setPenColor('#16A34A')" class="w-5 h-5 rounded-full bg-emerald-600 hover:scale-110 transition"></button>
+                            <input type="color" id="penColor" value="#0F172A" onchange="setPenColor(this.value)" class="w-5 h-5 rounded cursor-pointer border-0 opacity-0 absolute">
+                        </div>
+
+                        <!-- Stroke Width -->
+                        <div class="flex items-center gap-1.5 pl-2 border-l border-slate-300">
+                            <span class="text-[11px] text-slate-500 font-bold uppercase">Stroke:</span>
+                            <button type="button" onclick="setPenWidth(2)" class="px-2 py-0.5 text-[10px] font-bold bg-white rounded border border-slate-300">Fine</button>
+                            <button type="button" onclick="setPenWidth(4)" class="px-2 py-0.5 text-[10px] font-bold bg-white rounded border border-slate-300">Med</button>
+                            <button type="button" onclick="setPenWidth(7)" class="px-2 py-0.5 text-[10px] font-bold bg-white rounded border border-slate-300">Bold</button>
+                        </div>
                     </div>
-                    <button type="button" onclick="clearCanvas()" class="px-3 py-1 bg-rose-100 text-rose-700 rounded-xl hover:bg-rose-200"><i class="fa-solid fa-eraser mr-1"></i> Clear Board</button>
+
+                    <button type="button" onclick="clearCanvas()" class="px-3 py-1 bg-white hover:bg-rose-50 text-rose-700 border border-slate-200 rounded-lg text-xs font-bold transition">
+                        <i class="fa-solid fa-eraser mr-1"></i> Clear Board
+                    </button>
                 </div>
 
-                <div class="border-2 border-dashed border-slate-300 rounded-2xl overflow-hidden bg-white">
-                    <canvas id="whiteboardCanvas" width="600" height="300" class="w-full h-[280px] cursor-crosshair touch-none"></canvas>
+                <!-- Engineering Graph Paper Canvas -->
+                <div class="border border-slate-300 rounded-xl overflow-hidden bg-white shadow-inner" style="background-image: radial-gradient(#CBD5E1 1px, transparent 1px); background-size: 16px 16px;">
+                    <canvas id="whiteboardCanvas" width="800" height="360" class="w-full h-[320px] cursor-crosshair touch-none"></canvas>
                 </div>
             </div>
 
-            <div class="flex justify-end gap-3 pt-3 border-t border-slate-100">
-                <button type="button" onclick="closeNoteModal()" class="px-5 py-2.5 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition">Cancel</button>
-                <button type="submit" onclick="prepareSubmit()" class="px-6 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 text-xs font-extrabold shadow-lg shadow-amber-200 transition">Save Note to Vault</button>
+            <!-- Modal Action Footer -->
+            <div class="flex items-center justify-between pt-4 border-t border-slate-100 flex-shrink-0">
+                <div class="flex items-center gap-2 text-slate-400 text-xs font-medium">
+                    <i class="fa-solid fa-circle-check text-emerald-500 text-xs"></i>
+                    <span>Ready to index into academic vault</span>
+                </div>
+
+                <div class="flex items-center gap-2.5">
+                    <button type="button" 
+                            onclick="closeNoteModal()" 
+                            class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition cursor-pointer">
+                        Discard Draft
+                    </button>
+                    <button type="submit" 
+                            onclick="prepareSubmit()" 
+                            class="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold shadow-md transition cursor-pointer flex items-center gap-2">
+                        <i class="fa-solid fa-floppy-disk text-slate-300"></i>
+                        <span>Save to Academic Vault</span>
+                    </button>
+                </div>
             </div>
         </form>
     </div>
@@ -207,45 +402,97 @@ let currentTab = 'text';
 let cameraStream = null;
 let isDrawing = false;
 let wbCanvas, wbCtx;
+let activePenColor = '#0F172A';
+let activePenWidth = 2.5;
 
 function openNoteModal(tab = 'text') {
-    document.getElementById('addNoteModal').classList.remove('hidden');
-    document.getElementById('addNoteModal').classList.add('flex');
+    const modal = document.getElementById('addNoteModal');
+    modal.classList.remove('hidden');
+    modal.classList.add('flex');
     switchTab(tab);
-    initWhiteboard();
+    setTimeout(initWhiteboard, 80);
 }
 
 function closeNoteModal() {
     stopCamera();
-    document.getElementById('addNoteModal').classList.add('hidden');
+    const modal = document.getElementById('addNoteModal');
+    modal.classList.add('hidden');
+    modal.classList.remove('flex');
 }
 
 function switchTab(tab) {
     currentTab = tab;
     ['text', 'camera', 'scribble'].forEach(t => {
         document.getElementById(`tab-content-${t}`).classList.add('hidden');
-        document.getElementById(`tab-btn-${t}`).classList.remove('border-b-2', 'border-amber-500', 'text-amber-800');
-        document.getElementById(`tab-btn-${t}`).classList.add('text-slate-500');
+        const btn = document.getElementById(`tab-btn-${t}`);
+        btn.classList.remove('border-slate-900', 'text-slate-900');
+        btn.classList.add('border-transparent', 'text-slate-500');
     });
 
     document.getElementById(`tab-content-${tab}`).classList.remove('hidden');
-    document.getElementById(`tab-btn-${tab}`).classList.add('border-b-2', 'border-amber-500', 'text-amber-800');
-    document.getElementById(`tab-btn-${tab}`).classList.remove('text-slate-500');
+    const activeBtn = document.getElementById(`tab-btn-${tab}`);
+    activeBtn.classList.remove('border-transparent', 'text-slate-500');
+    activeBtn.classList.add('border-slate-900', 'text-slate-900');
 
     if (tab === 'camera') startCamera();
     else stopCamera();
 }
 
-// WebRTC Camera API
+// ----------------------------------------------------
+// Markdown / Academic Toolbar Helpers
+// ----------------------------------------------------
+function insertFormat(startTag, endTag) {
+    const textarea = document.getElementById('noteContentArea');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selected = textarea.value.substring(start, end);
+    const replacement = startTag + (selected || 'text') + endTag;
+    
+    textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + startTag.length, start + startTag.length + (selected ? selected.length : 4));
+    updateWordCount();
+}
+
+function insertTimestamp() {
+    const textarea = document.getElementById('noteContentArea');
+    const now = new Date();
+    const dateStr = `\n> 📅 **Academic Entry:** ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}\n`;
+    const start = textarea.selectionStart;
+    textarea.value = textarea.value.substring(0, start) + dateStr + textarea.value.substring(start);
+    textarea.focus();
+    updateWordCount();
+}
+
+function updateWordCount() {
+    const text = document.getElementById('noteContentArea').value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    const readTime = Math.ceil(words / 200);
+    document.getElementById('wordCountLabel').textContent = `${words} words • ${readTime} min read`;
+}
+
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        document.getElementById('fileUploadLabel').textContent = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+    }
+}
+
+// ----------------------------------------------------
+// WebRTC Camera Document Scanner
+// ----------------------------------------------------
 async function startCamera() {
     try {
         const video = document.getElementById('cameraVideo');
-        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        cameraStream = await navigator.mediaDevices.getUserMedia({ 
+            video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } 
+        });
         video.srcObject = cameraStream;
         video.classList.remove('hidden');
         document.getElementById('cameraCanvas').classList.add('hidden');
+        document.getElementById('viewfinderOverlay').classList.remove('hidden');
     } catch (err) {
-        alert("Unable to access camera: " + err.message);
+        console.warn("Camera stream unavailable: ", err.message);
     }
 }
 
@@ -259,58 +506,104 @@ function stopCamera() {
 function capturePhoto() {
     const video = document.getElementById('cameraVideo');
     const canvas = document.getElementById('cameraCanvas');
-    canvas.width = video.videoWidth || 640;
-    canvas.height = video.videoHeight || 480;
+    if (!video || !canvas) return;
+
+    canvas.width = video.videoWidth || 800;
+    canvas.height = video.videoHeight || 600;
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-    
-    document.getElementById('drawingDataInput').value = canvas.toDataURL('image/png');
-    document.getElementById('attachmentTypeInput').value = 'Camera Snapshot';
-    document.getElementById('categorySelect').value = 'Textbook Photo';
 
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.88);
+    document.getElementById('drawingDataInput').value = dataUrl;
+    document.getElementById('attachmentTypeInput').value = 'Camera Snapshot';
+    document.getElementById('categorySelect').value = 'Textbook Reference';
+    
     video.classList.add('hidden');
     canvas.classList.remove('hidden');
-    stopCamera();
+    document.getElementById('viewfinderOverlay').classList.add('hidden');
 }
 
-// HTML5 Whiteboard Canvas API
+// ----------------------------------------------------
+// Engineering Whiteboard Studio
+// ----------------------------------------------------
 function initWhiteboard() {
     wbCanvas = document.getElementById('whiteboardCanvas');
+    if (!wbCanvas) return;
     wbCtx = wbCanvas.getContext('2d');
-    wbCtx.fillStyle = "#ffffff";
-    wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+    wbCtx.lineCap = 'round';
+    wbCtx.lineJoin = 'round';
 
-    wbCanvas.onmousedown = (e) => { isDrawing = true; draw(e); };
-    wbCanvas.onmousemove = (e) => draw(e);
-    wbCanvas.onmouseup = () => { isDrawing = false; wbCtx.beginPath(); };
+    wbCanvas.onmousedown = startDraw;
+    wbCanvas.onmousemove = draw;
+    wbCanvas.onmouseup = stopDraw;
+    wbCanvas.onmouseleave = stopDraw;
+
+    wbCanvas.ontouchstart = (e) => {
+        e.preventDefault();
+        const touch = e.touches[0];
+        const rect = wbCanvas.getBoundingClientRect();
+        isDrawing = true;
+        wbCtx.beginPath();
+        wbCtx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+    };
+
+    wbCanvas.ontouchmove = (e) => {
+        e.preventDefault();
+        if (!isDrawing) return;
+        const touch = e.touches[0];
+        const rect = wbCanvas.getBoundingClientRect();
+        wbCtx.strokeStyle = activePenColor;
+        wbCtx.lineWidth = activePenWidth;
+        wbCtx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+        wbCtx.stroke();
+    };
+
+    wbCanvas.ontouchend = () => isDrawing = false;
+}
+
+function startDraw(e) {
+    isDrawing = true;
+    const rect = wbCanvas.getBoundingClientRect();
+    wbCtx.beginPath();
+    wbCtx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
 }
 
 function draw(e) {
     if (!isDrawing) return;
     const rect = wbCanvas.getBoundingClientRect();
-    const x = (e.clientX - rect.left) * (wbCanvas.width / rect.width);
-    const y = (e.clientY - rect.top) * (wbCanvas.height / rect.height);
-
-    wbCtx.lineWidth = document.getElementById('penWidth').value;
-    wbCtx.lineCap = 'round';
-    wbCtx.strokeStyle = document.getElementById('penColor').value;
-
-    wbCtx.lineTo(x, y);
+    wbCtx.strokeStyle = activePenColor;
+    wbCtx.lineWidth = activePenWidth;
+    wbCtx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
     wbCtx.stroke();
-    wbCtx.beginPath();
-    wbCtx.moveTo(x, y);
+}
+
+function stopDraw() {
+    if (isDrawing) {
+        wbCtx.closePath();
+        isDrawing = false;
+    }
+}
+
+function setPenColor(color) {
+    activePenColor = color;
+}
+
+function setPenWidth(width) {
+    activePenWidth = width;
 }
 
 function clearCanvas() {
-    wbCtx.fillStyle = "#ffffff";
-    wbCtx.fillRect(0, 0, wbCanvas.width, wbCanvas.height);
+    if (wbCtx && wbCanvas) {
+        wbCtx.clearRect(0, 0, wbCanvas.width, wbCanvas.height);
+    }
 }
 
 function prepareSubmit() {
-    if (currentTab === 'scribble') {
-        document.getElementById('drawingDataInput').value = wbCanvas.toDataURL('image/png');
+    if (currentTab === 'scribble' && wbCanvas) {
+        const dataUrl = wbCanvas.toDataURL('image/png');
+        document.getElementById('drawingDataInput').value = dataUrl;
         document.getElementById('attachmentTypeInput').value = 'Whiteboard Scribble';
-        document.getElementById('categorySelect').value = 'Whiteboard Scribble';
+        document.getElementById('categorySelect').value = 'Whiteboard Diagram';
     }
 }
 </script>
