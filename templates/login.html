@@ -50,11 +50,11 @@
 
     /* Right Side Ambient Image Blur */
     .blurred-showcase-bg {
-        background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}");
+        background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}?v={{ range(1000, 9999) | random }}");
         background-size: cover;
         background-position: center;
-        filter: blur(14px) brightness(0.88);
-        transform: scale(1.14);
+        filter: blur(16px) brightness(0.92);
+        transform: scale(1.18);
     }
 
     /* Social Circular Buttons */
