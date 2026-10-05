@@ -36,7 +36,17 @@
     .halftone-bg {
         background-image: radial-gradient(#94A3B8 1.2px, transparent 1.2px);
         background-size: 16px 16px;
-        opacity: 0.28;
+        opacity: 0.18;
+    }
+
+    /* Left Hero Custom Tile Artwork Layer */
+    .hero-artwork-bg {
+        background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}?v={{ range(1000, 9999) | random }}");
+        background-size: cover;
+        background-position: center;
+        opacity: 0.24;
+        filter: saturate(1.12) brightness(0.98);
+        transition: opacity 0.3s ease;
     }
 
     /* Subtle Floating Animations for Showcase */
@@ -151,6 +161,10 @@
         <!-- ---------------------------------------------------- -->
         <div class="w-full lg:w-[48%] bg-[#F9FAFB] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-slate-200/80 overflow-hidden">
             
+            <!-- Custom Floral Ceramic Tile Artwork Background Layer -->
+            <div class="hero-artwork-bg absolute inset-0 pointer-events-none"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-white/95 via-white/60 to-white/90 pointer-events-none"></div>
+
             <!-- Halftone Dot Texture Background -->
             <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
 
