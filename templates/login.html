@@ -21,7 +21,9 @@
 
     body {
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background-color: #F8FAFC;
+        background-color: #FFFFFF;
+        margin: 0;
+        padding: 0;
     }
 
     .material-symbols-outlined {
@@ -29,11 +31,6 @@
         display: inline-block;
         vertical-align: middle;
         line-height: 1;
-    }
-
-    /* Master Card Shadow */
-    .reference-master-card {
-        box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(226, 232, 240, 0.8);
     }
 
     /* Ambient Heritage Watermark in Right Hero Panel */
@@ -90,7 +87,7 @@
     .mockup-tablet-wrapper {
         transform: rotate(-28deg) translate(14%, 20%);
         transform-origin: center center;
-        box-shadow: -20px 30px 60px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.15);
+        box-shadow: -25px 35px 70px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15);
     }
 
     /* Pragati Animated Loader */
@@ -118,252 +115,253 @@
     }
 </style>
 
-<div class="min-h-screen w-full flex flex-col lg:flex-row select-none bg-white overflow-x-hidden">
+<!-- Full Screen Page Container with Matching Vesper Reference Split -->
+<div class="min-h-screen w-full flex flex-col lg:flex-row select-none bg-white p-3 sm:p-4 lg:p-5 gap-4 lg:gap-6 overflow-hidden">
 
     <!-- ---------------------------------------------------- -->
-    <!-- LEFT COLUMN: AUTHENTICATION FORM (Full Screen Height)-->
+    <!-- LEFT COLUMN: AUTHENTICATION FORM (Spacious White)    -->
     <!-- ---------------------------------------------------- -->
-    <div class="w-full lg:w-[48%] xl:w-[45%] bg-white min-h-screen p-6 sm:p-10 lg:p-12 xl:p-16 flex flex-col justify-between relative z-20">
+    <div class="w-full lg:w-[45%] xl:w-[42%] flex flex-col justify-between py-4 sm:py-6 px-4 sm:px-8 lg:px-10 xl:px-14 relative z-20 min-h-full">
         
         <!-- Top Brand Logo -->
-        <div class="text-left mb-6">
+        <div class="text-left pt-2">
             <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=5" 
                  alt="Pragati by KalpKrafts" 
                  class="h-8 sm:h-9 w-auto object-contain">
         </div>
 
-            <!-- Form Body Centered -->
-            <div class="w-full max-w-[380px] mx-auto my-auto">
+        <!-- Form Body Centered Vertically -->
+        <div class="w-full max-w-[370px] mx-auto my-auto py-8">
 
-                <!-- Flash Notifications -->
-                {% with messages = get_flashed_messages(with_categories=true) %}
-                  {% if messages %}
-                    <div class="mb-4 space-y-2 text-left">
-                    {% for category, message in messages %}
-                      <div class="p-2.5 rounded-xl flex items-center gap-2 text-xs border
-                        {% if category == 'danger' or category == 'error' %} bg-rose-50 border-rose-200 text-rose-800
-                        {% elif category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800
-                        {% else %} bg-indigo-50 border-indigo-200 text-indigo-800 {% endif %}">
-                          <i class="fa-solid fa-circle-exclamation text-xs"></i>
-                          <span class="font-bold">{{ message }}</span>
-                      </div>
-                    {% endfor %}
-                    </div>
-                  {% endif %}
-                {% endwith %}
-
-                <!-- Heading & Subheading -->
-                <div class="mb-6 text-left">
-                    <h2 class="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight mb-1">
-                        Log in to your account
-                    </h2>
-                    <p class="text-xs sm:text-sm text-slate-500 font-medium">
-                        Please enter your institutional credentials.
-                    </p>
+            <!-- Flash Notifications -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                <div class="mb-4 space-y-2 text-left">
+                {% for category, message in messages %}
+                  <div class="p-2.5 rounded-xl flex items-center gap-2 text-xs border
+                    {% if category == 'danger' or category == 'error' %} bg-rose-50 border-rose-200 text-rose-800
+                    {% elif category == 'success' %} bg-emerald-50 border-emerald-200 text-emerald-800
+                    {% else %} bg-indigo-50 border-indigo-200 text-indigo-800 {% endif %}">
+                      <i class="fa-solid fa-circle-exclamation text-xs"></i>
+                      <span class="font-bold">{{ message }}</span>
+                  </div>
+                {% endfor %}
                 </div>
+              {% endif %}
+            {% endwith %}
 
-                <!-- Modern Segmented Role Selector -->
-                <div class="mb-4 text-left">
-                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
-                        Select Role
-                    </label>
-                    <div class="grid grid-cols-3 gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80">
-                        <!-- Student -->
-                        <button type="button" 
-                                onclick="setUserRole('student', 'student@studysync.pro', 'password123')"
-                                id="roleTabStudent"
-                                class="role-tab-btn active-tab flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                            <span class="material-symbols-outlined text-[17px] role-tab-icon">school</span>
-                            <span>Student</span>
-                        </button>
-
-                        <!-- Faculty -->
-                        <button type="button" 
-                                onclick="setUserRole('faculty', 'faculty@studysync.pro', 'password123')"
-                                id="roleTabFaculty"
-                                class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                            <span class="material-symbols-outlined text-[17px] role-tab-icon">psychology</span>
-                            <span>Faculty</span>
-                        </button>
-
-                        <!-- HOD -->
-                        <button type="button" 
-                                onclick="setUserRole('hod', 'hod@studysync.pro', 'admin123')"
-                                id="roleTabHod"
-                                class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                            <span class="material-symbols-outlined text-[17px] role-tab-icon">shield</span>
-                            <span>HOD</span>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Main Login Form -->
-                <form action="{{ url_for('auth.login') }}" method="POST" id="signInForm" class="space-y-4 text-left" onsubmit="handleAuthSubmit(event)">
-                    
-                    <!-- Email / Campus ID -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="campus_id">
-                            Email or Campus ID
-                        </label>
-                        <div class="relative flex items-center">
-                            <input type="text" 
-                                   id="campus_id" 
-                                   name="campus_id" 
-                                   required 
-                                   autocomplete="username"
-                                   value="student@studysync.pro"
-                                   placeholder="Enter your email or Campus ID"
-                                   class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
-                        </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div>
-                        <label class="block text-xs font-semibold text-slate-700 mb-1" for="password">
-                            Password
-                        </label>
-                        <div class="relative flex items-center">
-                            <input type="password" 
-                                   id="password" 
-                                   name="password" 
-                                   required 
-                                   autocomplete="current-password"
-                                   value="password123"
-                                   placeholder="••••••••"
-                                   class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-10">
-                            <button type="button" 
-                                    onclick="togglePasswordVisibility('password', 'signInEyeIcon')" 
-                                    class="absolute right-3 text-slate-400 hover:text-slate-700 transition focus:outline-none p-1"
-                                    title="Toggle password visibility">
-                                <span class="material-symbols-outlined text-[18px]" id="signInEyeIcon">visibility</span>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Options: Remember & Forgot -->
-                    <div class="flex items-center justify-between text-xs pt-0.5">
-                        <label class="flex items-center gap-2 cursor-pointer text-slate-600 select-none">
-                            <input type="checkbox" name="remember" class="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                            <span>Remember for 30 days</span>
-                        </label>
-                        <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-xs text-[#1D4ED8] hover:text-blue-800 font-bold transition">
-                            Forgot password
-                        </a>
-                    </div>
-
-                    <!-- Primary Blue Action Button -->
-                    <div class="pt-1">
-                        <button type="submit" 
-                                id="signInSubmitBtn"
-                                class="w-full py-3 px-6 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
-                            <span id="signInBtnSpinner" class="hidden">
-                                <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
-                            </span>
-                            <span id="signInBtnText">Log in</span>
-                        </button>
-                    </div>
-                </form>
-
-                <!-- Divider 'OR' -->
-                <div class="relative flex items-center justify-center my-4">
-                    <div class="border-t border-slate-200 w-full"></div>
-                    <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OR</span>
-                    <div class="border-t border-slate-200 w-full"></div>
-                </div>
-
-                <!-- Secondary SSO Options -->
-                <div class="space-y-2">
-                    <!-- Google SSO -->
-                    <button type="button" 
-                            onclick="handleSsoClick('Google', 'student@studysync.pro', 'password123', event)"
-                            class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 24 24">
-                            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-                            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-                        </svg>
-                        <span>Continue with Google</span>
-                    </button>
-
-                    <!-- Microsoft SSO -->
-                    <button type="button" 
-                            onclick="handleSsoClick('Microsoft 365', 'faculty@studysync.pro', 'password123', event)"
-                            class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
-                        <svg class="w-4 h-4" viewBox="0 0 21 21">
-                            <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
-                            <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
-                            <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
-                            <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
-                        </svg>
-                        <span>Continue with Microsoft 365</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Footer Terms -->
-            <div class="text-center text-xs text-slate-400 mt-6">
-                By logging in, you agree to our <a href="javascript:void(0)" class="text-slate-700 font-bold hover:underline">Terms of Use</a> & <a href="javascript:void(0)" class="text-slate-700 font-bold hover:underline">Privacy Policy</a>
-            </div>
-        </div>
-
-        <!-- ---------------------------------------------------- -->
-        <!-- RIGHT COLUMN: BLUE HERO SHOWCASE WITH 3D TABLET      -->
-        <!-- ---------------------------------------------------- -->
-        <div class="w-full lg:w-[52%] xl:w-[55%] bg-gradient-to-br from-[#0B1220] via-[#1E3A8A] to-[#1D4ED8] p-8 sm:p-12 lg:p-14 xl:p-20 flex flex-col justify-between relative overflow-hidden text-white min-h-[540px] lg:min-h-screen">
-            
-            <!-- Ambient Heritage Texture Layer -->
-            <div class="ambient-heritage-bg absolute inset-0 pointer-events-none"></div>
-
-            <!-- Dark Navy Overlay Gradient -->
-            <div class="absolute inset-0 bg-gradient-to-b from-[#0B1220]/60 via-[#1E3A8A]/40 to-[#1D4ED8]/70 pointer-events-none"></div>
-
-            <!-- Subtle Ornamental Watermark -->
-            <div class="ornamental-watermark-motif absolute inset-0 pointer-events-none scale-125"></div>
-
-            <!-- Top Header & Statement in Right Card -->
-            <div class="relative z-10 max-w-lg text-left pt-4 lg:pt-8">
-                <!-- Headline -->
-                <h1 class="text-3xl sm:text-4xl xl:text-[46px] font-black text-white tracking-tight leading-[1.12]">
-                    Empowering academic<br>intelligence
-                </h1>
-                
-                <p class="text-xs sm:text-sm text-blue-100/80 font-medium mt-3 leading-relaxed max-w-md">
-                    A unified campus platform for attendance, real-time analytics, and personalized AI learning.
+            <!-- Heading & Subheading -->
+            <div class="mb-6 text-left">
+                <h2 class="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight mb-1">
+                    Log in to your account
+                </h2>
+                <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                    Please enter your details
                 </p>
             </div>
 
-            <!-- 3D Angled Computer Screen Mockup Emerging from Bottom-Right -->
-            <div class="absolute -right-8 -bottom-12 w-[660px] lg:w-[740px] xl:w-[820px] h-[520px] lg:h-[580px] pointer-events-none hidden sm:block">
-                <div class="mockup-tablet-wrapper w-full h-full bg-slate-950 rounded-[32px] p-3 border-[6px] border-slate-800/95 shadow-2xl">
-                    
-                    <!-- Computer Screen Glass Container -->
-                    <div class="w-full h-full bg-slate-900 rounded-[22px] overflow-hidden relative shadow-inner flex flex-col">
-                        
-                        <!-- Computer Micro Top Bar -->
-                        <div class="h-6 bg-[#0B1220] border-b border-slate-800/80 px-3 flex items-center justify-between">
-                            <div class="flex items-center gap-1.5">
-                                <span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>
-                                <span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
-                                <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
-                            </div>
-                            <div class="text-[9px] font-mono text-slate-400 font-medium">
-                                portal.pragati.edu/student/dashboard
-                            </div>
-                            <div class="w-6"></div>
-                        </div>
+            <!-- Modern Segmented Role Selector -->
+            <div class="mb-4 text-left">
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                    Select Role
+                </label>
+                <div class="grid grid-cols-3 gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80">
+                    <!-- Student -->
+                    <button type="button" 
+                            onclick="setUserRole('student', 'student@studysync.pro', 'password123')"
+                            id="roleTabStudent"
+                            class="role-tab-btn active-tab flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[17px] role-tab-icon">school</span>
+                        <span>Student</span>
+                    </button>
 
-                        <!-- Real Pragati Dashboard Image -->
-                        <div class="flex-1 w-full h-full bg-slate-100 overflow-hidden relative">
-                            <img src="{{ url_for('static', filename='images/dashboard_preview.png') }}?v=1" 
-                                 alt="Pragati Student Dashboard Preview" 
-                                 class="w-full h-full object-cover object-left-top">
+                    <!-- Faculty -->
+                    <button type="button" 
+                            onclick="setUserRole('faculty', 'faculty@studysync.pro', 'password123')"
+                            id="roleTabFaculty"
+                            class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[17px] role-tab-icon">psychology</span>
+                        <span>Faculty</span>
+                    </button>
+
+                    <!-- HOD -->
+                    <button type="button" 
+                            onclick="setUserRole('hod', 'hod@studysync.pro', 'admin123')"
+                            id="roleTabHod"
+                            class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[17px] role-tab-icon">shield</span>
+                        <span>HOD</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Login Form -->
+            <form action="{{ url_for('auth.login') }}" method="POST" id="signInForm" class="space-y-4 text-left" onsubmit="handleAuthSubmit(event)">
+                
+                <!-- Email / Campus ID -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1" for="campus_id">
+                        Email
+                    </label>
+                    <div class="relative flex items-center">
+                        <input type="text" 
+                               id="campus_id" 
+                               name="campus_id" 
+                               required 
+                               autocomplete="username"
+                               value="student@studysync.pro"
+                               placeholder="Enter your email"
+                               class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label class="block text-xs font-semibold text-slate-700 mb-1" for="password">
+                        Password
+                    </label>
+                    <div class="relative flex items-center">
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               required 
+                               autocomplete="current-password"
+                               value="password123"
+                               placeholder="••••••••"
+                               class="ref-input w-full px-3.5 py-2.5 rounded-xl border border-slate-200 bg-white text-xs sm:text-sm font-medium text-slate-800 placeholder:text-slate-400 focus:outline-none pr-10">
+                        <button type="button" 
+                                onclick="togglePasswordVisibility('password', 'signInEyeIcon')" 
+                                class="absolute right-3 text-slate-400 hover:text-slate-700 transition focus:outline-none p-1"
+                                title="Toggle password visibility">
+                            <span class="material-symbols-outlined text-[18px]" id="signInEyeIcon">visibility</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Options: Remember & Forgot -->
+                <div class="flex items-center justify-between text-xs pt-0.5">
+                    <label class="flex items-center gap-2 cursor-pointer text-slate-600 select-none">
+                        <input type="checkbox" name="remember" class="w-3.5 h-3.5 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+                        <span>Remember for 30 days</span>
+                    </label>
+                    <a href="javascript:void(0)" onclick="notifyAdminHelp()" class="text-xs text-[#1D4ED8] hover:text-blue-800 font-bold transition">
+                        Forgot password
+                    </a>
+                </div>
+
+                <!-- Primary Blue Action Button -->
+                <div class="pt-1">
+                    <button type="submit" 
+                            id="signInSubmitBtn"
+                            class="w-full py-3 px-6 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                        <span id="signInBtnSpinner" class="hidden">
+                            <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
+                        </span>
+                        <span id="signInBtnText">Log in</span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Divider 'OR' -->
+            <div class="relative flex items-center justify-center my-4">
+                <div class="border-t border-slate-200 w-full"></div>
+                <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OR</span>
+                <div class="border-t border-slate-200 w-full"></div>
+            </div>
+
+            <!-- Secondary SSO Options -->
+            <div class="space-y-2">
+                <!-- Google SSO -->
+                <button type="button" 
+                        onclick="handleSsoClick('Google', 'student@studysync.pro', 'password123', event)"
+                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+                    </svg>
+                    <span>Continue with Google</span>
+                </button>
+
+                <!-- Microsoft SSO -->
+                <button type="button" 
+                        onclick="handleSsoClick('Microsoft 365', 'faculty@studysync.pro', 'password123', event)"
+                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
+                    <svg class="w-4 h-4" viewBox="0 0 21 21">
+                        <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
+                        <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
+                        <rect x="1" y="11" width="9" height="9" fill="#00A4EF"/>
+                        <rect x="11" y="11" width="9" height="9" fill="#FFB900"/>
+                    </svg>
+                    <span>Continue with Microsoft 365</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer Terms -->
+        <div class="text-left text-xs text-slate-400 pb-2">
+            By creating an account, you agree to our <a href="javascript:void(0)" class="text-slate-700 font-bold hover:underline">Terms of Use</a>
+        </div>
+    </div>
+
+    <!-- ---------------------------------------------------- -->
+    <!-- RIGHT COLUMN: DEDICATED ROUNDED BLUE HERO CARD       -->
+    <!-- ---------------------------------------------------- -->
+    <div class="w-full lg:w-[55%] xl:w-[58%] min-h-[560px] lg:min-h-[calc(100vh-2.5rem)] rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#0B1220] via-[#1E3A8A] to-[#1D4ED8] p-8 sm:p-12 lg:p-14 xl:p-16 flex flex-col justify-between relative overflow-hidden text-white shadow-2xl">
+        
+        <!-- Ambient Heritage Texture Layer -->
+        <div class="ambient-heritage-bg absolute inset-0 pointer-events-none"></div>
+
+        <!-- Dark Navy Overlay Gradient -->
+        <div class="absolute inset-0 bg-gradient-to-b from-[#0B1220]/60 via-[#1E3A8A]/40 to-[#1D4ED8]/70 pointer-events-none"></div>
+
+        <!-- Subtle Ornamental Watermark -->
+        <div class="ornamental-watermark-motif absolute inset-0 pointer-events-none scale-125"></div>
+
+        <!-- Top Header & Statement in Right Card -->
+        <div class="relative z-10 max-w-lg text-left pt-2 lg:pt-4">
+            <!-- Headline -->
+            <h1 class="text-3xl sm:text-4xl xl:text-[44px] font-black text-white tracking-tight leading-[1.12]">
+                Empowering academic<br>intelligence
+            </h1>
+            
+            <p class="text-xs sm:text-sm text-blue-100/80 font-medium mt-3 leading-relaxed max-w-md">
+                A unified campus platform for attendance, real-time analytics, and personalized AI learning.
+            </p>
+        </div>
+
+        <!-- 3D Angled Computer Screen Mockup Emerging from Bottom-Right -->
+        <div class="absolute -right-8 -bottom-10 w-[640px] lg:w-[720px] xl:w-[800px] h-[500px] lg:h-[560px] pointer-events-none hidden sm:block">
+            <div class="mockup-tablet-wrapper w-full h-full bg-slate-950 rounded-[32px] p-3 border-[6px] border-slate-800/95 shadow-2xl">
+                
+                <!-- Computer Screen Glass Container -->
+                <div class="w-full h-full bg-slate-900 rounded-[22px] overflow-hidden relative shadow-inner flex flex-col">
+                    
+                    <!-- Computer Micro Top Bar -->
+                    <div class="h-6 bg-[#0B1220] border-b border-slate-800/80 px-3 flex items-center justify-between">
+                        <div class="flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-[#EF4444]"></span>
+                            <span class="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+                            <span class="w-2 h-2 rounded-full bg-[#10B981]"></span>
                         </div>
+                        <div class="text-[9px] font-mono text-slate-400 font-medium">
+                            portal.pragati.edu/student/dashboard
+                        </div>
+                        <div class="w-6"></div>
+                    </div>
+
+                    <!-- Real Pragati Dashboard Image -->
+                    <div class="flex-1 w-full h-full bg-slate-100 overflow-hidden relative">
+                        <img src="{{ url_for('static', filename='images/dashboard_preview.png') }}?v=1" 
+                             alt="Pragati Student Dashboard Preview" 
+                             class="w-full h-full object-cover object-left-top">
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <!-- ======================================================== -->
 <!-- PRAGATI MINIMAL SIGNATURE ANIMATED LOADER OVERLAY        -->
