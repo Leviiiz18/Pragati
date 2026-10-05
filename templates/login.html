@@ -39,14 +39,13 @@
         opacity: 0.18;
     }
 
-    /* Left Hero Custom Tile Artwork Layer */
+    /* Left Hero Custom Tile Artwork Layer (Full Visibility) */
     .hero-artwork-bg {
         background-image: url("{{ url_for('static', filename='images/login_bg.jpg') }}?v={{ range(1000, 9999) | random }}");
         background-size: cover;
         background-position: center;
-        opacity: 0.24;
-        filter: saturate(1.12) brightness(0.98);
-        transition: opacity 0.3s ease;
+        opacity: 1 !important;
+        filter: saturate(1.05) brightness(0.95);
     }
 
     /* Subtle Floating Animations for Showcase */
@@ -159,31 +158,23 @@
         <!-- ---------------------------------------------------- -->
         <!-- LEFT COLUMN: STAGNANT PRODUCT SHOWCASE HERO          -->
         <!-- ---------------------------------------------------- -->
-        <div class="w-full lg:w-[48%] bg-[#F9FAFB] p-8 sm:p-10 lg:p-12 flex flex-col justify-between relative border-b lg:border-b-0 lg:border-r border-slate-200/80 overflow-hidden">
+        <div class="w-full lg:w-[48%] relative p-8 sm:p-10 lg:p-12 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-slate-200/80 overflow-hidden min-h-[500px]">
             
-            <!-- Custom Floral Ceramic Tile Artwork Background Layer -->
-            <div class="hero-artwork-bg absolute inset-0 pointer-events-none"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-white/95 via-white/60 to-white/90 pointer-events-none"></div>
+            <!-- Full Vibrancy Floral Ceramic Tile Artwork Background -->
+            <div class="hero-artwork-bg absolute inset-0"></div>
+            
+            <!-- Subtle Darkening Vignette for High Contrast -->
+            <div class="absolute inset-0 bg-gradient-to-b from-slate-950/35 via-transparent to-slate-950/65 pointer-events-none"></div>
 
-            <!-- Halftone Dot Texture Background -->
-            <div class="halftone-bg absolute inset-0 pointer-events-none"></div>
-
-            <!-- Waveform / Circuit SVG Graphic Mesh with Ambient Float Animation -->
-            <svg class="absolute inset-0 w-full h-full animate-wave-mesh pointer-events-none" viewBox="0 0 500 500">
-                <path d="M 0,250 Q 125,180 250,250 T 500,250" fill="none" stroke="#4F46E5" stroke-width="2"/>
-                <path d="M 0,270 Q 125,200 250,270 T 500,270" fill="none" stroke="#0F172A" stroke-width="1.5" stroke-dasharray="4 4"/>
-                <path d="M 0,230 Q 125,160 250,230 T 500,230" fill="none" stroke="#7C3AED" stroke-width="1.5"/>
-            </svg>
-
-            <!-- Top Left: Clean Logo & ERP Badge -->
+            <!-- Top Left: Clean Logo & ERP Badge in Crisp Glass Pills -->
             <div class="relative z-10 flex items-center justify-between">
-                <div class="flex items-center gap-2">
+                <div class="flex items-center gap-2 bg-white/95 backdrop-blur-md px-3.5 py-1.5 rounded-2xl shadow-sm border border-white/80">
                     <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=3" 
                          alt="Pragati by Kalpkrats" 
-                         class="h-8 sm:h-9 w-auto object-contain">
+                         class="h-7 sm:h-8 w-auto object-contain">
                 </div>
 
-                <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-xs font-bold text-slate-600 shadow-2xs">
+                <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-white/80 text-xs font-bold text-slate-700 shadow-sm">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     ERP V2.6
                 </div>
@@ -194,14 +185,14 @@
                 
                 <!-- Floating mini badge top-left -->
                 <div class="flex items-center gap-2 mb-3">
-                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-slate-700 animate-badge-pulse">
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-md flex items-center justify-center text-slate-700 animate-badge-pulse">
                         <span class="material-symbols-outlined text-[17px] text-indigo-600">school</span>
                     </div>
-                    <div class="w-6 h-[2px] bg-indigo-500 rounded-full"></div>
+                    <div class="w-6 h-[2px] bg-white rounded-full shadow-xs"></div>
                 </div>
 
-                <!-- Stagnant Glassmorphic Preview Card (Does Not Change With Selection) -->
-                <div class="glass-preview-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/80 animate-subtle-float">
+                <!-- Stagnant Glassmorphic Preview Card (Pure White with Crisp Shadow) -->
+                <div class="glass-preview-card p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white shadow-2xl animate-subtle-float">
                     
                     <!-- Stagnant Tab Pills -->
                     <div class="flex items-center gap-2 mb-4">
@@ -209,7 +200,7 @@
                             <span class="material-symbols-outlined text-[14px]">school</span>
                             Student OS
                         </div>
-                        <div class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 bg-slate-100/70 border border-slate-200/60">
+                        <div class="px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1.5 text-slate-600 bg-slate-100 border border-slate-200/60">
                             <span class="material-symbols-outlined text-[14px]">psychology</span>
                             Faculty Hub
                         </div>
@@ -222,19 +213,19 @@
 
                     <!-- Feature Tags / Interactive Hover Chips -->
                     <div class="flex flex-wrap items-center gap-2">
-                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
                             <span class="material-symbols-outlined text-[14px] text-indigo-600">check_circle</span>
                             Attendance
                         </div>
-                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
                             <span class="material-symbols-outlined text-[14px] text-indigo-600">auto_stories</span>
                             Study Notes
                         </div>
-                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
                             <span class="material-symbols-outlined text-[14px] text-indigo-600">smart_toy</span>
                             AI Tutor
                         </div>
-                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100/90 border border-slate-200/80 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
+                        <div class="showcase-chip px-3 py-1.5 rounded-xl bg-slate-100 border border-slate-200 text-xs font-bold text-slate-700 flex items-center gap-1.5 cursor-default">
                             <span class="material-symbols-outlined text-[14px] text-indigo-600">grade</span>
                             GPA Analytics
                         </div>
@@ -243,18 +234,18 @@
 
                 <!-- Floating mini badge bottom-right -->
                 <div class="flex items-center justify-end gap-2 mt-3 mr-4">
-                    <div class="w-6 h-[2px] bg-slate-400 rounded-full"></div>
-                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-xs flex items-center justify-center text-xs font-bold text-slate-800 animate-badge-pulse" style="animation-delay: 1.5s;">
+                    <div class="w-6 h-[2px] bg-white rounded-full shadow-xs"></div>
+                    <div class="w-8 h-8 rounded-xl bg-white border border-slate-200/90 shadow-md flex items-center justify-center text-xs font-bold text-slate-800 animate-badge-pulse" style="animation-delay: 1.5s;">
                         AI
                     </div>
                 </div>
             </div>
 
-            <!-- Bottom Left Big Headline -->
+            <!-- Bottom Left Big Headline (Crisp White Text with Shadow for High Contrast) -->
             <div class="relative z-10 pt-2">
-                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                <h2 class="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight drop-shadow-md">
                     One Click Away from<br>
-                    <span class="text-slate-900">Unified Campus Intelligence</span>
+                    <span class="text-indigo-200">Unified Campus Intelligence</span>
                 </h2>
             </div>
         </div>
