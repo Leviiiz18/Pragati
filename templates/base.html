@@ -329,24 +329,24 @@
                                             <div>
                                                 <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2 flex items-center justify-between">
                                                     <span>AI & Wellness</span>
-                                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 font-bold border border-amber-200/60 flex items-center gap-1">
-                                                        <i class="fa-solid fa-lock text-[8px]"></i> Restricted
+                                                    <span class="text-[9px] px-1.5 py-0.5 rounded bg-slate-100 text-slate-500 font-bold border border-slate-200 flex items-center gap-1">
+                                                        <i class="fa-solid fa-lock text-[8px] text-slate-400"></i> Coming Soon
                                                     </span>
                                                 </div>
                                                 <div class="space-y-1">
-                                                    <a href="{{ url_for('student.ai_tutor') }}" class="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition group">
+                                                    <a href="{{ url_for('student.ai_tutor') }}" class="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition group">
                                                         <div class="flex items-center gap-2.5">
-                                                            <i class="fa-solid fa-robot text-indigo-500 w-4 text-center"></i>
-                                                            <span>AI Course Tutor</span>
+                                                            <i class="fa-solid fa-robot text-slate-400 w-4 text-center"></i>
+                                                            <span class="text-slate-600">AI Course Tutor</span>
                                                         </div>
-                                                        <i class="fa-solid fa-lock text-[10px] text-amber-500 group-hover:text-amber-600"></i>
+                                                        <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Soon</span>
                                                     </a>
-                                                    <a href="{{ url_for('student.wellness') }}" class="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition group">
+                                                    <a href="{{ url_for('student.wellness') }}" class="flex items-center justify-between px-2.5 py-2 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition group">
                                                         <div class="flex items-center gap-2.5">
-                                                            <i class="fa-solid fa-heart-pulse text-indigo-500 w-4 text-center"></i>
-                                                            <span>Mental Wellness AI</span>
+                                                            <i class="fa-solid fa-heart-pulse text-slate-400 w-4 text-center"></i>
+                                                            <span class="text-slate-600">Mental Wellness AI</span>
                                                         </div>
-                                                        <i class="fa-solid fa-lock text-[10px] text-amber-500 group-hover:text-amber-600"></i>
+                                                        <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Soon</span>
                                                     </a>
                                                 </div>
                                             </div>
@@ -573,19 +573,19 @@
                     <i class="fa-solid fa-rocket text-indigo-500"></i>
                     <span>Career & Placements</span>
                 </a>
-                <a href="{{ url_for('student.ai_tutor') }}" class="top-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                <a href="{{ url_for('student.ai_tutor') }}" class="top-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">
                     <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-robot text-indigo-500"></i>
-                        <span>AI Course Tutor (Locked)</span>
+                        <i class="fa-solid fa-robot text-slate-400"></i>
+                        <span class="text-slate-600">AI Course Tutor</span>
                     </div>
-                    <i class="fa-solid fa-lock text-[10px] text-amber-500"></i>
+                    <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Coming Soon</span>
                 </a>
-                <a href="{{ url_for('student.wellness') }}" class="top-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                <a href="{{ url_for('student.wellness') }}" class="top-nav-link flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:bg-slate-100">
                     <div class="flex items-center gap-3">
-                        <i class="fa-solid fa-heart-pulse text-indigo-500"></i>
-                        <span>Mental Wellness AI (Locked)</span>
+                        <i class="fa-solid fa-heart-pulse text-slate-400"></i>
+                        <span class="text-slate-600">Mental Wellness AI</span>
                     </div>
-                    <i class="fa-solid fa-lock text-[10px] text-amber-500"></i>
+                    <span class="text-[9px] font-bold text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Coming Soon</span>
                 </a>
                 {% endif %}
             </div>

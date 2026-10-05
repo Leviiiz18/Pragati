@@ -22,11 +22,6 @@
                 <p class="text-sm text-purple-200 font-medium mt-1">Assigned Faculty In-charge: <strong class="text-white">{{ subject.faculty.name if subject.faculty else 'Dr. Alan Turing' }}</strong> | Click any Module Card below to enter</p>
             </div>
 
-            <div class="flex items-center gap-3">
-                <a href="{{ url_for('student.ai_tutor') }}" class="px-5 py-2.5 rounded-2xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-amber-500/20 transition">
-                    <i class="fa-solid fa-robot"></i> Ask RAG AI Tutor
-                </a>
-            </div>
         </div>
     </div>
 
