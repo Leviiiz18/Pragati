@@ -19,11 +19,13 @@
         --color-gold: #D4AF5A;
     }
 
-    body {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        background-color: #FFFFFF;
+    html, body {
+        height: 100%;
         margin: 0;
         padding: 0;
+        overflow-x: hidden;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background-color: #FFFFFF;
     }
 
     .material-symbols-outlined {
@@ -83,11 +85,11 @@
         box-shadow: 0 0 0 3.5px rgba(29, 78, 216, 0.12);
     }
 
-    /* 3D Angled Tablet Screen Mockup */
+    /* 3D Angled Tablet Screen Mockup (Proportionally Scaled) */
     .mockup-tablet-wrapper {
-        transform: rotate(-28deg) translate(14%, 20%);
+        transform: rotate(-26deg) translate(8%, 14%);
         transform-origin: center center;
-        box-shadow: -25px 35px 70px -15px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15);
+        box-shadow: -20px 30px 60px -12px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.15);
     }
 
     /* Pragati Animated Loader */
@@ -115,23 +117,23 @@
     }
 </style>
 
-<!-- Full Screen Page Container with Matching Vesper Reference Split -->
-<div class="min-h-screen w-full flex flex-col lg:flex-row select-none bg-white p-3 sm:p-4 lg:p-5 gap-4 lg:gap-6 overflow-hidden">
+<!-- Full-Screen Edge-to-Edge Container with Right-Flush Blue Panel -->
+<div class="h-screen w-full flex flex-col lg:flex-row select-none bg-white overflow-hidden m-0 p-0">
 
     <!-- ---------------------------------------------------- -->
     <!-- LEFT COLUMN: AUTHENTICATION FORM (Spacious White)    -->
     <!-- ---------------------------------------------------- -->
-    <div class="w-full lg:w-[45%] xl:w-[42%] flex flex-col justify-between py-4 sm:py-6 px-4 sm:px-8 lg:px-10 xl:px-14 relative z-20 min-h-full">
+    <div class="w-full lg:w-[46%] xl:w-[43%] h-full flex flex-col justify-between py-6 lg:py-8 px-6 sm:px-10 lg:px-14 xl:px-18 relative z-20 overflow-y-auto">
         
         <!-- Top Brand Logo -->
-        <div class="text-left pt-2">
+        <div class="text-left pt-1">
             <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}?v=5" 
                  alt="Pragati by KalpKrafts" 
                  class="h-8 sm:h-9 w-auto object-contain">
         </div>
 
         <!-- Form Body Centered Vertically -->
-        <div class="w-full max-w-[370px] mx-auto my-auto py-8">
+        <div class="w-full max-w-[360px] mx-auto my-auto py-6">
 
             <!-- Flash Notifications -->
             {% with messages = get_flashed_messages(with_categories=true) %}
@@ -151,18 +153,18 @@
             {% endwith %}
 
             <!-- Heading & Subheading -->
-            <div class="mb-6 text-left">
-                <h2 class="text-2xl sm:text-[28px] font-extrabold text-slate-900 tracking-tight mb-1">
+            <div class="mb-5 text-left">
+                <h2 class="text-2xl sm:text-[26px] font-extrabold text-slate-900 tracking-tight mb-1">
                     Log in to your account
                 </h2>
-                <p class="text-xs sm:text-sm text-slate-500 font-medium">
+                <p class="text-xs text-slate-500 font-medium">
                     Please enter your details
                 </p>
             </div>
 
             <!-- Modern Segmented Role Selector -->
             <div class="mb-4 text-left">
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5">
+                <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1.5">
                     Select Role
                 </label>
                 <div class="grid grid-cols-3 gap-1 bg-slate-100/90 p-1 rounded-2xl border border-slate-200/80">
@@ -170,8 +172,8 @@
                     <button type="button" 
                             onclick="setUserRole('student', 'student@studysync.pro', 'password123')"
                             id="roleTabStudent"
-                            class="role-tab-btn active-tab flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer">
-                        <span class="material-symbols-outlined text-[17px] role-tab-icon">school</span>
+                            class="role-tab-btn active-tab flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[16px] role-tab-icon">school</span>
                         <span>Student</span>
                     </button>
 
@@ -179,8 +181,8 @@
                     <button type="button" 
                             onclick="setUserRole('faculty', 'faculty@studysync.pro', 'password123')"
                             id="roleTabFaculty"
-                            class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                        <span class="material-symbols-outlined text-[17px] role-tab-icon">psychology</span>
+                            class="role-tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[16px] role-tab-icon">psychology</span>
                         <span>Faculty</span>
                     </button>
 
@@ -188,15 +190,15 @@
                     <button type="button" 
                             onclick="setUserRole('hod', 'hod@studysync.pro', 'admin123')"
                             id="roleTabHod"
-                            class="role-tab-btn flex items-center justify-center gap-1.5 py-2 px-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
-                        <span class="material-symbols-outlined text-[17px] role-tab-icon">shield</span>
+                            class="role-tab-btn flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-all cursor-pointer">
+                        <span class="material-symbols-outlined text-[16px] role-tab-icon">shield</span>
                         <span>HOD</span>
                     </button>
                 </div>
             </div>
 
             <!-- Main Login Form -->
-            <form action="{{ url_for('auth.login') }}" method="POST" id="signInForm" class="space-y-4 text-left" onsubmit="handleAuthSubmit(event)">
+            <form action="{{ url_for('auth.login') }}" method="POST" id="signInForm" class="space-y-3.5 text-left" onsubmit="handleAuthSubmit(event)">
                 
                 <!-- Email / Campus ID -->
                 <div>
@@ -253,7 +255,7 @@
                 <div class="pt-1">
                     <button type="submit" 
                             id="signInSubmitBtn"
-                            class="w-full py-3 px-6 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
+                            class="w-full py-2.5 px-6 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] active:scale-[0.99] text-white font-bold text-xs sm:text-sm tracking-wide shadow-md transition-all cursor-pointer flex items-center justify-center gap-2">
                         <span id="signInBtnSpinner" class="hidden">
                             <i class="fa-solid fa-circle-notch fa-spin text-xs"></i>
                         </span>
@@ -263,9 +265,9 @@
             </form>
 
             <!-- Divider 'OR' -->
-            <div class="relative flex items-center justify-center my-4">
+            <div class="relative flex items-center justify-center my-3.5">
                 <div class="border-t border-slate-200 w-full"></div>
-                <span class="bg-white px-3 text-[11px] font-bold text-slate-400 uppercase tracking-wider">OR</span>
+                <span class="bg-white px-3 text-[10px] font-bold text-slate-400 uppercase tracking-wider">OR</span>
                 <div class="border-t border-slate-200 w-full"></div>
             </div>
 
@@ -274,7 +276,7 @@
                 <!-- Google SSO -->
                 <button type="button" 
                         onclick="handleSsoClick('Google', 'student@studysync.pro', 'password123', event)"
-                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
+                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-xs">
                     <svg class="w-4 h-4" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                         <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
@@ -287,7 +289,7 @@
                 <!-- Microsoft SSO -->
                 <button type="button" 
                         onclick="handleSsoClick('Microsoft 365', 'faculty@studysync.pro', 'password123', event)"
-                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-sm">
+                        class="w-full py-2.5 px-4 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 text-xs sm:text-sm font-bold flex items-center justify-center gap-2.5 transition active:scale-[0.99] cursor-pointer shadow-xs">
                     <svg class="w-4 h-4" viewBox="0 0 21 21">
                         <rect x="1" y="1" width="9" height="9" fill="#F25022"/>
                         <rect x="11" y="1" width="9" height="9" fill="#7FBA00"/>
@@ -300,15 +302,15 @@
         </div>
 
         <!-- Footer Terms -->
-        <div class="text-left text-xs text-slate-400 pb-2">
+        <div class="text-left text-xs text-slate-400 pb-1">
             By creating an account, you agree to our <a href="javascript:void(0)" class="text-slate-700 font-bold hover:underline">Terms of Use</a>
         </div>
     </div>
 
     <!-- ---------------------------------------------------- -->
-    <!-- RIGHT COLUMN: DEDICATED ROUNDED BLUE HERO CARD       -->
+    <!-- RIGHT COLUMN: FLUSH BLUE HERO PANEL WITH 3D PREVIEW  -->
     <!-- ---------------------------------------------------- -->
-    <div class="w-full lg:w-[55%] xl:w-[58%] min-h-[560px] lg:min-h-[calc(100vh-2.5rem)] rounded-[28px] sm:rounded-[36px] bg-gradient-to-br from-[#0B1220] via-[#1E3A8A] to-[#1D4ED8] p-8 sm:p-12 lg:p-14 xl:p-16 flex flex-col justify-between relative overflow-hidden text-white shadow-2xl">
+    <div class="w-full lg:w-[54%] xl:w-[57%] h-full bg-gradient-to-br from-[#0B1220] via-[#1E3A8A] to-[#1D4ED8] p-8 sm:p-12 lg:p-14 xl:p-18 flex flex-col justify-between relative overflow-hidden text-white rounded-l-[32px] sm:rounded-l-[40px] lg:rounded-l-[48px] shadow-2xl">
         
         <!-- Ambient Heritage Texture Layer -->
         <div class="ambient-heritage-bg absolute inset-0 pointer-events-none"></div>
@@ -331,12 +333,12 @@
             </p>
         </div>
 
-        <!-- 3D Angled Computer Screen Mockup Emerging from Bottom-Right -->
-        <div class="absolute -right-8 -bottom-10 w-[640px] lg:w-[720px] xl:w-[800px] h-[500px] lg:h-[560px] pointer-events-none hidden sm:block">
-            <div class="mockup-tablet-wrapper w-full h-full bg-slate-950 rounded-[32px] p-3 border-[6px] border-slate-800/95 shadow-2xl">
+        <!-- 3D Angled Computer Screen Mockup (Proportionally Positioned) -->
+        <div class="absolute -right-4 -bottom-6 w-[520px] sm:w-[580px] lg:w-[620px] xl:w-[680px] h-[360px] sm:h-[400px] lg:h-[440px] xl:h-[480px] pointer-events-none hidden sm:block">
+            <div class="mockup-tablet-wrapper w-full h-full bg-slate-950 rounded-[28px] p-2.5 border-[5px] border-slate-800/95 shadow-2xl">
                 
                 <!-- Computer Screen Glass Container -->
-                <div class="w-full h-full bg-slate-900 rounded-[22px] overflow-hidden relative shadow-inner flex flex-col">
+                <div class="w-full h-full bg-slate-900 rounded-[20px] overflow-hidden relative shadow-inner flex flex-col">
                     
                     <!-- Computer Micro Top Bar -->
                     <div class="h-6 bg-[#0B1220] border-b border-slate-800/80 px-3 flex items-center justify-between">
