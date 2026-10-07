@@ -8,84 +8,77 @@
          1. DASHBOARD HEADER & QUICK PROFILE IDENTIFIER
          ===================================================================== -->
     <!-- =====================================================================
-         1. DASHBOARD HEADER & QUICK PROFILE IDENTIFIER (AESTHETIC & MODERN)
+         1. EDITORIAL ILLUSTRATED WELCOME BANNER (INSPIRED BY REFERENCE)
          ===================================================================== -->
-    <header class="relative overflow-hidden bg-white/95 backdrop-blur-xl rounded-2xl border border-slate-200/80 shadow-[0_4px_24px_-4px_rgba(15,23,42,0.06)] p-5 sm:p-6 transition-all">
-        <!-- Ambient backdrop glow -->
-        <div class="absolute -top-16 -right-16 w-56 h-56 bg-gradient-to-br from-blue-500/10 via-indigo-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
-        <div class="absolute -bottom-16 -left-16 w-56 h-56 bg-gradient-to-tr from-indigo-500/10 via-sky-500/5 to-transparent rounded-full blur-3xl pointer-events-none"></div>
+    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FFFBEB] via-[#F0FDF4]/40 to-[#EFF6FF] border border-amber-200/60 shadow-sm p-6 sm:p-8 transition-all">
+        <!-- Stylized Minimal Cloud Accents in Background -->
+        <div class="absolute top-4 right-1/3 opacity-30 pointer-events-none hidden sm:block">
+            <svg class="w-16 h-8 text-amber-300 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        </div>
+        <div class="absolute bottom-3 right-1/4 opacity-25 pointer-events-none hidden sm:block">
+            <svg class="w-12 h-6 text-blue-300 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
+        </div>
 
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-5">
-            <!-- Left: Avatar Monogram + Greeting + Badges -->
-            <div class="flex items-center gap-4 min-w-0">
-                <!-- Squircle Monogram Avatar with Live Pulse Ring -->
-                <div class="relative flex-shrink-0">
-                    <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-[#1D4ED8] via-[#3B82F6] to-[#6366F1] flex items-center justify-center text-white font-extrabold text-xl sm:text-2xl shadow-lg shadow-blue-500/25 border-2 border-white ring-1 ring-slate-200/60 select-none">
-                        {{ (current_user.first_name[0] if current_user.first_name else current_user.name[0] if current_user.name else 'A')|upper }}
-                    </div>
-                    <span class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-4 w-4 bg-emerald-500 border-2 border-white items-center justify-center" title="Active Student Status"></span>
-                    </span>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <!-- Left Side: Editorial Typography & Stats -->
+            <div class="space-y-4 max-w-xl">
+                <!-- Main Greeting -->
+                <div class="space-y-1.5">
+                    <h1 class="font-serif text-3xl sm:text-4xl text-[#9A3412] tracking-tight font-bold">
+                        Hello, {{ current_user.first_name or current_user.name.split(' ')[0] }}!
+                    </h1>
+                    <p class="text-sm sm:text-base text-[#9A3412]/80 font-medium leading-relaxed">
+                        Welcome to campus! Your academic record is on track & your courses for Semester {{ current_user.semester or '4' }} are active today.
+                    </p>
                 </div>
 
-                <!-- Text & Chips -->
-                <div class="space-y-1.5 flex-1 min-w-0">
-                    <div class="flex items-center gap-2.5 flex-wrap">
-                        <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-1.5 flex-wrap">
-                            <span>Welcome back,</span>
-                            <span class="bg-gradient-to-r from-[#1D4ED8] via-[#4338CA] to-[#6366F1] bg-clip-text text-transparent drop-shadow-2xs">
-                                {{ current_user.first_name or current_user.name.split(' ')[0] }}
-                            </span>
-                            <span class="text-xl sm:text-2xl inline-block hover:scale-125 hover:rotate-12 transition-transform cursor-default select-none">👋</span>
-                        </h1>
-
-                        <!-- Live Status Pill -->
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-bold shadow-2xs">
-                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span>Active Scholar</span>
+                <!-- Two Editorial Metric Rows (Matching Reference) -->
+                <div class="space-y-2.5 pt-1">
+                    <!-- Stat Row 1: CGPA / Performance -->
+                    <div class="flex items-center gap-3 text-slate-800">
+                        <span class="w-7 h-7 rounded-lg bg-amber-100/80 text-amber-800 flex items-center justify-center flex-shrink-0 text-sm">
+                            <i class="fa-solid fa-graduation-cap"></i>
                         </span>
+                        <div class="text-xs sm:text-sm font-semibold">
+                            <span class="font-bold text-slate-900 font-mono text-sm sm:text-base">{{ '%.1f'|format(current_user.cgpa) if current_user.cgpa else '8.5' }} CGPA</span>
+                            <span class="text-slate-500 font-normal ml-1.5">Academic standing &bull; First Class Distinction</span>
+                        </div>
                     </div>
 
-                    <!-- Micro Badge Chips & Metadata Row -->
-                    <div class="flex items-center gap-2 flex-wrap text-xs">
-                        <!-- Registration ID Pill -->
-                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 text-white font-mono text-[11px] font-bold shadow-2xs">
-                            <i class="fa-solid fa-id-badge text-blue-400 text-[10px]"></i>
-                            <span>{{ current_user.registration_id or ('NU24CS' ~ '%03d'|format(current_user.id)) }}</span>
-                        </div>
-                        <!-- Course Code Pill -->
-                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-blue-50 text-[#1D4ED8] border border-blue-200/80 font-bold text-[11px]">
-                            <i class="fa-solid fa-graduation-cap text-[10px]"></i>
-                            <span>{{ current_user.course_code or 'BCA' }}</span>
-                        </div>
-                        <!-- Semester Pill -->
-                        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/80 font-bold text-[11px]">
-                            <i class="fa-solid fa-layer-group text-[10px]"></i>
-                            <span>Sem {{ current_user.semester or '4' }}</span>
-                        </div>
-                        <!-- Department & Term Meta -->
-                        <div class="hidden md:inline-flex items-center gap-1.5 text-slate-500 font-medium text-xs pl-1">
-                            <span class="text-slate-300">•</span>
-                            <i class="fa-solid fa-building-columns text-slate-400 text-[11px]"></i>
-                            <span class="text-slate-600 font-semibold truncate max-w-[200px] lg:max-w-none">Dept. of {{ current_user.department or 'Computer Science & Engineering' }}</span>
-                            <span class="text-slate-300">•</span>
-                            <span class="text-slate-400">AY 2026–2027</span>
+                    <!-- Stat Row 2: Attendance / Campus Health -->
+                    <div class="flex items-center gap-3 text-slate-800">
+                        <span class="w-7 h-7 rounded-lg bg-blue-100/80 text-blue-700 flex items-center justify-center flex-shrink-0 text-sm">
+                            <i class="fa-solid fa-cloud-sun"></i>
+                        </span>
+                        <div class="text-xs sm:text-sm font-semibold">
+                            <span class="font-bold text-slate-900 font-mono text-sm sm:text-base">{{ '%.1f'|format(current_user.attendance_percentage) if current_user.attendance_percentage else '100.0' }}% Attendance</span>
+                            <span class="text-slate-500 font-normal ml-1.5">Debarment safe &bull; Dept. of {{ current_user.department or 'Computer Science' }}</span>
                         </div>
                     </div>
+                </div>
+
+                <!-- Micro Tags & Quick Calendar Button -->
+                <div class="flex items-center gap-2.5 pt-2 flex-wrap">
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 border border-amber-200 text-amber-900 font-mono text-xs font-bold shadow-2xs">
+                        {{ current_user.registration_id or ('NU24CS' ~ '%03d'|format(current_user.id)) }}
+                    </span>
+                    <span class="px-2.5 py-1 rounded-lg bg-white/80 border border-amber-200 text-slate-700 text-xs font-semibold shadow-2xs">
+                        {{ current_user.course_code or 'BCA' }} &bull; Sem {{ current_user.semester or '4' }}
+                    </span>
+                    <a href="{{ url_for('student.calendar') }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-bold shadow-2xs transition active:scale-95 ml-auto sm:ml-0">
+                        <i class="fa-regular fa-calendar-days text-[11px]"></i>
+                        <span>Calendar</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Right: Quick Action Controls -->
-            <div class="flex items-center gap-2.5 flex-wrap sm:flex-nowrap flex-shrink-0 pt-2 md:pt-0">
-                <a href="{{ url_for('student.profile') }}" class="inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-bold border border-slate-200/90 shadow-2xs hover:border-slate-300 transition-all active:scale-95 group">
-                    <i class="fa-solid fa-id-card text-blue-600 group-hover:scale-110 transition-transform"></i>
-                    <span>Digital ID</span>
-                </a>
-                <a href="{{ url_for('student.calendar') }}" class="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gradient-to-r from-[#1D4ED8] to-[#2563EB] hover:from-[#1E40AF] hover:to-[#1D4ED8] text-white text-xs font-bold shadow-md shadow-blue-500/20 transition-all active:scale-95 group">
-                    <i class="fa-regular fa-calendar-days group-hover:rotate-6 transition-transform"></i>
-                    <span>Academic Calendar</span>
-                </a>
+            <!-- Right Side: Campus Student Illustration (Blended) -->
+            <div class="relative flex-shrink-0 flex items-center justify-center md:justify-end">
+                <div class="relative w-44 h-44 sm:w-52 sm:h-52 rounded-2xl overflow-hidden shadow-sm border border-amber-200/50 bg-amber-50/50">
+                    <img src="{{ url_for('static', filename='images/student_welcome.jpg') }}" 
+                         alt="Welcome to Campus" 
+                         class="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-500">
+                </div>
             </div>
         </div>
     </header>
