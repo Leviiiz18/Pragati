@@ -12,8 +12,8 @@
         <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-transparent blur-2xl pointer-events-none"></div>
         <div class="absolute -left-16 -bottom-16 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-500/5 via-indigo-500/5 to-transparent blur-2xl pointer-events-none"></div>
 
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <!-- Left: Avatar / Status + Name & Greeting -->
+        <div class="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <!-- Left: Avatar + Name & Dynamic Daily Context -->
             <div class="flex items-center gap-4 min-w-0">
                 <!-- Cool Gradient Avatar Icon with Live Activity Dot -->
                 <div class="relative flex-shrink-0">
@@ -40,28 +40,30 @@
                         </h1>
                     </div>
 
-                    <!-- Department & Term Meta -->
+                    <!-- Actionable & Meaningful Daily Status Subtitle -->
                     <p class="text-xs sm:text-sm text-slate-500 font-medium flex items-center gap-2 flex-wrap">
-                        <span>Dept. of {{ current_user.department or 'Computer Science & Engineering' }}</span>
-                        <span class="text-slate-300">•</span>
-                        <span class="text-slate-600 font-semibold">Academic Term 2026–2027</span>
+                        {% if today_slots %}
+                            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-book-open-reader text-[#1D4ED8] mr-1 text-xs"></i>{{ today_slots|length }} class{{ 'es' if today_slots|length != 1 else '' }} scheduled today</span>
+                            <span class="text-slate-300">•</span>
+                            <span>Here is your real-time academic cockpit</span>
+                        {% else %}
+                            <span class="text-slate-700 font-semibold"><i class="fa-solid fa-circle-check text-emerald-500 mr-1 text-xs"></i>All clear today</span>
+                            <span class="text-slate-300">•</span>
+                            <span>Here is your real-time academic cockpit</span>
+                        {% endif %}
                     </p>
                 </div>
             </div>
 
-            <!-- Right: Cool Modern Tech Pill (Registration ID, Course, Sem, Status) -->
-            <div class="flex items-center gap-2 flex-wrap md:justify-end flex-shrink-0">
+            <!-- Right: Clean Live Date & Term Badge -->
+            <div class="flex items-center gap-2.5 flex-wrap sm:justify-end flex-shrink-0">
                 <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 shadow-2xs text-xs">
-                    <div class="flex items-center gap-1.5 font-mono font-bold text-slate-800">
-                        <i class="fa-solid fa-id-badge text-[#1D4ED8] text-xs"></i>
-                        <span>{{ current_user.registration_id or ('NU24CS' ~ '%03d'|format(current_user.id)) }}</span>
-                    </div>
-                    <span class="text-slate-200">|</span>
-                    <span class="px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[11px] border border-indigo-100/80">
-                        {{ current_user.course_code or 'BCA' }}
-                    </span>
-                    <span class="px-2.5 py-0.5 rounded-md bg-slate-200/70 text-slate-700 font-bold text-[11px]">
-                        Sem {{ current_user.semester or '4' }}
+                    <i class="fa-regular fa-calendar text-[#1D4ED8] text-xs"></i>
+                    <span class="font-semibold text-slate-800">{{ day_name }}, {{ today_date.strftime('%d %b %Y') }}</span>
+                    <span class="text-slate-300">•</span>
+                    <span class="flex items-center gap-1.5 text-emerald-700 font-bold text-[11px]">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        Live Term
                     </span>
                 </div>
             </div>
