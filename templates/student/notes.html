@@ -469,7 +469,7 @@ function insertFormat(startTag, endTag) {
 function insertTimestamp() {
     const textarea = document.getElementById('noteContentArea');
     const now = new Date();
-    const dateStr = `\n> 📅 **Academic Entry:** ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}\n`;
+    const dateStr = `\n> **Academic Entry:** ${now.toLocaleDateString()} ${now.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}\n`;
     const start = textarea.selectionStart;
     textarea.value = textarea.value.substring(0, start) + dateStr + textarea.value.substring(start);
     textarea.focus();

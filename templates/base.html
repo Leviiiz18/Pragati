@@ -647,9 +647,18 @@
 
                 <div class="flex flex-wrap gap-2 text-xs">
                     <span class="text-slate-400 font-medium self-center">Quick Searches:</span>
-                    <button onclick="quickCmd('Show students at risk')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">⚠️ Students at Risk</button>
-                    <button onclick="quickCmd('Which faculty is overloaded?')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">⚖️ Faculty Workload</button>
-                    <button onclick="quickCmd('Generate NAAC report')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95">📄 NAAC Report</button>
+                    <button onclick="quickCmd('Show students at risk')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95 flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation text-amber-500 text-xs"></i>
+                        <span>Students at Risk</span>
+                    </button>
+                    <button onclick="quickCmd('Which faculty is overloaded?')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95 flex items-center gap-1.5">
+                        <i class="fa-solid fa-scale-balanced text-indigo-500 text-xs"></i>
+                        <span>Faculty Workload</span>
+                    </button>
+                    <button onclick="quickCmd('Generate NAAC report')" class="px-3 py-1.5 rounded-xl bg-slate-100 text-slate-700 hover:bg-blue-50 hover:text-blue-600 border border-slate-200 font-semibold transition active:scale-95 flex items-center gap-1.5">
+                        <i class="fa-solid fa-file-lines text-slate-500 text-xs"></i>
+                        <span>NAAC Report</span>
+                    </button>
                 </div>
 
                 <div id="cmdResults" class="hidden mt-4 p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 max-h-72 overflow-y-auto text-sm">
