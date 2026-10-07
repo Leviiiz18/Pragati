@@ -7,77 +7,62 @@
     <!-- =====================================================================
          1. DASHBOARD HEADER & QUICK PROFILE IDENTIFIER
          ===================================================================== -->
-    <!-- =====================================================================
-         1. EDITORIAL ILLUSTRATED WELCOME BANNER (INSPIRED BY REFERENCE)
-         ===================================================================== -->
-    <header class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#FFFBEB] via-[#F0FDF4]/40 to-[#EFF6FF] border border-amber-200/60 shadow-sm p-6 sm:p-8 transition-all">
-        <!-- Stylized Minimal Cloud Accents in Background -->
-        <div class="absolute top-4 right-1/3 opacity-30 pointer-events-none hidden sm:block">
-            <svg class="w-16 h-8 text-amber-300 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-        </div>
-        <div class="absolute bottom-3 right-1/4 opacity-25 pointer-events-none hidden sm:block">
-            <svg class="w-12 h-6 text-blue-300 fill-current" viewBox="0 0 24 24"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z"/></svg>
-        </div>
+    <header class="relative overflow-hidden bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 sm:p-6 transition-all">
+        <!-- Subtle Ambient Background Light Effect -->
+        <div class="absolute -right-16 -top-16 w-56 h-56 rounded-full bg-gradient-to-br from-blue-500/10 via-indigo-500/10 to-transparent blur-2xl pointer-events-none"></div>
+        <div class="absolute -left-16 -bottom-16 w-48 h-48 rounded-full bg-gradient-to-tr from-purple-500/5 via-indigo-500/5 to-transparent blur-2xl pointer-events-none"></div>
 
-        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <!-- Left Side: Editorial Typography & Stats -->
-            <div class="space-y-4 max-w-xl">
-                <!-- Main Greeting -->
-                <div class="space-y-1.5">
-                    <h1 class="font-serif text-3xl sm:text-4xl text-[#9A3412] tracking-tight font-bold">
-                        Hello, {{ current_user.first_name or current_user.name.split(' ')[0] }}!
-                    </h1>
-                    <p class="text-sm sm:text-base text-[#9A3412]/80 font-medium leading-relaxed">
-                        Welcome to campus! Your academic record is on track & your courses for Semester {{ current_user.semester or '4' }} are active today.
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <!-- Left: Avatar / Status + Name & Greeting -->
+            <div class="flex items-center gap-4 min-w-0">
+                <!-- Cool Gradient Avatar Icon with Live Activity Dot -->
+                <div class="relative flex-shrink-0">
+                    <div class="w-13 h-13 sm:w-14 sm:h-14 rounded-2xl bg-gradient-to-tr from-[#1D4ED8] via-indigo-600 to-sky-500 p-0.5 shadow-md shadow-indigo-500/20 flex items-center justify-center">
+                        <div class="w-full h-full bg-white rounded-[14px] flex items-center justify-center text-slate-800 font-extrabold text-lg sm:text-xl tracking-tight">
+                            {{ (current_user.first_name or current_user.name)[0] | upper }}
+                        </div>
+                    </div>
+                    <!-- Live Pulse Badge -->
+                    <span class="absolute -bottom-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center" title="Student Session Active">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 border-2 border-white"></span>
+                    </span>
+                </div>
+
+                <div class="space-y-1 min-w-0">
+                    <!-- Dynamic Greeting & Name -->
+                    <div class="flex items-center gap-2.5 flex-wrap">
+                        <h1 class="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight flex items-center gap-2">
+                            <span class="bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 bg-clip-text text-transparent">
+                                Welcome back, {{ current_user.first_name or current_user.name.split(' ')[0] }}
+                            </span>
+                            <span class="inline-block origin-bottom-right hover:rotate-12 transition-transform cursor-default select-none">👋</span>
+                        </h1>
+                    </div>
+
+                    <!-- Department & Term Meta -->
+                    <p class="text-xs sm:text-sm text-slate-500 font-medium flex items-center gap-2 flex-wrap">
+                        <span>Dept. of {{ current_user.department or 'Computer Science & Engineering' }}</span>
+                        <span class="text-slate-300">•</span>
+                        <span class="text-slate-600 font-semibold">Academic Term 2026–2027</span>
                     </p>
-                </div>
-
-                <!-- Two Editorial Metric Rows (Matching Reference) -->
-                <div class="space-y-2.5 pt-1">
-                    <!-- Stat Row 1: CGPA / Performance -->
-                    <div class="flex items-center gap-3 text-slate-800">
-                        <span class="w-7 h-7 rounded-lg bg-amber-100/80 text-amber-800 flex items-center justify-center flex-shrink-0 text-sm">
-                            <i class="fa-solid fa-graduation-cap"></i>
-                        </span>
-                        <div class="text-xs sm:text-sm font-semibold">
-                            <span class="font-bold text-slate-900 font-mono text-sm sm:text-base">{{ '%.1f'|format(current_user.cgpa) if current_user.cgpa else '8.5' }} CGPA</span>
-                            <span class="text-slate-500 font-normal ml-1.5">Academic standing &bull; First Class Distinction</span>
-                        </div>
-                    </div>
-
-                    <!-- Stat Row 2: Attendance / Campus Health -->
-                    <div class="flex items-center gap-3 text-slate-800">
-                        <span class="w-7 h-7 rounded-lg bg-blue-100/80 text-blue-700 flex items-center justify-center flex-shrink-0 text-sm">
-                            <i class="fa-solid fa-cloud-sun"></i>
-                        </span>
-                        <div class="text-xs sm:text-sm font-semibold">
-                            <span class="font-bold text-slate-900 font-mono text-sm sm:text-base">{{ '%.1f'|format(current_user.attendance_percentage) if current_user.attendance_percentage else '100.0' }}% Attendance</span>
-                            <span class="text-slate-500 font-normal ml-1.5">Debarment safe &bull; Dept. of {{ current_user.department or 'Computer Science' }}</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Micro Tags & Quick Calendar Button -->
-                <div class="flex items-center gap-2.5 pt-2 flex-wrap">
-                    <span class="px-2.5 py-1 rounded-lg bg-white/80 border border-amber-200 text-amber-900 font-mono text-xs font-bold shadow-2xs">
-                        {{ current_user.registration_id or ('NU24CS' ~ '%03d'|format(current_user.id)) }}
-                    </span>
-                    <span class="px-2.5 py-1 rounded-lg bg-white/80 border border-amber-200 text-slate-700 text-xs font-semibold shadow-2xs">
-                        {{ current_user.course_code or 'BCA' }} &bull; Sem {{ current_user.semester or '4' }}
-                    </span>
-                    <a href="{{ url_for('student.calendar') }}" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-bold shadow-2xs transition active:scale-95 ml-auto sm:ml-0">
-                        <i class="fa-regular fa-calendar-days text-[11px]"></i>
-                        <span>Calendar</span>
-                    </a>
                 </div>
             </div>
 
-            <!-- Right Side: Campus Student Illustration (Blended) -->
-            <div class="relative flex-shrink-0 flex items-center justify-center md:justify-end">
-                <div class="relative w-44 h-44 sm:w-52 sm:h-52 rounded-2xl overflow-hidden shadow-sm border border-amber-200/50 bg-amber-50/50">
-                    <img src="{{ url_for('static', filename='images/student_welcome.jpg') }}" 
-                         alt="Welcome to Campus" 
-                         class="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-500">
+            <!-- Right: Cool Modern Tech Pill (Registration ID, Course, Sem, Status) -->
+            <div class="flex items-center gap-2 flex-wrap md:justify-end flex-shrink-0">
+                <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200/80 shadow-2xs text-xs">
+                    <div class="flex items-center gap-1.5 font-mono font-bold text-slate-800">
+                        <i class="fa-solid fa-id-badge text-[#1D4ED8] text-xs"></i>
+                        <span>{{ current_user.registration_id or ('NU24CS' ~ '%03d'|format(current_user.id)) }}</span>
+                    </div>
+                    <span class="text-slate-200">|</span>
+                    <span class="px-2.5 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold text-[11px] border border-indigo-100/80">
+                        {{ current_user.course_code or 'BCA' }}
+                    </span>
+                    <span class="px-2.5 py-0.5 rounded-md bg-slate-200/70 text-slate-700 font-bold text-[11px]">
+                        Sem {{ current_user.semester or '4' }}
+                    </span>
                 </div>
             </div>
         </div>
