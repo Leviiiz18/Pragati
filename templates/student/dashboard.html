@@ -5,47 +5,13 @@
 <div class="w-full space-y-6 pb-12 antialiased">
 
     <!-- =====================================================================
-         1. DASHBOARD HEADER & QUICK PROFILE IDENTIFIER
+         1. DASHBOARD HEADER
          ===================================================================== -->
-    <header class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs p-5 sm:p-6 transition-all">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <!-- Left: Avatar + Name & Academic Status -->
-            <div class="flex items-center gap-4 min-w-0">
-                <div class="relative flex-shrink-0">
-                    <div class="w-12 h-12 rounded-xl bg-slate-900 p-0.5 shadow-sm flex items-center justify-center">
-                        <div class="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center text-white font-bold text-base tracking-tight">
-                            {{ (current_user.first_name or current_user.name)[0] | upper }}
-                        </div>
-                    </div>
-                </div>
-
-                <div class="space-y-0.5 min-w-0">
-                    <h1 class="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                        Welcome back, {{ current_user.first_name or current_user.name.split(' ')[0] }}
-                    </h1>
-                    <p class="text-xs sm:text-sm text-slate-500 font-medium">
-                        {% if today_slots %}
-                            <span class="text-slate-700 font-semibold">{{ today_slots|length }} lecture{{ 's' if today_slots|length != 1 else '' }} scheduled today</span>
-                            <span class="text-slate-300 mx-1.5">•</span>
-                            <span>Academic Portal</span>
-                        {% else %}
-                            <span class="text-slate-600 font-medium">No scheduled lectures today</span>
-                            <span class="text-slate-300 mx-1.5">•</span>
-                            <span>Academic Portal</span>
-                        {% endif %}
-                    </p>
-                </div>
-            </div>
-
-            <!-- Right: Clean Live Date Pill -->
-            <div class="flex items-center gap-2.5 flex-wrap sm:justify-end flex-shrink-0">
-                <div class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 font-medium">
-                    <i class="fa-regular fa-calendar text-slate-500 text-xs"></i>
-                    <span class="font-semibold text-slate-800">{{ day_name }}, {{ today_date.strftime('%d %b %Y') }}</span>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+            Welcome, {{ current_user.name }}
+        </h1>
+    </div>
 
     <!-- =====================================================================
          2. URGENCY & ACADEMIC ALERTS (DISMISSIBLE, NON-INTRUSIVE)
