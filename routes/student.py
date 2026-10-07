@@ -5,8 +5,27 @@ from services.ai_engine import AIEngine
 from services.career_service import CareerService
 from services.risk_analytics import RiskAnalyticsService
 import os
+import random
 from datetime import datetime, date
 from werkzeug.utils import secure_filename
+
+STUDENT_QUOTES = [
+    "Discipline today builds the results you want tomorrow.",
+    "Stay consistent. Small steps lead to big achievements.",
+    "Focus on progress, not perfection.",
+    "Knowledge is of no value unless you put it into practice.",
+    "Consistency is what transforms average into excellence.",
+    "The secret of getting ahead is getting started.",
+    "Small daily improvements over time lead to stunning results.",
+    "Excellence is not an act, but a habit.",
+    "Your future is created by what you do today, not tomorrow.",
+    "Mastery demands focus, patience, and persistent effort.",
+    "Curiosity is the engine of intellectual achievement.",
+    "Success is the sum of small efforts repeated day in and day out.",
+    "Hard work beats talent when talent doesn't work hard.",
+    "Every accomplishment starts with the decision to try.",
+    "Clarity and sustained effort conquer any obstacle."
+]
 
 student_bp = Blueprint('student', __name__)
 
@@ -147,6 +166,7 @@ def dashboard():
                            today_slots=today_slots,
                            today_date=today,
                            day_name=day_name,
+                           daily_quote=random.choice(STUDENT_QUOTES),
                            upcoming_assignments=assignments)
 
 @student_bp.route('/courses')
