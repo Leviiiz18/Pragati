@@ -24,8 +24,14 @@ def generate_registration_id(course_code="UCA", admission_year=2026):
     yy = str(admission_year)[-2:]
     prefix = f"{univ_code.upper()}{yy}{course_code.upper()}"
     
-    count = User.query.filter(User.registration_id.like(f"{prefix}%")).count()
-    return f"{prefix}{count + 1:03d}"
+    existing_students = User.query.filter(User.registration_id.like(f"{prefix}%")).all()
+    max_num = 0
+    for s in existing_students:
+        if s.registration_id and s.registration_id.startswith(prefix):
+            suffix = s.registration_id[len(prefix):]
+            if suffix.isdigit():
+                max_num = max(max_num, int(suffix))
+    return f"{prefix}{max_num + 1:03d}"
 
 def generate_employee_id(dept_code="CSE", joining_year=2026, role="faculty"):
     inst = Institution.query.first()
@@ -34,8 +40,14 @@ def generate_employee_id(dept_code="CSE", joining_year=2026, role="faculty"):
     tag = "HOD" if role == "hod" else "FAC"
     prefix = f"{univ_code.upper()}{yy}{tag}"
     
-    count = User.query.filter(User.employee_id.like(f"{prefix}%")).count()
-    return f"{prefix}{count + 1:03d}"
+    existing_staff = User.query.filter(User.employee_id.like(f"{prefix}%")).all()
+    max_num = 0
+    for staff in existing_staff:
+        if staff.employee_id and staff.employee_id.startswith(prefix):
+            suffix = staff.employee_id[len(prefix):]
+            if suffix.isdigit():
+                max_num = max(max_num, int(suffix))
+    return f"{prefix}{max_num + 1:03d}"
 
 def delete_user_cascading(user_id):
     user = User.query.get(user_id)
