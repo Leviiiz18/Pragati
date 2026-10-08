@@ -80,9 +80,114 @@ def create_app():
     if not os.path.exists(app.config.get('UPLOAD_FOLDER', 'uploads')):
         os.makedirs(app.config.get('UPLOAD_FOLDER', 'uploads'))
 
+    def ensure_default_accounts():
+        try:
+            from models import Department, Course, Institution
+            
+            # 1. Ensure Institution exists
+            inst = Institution.query.first()
+            if not inst:
+                inst = Institution(name="Nitte University", code="NU", address="Mangaluru, Karnataka, India")
+                db.session.add(inst)
+                db.session.commit()
+
+            # 2. Ensure basic Departments exist
+            depts_data = [
+                ("Computer Science", "CSE"),
+                ("Management", "MGT"),
+                ("Science", "SCI")
+            ]
+            for d_name, d_code in depts_data:
+                if not Department.query.filter_by(name=d_name).first():
+                    db.session.add(Department(name=d_name, code=d_code))
+            db.session.commit()
+
+            # 3. Ensure basic Courses exist
+            courses_data = [
+                ("BCA", "UCA", "Computer Science"),
+                ("B.Tech Computer Science", "CSE", "Computer Science"),
+                ("BBA", "BBA", "Management")
+            ]
+            for c_name, c_code, c_dept in courses_data:
+                if not Course.query.filter_by(code=c_code).first():
+                    db.session.add(Course(name=c_name, code=c_code, department=c_dept))
+            db.session.commit()
+
+            admin_pw = bcrypt.generate_password_hash('admin123').decode('utf-8')
+            pass_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+
+            # 4. Super Admin
+            admin = User.query.filter(User.role.in_(['super_admin', 'principal'])).first()
+            if not admin:
+                admin = User(
+                    name='System Administrator',
+                    email='admin@studysync.pro',
+                    password=admin_pw,
+                    role='super_admin',
+                    department='Administration',
+                    status='active'
+                )
+                db.session.add(admin)
+
+            # 5. HOD
+            hod = User.query.filter_by(role='hod').first()
+            if not hod:
+                hod = User(
+                    name='Dr. BCA HOD',
+                    email='hod@studysync.pro',
+                    employee_id='NU26HOD001',
+                    password=admin_pw,
+                    role='hod',
+                    department='Computer Science',
+                    status='active'
+                )
+                db.session.add(hod)
+                db.session.flush()
+                cs_dept = Department.query.filter_by(name='Computer Science').first()
+                if cs_dept:
+                    cs_dept.hod_id = hod.id
+
+            # 6. Faculty
+            faculty = User.query.filter_by(role='faculty').first()
+            if not faculty:
+                faculty = User(
+                    name='Prof. Jane Doe',
+                    email='faculty@studysync.pro',
+                    employee_id='NU26FAC001',
+                    password=pass_pw,
+                    role='faculty',
+                    department='Computer Science',
+                    designation='Assistant Professor',
+                    status='active'
+                )
+                db.session.add(faculty)
+
+            # 7. Student
+            student = User.query.filter_by(role='student').first()
+            if not student:
+                student = User(
+                    name='John Student',
+                    email='student@studysync.pro',
+                    registration_id='NU23UCA001',
+                    password=pass_pw,
+                    role='student',
+                    department='Computer Science',
+                    course_code='UCA',
+                    semester=3,
+                    cgpa=8.85,
+                    status='active'
+                )
+                db.session.add(student)
+
+            db.session.commit()
+        except Exception as e:
+            db.session.rollback()
+            print(f"[Notice] Auto-seed status: {e}")
+
     with app.app_context():
         try:
             db.create_all()
+            ensure_default_accounts()
         except Exception:
             pass
 

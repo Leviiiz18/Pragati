@@ -1,97 +1,135 @@
 {% extends "base.html" %}
-{% block title %}Super Admin Executive Dashboard - Pragati by Kalpkrats{% endblock %}
+{% block title %}Super Admin Executive Dashboard — Pragati by Kalpkrats{% endblock %}
+
 {% block content %}
-<div class="space-y-8">
-    <div class="flex items-center justify-between">
+<div class="space-y-6">
+
+    <!-- 1. BREADCRUMB & EXECUTIVE HEADER -->
+    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 print:hidden" aria-label="Breadcrumb">
+        <a href="{{ url_for('super_admin.dashboard') }}" class="hover:text-[#1D4ED8] transition flex items-center gap-1.5">
+            <i class="fa-solid fa-shield-halved text-[11px] text-[#4757F0]"></i>
+            <span>Executive Governance</span>
+        </a>
+        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+        <span class="text-slate-800 font-bold">Central Institutional Administration</span>
+    </nav>
+
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/90 pb-5">
         <div>
-            <h1 class="text-3xl font-extrabold text-slate-900">Executive Governance & Institutional Onboarding</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Pre-feed University branding, configure course codes, and audit cross-department performance.</p>
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#1D4ED8] to-[#4F46E5] text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
+                    <i class="fa-solid fa-crown text-base"></i>
+                </div>
+                <div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                        Executive Governance &amp; Administration
+                    </h1>
+                    <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
+                        Institutional oversight for students, faculty roster, degree courses, and campus registry.
+                    </p>
+                </div>
+            </div>
         </div>
-        <div class="px-4 py-2 rounded-2xl bg-purple-100 border border-purple-200 text-purple-800 text-xs font-bold flex items-center gap-2">
-            <i class="fa-solid fa-shield-halved"></i> Super Admin Privileges Active
+
+        <div class="flex flex-wrap items-center gap-2.5">
+            <button type="button" onclick="openAddStudentModal()"
+                    class="px-4 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-user-plus text-xs"></i>
+                <span>Enrol New Student</span>
+            </button>
+            <button type="button" onclick="openAddFacultyModal()"
+                    class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 flex items-center gap-2 transition active:scale-95 cursor-pointer">
+                <i class="fa-solid fa-chalkboard-user text-xs text-indigo-600"></i>
+                <span>Onboard Faculty</span>
+            </button>
+            <div class="px-3 py-2 rounded-xl bg-purple-50 border border-purple-200 text-purple-800 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
+                <i class="fa-solid fa-shield-check text-purple-600"></i>
+                <span>Super Admin</span>
+            </div>
         </div>
     </div>
 
-    <!-- Executive Metrics Grid (Modern Glassmorphic 21st Style) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+    <!-- 2. EXECUTIVE METRICS GRID (4 Glassmorphic Stat Cards) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <!-- Card 1: Total Students -->
-        <div class="stat-card-glass stat-glow-blue p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-blue-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+        <div class="stat-card-glass stat-glow-blue p-5 sm:p-6 group relative overflow-hidden">
             <div class="flex items-center justify-between mb-3 relative z-10">
                 <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-blue-700 transition-colors">
                     Total Students
                 </span>
-                <div class="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-300/40 text-blue-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <div class="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-300/40 text-blue-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-user-graduate text-sm"></i>
                 </div>
             </div>
             <div class="relative z-10 flex items-baseline gap-2">
                 <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ total_students }}</span>
                 <span class="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
-                    <i class="fa-solid fa-arrow-trend-up text-[10px]"></i> +5.4%
+                    <i class="fa-solid fa-circle-check text-[10px]"></i> {{ active_students }} Active
                 </span>
             </div>
             <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Academic Year Growth</span>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 font-bold text-[10px]">
-                    Expanding
+                <span>Suspended: <strong class="text-rose-600">{{ suspended_students }}</strong></span>
+                <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200/50">
+                    All Depts
                 </span>
             </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 22 Q 25 18, 50 12 T 75 8 T 100 3 L 100 25 L 0 25 Z" fill="url(#sparkBlueAdmin)" />
-                <defs>
-                    <linearGradient id="sparkBlueAdmin" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#3B82F6" />
-                        <stop offset="100%" stop-color="#3B82F6" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-            </svg>
         </div>
 
-        <!-- Card 2: Total Faculty Members -->
-        <div class="stat-card-glass stat-glow-indigo p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-indigo-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+        <!-- Card 2: Faculty & HODs -->
+        <div class="stat-card-glass stat-glow-indigo p-5 sm:p-6 group relative overflow-hidden">
             <div class="flex items-center justify-between mb-3 relative z-10">
                 <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-indigo-700 transition-colors">
-                    Faculty Staff
+                    Academic Staff
                 </span>
-                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-300/40 text-indigo-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-300/40 text-indigo-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-chalkboard-user text-sm"></i>
                 </div>
             </div>
             <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ total_faculty }}</span>
+                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ total_faculty + total_hods }}</span>
                 <span class="text-xs font-bold text-indigo-600 flex items-center gap-0.5">
-                    <i class="fa-solid fa-scale-balanced text-[10px]"></i> 1:15
+                    {{ total_hods }} HODs
                 </span>
             </div>
             <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>UGC Compliance Ratio</span>
-                <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60 font-bold text-[10px]">
-                    Optimal
+                <span>Faculty: <strong class="text-slate-800">{{ total_faculty }}</strong></span>
+                <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold text-[10px] border border-indigo-200/50">
+                    Full Roster
                 </span>
             </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 20 Q 30 15, 55 10 T 80 8 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkIndigoAdmin)" />
-                <defs>
-                    <linearGradient id="sparkIndigoAdmin" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#6366F1" />
-                        <stop offset="100%" stop-color="#6366F1" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-            </svg>
         </div>
 
-        <!-- Card 3: Annual Fee Revenue -->
-        <div class="stat-card-glass stat-glow-emerald p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-emerald-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+        <!-- Card 3: Degree Programs & Courses -->
+        <div class="stat-card-glass stat-glow-purple p-5 sm:p-6 group relative overflow-hidden">
+            <div class="flex items-center justify-between mb-3 relative z-10">
+                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-purple-700 transition-colors">
+                    Degree Programs
+                </span>
+                <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-300/40 text-purple-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
+                    <i class="fa-solid fa-graduation-cap text-sm"></i>
+                </div>
+            </div>
+            <div class="relative z-10 flex items-baseline gap-2">
+                <span class="text-3xl sm:text-4xl font-black text-purple-600 tracking-tight">{{ courses|length }}</span>
+                <span class="text-xs font-bold text-purple-700 flex items-center gap-0.5">
+                    {{ departments|length }} Depts
+                </span>
+            </div>
+            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
+                <span>Prefix: <strong class="text-slate-800 font-mono">{{ institution.code if institution else 'NU' }}</strong></span>
+                <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold text-[10px] border border-purple-200/50">
+                    Pre-Fed
+                </span>
+            </div>
+        </div>
+
+        <!-- Card 4: Fee Realization & Revenue -->
+        <div class="stat-card-glass stat-glow-emerald p-5 sm:p-6 group relative overflow-hidden">
             <div class="flex items-center justify-between mb-3 relative z-10">
                 <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-emerald-700 transition-colors">
-                    Fee Revenue
+                    Fee Realization
                 </span>
-                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-300/40 text-emerald-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-300/40 text-emerald-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
                     <i class="fa-solid fa-indian-rupee-sign text-sm"></i>
                 </div>
             </div>
@@ -99,152 +137,887 @@
                 <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">₹{{ "{:,.0f}".format(total_fees_collected) }}</span>
             </div>
             <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>94.2% Realized</span>
+                <span>Placement Drives: <strong class="text-slate-800">{{ placements_count }}</strong></span>
                 <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                    Healthy
+                    Institutional
                 </span>
             </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 24 Q 25 18, 50 12 T 75 6 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkEmeraldAdmin)" />
-                <defs>
-                    <linearGradient id="sparkEmeraldAdmin" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#10B981" />
-                        <stop offset="100%" stop-color="#10B981" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-            </svg>
-        </div>
-
-        <!-- Card 4: Active Placement Drives -->
-        <div class="stat-card-glass stat-glow-purple p-6 group">
-            <div class="absolute -right-8 -top-8 w-32 h-32 rounded-full bg-purple-500/10 blur-2xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-purple-700 transition-colors">
-                    Placement Drives
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-300/40 text-purple-600 flex items-center justify-center shadow-xs group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <i class="fa-solid fa-briefcase text-sm"></i>
-                </div>
-            </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-purple-600 tracking-tight">{{ placements_count }}</span>
-                <span class="text-xs font-bold text-purple-700 flex items-center gap-0.5">
-                    <i class="fa-solid fa-building text-[10px]"></i> Active
-                </span>
-            </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Avg Package: 12.5 LPA</span>
-                <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200/60 font-bold text-[10px]">
-                    Tier-1 Drives
-                </span>
-            </div>
-            <!-- Decorative Micro-Sparkline SVG -->
-            <svg class="absolute bottom-0 left-0 right-0 w-full h-8 opacity-20 group-hover:opacity-40 transition-opacity pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
-                <path d="M0 20 Q 25 15, 50 10 T 75 6 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkPurpleAdmin)" />
-                <defs>
-                    <linearGradient id="sparkPurpleAdmin" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%" stop-color="#A855F7" />
-                        <stop offset="100%" stop-color="#A855F7" stop-opacity="0" />
-                    </linearGradient>
-                </defs>
-            </svg>
         </div>
     </div>
 
-    <!-- Institution & Pre-Fed Course Onboarding Section -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <!-- Pre-feed University Settings -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl border border-blue-200">
-                    <i class="fa-solid fa-building-columns"></i>
+    <!-- 3. UNIFIED SEGMENTED SECTION TABS -->
+    <div class="flex items-center gap-2 border-b border-slate-200/80 pb-1">
+        <button type="button" onclick="switchMainTab('students')" id="tabBtn-students"
+                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-[#1D4ED8] text-white shadow-xs cursor-pointer">
+            <i class="fa-solid fa-user-graduate text-xs"></i>
+            <span>Student Management ({{ total_students }})</span>
+        </button>
+        <button type="button" onclick="switchMainTab('faculty')" id="tabBtn-faculty"
+                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer">
+            <i class="fa-solid fa-chalkboard-user text-xs"></i>
+            <span>Faculty &amp; HOD Roster ({{ total_faculty + total_hods }})</span>
+        </button>
+        <button type="button" onclick="switchMainTab('institution')" id="tabBtn-institution"
+                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer">
+            <i class="fa-solid fa-building-columns text-xs"></i>
+            <span>Degree Programs &amp; Campus</span>
+        </button>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 1: STUDENT MANAGEMENT & DIRECTORY                         -->
+    <!-- ============================================================= -->
+    <div id="section-students" class="space-y-4">
+        
+        <!-- Search & Filter Console -->
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3.5">
+            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
+                <!-- Real-time Text Search -->
+                <div class="relative flex-1 max-w-md">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="adminStudentSearchInput" oninput="applyAdminStudentFilters()"
+                           placeholder="Search by student name, Reg ID, USN, email, or department..."
+                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition">
                 </div>
-                <div>
-                    <h3 class="text-lg font-extrabold text-slate-900">Pre-Fed University Setup</h3>
-                    <p class="text-xs text-slate-500 font-medium">Used for automatic Registration ID generation prefix (e.g. NU)</p>
+
+                <!-- Dropdown Filters Group -->
+                <div class="flex flex-wrap items-center gap-2.5">
+                    <!-- Department Filter -->
+                    <div class="flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Dept:</label>
+                        <select id="adminDeptFilter" onchange="applyAdminStudentFilters()"
+                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                            <option value="all">All Departments</option>
+                            {% for d in departments %}
+                            <option value="{{ d.name }}">{{ d.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Program / Course Filter -->
+                    <div class="flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Program:</label>
+                        <select id="adminCourseFilter" onchange="applyAdminStudentFilters()"
+                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                            <option value="all">All Programs</option>
+                            {% for c in courses %}
+                            <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Academic Status Filter -->
+                    <div class="flex items-center gap-1.5">
+                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status:</label>
+                        <select id="adminStatusFilter" onchange="applyAdminStudentFilters()"
+                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                            <option value="all">All Status</option>
+                            <option value="active">Active Only</option>
+                            <option value="suspended">Suspended Only</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
-            <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3">
-                <input type="hidden" name="action" value="update_institution">
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">University Name</label>
-                    <input type="text" name="name" value="{{ institution.name if institution else 'Nitte University' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">University Abbreviation Code (Used in Reg ID)</label>
-                    <input type="text" name="code" value="{{ institution.code if institution else 'NU' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
-                    <span class="text-[10px] text-slate-400 font-medium">e.g., NU for Nitte University -> Reg ID begins with NU</span>
-                </div>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition">Save University Setup</button>
-            </form>
+            <!-- Semester Pills Filter -->
+            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 border-t border-slate-100 custom-scroll">
+                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">Semester:</span>
+                <button type="button" onclick="setAdminSemFilter('all')" id="adminSemTab-all"
+                        class="admin-sem-tab px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-2xs transition whitespace-nowrap">
+                    All ({{ students|length }})
+                </button>
+                {% for sem_num in range(1, 9) %}
+                {% set s_count = students|selectattr('semester', 'equalto', sem_num)|list|length %}
+                <button type="button" onclick="setAdminSemFilter('{{ sem_num }}')" id="adminSemTab-{{ sem_num }}"
+                        class="admin-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
+                    Sem {{ sem_num }} ({{ s_count }})
+                </button>
+                {% endfor %}
+            </div>
         </div>
 
-        <!-- Pre-feed Course Codes -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl border border-purple-200">
-                    <i class="fa-solid fa-graduation-cap"></i>
-                </div>
-                <div>
-                    <h3 class="text-lg font-extrabold text-slate-900">Pre-Feed Degree Courses</h3>
-                    <p class="text-xs text-slate-500 font-medium">Add degree programs & course codes (e.g., UCA for BCA, CSE for B.Tech)</p>
-                </div>
-            </div>
+        <!-- Student Roster Table -->
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700 min-w-[800px]">
+                    <thead class="text-[11px] uppercase bg-slate-50/90 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                        <tr>
+                            <th class="py-3 px-4">Student ID / Reg No</th>
+                            <th class="py-3 px-4">Student Details</th>
+                            <th class="py-3 px-4">Department &amp; Program</th>
+                            <th class="py-3 px-4">Semester</th>
+                            <th class="py-3 px-4">CGPA</th>
+                            <th class="py-3 px-4">Status</th>
+                            <th class="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminStudentTableBody" class="divide-y divide-slate-100">
+                        {% for s in students %}
+                        {% set reg_display = s.registration_id or ('NU26UCA' ~ ('%03d'|format(s.id))) %}
+                        <tr class="admin-student-row hover:bg-slate-50/70 transition-colors"
+                            data-sem="{{ s.semester or 1 }}"
+                            data-course="{{ s.course_code or 'UCA' }}"
+                            data-dept="{{ s.department or '' }}"
+                            data-status="{{ s.status or 'active' }}"
+                            data-search="{{ s.name|lower }} {{ reg_display|lower }} {{ s.email|lower }} {{ (s.department or '')|lower }}">
+                            
+                            <!-- Student ID -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-mono font-bold text-xs border border-blue-200/70">
+                                    {{ reg_display }}
+                                </span>
+                            </td>
 
-            <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3">
-                <input type="hidden" name="action" value="add_course">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">Course Name</label>
-                        <input type="text" name="name" placeholder="Bachelor of Computer Applications" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-600 mb-1">Course Code</label>
-                        <input type="text" name="code" placeholder="UCA" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 mb-1">Department</label>
-                    <input type="text" name="department" value="Computer Science" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500">
-                </div>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition">Pre-Feed New Course Code</button>
-            </form>
+                            <!-- Student Details -->
+                            <td class="py-3 px-4">
+                                <div class="flex items-center gap-2.5">
+                                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#1D4ED8] to-[#60A5FA] text-white font-extrabold text-[11px] flex items-center justify-center flex-shrink-0 shadow-2xs">
+                                        {{ s.name[:2]|upper }}
+                                    </div>
+                                    <div class="min-w-0">
+                                        <div class="font-extrabold text-slate-900 text-xs truncate max-w-[200px]">{{ s.name }}</div>
+                                        <div class="text-[11px] text-slate-500 font-mono truncate max-w-[200px]">{{ s.email }}</div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Dept & Course -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <div class="font-bold text-slate-800">{{ s.department or 'General' }}</div>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-50 text-purple-700">
+                                    {{ s.course_code or 'UCA' }}
+                                </span>
+                            </td>
+
+                            <!-- Semester -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-xs">
+                                    Sem {{ s.semester or 1 }}
+                                </span>
+                            </td>
+
+                            <!-- CGPA -->
+                            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold">
+                                {% if s.cgpa %}
+                                <span class="text-slate-900">{{ s.cgpa }}</span>
+                                {% else %}
+                                <span class="text-slate-400 font-normal">N/A</span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Status -->
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                {% if s.status == 'suspended' %}
+                                <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[11px]">
+                                    Suspended
+                                </span>
+                                {% else %}
+                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px]">
+                                    Active
+                                </span>
+                                {% endif %}
+                            </td>
+
+                            <!-- Actions -->
+                            <td class="py-3 px-4 whitespace-nowrap text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <!-- Edit Modal Button -->
+                                    <button type="button" 
+                                            onclick='openEditStudentModal({{ s.id }}, "{{ s.name }}", "{{ s.email }}", "{{ s.department or 'Computer Science' }}", "{{ s.course_code or 'UCA' }}", {{ s.semester or 1 }}, "{{ s.cgpa or '' }}", "{{ s.student_phone or '' }}", "{{ s.status or 'active' }}")'
+                                            class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 flex items-center justify-center transition cursor-pointer"
+                                            title="Edit Student">
+                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
+                                    </button>
+
+                                    <!-- Promote Semester -->
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Promote {{ s.name }} to Semester {{ (s.semester or 1) + 1 }}?');">
+                                        <input type="hidden" name="action" value="promote_student">
+                                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 flex items-center justify-center transition cursor-pointer" title="Promote to Next Semester">
+                                            <i class="fa-solid fa-arrow-up-right-dots text-xs"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Toggle Suspend / Active -->
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
+                                        <input type="hidden" name="action" value="suspend_student">
+                                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-700 flex items-center justify-center transition cursor-pointer" title="{% if s.status == 'suspended' %}Activate Account{% else %}Suspend Account{% endif %}">
+                                            <i class="fa-solid {% if s.status == 'suspended' %}fa-user-check text-emerald-600{% else %}fa-user-slash text-amber-600{% endif %} text-xs"></i>
+                                        </button>
+                                    </form>
+
+                                    <!-- Delete Student -->
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('PERMANENT ACTION: Delete student {{ s.name }} ({{ reg_display }}) and all associated records?');">
+                                        <input type="hidden" name="action" value="delete_student">
+                                        <input type="hidden" name="student_id" value="{{ s.id }}">
+                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700 flex items-center justify-center transition cursor-pointer" title="Delete Student">
+                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400 font-medium">
+                                No students currently registered. Click "Enrol New Student" to get started.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
-    <!-- Pre-Fed Courses Table -->
-    <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-4">
-        <h3 class="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-list-check text-blue-600"></i> Pre-Fed Institutional Courses
-        </h3>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left text-sm text-slate-700">
-                <thead class="text-xs uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
-                    <tr>
-                        <th class="p-3">Course Name</th>
-                        <th class="p-3">Course Code</th>
-                        <th class="p-3">Department</th>
-                        <th class="p-3">Reg ID Example</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-200">
-                    {% for c in courses %}
-                    <tr class="hover:bg-slate-50 font-medium">
-                        <td class="p-3 font-bold text-slate-900">{{ c.name }}</td>
-                        <td class="p-3"><span class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 text-xs font-mono font-bold">{{ c.code or 'UCA' }}</span></td>
-                        <td class="p-3 text-slate-700">{{ c.department }}</td>
-                        <td class="p-3 font-mono font-bold text-blue-600">{{ institution.code if institution else 'NU' }}26{{ c.code or 'UCA' }}001</td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" class="p-4 text-center text-slate-400">No courses configured.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    <!-- ============================================================= -->
+    <!-- TAB 2: FACULTY & HOD ROSTER                                   -->
+    <!-- ============================================================= -->
+    <div id="section-faculty" class="space-y-4 hidden">
+        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3.5">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="relative flex-1 max-w-md">
+                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                    </span>
+                    <input type="text" id="adminFacSearchInput" oninput="applyAdminFacultyFilters()"
+                           placeholder="Search faculty by name, employee ID, or department..."
+                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500">
+                </div>
+                <button type="button" onclick="openAddFacultyModal()"
+                        class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs cursor-pointer">
+                    <i class="fa-solid fa-plus text-xs"></i>
+                    <span>Onboard Faculty / HOD</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700 min-w-[750px]">
+                    <thead class="text-[11px] uppercase bg-slate-50/90 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                        <tr>
+                            <th class="py-3 px-4">Employee ID</th>
+                            <th class="py-3 px-4">Faculty Member</th>
+                            <th class="py-3 px-4">Role</th>
+                            <th class="py-3 px-4">Department</th>
+                            <th class="py-3 px-4">Contact / Phone</th>
+                            <th class="py-3 px-4">Status</th>
+                            <th class="py-3 px-4 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="adminFacultyTableBody" class="divide-y divide-slate-100">
+                        {% for f in faculties %}
+                        <tr class="admin-fac-row hover:bg-slate-50/70 transition-colors"
+                            data-search="{{ f.name|lower }} {{ (f.employee_id or '')|lower }} {{ (f.department or '')|lower }} {{ f.email|lower }}">
+                            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-indigo-700">
+                                {{ f.employee_id or ('EMP' ~ f.id) }}
+                            </td>
+                            <td class="py-3 px-4">
+                                <div class="font-extrabold text-slate-900 text-xs">{{ f.name }}</div>
+                                <div class="text-[11px] text-slate-500 font-mono">{{ f.email }}</div>
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                {% if f.role == 'hod' %}
+                                <span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">
+                                    Head of Dept (HOD)
+                                </span>
+                                {% else %}
+                                <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 font-bold text-[10px]">
+                                    Faculty
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap font-bold text-slate-800">
+                                {{ f.department or 'General' }}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap text-slate-600">
+                                {{ f.phone or 'Not provided' }}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap">
+                                {% if f.status == 'suspended' %}
+                                <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[10px]">Suspended</span>
+                                {% else %}
+                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">Active</span>
+                                {% endif %}
+                            </td>
+                            <td class="py-3 px-4 whitespace-nowrap text-right">
+                                <div class="inline-flex items-center gap-1.5">
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
+                                        <input type="hidden" name="action" value="suspend_faculty">
+                                        <input type="hidden" name="faculty_id" value="{{ f.id }}">
+                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-700 flex items-center justify-center transition cursor-pointer" title="Toggle Status">
+                                            <i class="fa-solid fa-power-off text-xs"></i>
+                                        </button>
+                                    </form>
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Delete staff record for {{ f.name }}?');">
+                                        <input type="hidden" name="action" value="delete_faculty">
+                                        <input type="hidden" name="faculty_id" value="{{ f.id }}">
+                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700 flex items-center justify-center transition cursor-pointer" title="Delete Faculty">
+                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="7" class="py-8 text-center text-slate-400 font-medium">
+                                No faculty or HODs registered yet.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- TAB 3: DEGREE PROGRAMS & CAMPUS SETUP                         -->
+    <!-- ============================================================= -->
+    <div id="section-institution" class="space-y-6 hidden">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- University Setup Form -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl border border-blue-200">
+                        <i class="fa-solid fa-building-columns"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">University Identification</h3>
+                        <p class="text-xs text-slate-500 font-medium">Prefix used across auto-generated IDs (e.g. NU)</p>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+                    <input type="hidden" name="action" value="update_institution">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">University Name</label>
+                        <input type="text" name="name" value="{{ institution.name if institution else 'Nitte University' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">University Abbreviation Code (Prefix)</label>
+                        <input type="text" name="code" value="{{ institution.code if institution else 'NU' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white uppercase">
+                        <span class="text-[10px] text-slate-400 mt-1 block font-medium">e.g., NU -> Generates Reg ID: NU26UCA001</span>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Address / Campus</label>
+                        <input type="text" name="address" value="{{ institution.address if institution else 'Mangaluru, Karnataka, India' }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition cursor-pointer">
+                        Save University Setup
+                    </button>
+                </form>
+            </div>
+
+            <!-- Add Degree Course Form -->
+            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl border border-purple-200">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-base font-extrabold text-slate-900">Pre-Feed Degree Program</h3>
+                        <p class="text-xs text-slate-500 font-medium">Register courses &amp; code tags (e.g. UCA for BCA, CSE for B.Tech)</p>
+                    </div>
+                </div>
+
+                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+                    <input type="hidden" name="action" value="add_course">
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Degree Program Name</label>
+                            <input type="text" name="name" placeholder="Bachelor of Computer Applications" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Program Code</label>
+                            <input type="text" name="code" placeholder="UCA" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white uppercase">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
+                        <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-purple-500">
+                            {% for d in departments %}
+                            <option value="{{ d.name }}">{{ d.name }}</option>
+                            {% else %}
+                            <option value="Computer Science">Computer Science</option>
+                            <option value="Management">Management</option>
+                            <option value="Science">Science</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition cursor-pointer">
+                        Add Degree Course
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Pre-Fed Courses Catalog -->
+        <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
+            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                <i class="fa-solid fa-list-check text-blue-600"></i> Pre-Fed Degree Catalog
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-xs text-slate-700">
+                    <thead class="text-[11px] uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
+                        <tr>
+                            <th class="p-3">Course Name</th>
+                            <th class="p-3">Course Code</th>
+                            <th class="p-3">Department</th>
+                            <th class="p-3">Generated Reg ID Sample</th>
+                            <th class="p-3 text-right">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for c in courses %}
+                        <tr class="hover:bg-slate-50 font-medium">
+                            <td class="p-3 font-bold text-slate-900">{{ c.name }}</td>
+                            <td class="p-3">
+                                <span class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 text-xs font-mono font-bold">
+                                    {{ c.code or 'UCA' }}
+                                </span>
+                            </td>
+                            <td class="p-3 text-slate-700">{{ c.department }}</td>
+                            <td class="p-3 font-mono font-bold text-blue-600">
+                                {{ institution.code if institution else 'NU' }}26{{ c.code or 'UCA' }}001
+                            </td>
+                            <td class="p-3 text-right">
+                                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Remove course {{ c.name }}?');">
+                                    <input type="hidden" name="action" value="delete_course">
+                                    <input type="hidden" name="course_id" value="{{ c.id }}">
+                                    <button type="submit" class="text-slate-400 hover:text-rose-600 p-1 transition" title="Delete Course">
+                                        <i class="fa-solid fa-trash-can text-xs"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="p-4 text-center text-slate-400">No courses configured.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
+
+<!-- ============================================================= -->
+<!-- MODAL 1: ADD NEW STUDENT                                      -->
+<!-- ============================================================= -->
+<div id="addStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-user-plus text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Enrol New Student</h3>
+                    <p class="text-xs text-slate-500">System automatically generates Registration ID &amp; student account</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeAddStudentModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+            <input type="hidden" name="action" value="add_student">
+            
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">First Name</label>
+                    <input type="text" name="first_name" required placeholder="John" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Last Name</label>
+                    <input type="text" name="last_name" placeholder="Doe" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% else %}
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Management">Management</option>
+                        <option value="Science">Science</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Degree Program</label>
+                    <select name="course_code" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                        {% for c in courses %}
+                        <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
+                        {% else %}
+                        <option value="UCA">UCA - BCA</option>
+                        <option value="CSE">CSE - B.Tech</option>
+                        <option value="BBA">BBA - Management</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Semester</label>
+                    <select name="semester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                        {% for s_num in range(1, 9) %}
+                        <option value="{{ s_num }}">Sem {{ s_num }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Gender</label>
+                    <select name="gender" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Admission Year</label>
+                    <input type="number" name="admission_year" value="2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Personal / Contact Email</label>
+                    <input type="email" name="personal_email" placeholder="john.personal@gmail.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Student Phone</label>
+                    <input type="text" name="student_phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center gap-2 text-xs text-blue-900 font-medium">
+                <i class="fa-solid fa-circle-info text-blue-600"></i>
+                <span>Initial login password is defaulted to <strong class="font-mono">password123</strong>.</span>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeAddStudentModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition cursor-pointer">
+                    Enrol Student
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- MODAL 2: EDIT STUDENT                                         -->
+<!-- ============================================================= -->
+<div id="editStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-user-pen text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Edit Student Record</h3>
+                    <p class="text-xs text-slate-500">Update academic placement, department, and contact details</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeEditStudentModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+            <input type="hidden" name="action" value="edit_student">
+            <input type="hidden" name="student_id" id="editStudentId">
+            
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
+                <input type="text" name="name" id="editStudentName" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Institutional Email</label>
+                    <input type="email" name="email" id="editStudentEmail" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Student Phone</label>
+                    <input type="text" name="student_phone" id="editStudentPhone" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" id="editStudentDept" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% else %}
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Management">Management</option>
+                        <option value="Science">Science</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Course Code</label>
+                    <input type="text" name="course_code" id="editStudentCourseCode" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Semester</label>
+                    <select name="semester" id="editStudentSemester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                        {% for s_num in range(1, 9) %}
+                        <option value="{{ s_num }}">Sem {{ s_num }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">CGPA</label>
+                    <input type="number" step="0.01" min="0" max="10" name="cgpa" id="editStudentCgpa" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Account Status</label>
+                    <select name="status" id="editStudentStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                        <option value="active">Active</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeEditStudentModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-200 transition cursor-pointer">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- MODAL 3: ONBOARD FACULTY / HOD                                -->
+<!-- ============================================================= -->
+<div id="addFacultyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+                <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
+                    <i class="fa-solid fa-chalkboard-user text-sm"></i>
+                </div>
+                <div>
+                    <h3 class="text-base font-extrabold text-slate-900">Onboard Academic Staff</h3>
+                    <p class="text-xs text-slate-500">Add Faculty member or Department Head (HOD)</p>
+                </div>
+            </div>
+            <button type="button" onclick="closeAddFacultyModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+            <input type="hidden" name="action" value="add_faculty">
+            
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Staff Member Name</label>
+                <input type="text" name="name" required placeholder="Prof. Jane Doe" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Role / Designation</label>
+                    <select name="role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-purple-500">
+                        <option value="faculty">Faculty Member</option>
+                        <option value="hod">Department Head (HOD)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-purple-500">
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% else %}
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Management">Management</option>
+                        <option value="Science">Science</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email (Optional)</label>
+                    <input type="email" name="email" placeholder="Auto-generated if blank" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
+                    <input type="text" name="phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-xs font-bold text-slate-700 mb-1">Specialization / Subject Domain</label>
+                <input type="text" name="specialization" placeholder="e.g. Artificial Intelligence, Cloud Infrastructure" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+            </div>
+
+            <div class="p-3 rounded-xl bg-purple-50/80 border border-purple-100 flex items-center gap-2 text-xs text-purple-900 font-medium">
+                <i class="fa-solid fa-circle-info text-purple-600"></i>
+                <span>Initial login: Faculty (<strong class="font-mono">password123</strong>) &bull; HOD (<strong class="font-mono">admin123</strong>).</span>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" onclick="closeAddFacultyModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition cursor-pointer">
+                    Onboard Staff
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ============================================================= -->
+<!-- CLIENT-SIDE FILTER & MODAL CONTROLLERS                         -->
+<!-- ============================================================= -->
+<script>
+    // Tab switching
+    let currentAdminSem = 'all';
+
+    function switchMainTab(tab) {
+        ['students', 'faculty', 'institution'].forEach(t => {
+            const sec = document.getElementById('section-' + t);
+            const btn = document.getElementById('tabBtn-' + t);
+            if (!sec || !btn) return;
+            if (t === tab) {
+                sec.classList.remove('hidden');
+                btn.classList.add('bg-[#1D4ED8]', 'text-white', 'shadow-xs');
+                btn.classList.remove('bg-slate-100', 'text-slate-600');
+            } else {
+                sec.classList.add('hidden');
+                btn.classList.remove('bg-[#1D4ED8]', 'text-white', 'shadow-xs');
+                btn.classList.add('bg-slate-100', 'text-slate-600');
+            }
+        });
+    }
+
+    // Modal helpers
+    function openAddStudentModal() {
+        const m = document.getElementById('addStudentModal');
+        if (m) m.classList.remove('hidden'), m.classList.add('flex');
+    }
+    function closeAddStudentModal() {
+        const m = document.getElementById('addStudentModal');
+        if (m) m.classList.add('hidden'), m.classList.remove('flex');
+    }
+
+    function openEditStudentModal(id, name, email, dept, courseCode, sem, cgpa, phone, status) {
+        document.getElementById('editStudentId').value = id;
+        document.getElementById('editStudentName').value = name;
+        document.getElementById('editStudentEmail').value = email;
+        document.getElementById('editStudentDept').value = dept;
+        document.getElementById('editStudentCourseCode').value = courseCode;
+        document.getElementById('editStudentSemester').value = sem;
+        document.getElementById('editStudentCgpa').value = cgpa;
+        document.getElementById('editStudentPhone').value = phone;
+        document.getElementById('editStudentStatus').value = status;
+
+        const m = document.getElementById('editStudentModal');
+        if (m) m.classList.remove('hidden'), m.classList.add('flex');
+    }
+    function closeEditStudentModal() {
+        const m = document.getElementById('editStudentModal');
+        if (m) m.classList.add('hidden'), m.classList.remove('flex');
+    }
+
+    function openAddFacultyModal() {
+        const m = document.getElementById('addFacultyModal');
+        if (m) m.classList.remove('hidden'), m.classList.add('flex');
+    }
+    function closeAddFacultyModal() {
+        const m = document.getElementById('addFacultyModal');
+        if (m) m.classList.add('hidden'), m.classList.remove('flex');
+    }
+
+    // Student filters
+    function setAdminSemFilter(sem) {
+        currentAdminSem = sem;
+        document.querySelectorAll('.admin-sem-tab').forEach(btn => {
+            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-2xs');
+            btn.classList.add('bg-slate-100', 'text-slate-600');
+        });
+        const active = document.getElementById('adminSemTab-' + sem);
+        if (active) {
+            active.classList.add('bg-blue-600', 'text-white', 'shadow-2xs');
+            active.classList.remove('bg-slate-100', 'text-slate-600');
+        }
+        applyAdminStudentFilters();
+    }
+
+    function applyAdminStudentFilters() {
+        const query = (document.getElementById('adminStudentSearchInput')?.value || '').toLowerCase().trim();
+        const dept = document.getElementById('adminDeptFilter')?.value || 'all';
+        const course = document.getElementById('adminCourseFilter')?.value || 'all';
+        const status = document.getElementById('adminStatusFilter')?.value || 'all';
+
+        const rows = document.querySelectorAll('.admin-student-row');
+        rows.forEach(r => {
+            const rSearch = r.getAttribute('data-search') || '';
+            const rSem = r.getAttribute('data-sem');
+            const rCourse = r.getAttribute('data-course');
+            const rDept = r.getAttribute('data-dept');
+            const rStatus = r.getAttribute('data-status');
+
+            const matchQuery = !query || rSearch.includes(query);
+            const matchSem = currentAdminSem === 'all' || rSem === currentAdminSem;
+            const matchDept = dept === 'all' || rDept === dept;
+            const matchCourse = course === 'all' || rCourse === course;
+            const matchStatus = status === 'all' || rStatus === status;
+
+            if (matchQuery && matchSem && matchDept && matchCourse && matchStatus) {
+                r.classList.remove('hidden');
+            } else {
+                r.classList.add('hidden');
+            }
+        });
+    }
+
+    // Faculty filter
+    function applyAdminFacultyFilters() {
+        const q = (document.getElementById('adminFacSearchInput')?.value || '').toLowerCase().trim();
+        document.querySelectorAll('.admin-fac-row').forEach(r => {
+            const text = r.getAttribute('data-search') || '';
+            if (!q || text.includes(q)) {
+                r.classList.remove('hidden');
+            } else {
+                r.classList.add('hidden');
+            }
+        });
+    }
+
+    // Auto-select tab if URL hash specifies (e.g. #faculty-roster, #student-roster)
+    document.addEventListener('DOMContentLoaded', () => {
+        const hash = window.location.hash;
+        if (hash.includes('faculty')) {
+            switchMainTab('faculty');
+        } else if (hash.includes('institution')) {
+            switchMainTab('institution');
+        } else {
+            switchMainTab('students');
+        }
+    });
+</script>
 {% endblock %}

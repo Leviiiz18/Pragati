@@ -95,15 +95,25 @@
                         {% if current_user.role in ['super_admin', 'principal'] %}
                         <a href="{{ url_for('super_admin.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-chart-line text-slate-400"></i>
-                            <span>Overview</span>
+                            <span>Executive Desk</span>
+                        </a>
+                        <a href="{{ url_for('super_admin.dashboard') }}#student-roster" onclick="if(window.switchMainTab) switchMainTab('students')" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-user-graduate text-slate-400"></i>
+                            <span>Students</span>
+                        </a>
+                        <a href="{{ url_for('super_admin.dashboard') }}#faculty-roster" onclick="if(window.switchMainTab) switchMainTab('faculty')" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-chalkboard-user text-slate-400"></i>
+                            <span>Faculty &amp; HODs</span>
+                        </a>
+                        <a href="{{ url_for('super_admin.dashboard') }}#institution-setup" onclick="if(window.switchMainTab) switchMainTab('institution')" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-building-columns text-slate-400"></i>
+                            <span>Campus Setup</span>
                         </a>
                         <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-id-card text-slate-400"></i>
                             <span>Executive ID</span>
                         </a>
-                        {% endif %}
-
-                        {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
+                        {% elif current_user.role == 'hod' %}
                         <!-- 4 Clean Essential Tabs for HOD -->
                         <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-compass text-slate-400"></i>
@@ -448,13 +458,23 @@
                     <i class="fa-solid fa-chart-line text-slate-400"></i>
                     <span>Executive Overview</span>
                 </a>
+                <a href="{{ url_for('super_admin.dashboard') }}#student-roster" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-user-graduate text-slate-400"></i>
+                    <span>Student Registry</span>
+                </a>
+                <a href="{{ url_for('super_admin.dashboard') }}#faculty-roster" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-chalkboard-user text-slate-400"></i>
+                    <span>Faculty &amp; HODs</span>
+                </a>
+                <a href="{{ url_for('super_admin.dashboard') }}#institution-setup" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                    <i class="fa-solid fa-building-columns text-slate-400"></i>
+                    <span>Degree Programs</span>
+                </a>
                 <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
                     <i class="fa-solid fa-id-card text-slate-400"></i>
-                    <span>Executive ID & Profile</span>
+                    <span>Executive ID &amp; Profile</span>
                 </a>
-                {% endif %}
-
-                {% if current_user.role in ['hod', 'super_admin', 'principal'] %}
+                {% elif current_user.role == 'hod' %}
                 <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
                     <i class="fa-solid fa-gauge-high text-slate-400"></i>
                     <span>Department Health</span>
