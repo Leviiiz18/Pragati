@@ -1,669 +1,730 @@
 {% extends "base.html" %}
-{% block title %}Super Admin Executive Dashboard — Pragati by Kalpkrats{% endblock %}
+{% block title %}Super Admin Executive Workspace — Pragati by Kalpkrats{% endblock %}
 
 {% block content %}
-<div class="space-y-6">
+<div class="w-full space-y-6 pb-12 antialiased">
 
-    <!-- 1. BREADCRUMB & EXECUTIVE HEADER -->
-    <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 print:hidden" aria-label="Breadcrumb">
-        <a href="{{ url_for('super_admin.dashboard') }}" class="hover:text-[#1D4ED8] transition flex items-center gap-1.5">
-            <i class="fa-solid fa-shield-halved text-[11px] text-[#4757F0]"></i>
-            <span>Executive Governance</span>
-        </a>
-        <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
-        <span class="text-slate-800 font-bold">Central Institutional Administration</span>
-    </nav>
-
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 border-b border-slate-200/90 pb-5">
+    <!-- =====================================================================
+         1. DASHBOARD HEADER (Welcome, Dynamic Live Date & Academic Quote)
+         ===================================================================== -->
+    <div class="flex flex-col md:flex-row md:items-start justify-between gap-3 pb-1">
         <div>
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#1D4ED8] to-[#4F46E5] text-white flex items-center justify-center font-bold shadow-md shadow-blue-500/20">
-                    <i class="fa-solid fa-crown text-base"></i>
-                </div>
-                <div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
-                        Executive Governance &amp; Administration
-                    </h1>
-                    <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
-                        Institutional oversight for students, faculty roster, degree courses, and campus registry.
-                    </p>
-                </div>
-            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-[32px] font-black text-slate-900 tracking-tight leading-tight">
+                Welcome back, {{ current_user.name }}
+            </h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-500 mt-1">
+                Institutional Governance. Central university administration &amp; academic oversight.
+            </p>
         </div>
 
-        <div class="flex flex-wrap items-center gap-2.5">
-            <button type="button" onclick="openAddStudentModal()"
-                    class="px-4 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-[#1E40AF] text-white text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95 cursor-pointer">
-                <i class="fa-solid fa-user-plus text-xs"></i>
-                <span>Enrol New Student</span>
-            </button>
-            <button type="button" onclick="openAddFacultyModal()"
-                    class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold border border-slate-200 flex items-center gap-2 transition active:scale-95 cursor-pointer">
-                <i class="fa-solid fa-chalkboard-user text-xs text-indigo-600"></i>
-                <span>Onboard Faculty</span>
-            </button>
-            <div class="px-3 py-2 rounded-xl bg-purple-50 border border-purple-200 text-purple-800 text-xs font-bold flex items-center gap-1.5 shadow-2xs">
-                <i class="fa-solid fa-shield-check text-purple-600"></i>
-                <span>Super Admin</span>
+        <div class="text-left md:text-right space-y-1 flex-shrink-0">
+            <div class="text-xs sm:text-sm font-semibold text-slate-600">
+                {{ today_date.strftime('%A, %d %B %Y') if today_date else 'Thursday, 08 October 2026' }}
             </div>
+            <p class="text-xs sm:text-sm italic font-medium text-slate-400 max-w-md">
+                &ldquo;Leadership and learning are indispensable to each other.&rdquo;
+            </p>
         </div>
     </div>
 
-    <!-- 2. EXECUTIVE METRICS GRID (4 Glassmorphic Stat Cards) -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
-        <!-- Card 1: Total Students -->
-        <div class="stat-card-glass stat-glow-blue p-5 sm:p-6 group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-blue-700 transition-colors">
-                    Total Students
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-blue-500/10 border border-blue-300/40 text-blue-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-user-graduate text-sm"></i>
-                </div>
-            </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ total_students }}</span>
-                <span class="text-xs font-bold text-emerald-600 flex items-center gap-0.5">
-                    <i class="fa-solid fa-circle-check text-[10px]"></i> {{ active_students }} Active
-                </span>
-            </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Suspended: <strong class="text-rose-600">{{ suspended_students }}</strong></span>
-                <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-700 font-bold text-[10px] border border-blue-200/50">
-                    All Depts
-                </span>
-            </div>
-        </div>
-
-        <!-- Card 2: Faculty & HODs -->
-        <div class="stat-card-glass stat-glow-indigo p-5 sm:p-6 group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-indigo-700 transition-colors">
-                    Academic Staff
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-indigo-500/10 border border-indigo-300/40 text-indigo-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-chalkboard-user text-sm"></i>
-                </div>
-            </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">{{ total_faculty + total_hods }}</span>
-                <span class="text-xs font-bold text-indigo-600 flex items-center gap-0.5">
-                    {{ total_hods }} HODs
-                </span>
-            </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Faculty: <strong class="text-slate-800">{{ total_faculty }}</strong></span>
-                <span class="px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 font-bold text-[10px] border border-indigo-200/50">
-                    Full Roster
-                </span>
-            </div>
-        </div>
-
-        <!-- Card 3: Degree Programs & Courses -->
-        <div class="stat-card-glass stat-glow-purple p-5 sm:p-6 group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-purple-700 transition-colors">
-                    Degree Programs
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-purple-500/10 border border-purple-300/40 text-purple-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-graduation-cap text-sm"></i>
-                </div>
-            </div>
-            <div class="relative z-10 flex items-baseline gap-2">
-                <span class="text-3xl sm:text-4xl font-black text-purple-600 tracking-tight">{{ courses|length }}</span>
-                <span class="text-xs font-bold text-purple-700 flex items-center gap-0.5">
-                    {{ departments|length }} Depts
-                </span>
-            </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Prefix: <strong class="text-slate-800 font-mono">{{ institution.code if institution else 'NU' }}</strong></span>
-                <span class="px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 font-bold text-[10px] border border-purple-200/50">
-                    Pre-Fed
-                </span>
-            </div>
-        </div>
-
-        <!-- Card 4: Fee Realization & Revenue -->
-        <div class="stat-card-glass stat-glow-emerald p-5 sm:p-6 group relative overflow-hidden">
-            <div class="flex items-center justify-between mb-3 relative z-10">
-                <span class="text-[11px] font-extrabold uppercase tracking-widest text-slate-400 group-hover:text-emerald-700 transition-colors">
-                    Fee Realization
-                </span>
-                <div class="w-10 h-10 rounded-2xl bg-emerald-500/10 border border-emerald-300/40 text-emerald-600 flex items-center justify-center shadow-2xs group-hover:scale-110 transition-transform">
-                    <i class="fa-solid fa-indian-rupee-sign text-sm"></i>
-                </div>
-            </div>
-            <div class="relative z-10 flex items-baseline gap-1">
-                <span class="text-3xl sm:text-4xl font-black text-slate-900 tracking-tight">₹{{ "{:,.0f}".format(total_fees_collected) }}</span>
-            </div>
-            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-500 font-semibold relative z-10 pt-3 border-t border-slate-100">
-                <span>Placement Drives: <strong class="text-slate-800">{{ placements_count }}</strong></span>
-                <span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-bold text-[10px]">
-                    Institutional
-                </span>
-            </div>
-        </div>
-    </div>
-
-    <!-- 3. UNIFIED SEGMENTED SECTION TABS -->
-    <div class="flex items-center gap-2 border-b border-slate-200/80 pb-1">
-        <button type="button" onclick="switchMainTab('students')" id="tabBtn-students"
-                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-[#1D4ED8] text-white shadow-xs cursor-pointer">
-            <i class="fa-solid fa-user-graduate text-xs"></i>
-            <span>Student Management ({{ total_students }})</span>
-        </button>
-        <button type="button" onclick="switchMainTab('faculty')" id="tabBtn-faculty"
-                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer">
-            <i class="fa-solid fa-chalkboard-user text-xs"></i>
-            <span>Faculty &amp; HOD Roster ({{ total_faculty + total_hods }})</span>
-        </button>
-        <button type="button" onclick="switchMainTab('institution')" id="tabBtn-institution"
-                class="main-nav-tab px-4 py-2.5 rounded-xl text-xs font-bold transition flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 cursor-pointer">
-            <i class="fa-solid fa-building-columns text-xs"></i>
-            <span>Degree Programs &amp; Campus</span>
-        </button>
-    </div>
-
-    <!-- ============================================================= -->
-    <!-- TAB 1: STUDENT MANAGEMENT & DIRECTORY                         -->
-    <!-- ============================================================= -->
-    <div id="section-students" class="space-y-4">
+    <!-- =====================================================================
+         2. KEY INSTITUTIONAL TELEMETRY (4 CLEAN STAT CARDS EXACTLY AS SCREENSHOT)
+         ===================================================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 flex-shrink-0">
         
-        <!-- Search & Filter Console -->
-        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3.5">
-            <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3">
-                <!-- Real-time Text Search -->
-                <div class="relative flex-1 max-w-md">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="adminStudentSearchInput" oninput="applyAdminStudentFilters()"
-                           placeholder="Search by student name, Reg ID, USN, email, or department..."
-                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-100 transition">
+        <!-- Metric 1: Total Students -->
+        <div data-scroll-to="studentRegistryCard" class="stat-card-glass stat-glow-purple p-4 group relative overflow-hidden flex flex-col justify-between cursor-pointer transition-all duration-300 min-h-[125px]">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-purple-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            
+            <div class="flex items-start justify-between relative z-10">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Total Students</span>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left font-mono">
+                            {{ total_students }}
+                        </span>
+                        <span class="text-[10px] font-semibold text-slate-400">
+                            / {{ active_students }} Active
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium">
+                        {{ suspended_students }} Suspended Records
+                    </div>
                 </div>
-
-                <!-- Dropdown Filters Group -->
-                <div class="flex flex-wrap items-center gap-2.5">
-                    <!-- Department Filter -->
-                    <div class="flex items-center gap-1.5">
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Dept:</label>
-                        <select id="adminDeptFilter" onchange="applyAdminStudentFilters()"
-                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
-                            <option value="all">All Departments</option>
-                            {% for d in departments %}
-                            <option value="{{ d.name }}">{{ d.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Program / Course Filter -->
-                    <div class="flex items-center gap-1.5">
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Program:</label>
-                        <select id="adminCourseFilter" onchange="applyAdminStudentFilters()"
-                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
-                            <option value="all">All Programs</option>
-                            {% for c in courses %}
-                            <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-
-                    <!-- Academic Status Filter -->
-                    <div class="flex items-center gap-1.5">
-                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wider">Status:</label>
-                        <select id="adminStatusFilter" onchange="applyAdminStudentFilters()"
-                                class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
-                            <option value="all">All Status</option>
-                            <option value="active">Active Only</option>
-                            <option value="suspended">Suspended Only</option>
-                        </select>
-                    </div>
+                <div class="w-9 h-9 rounded-xl bg-white/90 border border-purple-200/70 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-600 group-hover:text-white group-hover:border-purple-600 group-hover:shadow-md transition-all duration-300 relative z-10">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5"/>
+                    </svg>
                 </div>
             </div>
 
-            <!-- Semester Pills Filter -->
-            <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 border-t border-slate-100 custom-scroll">
-                <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">Semester:</span>
-                <button type="button" onclick="setAdminSemFilter('all')" id="adminSemTab-all"
-                        class="admin-sem-tab px-3 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-2xs transition whitespace-nowrap">
-                    All ({{ students|length }})
-                </button>
-                {% for sem_num in range(1, 9) %}
-                {% set s_count = students|selectattr('semester', 'equalto', sem_num)|list|length %}
-                <button type="button" onclick="setAdminSemFilter('{{ sem_num }}')" id="adminSemTab-{{ sem_num }}"
-                        class="admin-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap">
-                    Sem {{ sem_num }} ({{ s_count }})
-                </button>
-                {% endfor %}
+            <div class="mt-2.5 pt-2 border-t border-purple-200/40 flex items-center justify-between text-[11px] relative z-10">
+                <span class="text-slate-400 font-medium text-[10px]">Institutional Registry</span>
+                <span class="text-purple-600 hover:text-purple-700 font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span>Directory</span>
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </span>
             </div>
+
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-7 opacity-15 group-hover:opacity-35 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 22 Q 30 18, 55 10 T 80 8 T 100 2 L 100 25 L 0 25 Z" fill="url(#sparkCgpaSuper)" />
+                <defs><linearGradient id="sparkCgpaSuper" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#8B5CF6" /><stop offset="100%" stop-color="#8B5CF6" stop-opacity="0" /></linearGradient></defs>
+            </svg>
         </div>
 
-        <!-- Student Roster Table -->
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-700 min-w-[800px]">
-                    <thead class="text-[11px] uppercase bg-slate-50/90 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
-                        <tr>
-                            <th class="py-3 px-4">Student ID / Reg No</th>
-                            <th class="py-3 px-4">Student Details</th>
-                            <th class="py-3 px-4">Department &amp; Program</th>
-                            <th class="py-3 px-4">Semester</th>
-                            <th class="py-3 px-4">CGPA</th>
-                            <th class="py-3 px-4">Status</th>
-                            <th class="py-3 px-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminStudentTableBody" class="divide-y divide-slate-100">
-                        {% for s in students %}
-                        {% set reg_display = s.registration_id or ('NU26UCA' ~ ('%03d'|format(s.id))) %}
-                        <tr class="admin-student-row hover:bg-slate-50/70 transition-colors"
-                            data-sem="{{ s.semester or 1 }}"
-                            data-course="{{ s.course_code or 'UCA' }}"
-                            data-dept="{{ s.department or '' }}"
-                            data-status="{{ s.status or 'active' }}"
-                            data-search="{{ s.name|lower }} {{ reg_display|lower }} {{ s.email|lower }} {{ (s.department or '')|lower }}">
-                            
-                            <!-- Student ID -->
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-800 font-mono font-bold text-xs border border-blue-200/70">
-                                    {{ reg_display }}
-                                </span>
-                            </td>
+        <!-- Metric 2: Campus Attendance Rate -->
+        <div data-scroll-to="concernsCard" class="stat-card-glass stat-glow-emerald p-4 group relative overflow-hidden flex flex-col justify-between cursor-pointer transition-all duration-300 min-h-[125px]">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-emerald-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            
+            <div class="flex items-start justify-between relative z-10">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Attendance Rate</span>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left font-mono">
+                            {{ avg_attendance }}%
+                        </span>
+                        <span class="text-[10px] font-semibold text-emerald-600 flex items-center gap-1">
+                            <svg class="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+                            </svg>
+                            On Track
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium">Target &ge; 75% req.</div>
+                </div>
 
-                            <!-- Student Details -->
-                            <td class="py-3 px-4">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-[#1D4ED8] to-[#60A5FA] text-white font-extrabold text-[11px] flex items-center justify-center flex-shrink-0 shadow-2xs">
-                                        {{ s.name[:2]|upper }}
-                                    </div>
-                                    <div class="min-w-0">
-                                        <div class="font-extrabold text-slate-900 text-xs truncate max-w-[200px]">{{ s.name }}</div>
-                                        <div class="text-[11px] text-slate-500 font-mono truncate max-w-[200px]">{{ s.email }}</div>
-                                    </div>
-                                </div>
-                            </td>
+                <div class="w-9 h-9 rounded-xl bg-white/90 border border-emerald-200/70 text-emerald-600 flex items-center justify-center flex-shrink-0 group-hover:bg-emerald-600 group-hover:text-white group-hover:border-emerald-600 group-hover:shadow-md transition-all duration-300 relative z-10">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                </div>
+            </div>
 
-                            <!-- Dept & Course -->
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                <div class="font-bold text-slate-800">{{ s.department or 'General' }}</div>
-                                <span class="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-purple-50 text-purple-700">
-                                    {{ s.course_code or 'UCA' }}
-                                </span>
-                            </td>
+            <!-- Progress Bar -->
+            <div class="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden my-1 relative z-10">
+                <div class="progress-bar-fill bg-emerald-500 h-1.5 rounded-full" data-width="{{ (avg_attendance|int) }}"></div>
+            </div>
 
-                            <!-- Semester -->
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-800 font-bold text-xs">
-                                    Sem {{ s.semester or 1 }}
-                                </span>
-                            </td>
+            <div class="mt-2 pt-2 border-t border-emerald-200/40 flex items-center justify-between text-[11px] relative z-10">
+                <span class="text-slate-400 font-medium text-[10px]">Compliant Status</span>
+                <span class="text-purple-600 hover:text-purple-700 font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span>Details</span>
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </div>
 
-                            <!-- CGPA -->
-                            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold">
-                                {% if s.cgpa %}
-                                <span class="text-slate-900">{{ s.cgpa }}</span>
-                                {% else %}
-                                <span class="text-slate-400 font-normal">N/A</span>
-                                {% endif %}
-                            </td>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-7 opacity-15 group-hover:opacity-35 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 15 Q 30 8, 55 18 T 80 10 T 100 4 L 100 25 L 0 25 Z" fill="url(#sparkAttSuper)" />
+                <defs><linearGradient id="sparkAttSuper" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#10B981" /><stop offset="100%" stop-color="#10B981" stop-opacity="0" /></linearGradient></defs>
+            </svg>
+        </div>
 
-                            <!-- Status -->
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                {% if s.status == 'suspended' %}
-                                <span class="px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[11px]">
-                                    Suspended
-                                </span>
-                                {% else %}
-                                <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[11px]">
-                                    Active
-                                </span>
-                                {% endif %}
-                            </td>
+        <!-- Metric 3: Academic Staff -->
+        <div data-scroll-to="facultyCard" class="stat-card-glass stat-glow-indigo p-4 group relative overflow-hidden flex flex-col justify-between cursor-pointer transition-all duration-300 min-h-[125px]">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-indigo-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            
+            <div class="flex items-start justify-between relative z-10">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Academic Staff</span>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left font-mono">
+                            {{ total_faculty + total_hods }}
+                        </span>
+                        <span class="text-[10px] font-semibold text-slate-400">
+                            faculty &amp; HODs
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium">
+                        {{ total_faculty }} Teaching &bull; {{ total_hods }} Dept Heads
+                    </div>
+                </div>
 
-                            <!-- Actions -->
-                            <td class="py-3 px-4 whitespace-nowrap text-right">
-                                <div class="inline-flex items-center gap-1.5">
-                                    <!-- Edit Modal Button -->
-                                    <button type="button" 
-                                            onclick='openEditStudentModal({{ s.id }}, "{{ s.name }}", "{{ s.email }}", "{{ s.department or 'Computer Science' }}", "{{ s.course_code or 'UCA' }}", {{ s.semester or 1 }}, "{{ s.cgpa or '' }}", "{{ s.student_phone or '' }}", "{{ s.status or 'active' }}")'
-                                            class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-blue-50 text-slate-600 hover:text-blue-700 flex items-center justify-center transition cursor-pointer"
-                                            title="Edit Student">
-                                        <i class="fa-solid fa-pen-to-square text-xs"></i>
-                                    </button>
+                <div class="w-9 h-9 rounded-xl bg-white/90 border border-indigo-200/70 text-indigo-600 flex items-center justify-center flex-shrink-0 group-hover:bg-indigo-600 group-hover:text-white group-hover:border-indigo-600 group-hover:shadow-md transition-all duration-300 relative z-10">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                    </svg>
+                </div>
+            </div>
 
-                                    <!-- Promote Semester -->
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Promote {{ s.name }} to Semester {{ (s.semester or 1) + 1 }}?');">
-                                        <input type="hidden" name="action" value="promote_student">
-                                        <input type="hidden" name="student_id" value="{{ s.id }}">
-                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-emerald-50 text-slate-600 hover:text-emerald-700 flex items-center justify-center transition cursor-pointer" title="Promote to Next Semester">
-                                            <i class="fa-solid fa-arrow-up-right-dots text-xs"></i>
-                                        </button>
-                                    </form>
+            <div class="mt-2.5 pt-2 border-t border-indigo-200/40 flex items-center justify-between text-[11px] relative z-10">
+                <span class="text-slate-400 font-medium text-[10px]">Academic Directory</span>
+                <span class="text-purple-600 hover:text-purple-700 font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span>View Roster</span>
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </div>
 
-                                    <!-- Toggle Suspend / Active -->
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
-                                        <input type="hidden" name="action" value="suspend_student">
-                                        <input type="hidden" name="student_id" value="{{ s.id }}">
-                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-700 flex items-center justify-center transition cursor-pointer" title="{% if s.status == 'suspended' %}Activate Account{% else %}Suspend Account{% endif %}">
-                                            <i class="fa-solid {% if s.status == 'suspended' %}fa-user-check text-emerald-600{% else %}fa-user-slash text-amber-600{% endif %} text-xs"></i>
-                                        </button>
-                                    </form>
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-7 opacity-15 group-hover:opacity-35 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 18 Q 25 12, 50 16 T 75 6 T 100 12 L 100 25 L 0 25 Z" fill="url(#sparkStaffSuper)" />
+                <defs><linearGradient id="sparkStaffSuper" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4F46E5" /><stop offset="100%" stop-color="#4F46E5" stop-opacity="0" /></linearGradient></defs>
+            </svg>
+        </div>
 
-                                    <!-- Delete Student -->
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('PERMANENT ACTION: Delete student {{ s.name }} ({{ reg_display }}) and all associated records?');">
-                                        <input type="hidden" name="action" value="delete_student">
-                                        <input type="hidden" name="student_id" value="{{ s.id }}">
-                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700 flex items-center justify-center transition cursor-pointer" title="Delete Student">
-                                            <i class="fa-solid fa-trash-can text-xs"></i>
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400 font-medium">
-                                No students currently registered. Click "Enrol New Student" to get started.
-                            </td>
-                        </tr>
+        <!-- Metric 4: Degree Programs & Catalog -->
+        <div data-scroll-to="setupCard" class="stat-card-glass stat-glow-purple p-4 group relative overflow-hidden flex flex-col justify-between cursor-pointer transition-all duration-300 min-h-[125px]">
+            <div class="absolute -right-6 -top-6 w-24 h-24 rounded-full bg-purple-500/10 blur-xl pointer-events-none group-hover:scale-150 transition-all duration-500"></div>
+            
+            <div class="flex items-start justify-between relative z-10">
+                <div class="space-y-0.5">
+                    <span class="text-[10px] font-bold uppercase tracking-widest text-slate-400">Degree Programs</span>
+                    <div class="flex items-baseline gap-1.5">
+                        <span class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight group-hover:scale-105 transition-transform origin-left font-mono">
+                            {{ courses|length }}
+                        </span>
+                        <span class="text-[10px] font-semibold text-slate-400">
+                            accredited
+                        </span>
+                    </div>
+                    <div class="text-[10px] text-slate-400 font-medium truncate max-w-[140px]">
+                        Across {{ departments|length }} Departments
+                    </div>
+                </div>
+
+                <div class="w-9 h-9 rounded-xl bg-white/90 border border-purple-200/70 text-purple-600 flex items-center justify-center flex-shrink-0 group-hover:bg-purple-600 group-hover:text-white group-hover:border-purple-600 group-hover:shadow-md transition-all duration-300 relative z-10">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/>
+                    </svg>
+                </div>
+            </div>
+
+            <div class="mt-2.5 pt-2 border-t border-purple-200/40 flex items-center justify-between text-[11px] relative z-10">
+                <span class="text-slate-400 font-medium text-[10px]">Academic Catalog</span>
+                <span class="text-purple-600 hover:text-purple-700 font-bold inline-flex items-center gap-1 group-hover:translate-x-0.5 transition-transform text-xs">
+                    <span>Manage</span>
+                    <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                </span>
+            </div>
+
+            <svg class="absolute bottom-0 left-0 right-0 w-full h-7 opacity-15 group-hover:opacity-35 transition-opacity duration-300 pointer-events-none" preserveAspectRatio="none" viewBox="0 0 100 25" fill="none">
+                <path d="M0 22 Q 20 10, 45 18 T 75 10 T 100 6 L 100 25 L 0 25 Z" fill="url(#sparkCourseSuper)" />
+                <defs><linearGradient id="sparkCourseSuper" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#A855F7" /><stop offset="100%" stop-color="#A855F7" stop-opacity="0" /></linearGradient></defs>
+            </svg>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         3. MAIN TWO-COLUMN WORKSPACE (EXACTLY AS SCREENSHOT)
+         ===================================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+        <!-- =================================================================
+             LEFT COLUMN: STUDENT REGISTRY & ACADEMIC GOVERNANCE (~68% Width)
+             ================================================================= -->
+        <div class="lg:col-span-8 space-y-6">
+
+            <!-- MAIN CARD: Student Registry & Governance -->
+            <div id="studentRegistryCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+                
+                <!-- Card Header (Exact style as "Enrolled Courses & Modules" in screenshot) -->
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-900">Student Registry &amp; Academic Governance</h2>
+                            <p class="text-[11px] text-slate-500">Enrol students, track attendance, edit records, and oversee progression</p>
+                        </div>
+                    </div>
+
+                    <!-- Search Input & Enrol Action -->
+                    <div class="flex items-center gap-2">
+                        <div class="relative">
+                            <input type="text" id="studentSearchInput" placeholder="Search students..."
+                                   class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500 w-36 sm:w-48 placeholder:text-slate-400">
+                        </div>
+                        <button type="button" data-modal-target="addStudentModal"
+                                class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-2xs cursor-pointer whitespace-nowrap">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                            <span>Enrol Student</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters Row: Dropdowns + Semester Tabs -->
+                <div class="space-y-3 pt-1">
+                    <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                        <!-- Department Filter -->
+                        <div class="flex items-center gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dept:</label>
+                            <select id="deptFilter"
+                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                                <option value="all">All Departments</option>
+                                {% for d in departments %}
+                                <option value="{{ d.name }}">{{ d.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Program Filter -->
+                        <div class="flex items-center gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Program:</label>
+                            <select id="courseFilter"
+                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                                <option value="all">All Programs</option>
+                                {% for c in courses %}
+                                <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Status Filter -->
+                        <div class="flex items-center gap-1.5">
+                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status:</label>
+                            <select id="statusFilter"
+                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                                <option value="all">All Status</option>
+                                <option value="active">Active Only</option>
+                                <option value="suspended">Suspended Only</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Semester Pill Bar -->
+                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 border-t border-slate-100">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">Semester:</span>
+                        <button type="button" data-sem-filter="all" id="studentSemTab-all"
+                                class="student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-2xs transition whitespace-nowrap cursor-pointer">
+                            All ({{ students|length }})
+                        </button>
+                        {% for sem_num in range(1, 9) %}
+                        {% set sem_count = students|selectattr('semester', 'equalto', sem_num)|list|length %}
+                        <button type="button" data-sem-filter="{{ sem_num }}" id="studentSemTab-{{ sem_num }}"
+                                class="student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap cursor-pointer">
+                            Sem {{ sem_num }} ({{ sem_count }})
+                        </button>
                         {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================= -->
-    <!-- TAB 2: FACULTY & HOD ROSTER                                   -->
-    <!-- ============================================================= -->
-    <div id="section-faculty" class="space-y-4 hidden">
-        <div class="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200/90 shadow-2xs space-y-3.5">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="relative flex-1 max-w-md">
-                    <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-                        <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                    </span>
-                    <input type="text" id="adminFacSearchInput" oninput="applyAdminFacultyFilters()"
-                           placeholder="Search faculty by name, employee ID, or department..."
-                           class="w-full pl-9 pr-4 py-2 rounded-xl border border-slate-200 bg-slate-50 text-xs font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-blue-500">
+                    </div>
                 </div>
-                <button type="button" onclick="openAddFacultyModal()"
-                        class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-xs cursor-pointer">
-                    <i class="fa-solid fa-plus text-xs"></i>
-                    <span>Onboard Faculty / HOD</span>
-                </button>
-            </div>
-        </div>
 
-        <div class="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-700 min-w-[750px]">
-                    <thead class="text-[11px] uppercase bg-slate-50/90 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
-                        <tr>
-                            <th class="py-3 px-4">Employee ID</th>
-                            <th class="py-3 px-4">Faculty Member</th>
-                            <th class="py-3 px-4">Role</th>
-                            <th class="py-3 px-4">Department</th>
-                            <th class="py-3 px-4">Contact / Phone</th>
-                            <th class="py-3 px-4">Status</th>
-                            <th class="py-3 px-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="adminFacultyTableBody" class="divide-y divide-slate-100">
-                        {% for f in faculties %}
-                        <tr class="admin-fac-row hover:bg-slate-50/70 transition-colors"
-                            data-search="{{ f.name|lower }} {{ (f.employee_id or '')|lower }} {{ (f.department or '')|lower }} {{ f.email|lower }}">
-                            <td class="py-3 px-4 whitespace-nowrap font-mono font-bold text-indigo-700">
-                                {{ f.employee_id or ('EMP' ~ f.id) }}
-                            </td>
-                            <td class="py-3 px-4">
-                                <div class="font-extrabold text-slate-900 text-xs">{{ f.name }}</div>
-                                <div class="text-[11px] text-slate-500 font-mono">{{ f.email }}</div>
-                            </td>
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                {% if f.role == 'hod' %}
-                                <span class="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 font-bold text-[10px]">
-                                    Head of Dept (HOD)
-                                </span>
-                                {% else %}
-                                <span class="px-2.5 py-0.5 rounded-full bg-blue-50 text-blue-800 border border-blue-200 font-bold text-[10px]">
-                                    Faculty
-                                </span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4 whitespace-nowrap font-bold text-slate-800">
-                                {{ f.department or 'General' }}
-                            </td>
-                            <td class="py-3 px-4 whitespace-nowrap text-slate-600">
-                                {{ f.phone or 'Not provided' }}
-                            </td>
-                            <td class="py-3 px-4 whitespace-nowrap">
-                                {% if f.status == 'suspended' %}
-                                <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 font-bold text-[10px]">Suspended</span>
-                                {% else %}
-                                <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold text-[10px]">Active</span>
-                                {% endif %}
-                            </td>
-                            <td class="py-3 px-4 whitespace-nowrap text-right">
-                                <div class="inline-flex items-center gap-1.5">
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
-                                        <input type="hidden" name="action" value="suspend_faculty">
-                                        <input type="hidden" name="faculty_id" value="{{ f.id }}">
-                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-amber-50 text-slate-600 hover:text-amber-700 flex items-center justify-center transition cursor-pointer" title="Toggle Status">
-                                            <i class="fa-solid fa-power-off text-xs"></i>
+                <!-- Table Component -->
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[760px]">
+                        <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                            <tr>
+                                <th class="py-3 px-3.5">Student ID</th>
+                                <th class="py-3 px-3.5">Name &amp; Contact</th>
+                                <th class="py-3 px-3.5">Program</th>
+                                <th class="py-3 px-3.5">Semester</th>
+                                <th class="py-3 px-3.5">Attendance</th>
+                                <th class="py-3 px-3.5">CGPA</th>
+                                <th class="py-3 px-3.5">Status</th>
+                                <th class="py-3 px-3.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody" class="divide-y divide-slate-100">
+                            {% for s in students %}
+                            {% set att_val = (s.attendance_percentage or 85.0)|round|int %}
+                            <tr class="student-row hover:bg-slate-50/70 transition-colors"
+                                data-name="{{ s.name|lower }}"
+                                data-reg="{{ (s.registration_id or '')|lower }}"
+                                data-email="{{ s.email|lower }}"
+                                data-dept="{{ s.department or '' }}"
+                                data-course="{{ s.course_code or 'UCA' }}"
+                                data-semester="{{ s.semester or 1 }}"
+                                data-status="{{ s.status or 'active' }}">
+                                
+                                <td class="py-3 px-3.5">
+                                    <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
+                                        {{ s.registration_id }}
+                                    </span>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full bg-purple-50 text-purple-700 font-bold flex items-center justify-center text-[10px] border border-purple-200 flex-shrink-0">
+                                            {{ s.name[:2]|upper }}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900 text-xs">{{ s.name }}</div>
+                                            <div class="text-[10px] text-slate-400 truncate max-w-[150px]">{{ s.email }}</div>
+                                            {% if s.student_phone or s.phone %}
+                                            <div class="text-[10px] text-slate-500 font-mono">{{ s.student_phone or s.phone }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    <span class="font-bold text-slate-800 text-[11px]">{{ s.course_code or 'UCA' }}</span>
+                                    <div class="text-[10px] text-slate-400">{{ s.department or 'Computer Science' }}</div>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    <span class="px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-bold text-[10px]">
+                                        Sem {{ s.semester or 1 }}
+                                    </span>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    <div class="flex items-center gap-1.5">
+                                        <span class="font-mono font-bold text-xs {% if att_val < 75 %}text-rose-600{% else %}text-emerald-700{% endif %}">
+                                            {{ att_val }}%
+                                        </span>
+                                        <div class="w-10 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                                            <div class="progress-bar-fill h-1.5 rounded-full {% if att_val < 75 %}bg-rose-500{% else %}bg-emerald-500{% endif %}" data-width="{{ att_val }}"></div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    <span class="font-mono font-bold text-slate-800 text-xs">
+                                        {{ "%.2f"|format(s.cgpa) if s.cgpa else '—' }}
+                                    </span>
+                                </td>
+
+                                <td class="py-3 px-3.5">
+                                    {% if s.status == 'suspended' %}
+                                    <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold">
+                                        Suspended
+                                    </span>
+                                    {% else %}
+                                    <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] font-bold">
+                                        Active
+                                    </span>
+                                    {% endif %}
+                                </td>
+
+                                <td class="py-3 px-3.5 text-right">
+                                    <div class="flex items-center justify-end gap-1">
+                                        <!-- Edit Button with Dataset -->
+                                        <button type="button" class="edit-student-trigger p-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 transition cursor-pointer"
+                                                data-id="{{ s.id }}"
+                                                data-name="{{ s.name }}"
+                                                data-email="{{ s.email }}"
+                                                data-dept="{{ s.department or '' }}"
+                                                data-course="{{ s.course_code or 'UCA' }}"
+                                                data-sem="{{ s.semester or 1 }}"
+                                                data-cgpa="{{ s.cgpa or '' }}"
+                                                data-phone="{{ s.student_phone or '' }}"
+                                                data-status="{{ s.status or 'active' }}"
+                                                title="Edit Record">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                                            </svg>
                                         </button>
-                                    </form>
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Delete staff record for {{ f.name }}?');">
+
+                                        <!-- Promote Button -->
+                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Promote this student to the next semester?">
+                                            <input type="hidden" name="action" value="promote_student">
+                                            <input type="hidden" name="student_id" value="{{ s.id }}">
+                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 text-slate-600 transition cursor-pointer" title="Promote Semester">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+
+                                        <!-- Suspend Button -->
+                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
+                                            <input type="hidden" name="action" value="suspend_student">
+                                            <input type="hidden" name="student_id" value="{{ s.id }}">
+                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-50 hover:text-amber-600 text-slate-600 transition cursor-pointer" title="Toggle Active/Suspended">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+
+                                        <!-- Delete Button -->
+                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Permanently remove this student record?">
+                                            <input type="hidden" name="action" value="delete_student">
+                                            <input type="hidden" name="student_id" value="{{ s.id }}">
+                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition cursor-pointer" title="Delete Student">
+                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="8" class="p-8 text-center text-slate-400">No students found.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- SECONDARY CARD: Faculty & HOD Roster -->
+            <div id="facultyCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                    <div class="flex items-center gap-2.5">
+                        <span class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
+                            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                            </svg>
+                        </span>
+                        <div>
+                            <h2 class="text-sm font-bold text-slate-900">Academic Staff &amp; Faculty Roster</h2>
+                            <p class="text-[11px] text-slate-500">Department Heads, teaching faculty, and designations</p>
+                        </div>
+                    </div>
+                    <button type="button" data-modal-target="addFacultyModal"
+                            class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-2xs cursor-pointer">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
+                        <span>Onboard Staff</span>
+                    </button>
+                </div>
+
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[700px]">
+                        <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                            <tr>
+                                <th class="py-3 px-3.5">Staff ID</th>
+                                <th class="py-3 px-3.5">Faculty Member</th>
+                                <th class="py-3 px-3.5">Department &amp; Role</th>
+                                <th class="py-3 px-3.5">Designation</th>
+                                <th class="py-3 px-3.5">Status</th>
+                                <th class="py-3 px-3.5 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for f in faculties %}
+                            <tr class="hover:bg-slate-50/70 transition-colors">
+                                <td class="py-3 px-3.5 font-mono font-bold text-slate-800 text-[11px]">
+                                    {{ f.employee_id }}
+                                </td>
+                                <td class="py-3 px-3.5">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-7 h-7 rounded-full {% if f.role == 'hod' %}bg-purple-100 text-purple-700 border border-purple-200{% else %}bg-indigo-50 text-indigo-700 border border-indigo-200{% endif %} font-bold flex items-center justify-center text-[10px] flex-shrink-0">
+                                            {{ f.name[:2]|upper }}
+                                        </div>
+                                        <div>
+                                            <div class="font-bold text-slate-900 text-xs">{{ f.name }}</div>
+                                            <div class="text-[10px] text-slate-400">{{ f.email }}</div>
+                                            {% if f.phone %}
+                                            <div class="text-[10px] text-slate-500 font-mono">{{ f.phone }}</div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td class="py-3 px-3.5">
+                                    <span class="font-bold text-slate-800">{{ f.department or 'Computer Science' }}</span>
+                                    {% if f.role == 'hod' %}
+                                    <span class="ml-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[9px] font-bold">HOD</span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-3 px-3.5 text-slate-600">{{ f.designation or 'Professor' }}</td>
+                                <td class="py-3 px-3.5">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if f.status == 'suspended' %}bg-rose-50 text-rose-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">
+                                        {{ (f.status or 'active')|capitalize }}
+                                    </span>
+                                </td>
+                                <td class="py-3 px-3.5 text-right">
+                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Remove this faculty member from the institution?">
                                         <input type="hidden" name="action" value="delete_faculty">
                                         <input type="hidden" name="faculty_id" value="{{ f.id }}">
-                                        <button type="submit" class="w-7 h-7 rounded-lg bg-slate-100 hover:bg-rose-50 text-slate-600 hover:text-rose-700 flex items-center justify-center transition cursor-pointer" title="Delete Faculty">
-                                            <i class="fa-solid fa-trash-can text-xs"></i>
+                                        <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 transition cursor-pointer" title="Delete">
+                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
                                         </button>
                                     </form>
-                                </div>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="7" class="py-8 text-center text-slate-400 font-medium">
-                                No faculty or HODs registered yet.
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-
-    <!-- ============================================================= -->
-    <!-- TAB 3: DEGREE PROGRAMS & CAMPUS SETUP                         -->
-    <!-- ============================================================= -->
-    <div id="section-institution" class="space-y-6 hidden">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- University Setup Form -->
-            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-xl border border-blue-200">
-                        <i class="fa-solid fa-building-columns"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-extrabold text-slate-900">University Identification</h3>
-                        <p class="text-xs text-slate-500 font-medium">Prefix used across auto-generated IDs (e.g. NU)</p>
-                    </div>
-                </div>
-
-                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
-                    <input type="hidden" name="action" value="update_institution">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">University Name</label>
-                        <input type="text" name="name" value="{{ institution.name if institution else 'Nitte University' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">University Abbreviation Code (Prefix)</label>
-                        <input type="text" name="code" value="{{ institution.code if institution else 'NU' }}" required class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white uppercase">
-                        <span class="text-[10px] text-slate-400 mt-1 block font-medium">e.g., NU -> Generates Reg ID: NU26UCA001</span>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Address / Campus</label>
-                        <input type="text" name="address" value="{{ institution.address if institution else 'Mangaluru, Karnataka, India' }}" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
-                    </div>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition cursor-pointer">
-                        Save University Setup
-                    </button>
-                </form>
-            </div>
-
-            <!-- Add Degree Course Form -->
-            <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-2xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-xl border border-purple-200">
-                        <i class="fa-solid fa-graduation-cap"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-base font-extrabold text-slate-900">Pre-Feed Degree Program</h3>
-                        <p class="text-xs text-slate-500 font-medium">Register courses &amp; code tags (e.g. UCA for BCA, CSE for B.Tech)</p>
-                    </div>
-                </div>
-
-                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
-                    <input type="hidden" name="action" value="add_course">
-                    <div class="grid grid-cols-2 gap-3">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Degree Program Name</label>
-                            <input type="text" name="name" placeholder="Bachelor of Computer Applications" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Program Code</label>
-                            <input type="text" name="code" placeholder="UCA" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white uppercase">
-                        </div>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
-                        <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 focus:outline-none focus:border-purple-500">
-                            {% for d in departments %}
-                            <option value="{{ d.name }}">{{ d.name }}</option>
-                            {% else %}
-                            <option value="Computer Science">Computer Science</option>
-                            <option value="Management">Management</option>
-                            <option value="Science">Science</option>
+                                </td>
+                            </tr>
                             {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition cursor-pointer">
-                        Add Degree Course
-                    </button>
-                </form>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Pre-Fed Courses Catalog -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-2xs space-y-4">
-            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                <i class="fa-solid fa-list-check text-blue-600"></i> Pre-Fed Degree Catalog
-            </h3>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-xs text-slate-700">
-                    <thead class="text-[11px] uppercase bg-slate-100 text-slate-500 border-b border-slate-200 font-bold">
-                        <tr>
-                            <th class="p-3">Course Name</th>
-                            <th class="p-3">Course Code</th>
-                            <th class="p-3">Department</th>
-                            <th class="p-3">Generated Reg ID Sample</th>
-                            <th class="p-3 text-right">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        {% for c in courses %}
-                        <tr class="hover:bg-slate-50 font-medium">
-                            <td class="p-3 font-bold text-slate-900">{{ c.name }}</td>
-                            <td class="p-3">
-                                <span class="px-2.5 py-1 rounded-xl bg-purple-50 text-purple-800 text-xs font-mono font-bold">
-                                    {{ c.code or 'UCA' }}
-                                </span>
-                            </td>
-                            <td class="p-3 text-slate-700">{{ c.department }}</td>
-                            <td class="p-3 font-mono font-bold text-blue-600">
-                                {{ institution.code if institution else 'NU' }}26{{ c.code or 'UCA' }}001
-                            </td>
-                            <td class="p-3 text-right">
-                                <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Remove course {{ c.name }}?');">
-                                    <input type="hidden" name="action" value="delete_course">
-                                    <input type="hidden" name="course_id" value="{{ c.id }}">
-                                    <button type="submit" class="text-slate-400 hover:text-rose-600 p-1 transition" title="Delete Course">
-                                        <i class="fa-solid fa-trash-can text-xs"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="5" class="p-4 text-center text-slate-400">No courses configured.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+        <!-- =================================================================
+             RIGHT COLUMN: ACADEMIC CALENDAR & INSTITUTIONAL WIDGETS (~32% Width)
+             ================================================================= -->
+        <div class="lg:col-span-4 space-y-6">
+
+            <!-- SECTION: ACADEMIC CALENDAR (Exact Match with Screenshot!) -->
+            <div class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-3.5">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center font-bold">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </span>
+                        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Academic Calendar</h3>
+                    </div>
+                    <span class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800 cursor-pointer">
+                        Expanded &rarr;
+                    </span>
+                </div>
+
+                <!-- Monthly Calendar View -->
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between px-1">
+                        <span id="calMonthLabel" class="text-xs font-bold text-slate-800">October 2026</span>
+                        <div class="flex items-center gap-1">
+                            <button type="button" id="calPrevBtn" class="p-1 rounded hover:bg-slate-100 text-slate-500 cursor-pointer" title="Previous Month">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button type="button" id="calNextBtn" class="p-1 rounded hover:bg-slate-100 text-slate-500 cursor-pointer" title="Next Month">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Days of Week Header -->
+                    <div class="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        <span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span><span>Su</span>
+                    </div>
+
+                    <!-- Calendar Cells Grid -->
+                    <div id="calendarDaysGrid" class="grid grid-cols-7 gap-1 text-center text-xs">
+                        <!-- Populated by JavaScript exactly matching screenshot -->
+                    </div>
+                </div>
+
+                <!-- Calendar Legend Box -->
+                <div class="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-[11px] text-slate-500 bg-slate-50/80 p-2.5 rounded-lg border border-slate-100">
+                    <span class="font-bold text-slate-700 text-[10px] uppercase tracking-wider">Legend</span>
+                    <div class="flex items-center gap-3">
+                        <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
+                            <span class="w-3.5 h-3.5 rounded bg-emerald-100 text-emerald-700 flex items-center justify-center text-[10px] font-bold">✓</span>
+                            <span>Session</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
+                            <span class="w-3.5 h-3.5 rounded bg-rose-100 text-rose-700 flex items-center justify-center text-[10px] font-bold">✕</span>
+                            <span>Holiday</span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 font-semibold text-slate-700">
+                            <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                            <span>Event</span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SECTION: DEBARMENT ALERTS (< 75%) -->
+            <div id="concernsCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-3">
+                <div class="flex items-center justify-between pb-2.5 border-b border-slate-100">
+                    <div class="flex items-center gap-2">
+                        <span class="w-6 h-6 rounded-md bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z"/>
+                            </svg>
+                        </span>
+                        <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Debarment Concerns</h3>
+                    </div>
+                    <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 font-bold text-[10px] border border-rose-200">
+                        {{ at_risk_students|length }} Flagged
+                    </span>
+                </div>
+
+                <div class="space-y-2 max-h-56 overflow-y-auto">
+                    {% for s in at_risk_students %}
+                    <div class="p-2.5 rounded-lg border border-slate-200 bg-slate-50/70 flex items-center justify-between gap-2 text-xs">
+                        <div>
+                            <div class="font-bold text-slate-900">{{ s.name }}</div>
+                            <div class="text-[10px] text-slate-400 font-mono">{{ s.registration_id }} &bull; Sem {{ s.semester }}</div>
+                        </div>
+                        <div class="text-right">
+                            <span class="font-mono font-bold text-rose-600">{{ (s.attendance_percentage or 85.0)|round|int }}%</span>
+                            <div class="text-[9px] text-rose-500 font-semibold">Below 75%</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <div class="py-4 text-center text-slate-400 text-xs">
+                        All students meet the 75% attendance criteria.
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- SECTION: CAMPUS SETUP & QUICK ACTIONS -->
+            <div id="setupCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-4 sm:p-5 space-y-3">
+                <div class="flex items-center gap-2 pb-2.5 border-b border-slate-100">
+                    <span class="w-6 h-6 rounded-md bg-slate-100 text-slate-600 flex items-center justify-center font-bold">
+                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 11-3 0m3 0a1.5 1.5 0 10-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m-9.75 0h9.75"/>
+                        </svg>
+                    </span>
+                    <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wider">Campus Operations</h3>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <button type="button" data-modal-target="addStudentModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
+                        <div class="font-bold text-slate-900">Enrol Student</div>
+                        <div class="text-[10px] text-slate-400">Add to roster</div>
+                    </button>
+                    <button type="button" data-modal-target="addFacultyModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
+                        <div class="font-bold text-slate-900">Onboard Staff</div>
+                        <div class="text-[10px] text-slate-400">Faculty &amp; HODs</div>
+                    </button>
+                    <button type="button" data-modal-target="noticeModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
+                        <div class="font-bold text-slate-900">Broadcast</div>
+                        <div class="text-[10px] text-slate-400">Publish notice</div>
+                    </button>
+                    <a href="{{ url_for('super_admin.profile') }}" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left">
+                        <div class="font-bold text-slate-900">Admin ID</div>
+                        <div class="text-[10px] text-slate-400">Institution code</div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- ============================================================= -->
-<!-- MODAL 1: ADD NEW STUDENT                                      -->
+<!-- MODAL 1: ENROL NEW STUDENT                                      -->
 <!-- ============================================================= -->
-<div id="addStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+<div id="addStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-user-plus text-sm"></i>
-                </div>
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.765z"/>
+                    </svg>
+                </span>
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900">Enrol New Student</h3>
-                    <p class="text-xs text-slate-500">System automatically generates Registration ID &amp; student account</p>
+                    <h3 class="text-base font-bold text-slate-900">Enrol New Student</h3>
+                    <p class="text-xs text-slate-500">Auto-generates student account &amp; university Registration ID</p>
                 </div>
             </div>
-            <button type="button" onclick="closeAddStudentModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            <button type="button" data-modal-close="addStudentModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
 
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
             <input type="hidden" name="action" value="add_student">
             
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">First Name</label>
-                    <input type="text" name="first_name" required placeholder="John" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">First Name</label>
+                    <input type="text" name="first_name" required placeholder="John" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Last Name</label>
-                    <input type="text" name="last_name" placeholder="Doe" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Last Name</label>
+                    <input type="text" name="last_name" placeholder="Doe" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for d in departments %}
                         <option value="{{ d.name }}">{{ d.name }}</option>
                         {% else %}
                         <option value="Computer Science">Computer Science</option>
-                        <option value="Management">Management</option>
-                        <option value="Science">Science</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Degree Program</label>
-                    <select name="course_code" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Degree Program</label>
+                    <select name="course_code" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for c in courses %}
                         <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
                         {% else %}
                         <option value="UCA">UCA - BCA</option>
-                        <option value="CSE">CSE - B.Tech</option>
-                        <option value="BBA">BBA - Management</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -671,46 +732,48 @@
 
             <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Semester</label>
-                    <select name="semester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Semester</label>
+                    <select name="semester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for s_num in range(1, 9) %}
                         <option value="{{ s_num }}">Sem {{ s_num }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Gender</label>
-                    <select name="gender" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Gender</label>
+                    <select name="gender" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         <option value="Male">Male</option>
                         <option value="Female">Female</option>
                         <option value="Other">Other</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Admission Year</label>
-                    <input type="number" name="admission_year" value="2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Admission Year</label>
+                    <input type="number" name="admission_year" value="2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Personal / Contact Email</label>
-                    <input type="email" name="personal_email" placeholder="john.personal@gmail.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Contact Email</label>
+                    <input type="email" name="personal_email" placeholder="john.personal@gmail.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Student Phone</label>
-                    <input type="text" name="student_phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Student Phone</label>
+                    <input type="text" name="student_phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
             </div>
 
-            <div class="p-3 rounded-xl bg-blue-50/80 border border-blue-100 flex items-center gap-2 text-xs text-blue-900 font-medium">
-                <i class="fa-solid fa-circle-info text-blue-600"></i>
-                <span>Initial login password is defaulted to <strong class="font-mono">password123</strong>.</span>
+            <div class="p-3 rounded-xl bg-indigo-50/80 border border-indigo-100 flex items-center gap-2 text-indigo-900 font-medium">
+                <svg class="w-4 h-4 text-indigo-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
+                </svg>
+                <span>Initial password defaulted to <strong class="font-mono">password123</strong>.</span>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeAddStudentModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-[#1D4ED8] hover:bg-blue-700 text-white text-xs font-bold shadow-md shadow-blue-200 transition cursor-pointer">
+                <button type="button" data-modal-close="addStudentModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
                     Enrol Student
                 </button>
             </div>
@@ -719,80 +782,84 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- MODAL 2: EDIT STUDENT                                         -->
+<!-- MODAL 2: EDIT STUDENT RECORD                                   -->
 <!-- ============================================================= -->
-<div id="editStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto custom-scroll">
+<div id="editStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-user-pen text-sm"></i>
-                </div>
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
+                    </svg>
+                </span>
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900">Edit Student Record</h3>
-                    <p class="text-xs text-slate-500">Update academic placement, department, and contact details</p>
+                    <h3 class="text-base font-bold text-slate-900">Edit Student Record</h3>
+                    <p class="text-xs text-slate-500">Update academic assignment and contact details</p>
                 </div>
             </div>
-            <button type="button" onclick="closeEditStudentModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            <button type="button" data-modal-close="editStudentModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
 
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
             <input type="hidden" name="action" value="edit_student">
             <input type="hidden" name="student_id" id="editStudentId">
             
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Full Name</label>
-                <input type="text" name="name" id="editStudentName" required class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                <label class="block font-bold text-slate-700 mb-1">Full Name</label>
+                <input type="text" name="name" id="editStudentName" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Institutional Email</label>
-                    <input type="email" name="email" id="editStudentEmail" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Institutional Email</label>
+                    <input type="email" name="email" id="editStudentEmail" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Student Phone</label>
-                    <input type="text" name="student_phone" id="editStudentPhone" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
+                    <input type="text" name="student_phone" id="editStudentPhone" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" id="editStudentDept" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" id="editStudentDept" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for d in departments %}
                         <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% else %}
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="Management">Management</option>
-                        <option value="Science">Science</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Course Code</label>
-                    <input type="text" name="course_code" id="editStudentCourseCode" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500 uppercase">
+                    <label class="block font-bold text-slate-700 mb-1">Degree Program</label>
+                    <select name="course_code" id="editStudentCourse" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        {% for c in courses %}
+                        <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
             </div>
 
             <div class="grid grid-cols-3 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Semester</label>
-                    <select name="semester" id="editStudentSemester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Semester</label>
+                    <select name="semester" id="editStudentSem" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for s_num in range(1, 9) %}
                         <option value="{{ s_num }}">Sem {{ s_num }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">CGPA</label>
-                    <input type="number" step="0.01" min="0" max="10" name="cgpa" id="editStudentCgpa" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-bold text-slate-900 focus:outline-none focus:border-blue-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">CGPA</label>
+                    <input type="number" step="0.01" min="0" max="10" name="cgpa" id="editStudentCgpa" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Account Status</label>
-                    <select name="status" id="editStudentStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-blue-500">
+                    <label class="block font-bold text-slate-700 mb-1">Status</label>
+                    <select name="status" id="editStudentStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         <option value="active">Active</option>
                         <option value="suspended">Suspended</option>
                     </select>
@@ -800,8 +867,8 @@
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeEditStudentModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-md shadow-indigo-200 transition cursor-pointer">
+                <button type="button" data-modal-close="editStudentModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
                     Save Changes
                 </button>
             </div>
@@ -810,50 +877,50 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- MODAL 3: ONBOARD FACULTY / HOD                                -->
+<!-- MODAL 3: ONBOARD FACULTY MEMBER                                -->
 <!-- ============================================================= -->
-<div id="addFacultyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden items-center justify-center p-4">
-    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-7 border border-slate-200 shadow-2xl space-y-4">
+<div id="addFacultyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
             <div class="flex items-center gap-2.5">
-                <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-700 flex items-center justify-center font-bold">
-                    <i class="fa-solid fa-chalkboard-user text-sm"></i>
-                </div>
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
+                    </svg>
+                </span>
                 <div>
-                    <h3 class="text-base font-extrabold text-slate-900">Onboard Academic Staff</h3>
-                    <p class="text-xs text-slate-500">Add Faculty member or Department Head (HOD)</p>
+                    <h3 class="text-base font-bold text-slate-900">Onboard Academic Staff</h3>
+                    <p class="text-xs text-slate-500">Auto-generates staff account &amp; Employee ID</p>
                 </div>
             </div>
-            <button type="button" onclick="closeAddFacultyModal()" class="w-8 h-8 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center">
-                <i class="fa-solid fa-xmark text-sm"></i>
+            <button type="button" data-modal-close="addFacultyModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
             </button>
         </div>
 
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 no-loader">
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
             <input type="hidden" name="action" value="add_faculty">
-            
+
             <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Staff Member Name</label>
-                <input type="text" name="name" required placeholder="Prof. Jane Doe" class="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                <label class="block font-bold text-slate-700 mb-1">Full Name &amp; Academic Title</label>
+                <input type="text" name="name" required placeholder="Dr. Alan Turing" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Role / Designation</label>
-                    <select name="role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-purple-500">
-                        <option value="faculty">Faculty Member</option>
-                        <option value="hod">Department Head (HOD)</option>
+                    <label class="block font-bold text-slate-700 mb-1">Role Classification</label>
+                    <select name="role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="faculty">Teaching Faculty</option>
+                        <option value="hod">Head of Department (HOD)</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-purple-500">
+                    <label class="block font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
                         {% for d in departments %}
                         <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% else %}
-                        <option value="Computer Science">Computer Science</option>
-                        <option value="Management">Management</option>
-                        <option value="Science">Science</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -861,28 +928,23 @@
 
             <div class="grid grid-cols-2 gap-3">
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Email (Optional)</label>
-                    <input type="email" name="email" placeholder="Auto-generated if blank" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Official / Work Email</label>
+                    <input type="email" name="email" placeholder="Optional (auto-generated if empty)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1">Phone Number</label>
-                    <input type="text" name="phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
+                    <label class="block font-bold text-slate-700 mb-1">Designation</label>
+                    <select name="designation" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Head of Department">Head of Department</option>
+                    </select>
                 </div>
-            </div>
-
-            <div>
-                <label class="block text-xs font-bold text-slate-700 mb-1">Specialization / Subject Domain</label>
-                <input type="text" name="specialization" placeholder="e.g. Artificial Intelligence, Cloud Infrastructure" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
-            </div>
-
-            <div class="p-3 rounded-xl bg-purple-50/80 border border-purple-100 flex items-center gap-2 text-xs text-purple-900 font-medium">
-                <i class="fa-solid fa-circle-info text-purple-600"></i>
-                <span>Initial login: Faculty (<strong class="font-mono">password123</strong>) &bull; HOD (<strong class="font-mono">admin123</strong>).</span>
             </div>
 
             <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" onclick="closeAddFacultyModal()" class="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white text-xs font-bold shadow-md shadow-purple-200 transition cursor-pointer">
+                <button type="button" data-modal-close="addFacultyModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
                     Onboard Staff
                 </button>
             </div>
@@ -891,133 +953,306 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- CLIENT-SIDE FILTER & MODAL CONTROLLERS                         -->
+<!-- MODAL 4: BROADCAST NOTICE                                      -->
 <!-- ============================================================= -->
-<script>
-    // Tab switching
-    let currentAdminSem = 'all';
+<div id="noticeModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.34 15.84c-.688-.06-1.386-.09-2.09-.09H7.5a4.5 4.5 0 110-9h.75c.704 0 1.402-.03 2.09-.09m0 9.18c.253.962.584 1.892.985 2.783.247.55.06 1.21-.463 1.511l-.657.38c-.551.318-1.26.117-1.527-.455a28.047 28.047 0 01-1.86-6.07m3.522 1.851c.642.06 1.288.106 1.938.136m-1.938-.136a28.32 28.32 0 010-9.18m1.938.136c-.65.03-1.296.076-1.938.136m1.938-.136c1.328.062 2.651.18 3.96.354 1.309.174 2.593.42 3.842.735 1.05.265 1.76 1.22 1.76 2.305v1.98c0 1.085-.71 2.04-1.76 2.305-1.249.315-2.533.561-3.842.735-1.309.174-2.632.292-3.96.354"/>
+                    </svg>
+                </span>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Broadcast Institutional Notice</h3>
+                    <p class="text-xs text-slate-500">Live notifications for campus students &amp; staff</p>
+                </div>
+            </div>
+            <button type="button" data-modal-close="noticeModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+            </button>
+        </div>
 
-    function switchMainTab(tab) {
-        ['students', 'faculty', 'institution'].forEach(t => {
-            const sec = document.getElementById('section-' + t);
-            const btn = document.getElementById('tabBtn-' + t);
-            if (!sec || !btn) return;
-            if (t === tab) {
-                sec.classList.remove('hidden');
-                btn.classList.add('bg-[#1D4ED8]', 'text-white', 'shadow-xs');
-                btn.classList.remove('bg-slate-100', 'text-slate-600');
+        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
+            <input type="hidden" name="action" value="post_notice">
+
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Target Audience</label>
+                <select name="target_role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
+                    <option value="all">Entire University</option>
+                    <option value="student">Students Only</option>
+                    <option value="faculty">Faculty &amp; HODs Only</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Announcement Title</label>
+                <input type="text" name="title" required placeholder="End-Semester Examination Schedule" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
+            </div>
+
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Message Content</label>
+                <textarea name="message" rows="3" required placeholder="Announcement details..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400"></textarea>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" data-modal-close="noticeModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
+                    Broadcast Notice
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // -----------------------------------------------------------------
+    // 1. Smooth Scroll to Section
+    // -----------------------------------------------------------------
+    function scrollToSection(id) {
+        const el = document.getElementById(id);
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // -----------------------------------------------------------------
+    // 2. Student Registry Filters
+    // -----------------------------------------------------------------
+    let currentStudentSem = 'all';
+
+    function setStudentSemFilter(sem) {
+        currentStudentSem = String(sem);
+        document.querySelectorAll('.student-sem-tab').forEach(btn => {
+            btn.className = 'student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap cursor-pointer';
+        });
+        const activeBtn = document.getElementById('studentSemTab-' + sem);
+        if (activeBtn) {
+            activeBtn.className = 'student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-2xs transition whitespace-nowrap cursor-pointer';
+        }
+        applyStudentFilters();
+    }
+
+    function applyStudentFilters() {
+        const query = (document.getElementById('studentSearchInput')?.value || '').toLowerCase().trim();
+        const dept = document.getElementById('deptFilter')?.value || 'all';
+        const course = document.getElementById('courseFilter')?.value || 'all';
+        const status = document.getElementById('statusFilter')?.value || 'all';
+
+        const rows = document.querySelectorAll('.student-row');
+        rows.forEach(row => {
+            const rName = row.getAttribute('data-name') || '';
+            const rReg = row.getAttribute('data-reg') || '';
+            const rEmail = row.getAttribute('data-email') || '';
+            const rDept = row.getAttribute('data-dept') || '';
+            const rCourse = row.getAttribute('data-course') || '';
+            const rSem = row.getAttribute('data-semester') || '';
+            const rStatus = row.getAttribute('data-status') || '';
+
+            const matchesSearch = !query || rName.includes(query) || rReg.includes(query) || rEmail.includes(query);
+            const matchesDept = (dept === 'all') || (rDept === dept);
+            const matchesCourse = (course === 'all') || (rCourse === course);
+            const matchesStatus = (status === 'all') || (rStatus === status);
+            const matchesSem = (currentStudentSem === 'all') || (rSem === currentStudentSem);
+
+            if (matchesSearch && matchesDept && matchesCourse && matchesStatus && matchesSem) {
+                row.style.display = '';
             } else {
-                sec.classList.add('hidden');
-                btn.classList.remove('bg-[#1D4ED8]', 'text-white', 'shadow-xs');
-                btn.classList.add('bg-slate-100', 'text-slate-600');
+                row.style.display = 'none';
             }
         });
     }
 
-    // Modal helpers
+    // -----------------------------------------------------------------
+    // 3. Modal Triggers & Event Delegation (Clean JS, No Template Inlining)
+    // -----------------------------------------------------------------
     function openAddStudentModal() {
-        const m = document.getElementById('addStudentModal');
-        if (m) m.classList.remove('hidden'), m.classList.add('flex');
+        document.getElementById('addStudentModal').classList.remove('hidden');
     }
     function closeAddStudentModal() {
-        const m = document.getElementById('addStudentModal');
-        if (m) m.classList.add('hidden'), m.classList.remove('flex');
-    }
-
-    function openEditStudentModal(id, name, email, dept, courseCode, sem, cgpa, phone, status) {
-        document.getElementById('editStudentId').value = id;
-        document.getElementById('editStudentName').value = name;
-        document.getElementById('editStudentEmail').value = email;
-        document.getElementById('editStudentDept').value = dept;
-        document.getElementById('editStudentCourseCode').value = courseCode;
-        document.getElementById('editStudentSemester').value = sem;
-        document.getElementById('editStudentCgpa').value = cgpa;
-        document.getElementById('editStudentPhone').value = phone;
-        document.getElementById('editStudentStatus').value = status;
-
-        const m = document.getElementById('editStudentModal');
-        if (m) m.classList.remove('hidden'), m.classList.add('flex');
-    }
-    function closeEditStudentModal() {
-        const m = document.getElementById('editStudentModal');
-        if (m) m.classList.add('hidden'), m.classList.remove('flex');
+        document.getElementById('addStudentModal').classList.add('hidden');
     }
 
     function openAddFacultyModal() {
-        const m = document.getElementById('addFacultyModal');
-        if (m) m.classList.remove('hidden'), m.classList.add('flex');
+        document.getElementById('addFacultyModal').classList.remove('hidden');
     }
     function closeAddFacultyModal() {
-        const m = document.getElementById('addFacultyModal');
-        if (m) m.classList.add('hidden'), m.classList.remove('flex');
+        document.getElementById('addFacultyModal').classList.add('hidden');
     }
 
-    // Student filters
-    function setAdminSemFilter(sem) {
-        currentAdminSem = sem;
-        document.querySelectorAll('.admin-sem-tab').forEach(btn => {
-            btn.classList.remove('bg-blue-600', 'text-white', 'shadow-2xs');
-            btn.classList.add('bg-slate-100', 'text-slate-600');
-        });
-        const active = document.getElementById('adminSemTab-' + sem);
-        if (active) {
-            active.classList.add('bg-blue-600', 'text-white', 'shadow-2xs');
-            active.classList.remove('bg-slate-100', 'text-slate-600');
-        }
-        applyAdminStudentFilters();
+    function openNoticeModal() {
+        document.getElementById('noticeModal').classList.remove('hidden');
+    }
+    function closeNoticeModal() {
+        document.getElementById('noticeModal').classList.add('hidden');
     }
 
-    function applyAdminStudentFilters() {
-        const query = (document.getElementById('adminStudentSearchInput')?.value || '').toLowerCase().trim();
-        const dept = document.getElementById('adminDeptFilter')?.value || 'all';
-        const course = document.getElementById('adminCourseFilter')?.value || 'all';
-        const status = document.getElementById('adminStatusFilter')?.value || 'all';
-
-        const rows = document.querySelectorAll('.admin-student-row');
-        rows.forEach(r => {
-            const rSearch = r.getAttribute('data-search') || '';
-            const rSem = r.getAttribute('data-sem');
-            const rCourse = r.getAttribute('data-course');
-            const rDept = r.getAttribute('data-dept');
-            const rStatus = r.getAttribute('data-status');
-
-            const matchQuery = !query || rSearch.includes(query);
-            const matchSem = currentAdminSem === 'all' || rSem === currentAdminSem;
-            const matchDept = dept === 'all' || rDept === dept;
-            const matchCourse = course === 'all' || rCourse === course;
-            const matchStatus = status === 'all' || rStatus === status;
-
-            if (matchQuery && matchSem && matchDept && matchCourse && matchStatus) {
-                r.classList.remove('hidden');
-            } else {
-                r.classList.add('hidden');
-            }
-        });
+    function closeEditStudentModal() {
+        document.getElementById('editStudentModal').classList.add('hidden');
     }
 
-    // Faculty filter
-    function applyAdminFacultyFilters() {
-        const q = (document.getElementById('adminFacSearchInput')?.value || '').toLowerCase().trim();
-        document.querySelectorAll('.admin-fac-row').forEach(r => {
-            const text = r.getAttribute('data-search') || '';
-            if (!q || text.includes(q)) {
-                r.classList.remove('hidden');
-            } else {
-                r.classList.add('hidden');
-            }
-        });
-    }
-
-    // Auto-select tab if URL hash specifies (e.g. #faculty-roster, #student-roster)
+    // Unobtrusive Edit Button listener via dataset
     document.addEventListener('DOMContentLoaded', () => {
-        const hash = window.location.hash;
-        if (hash.includes('faculty')) {
-            switchMainTab('faculty');
-        } else if (hash.includes('institution')) {
-            switchMainTab('institution');
-        } else {
-            switchMainTab('students');
-        }
+        document.querySelectorAll('.edit-student-trigger').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const d = btn.dataset;
+                document.getElementById('editStudentId').value = d.id || '';
+                document.getElementById('editStudentName').value = d.name || '';
+                document.getElementById('editStudentEmail').value = d.email || '';
+                document.getElementById('editStudentDept').value = d.dept || '';
+                document.getElementById('editStudentCourse').value = d.course || 'UCA';
+                document.getElementById('editStudentSem').value = d.sem || '1';
+                document.getElementById('editStudentCgpa').value = d.cgpa || '';
+                document.getElementById('editStudentPhone').value = d.phone || '';
+                document.getElementById('editStudentStatus').value = d.status || 'active';
+                document.getElementById('editStudentModal').classList.remove('hidden');
+            });
+        });
+
+        // Dynamic progress bar width initialization
+        document.querySelectorAll('.progress-bar-fill[data-width]').forEach(el => {
+            const w = el.getAttribute('data-width');
+            if (w !== null && w !== '') {
+                el.style.width = Math.min(100, Math.max(0, parseInt(w, 10) || 0)) + '%';
+            }
+        });
+
+        // Form confirmation handlers
+        document.querySelectorAll('.js-confirm-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                const msg = this.getAttribute('data-confirm') || 'Are you sure you want to proceed?';
+                if (!confirm(msg)) {
+                    e.preventDefault();
+                }
+            });
+        });
+
+        // Modal Open Handlers
+        document.querySelectorAll('[data-modal-target]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mId = btn.getAttribute('data-modal-target');
+                const m = document.getElementById(mId);
+                if (m) m.classList.remove('hidden');
+            });
+        });
+
+        // Modal Close Handlers
+        document.querySelectorAll('[data-modal-close]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const mId = btn.getAttribute('data-modal-close');
+                const m = document.getElementById(mId);
+                if (m) m.classList.add('hidden');
+            });
+        });
+
+        // Scroll To Section Handlers
+        document.querySelectorAll('[data-scroll-to]').forEach(el => {
+            el.addEventListener('click', () => {
+                const targetId = el.getAttribute('data-scroll-to');
+                const target = document.getElementById(targetId);
+                if (target) target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+
+        // Semester Filter Tabs
+        document.querySelectorAll('[data-sem-filter]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const sem = btn.getAttribute('data-sem-filter');
+                setStudentSemFilter(sem);
+            });
+        });
+
+        // Calendar Month Controls
+        document.getElementById('calPrevBtn')?.addEventListener('click', prevCalMonth);
+        document.getElementById('calNextBtn')?.addEventListener('click', nextCalMonth);
+
+        // Student Filters Input & Select Event Listeners
+        document.getElementById('studentSearchInput')?.addEventListener('input', applyStudentFilters);
+        document.getElementById('deptFilter')?.addEventListener('change', applyStudentFilters);
+        document.getElementById('courseFilter')?.addEventListener('change', applyStudentFilters);
+        document.getElementById('statusFilter')?.addEventListener('change', applyStudentFilters);
+
+        // Initialize Calendar
+        renderMiniCalendar();
     });
+
+    // -----------------------------------------------------------------
+    // 4. Interactive Academic Calendar Widget (Matching Screenshot)
+    // -----------------------------------------------------------------
+    let calCurrentDate = new Date(2026, 9, 8); // October 2026
+
+    function prevCalMonth() {
+        calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
+        renderMiniCalendar();
+    }
+
+    function nextCalMonth() {
+        calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
+        renderMiniCalendar();
+    }
+
+    function renderMiniCalendar() {
+        const grid = document.getElementById('calendarDaysGrid');
+        const label = document.getElementById('calMonthLabel');
+        if (!grid || !label) return;
+
+        const year = calCurrentDate.getFullYear();
+        const month = calCurrentDate.getMonth();
+
+        const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        label.textContent = `${monthNames[month]} ${year}`;
+
+        grid.innerHTML = '';
+
+        const firstDay = new Date(year, month, 1);
+        const lastDay = new Date(year, month + 1, 0);
+
+        let startDayIdx = firstDay.getDay() - 1;
+        if (startDayIdx === -1) startDayIdx = 6;
+
+        for (let i = 0; i < startDayIdx; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'py-1 text-slate-300 text-[11px]';
+            grid.appendChild(emptyCell);
+        }
+
+        const todayNum = (year === 2026 && month === 9) ? 8 : 1;
+
+        for (let day = 1; day <= lastDay.getDate(); day++) {
+            const cell = document.createElement('div');
+            const isToday = (day === todayNum && year === 2026 && month === 9);
+            const isPast = day < todayNum && (year === 2026 && month === 9);
+
+            let cellClass = 'py-1 rounded-md text-xs font-medium flex flex-col items-center justify-center transition-all ';
+            if (isToday) {
+                cellClass += 'bg-slate-900 text-white font-bold shadow-xs';
+            } else if (isPast) {
+                cellClass += 'text-slate-700 hover:bg-slate-50';
+            } else {
+                cellClass += 'text-slate-600 hover:bg-slate-50';
+            }
+            cell.className = cellClass;
+
+            const numSpan = document.createElement('span');
+            numSpan.textContent = day;
+            numSpan.className = isToday ? 'text-white font-bold' : 'text-slate-700';
+            cell.appendChild(numSpan);
+
+            if (isPast && day % 7 !== 0 && day % 7 !== 6) {
+                const check = document.createElement('span');
+                check.className = 'text-[9px] text-emerald-600 leading-none font-bold';
+                check.textContent = '✓';
+                cell.appendChild(check);
+            } else if (day % 7 === 0 || day % 7 === 6) {
+                const mark = document.createElement('span');
+                mark.className = 'text-[9px] text-slate-300 leading-none';
+                mark.textContent = '-';
+                cell.appendChild(mark);
+            }
+
+            grid.appendChild(cell);
+        }
+    }
 </script>
 {% endblock %}

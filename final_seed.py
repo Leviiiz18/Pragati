@@ -20,29 +20,29 @@ def seed_data():
 
         # 1. HODs
         hods = [
-            User(name='Dr. BCA HOD', email='hod@studysync.pro', employee_id='NU26HOD001', password=admin_pw, role='hod', department='Computer Science'),
-            User(name='Dr. BBA HOD', email='bba.hod@studysync.com', password=admin_pw, role='hod', department='Management'),
-            User(name='Dr. Anil Verma', email='anil.hod@studysync.com', password=admin_pw, role='hod', department='Science')
+            User(name='Dr. BCA HOD', email='hod@studysync.pro', employee_id='NU26HOD001', phone='+91 98201 11223', designation='Head of Department', password=admin_pw, role='hod', department='Computer Science'),
+            User(name='Dr. BBA HOD', email='bba.hod@studysync.com', employee_id='NU26HOD002', phone='+91 98202 22334', designation='Head of Department', password=admin_pw, role='hod', department='Management'),
+            User(name='Dr. Anil Verma', email='anil.hod@studysync.com', employee_id='NU26HOD003', phone='+91 98203 33445', designation='Head of Department', password=admin_pw, role='hod', department='Science')
         ]
         db.session.add_all(hods)
         db.session.commit()
         
         # 2. Faculty
         faculties = [
-            User(name='Prof. Jane Doe', email='faculty@studysync.pro', employee_id='NU26FAC001', password=pass_pw, role='faculty', department='Computer Science'),
-            User(name='Finance Prof', email='fin.fac@studysync.com', password=pass_pw, role='faculty', department='Management'),
-            User(name='Riya Nair', email='riya.ds@studysync.com', password=pass_pw, role='faculty', department='Science'),
-            User(name='Neha Kapoor', email='neha.se@studysync.com', password=pass_pw, role='faculty', department='Science')
+            User(name='Prof. Jane Doe', email='faculty@studysync.pro', employee_id='NU26FAC001', phone='+91 98301 44556', designation='Assistant Professor', password=pass_pw, role='faculty', department='Computer Science'),
+            User(name='Finance Prof', email='fin.fac@studysync.com', employee_id='NU26FAC002', phone='+91 98302 55667', designation='Associate Professor', password=pass_pw, role='faculty', department='Management'),
+            User(name='Riya Nair', email='riya.ds@studysync.com', employee_id='NU26FAC003', phone='+91 98303 66778', designation='Assistant Professor', password=pass_pw, role='faculty', department='Science'),
+            User(name='Neha Kapoor', email='neha.se@studysync.com', employee_id='NU26FAC004', phone='+91 98304 77889', designation='Assistant Professor', password=pass_pw, role='faculty', department='Science')
         ]
         db.session.add_all(faculties)
         db.session.commit()
         
         # 3. Students
         students = [
-            User(name='John Student', email='student@studysync.pro', registration_id='NU23UCA001', password=pass_pw, role='student', department='Computer Science'),
-            User(name='BBA Student', email='bba.std@studysync.com', password=pass_pw, role='student', department='Management'),
-            User(name='Rahul Sharma', email='rahul@studysync.com', password=pass_pw, role='student', department='Science'),
-            User(name='Priya Das', email='priya@studysync.com', password=pass_pw, role='student', department='Science')
+            User(name='John Student', email='student@studysync.pro', registration_id='NU23UCA001', phone='+91 98451 12345', student_phone='+91 98451 12345', course_code='UCA', semester=3, cgpa=8.85, attendance_percentage=82.5, password=pass_pw, role='student', department='Computer Science'),
+            User(name='BBA Student', email='bba.std@studysync.com', registration_id='NU23BBA001', phone='+91 98452 23456', student_phone='+91 98452 23456', course_code='BBA', semester=3, cgpa=7.90, attendance_percentage=86.0, password=pass_pw, role='student', department='Management'),
+            User(name='Rahul Sharma', email='rahul@studysync.com', registration_id='NU23BSC001', phone='+91 98453 34567', student_phone='+91 98453 34567', course_code='BSC', semester=4, cgpa=8.20, attendance_percentage=71.5, password=pass_pw, role='student', department='Science'),
+            User(name='Priya Das', email='priya@studysync.com', registration_id='NU23BSC002', phone='+91 98454 45678', student_phone='+91 98454 45678', course_code='BSC', semester=4, cgpa=9.15, attendance_percentage=94.0, password=pass_pw, role='student', department='Science')
         ]
         db.session.add_all(students)
         db.session.commit()

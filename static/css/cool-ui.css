@@ -1300,6 +1300,26 @@ tbody tr:hover {
   animation-delay: 0.26s;
 }
 
+.hod-card-courses {
+  --hod-accent: #7c3aed;
+  --hod-accent-alpha: rgba(124, 58, 237, 0.35);
+  --hod-shadow: rgba(124, 58, 237, 0.16);
+  --hod-border-hover: #c4b5fd;
+  --hod-pill-bg: #f5f3ff;
+  --hod-pill-text: #6d28d9;
+  animation-delay: 0.22s;
+}
+
+.hod-card-revenue {
+  --hod-accent: #059669;
+  --hod-accent-alpha: rgba(5, 150, 105, 0.35);
+  --hod-shadow: rgba(5, 150, 105, 0.16);
+  --hod-border-hover: #6ee7b7;
+  --hod-pill-bg: #ecfdf5;
+  --hod-pill-text: #047857;
+  animation-delay: 0.28s;
+}
+
 /* Top Horizon Luminous Beam (draws out from center on hover) */
 .hod-stat-card::before {
   content: '';

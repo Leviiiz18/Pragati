@@ -1,4 +1,5 @@
 import random
+from datetime import date
 from flask import Blueprint, render_template, request, flash, redirect, url_for, jsonify
 from flask_login import login_required, current_user
 from models import (
@@ -78,7 +79,7 @@ def delete_user_cascading(user_id):
             dept.hod_id = None
             
     name = user.name
-    reg_id = user.registration_id or user.employee_id or f"ID #{user.id}"
+    reg_id = user.registration_id or user.employee_id or f"User {user.id}"
     db.session.delete(user)
     db.session.commit()
     return True, f"{name} ({reg_id}) deleted successfully"
@@ -157,7 +158,7 @@ def dashboard():
             db.session.add(new_student)
             db.session.commit()
             flash(f'Student {full_name} enrolled successfully! System Generated Registration ID: {reg_id}', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#student-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # STUDENT MANAGEMENT: EDIT STUDENT
@@ -177,7 +178,7 @@ def dashboard():
                 student.status = request.form.get('status', student.status)
                 db.session.commit()
                 flash(f'Student records for {student.name} ({student.registration_id}) updated successfully.', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#student-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # STUDENT MANAGEMENT: DELETE STUDENT
@@ -186,7 +187,7 @@ def dashboard():
             student_id = request.form.get('student_id') or request.form.get('user_id')
             success, msg = delete_user_cascading(student_id)
             flash(msg, 'warning' if success else 'danger')
-            return redirect(url_for('super_admin.dashboard') + '#student-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # STUDENT MANAGEMENT: SUSPEND / ACTIVATE
@@ -198,7 +199,7 @@ def dashboard():
                 student.status = 'suspended' if student.status == 'active' else 'active'
                 db.session.commit()
                 flash(f'Student {student.name} status updated to {student.status.upper()}.', 'info')
-            return redirect(url_for('super_admin.dashboard') + '#student-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # STUDENT MANAGEMENT: PROMOTE SEMESTER
@@ -210,7 +211,7 @@ def dashboard():
                 student.semester = min(8, (student.semester or 1) + 1)
                 db.session.commit()
                 flash(f'Student {student.name} promoted to Semester {student.semester}.', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#student-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # FACULTY MANAGEMENT: ADD FACULTY / HOD
@@ -252,7 +253,7 @@ def dashboard():
                     db.session.commit()
 
             flash(f'{role.upper()} {name} onboarded! Employee ID: {emp_id}', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#faculty-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # FACULTY MANAGEMENT: DELETE FACULTY
@@ -261,7 +262,7 @@ def dashboard():
             faculty_id = request.form.get('faculty_id') or request.form.get('user_id')
             success, msg = delete_user_cascading(faculty_id)
             flash(msg, 'warning' if success else 'danger')
-            return redirect(url_for('super_admin.dashboard') + '#faculty-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # FACULTY MANAGEMENT: SUSPEND FACULTY
@@ -273,7 +274,7 @@ def dashboard():
                 fac.status = 'suspended' if fac.status == 'active' else 'active'
                 db.session.commit()
                 flash(f'Faculty member {fac.name} status updated to {fac.status.upper()}.', 'info')
-            return redirect(url_for('super_admin.dashboard') + '#faculty-roster')
+            return redirect(url_for('super_admin.dashboard'))
 
         # -----------------------------------------------------------------
         # INSTITUTION & COURSE MANAGEMENT
@@ -284,7 +285,7 @@ def dashboard():
             inst.address = request.form.get('address', inst.address)
             db.session.commit()
             flash(f'University details updated: {inst.name} ({inst.code})', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#institution-setup')
+            return redirect(url_for('super_admin.dashboard'))
 
         elif action == 'add_course':
             c_name = request.form.get('name')
@@ -294,16 +295,24 @@ def dashboard():
             db.session.add(new_c)
             db.session.commit()
             flash(f'Course {c_name} ({c_code}) pre-fed into institutional system.', 'success')
-            return redirect(url_for('super_admin.dashboard') + '#institution-setup')
+            return redirect(url_for('super_admin.dashboard'))
 
-        elif action == 'delete_course':
-            course_id = request.form.get('course_id')
-            course = Course.query.get(course_id)
-            if course:
-                db.session.delete(course)
+        elif action == 'post_notice':
+            title = (request.form.get('title') or '').strip()
+            message = (request.form.get('message') or '').strip()
+            target_role = request.form.get('target_role', 'all')
+            if title and message:
+                recipients = []
+                if target_role == 'all':
+                    recipients = User.query.all()
+                else:
+                    recipients = User.query.filter_by(role=target_role).all()
+                for r in recipients:
+                    notif = Notification(user_id=r.id, title=title, message=message, notif_type='announcement')
+                    db.session.add(notif)
                 db.session.commit()
-                flash(f'Course {course.name} ({course.code}) removed from catalog.', 'warning')
-            return redirect(url_for('super_admin.dashboard') + '#institution-setup')
+                flash(f'Institutional notice "{title}" broadcasted successfully.', 'success')
+            return redirect(url_for('super_admin.dashboard'))
 
     # Load all entities for unified dashboard
     students = User.query.filter_by(role='student').order_by(User.id.desc()).all()
@@ -321,6 +330,11 @@ def dashboard():
     total_fees_collected = sum(f.paid_amount for f in FeeRecord.query.all()) if FeeRecord.query.first() else 1450000.0
     placements_count = PlacementDrive.query.filter_by(status='Active').count()
 
+    avg_attendance = round(sum((s.attendance_percentage or 85.0) for s in students) / len(students), 1) if students else 88.5
+    at_risk_students = [s for s in students if (s.attendance_percentage or 85.0) < 75.0 or s.status == 'suspended']
+    placement_ready = sum(1 for s in students if (s.cgpa or 0) >= 7.5 and (s.attendance_percentage or 85.0) >= 75)
+    total_subjects = Subject.query.count()
+
     return render_template(
         'super_admin/dashboard.html',
         institution=inst,
@@ -334,14 +348,19 @@ def dashboard():
         total_faculty=total_faculty,
         total_hods=total_hods,
         total_fees_collected=total_fees_collected,
-        placements_count=placements_count
+        placements_count=placements_count,
+        today_date=date.today(),
+        avg_attendance=avg_attendance,
+        at_risk_students=at_risk_students,
+        placement_ready=placement_ready,
+        total_subjects=total_subjects
     )
 
 @super_admin_bp.route('/students')
 def students_redirect():
-    return redirect(url_for('super_admin.dashboard') + '#student-roster')
+    return redirect(url_for('super_admin.dashboard'))
 
 @super_admin_bp.route('/faculty')
 def faculty_redirect():
-    return redirect(url_for('super_admin.dashboard') + '#faculty-roster')
+    return redirect(url_for('super_admin.dashboard'))
 
