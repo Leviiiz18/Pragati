@@ -377,10 +377,10 @@
                                 <div class="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent group-hover:opacity-60 transition-opacity"></div>
                             </a>
 
-                            <!-- Card Content Body -->
-                            <div class="p-4 space-y-2.5">
+                            <!-- Card Content Body (Minimal Clean Dashboard Format) -->
+                            <div class="p-4 space-y-2">
                                 <div class="flex items-center justify-between text-slate-400">
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ s.code }} &bull; {{ current_user.course_code or 'UCA' }}</span>
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ current_user.course_code or 'UCA' }}</span>
                                     <span class="text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors tracking-widest">&bull;&bull;&bull;</span>
                                 </div>
 
@@ -390,34 +390,14 @@
                                     </h3>
                                 </a>
 
-                                <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
-                                    <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    <span class="truncate">Teacher: <strong class="text-slate-700 font-semibold">{{ s.faculty.name if s.faculty else 'Assigned Faculty' }}</strong></span>
-                                </div>
-
-                                <!-- Syllabus Progress Bar -->
-                                <div class="space-y-1 pt-0.5">
-                                    <div class="flex items-center justify-between text-[10px] text-slate-500 font-medium">
-                                        <span>Syllabus Covered</span>
-                                        <span class="font-bold text-slate-700">{{ (s.completion_percentage or 75)|int }}%</span>
-                                    </div>
-                                    <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
-                                        <div class="h-full rounded-full transition-all duration-500 dynamic-progress-bar
-                                            {% if theme_idx == 1 %} bg-indigo-500
-                                            {% elif theme_idx == 2 %} bg-rose-500
-                                            {% elif theme_idx == 3 %} bg-sky-500
-                                            {% elif theme_idx == 4 %} bg-teal-500
-                                            {% elif theme_idx == 5 %} bg-amber-500
-                                            {% else %} bg-indigo-600 {% endif %}" data-progress="{{ (s.completion_percentage or 75)|int }}"></div>
-                                    </div>
+                                <div class="text-xs text-slate-500 font-medium pt-0.5">
+                                    Teacher: <span class="font-bold text-slate-800">{{ s.faculty.name if s.faculty else 'Assigned Faculty' }}</span>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Card Footer -->
-                        <div class="px-4 py-2.5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs font-semibold text-slate-600">
+                        <div class="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex items-center justify-between text-xs font-semibold text-slate-600">
                             <span class="text-[11px] text-slate-500">{{ s.modules|length if s.modules else 5 }} Modules Syllabus</span>
                             <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="inline-flex items-center gap-1 font-bold text-xs text-blue-600 hover:text-blue-800 transition-colors">
                                 <span>Open Course</span>
