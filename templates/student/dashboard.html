@@ -357,13 +357,13 @@
                             View All &rarr;
                         </a>
                     </div>
-                </div>                <!-- Course Cards Grid with Cool Color Differentiation -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="studentCoursesGrid">
+                </div>                <!-- Course Cards Grid (Clean 3-Column Layout Matching Reference Design) -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4" id="studentCoursesGrid">
                     {% for s in subjects %}
                     {% set theme_idx = loop.index % 6 %}
                     <div class="course-card bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 overflow-hidden flex flex-col justify-between group" data-title="{{ s.name|lower }}" data-code="{{ s.code|lower }}">
                         <div>
-                            <!-- Vibrant Differentiated Gradient Banner Header with Cool Texture -->
+                            <!-- Clean Vibrant Differentiated Gradient Banner Header -->
                             <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="block relative h-28 overflow-hidden 
                                 {% if theme_idx == 1 %} bg-gradient-to-tr from-purple-700 via-indigo-600 to-purple-500
                                 {% elif theme_idx == 2 %} bg-gradient-to-tr from-pink-600 via-rose-500 to-pink-400
@@ -372,32 +372,20 @@
                                 {% elif theme_idx == 5 %} bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400
                                 {% else %} bg-gradient-to-tr from-slate-800 via-indigo-900 to-slate-700 {% endif %}">
                                 
-                                <!-- Cool Matrix/Dot Overlay & Glass Sheen -->
-                                <div class="absolute inset-0 opacity-25 mix-blend-overlay bg-[radial-gradient(#fff_1.25px,transparent_1.25px)] [background-size:14px_14px]"></div>
-                                <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 group-hover:opacity-75 transition-opacity duration-300"></div>
-                                
-                                <!-- Floating Pill Tags Inside Banner -->
-                                <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
-                                    <span class="px-2.5 py-0.5 rounded-md bg-black/30 backdrop-blur-md border border-white/20 text-white font-mono text-[10px] font-bold tracking-wider shadow-xs">
-                                        {{ s.code }}
-                                    </span>
-                                    <span class="px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold">
-                                        {{ s.credits or 4 }} Credits
-                                    </span>
-                                </div>
+                                <!-- Cool Dot Mesh & Top Sheen Overlay -->
+                                <div class="absolute inset-0 opacity-20 mix-blend-overlay bg-[radial-gradient(#fff_1.25px,transparent_1.25px)] [background-size:14px_14px]"></div>
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/15 to-transparent group-hover:opacity-60 transition-opacity"></div>
                             </a>
 
                             <!-- Card Content Body -->
                             <div class="p-4 space-y-2.5">
                                 <div class="flex items-center justify-between text-slate-400">
-                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ current_user.course_code or 'UCA' }} &bull; Sem {{ s.semester or current_user.semester }}</span>
-                                    <div class="text-slate-400 group-hover:text-slate-600 transition-colors">
-                                        <span class="text-xs font-bold tracking-widest leading-none">&bull;&bull;&bull;</span>
-                                    </div>
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ s.code }} &bull; {{ current_user.course_code or 'UCA' }}</span>
+                                    <span class="text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors tracking-widest">&bull;&bull;&bull;</span>
                                 </div>
 
-                                <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="block">
-                                    <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                                <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="block text-slate-900 hover:text-blue-600 visited:text-slate-900 transition-colors">
+                                    <h3 class="text-sm font-bold text-slate-900 group-hover:text-blue-600 transition-colors line-clamp-1 leading-snug">
                                         {{ s.name }}
                                     </h3>
                                 </a>
@@ -409,9 +397,9 @@
                                     <span class="truncate">Teacher: <strong class="text-slate-700 font-semibold">{{ s.faculty.name if s.faculty else 'Assigned Faculty' }}</strong></span>
                                 </div>
 
-                                <!-- Syllabus Progress Bar with matching color -->
-                                <div class="space-y-1 pt-1">
-                                    <div class="flex items-center justify-between text-[10px] text-slate-500">
+                                <!-- Syllabus Progress Bar -->
+                                <div class="space-y-1 pt-0.5">
+                                    <div class="flex items-center justify-between text-[10px] text-slate-500 font-medium">
                                         <span>Syllabus Covered</span>
                                         <span class="font-bold text-slate-700">{{ (s.completion_percentage or 75)|int }}%</span>
                                     </div>
@@ -440,7 +428,7 @@
                         </div>
                     </div>
                     {% else %}
-                    <div class="col-span-2 p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
+                    <div class="col-span-3 p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
                         No registered courses found for current semester.
                     </div>
                     {% endfor %}
