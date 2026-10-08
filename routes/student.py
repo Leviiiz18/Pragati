@@ -156,6 +156,13 @@ def dashboard():
         (Event.user_id == current_user.id)
     ).order_by(Event.date.asc(), Event.created_at.desc()).all()
 
+    # Resume learning state for "Start from where you left"
+    resume_module = None
+    if current_user.last_visited_module_id:
+        resume_module = Module.query.get(current_user.last_visited_module_id)
+        if resume_module and resume_module.subject_id not in subj_ids:
+            resume_module = None
+
     return render_template('student/dashboard.html',
                            subjects=subjects,
                            classes_needed=classes_needed,
@@ -167,6 +174,7 @@ def dashboard():
                            today_date=today,
                            day_name=day_name,
                            daily_quote=random.choice(STUDENT_QUOTES),
+                           resume_module=resume_module,
                            upcoming_assignments=assignments)
 
 @student_bp.route('/courses')
@@ -191,6 +199,14 @@ def module_detail(module_id):
     mod = Module.query.get_or_404(module_id)
     subj = mod.subject
     student_notes = StudentNote.query.filter_by(student_id=current_user.id, subject_id=subj.id).order_by(StudentNote.created_at.desc()).all()
+
+    # Track student learning activity for "Start from where you left"
+    current_user.last_visited_module_id = mod.id
+    current_user.last_visited_at = datetime.utcnow()
+    try:
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
 
     if request.method == 'POST':
         action = request.form.get('action')

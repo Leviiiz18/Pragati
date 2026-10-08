@@ -96,7 +96,12 @@ class User(BaseModel, UserMixin):
     mentor_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     phone = db.Column(db.String(20), nullable=True)
 
+    # Activity & Resume Learning Telemetry
+    last_visited_module_id = db.Column(db.Integer, db.ForeignKey('module.id'), nullable=True)
+    last_visited_at = db.Column(db.DateTime, nullable=True)
+
     # Relationships
+    last_visited_module = db.relationship('Module', foreign_keys=[last_visited_module_id], lazy=True)
     subjects_taught = db.relationship('Subject', backref='faculty', lazy=True)
     enrollments = db.relationship('Enrollment', backref='student', lazy=True)
     events_created = db.relationship('Event', backref='creator', lazy=True, foreign_keys='Event.created_by')
