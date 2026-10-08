@@ -357,63 +357,90 @@
                             View All &rarr;
                         </a>
                     </div>
-                </div>
-
-                <!-- Course Cards Grid -->
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5" id="studentCoursesGrid">
+                </div>                <!-- Course Cards Grid with Cool Color Differentiation -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="studentCoursesGrid">
                     {% for s in subjects %}
-                    <div class="course-card rounded-lg border border-slate-200/90 bg-slate-50/50 hover:bg-white hover:border-slate-300 p-4 transition-all duration-150 flex flex-col justify-between group" data-title="{{ s.name|lower }}" data-code="{{ s.code|lower }}">
-                        <div class="space-y-2">
-                            <!-- Course Code & Credits Pill -->
-                            <div class="flex items-center justify-between">
-                                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase tracking-wider bg-slate-200/80 text-slate-700">
-                                    {{ s.code }}
-                                </span>
-                                <span class="text-[10px] text-slate-500 font-medium">
-                                    {{ s.credits or 4 }} Credits &bull; Sem {{ s.semester or current_user.semester }}
-                                </span>
-                            </div>
+                    {% set theme_idx = loop.index % 6 %}
+                    <div class="course-card bg-white rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300 overflow-hidden flex flex-col justify-between group" data-title="{{ s.name|lower }}" data-code="{{ s.code|lower }}">
+                        <div>
+                            <!-- Vibrant Differentiated Gradient Banner Header with Cool Texture -->
+                            <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="block relative h-28 overflow-hidden 
+                                {% if theme_idx == 1 %} bg-gradient-to-tr from-purple-700 via-indigo-600 to-purple-500
+                                {% elif theme_idx == 2 %} bg-gradient-to-tr from-pink-600 via-rose-500 to-pink-400
+                                {% elif theme_idx == 3 %} bg-gradient-to-tr from-sky-600 via-blue-500 to-cyan-400
+                                {% elif theme_idx == 4 %} bg-gradient-to-tr from-teal-600 via-emerald-500 to-teal-400
+                                {% elif theme_idx == 5 %} bg-gradient-to-tr from-amber-600 via-orange-500 to-amber-400
+                                {% else %} bg-gradient-to-tr from-slate-800 via-indigo-900 to-slate-700 {% endif %}">
+                                
+                                <!-- Cool Matrix/Dot Overlay & Glass Sheen -->
+                                <div class="absolute inset-0 opacity-25 mix-blend-overlay bg-[radial-gradient(#fff_1.25px,transparent_1.25px)] [background-size:14px_14px]"></div>
+                                <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/20 group-hover:opacity-75 transition-opacity duration-300"></div>
+                                
+                                <!-- Floating Pill Tags Inside Banner -->
+                                <div class="absolute top-3 left-3 right-3 flex items-center justify-between z-10 pointer-events-none">
+                                    <span class="px-2.5 py-0.5 rounded-md bg-black/30 backdrop-blur-md border border-white/20 text-white font-mono text-[10px] font-bold tracking-wider shadow-xs">
+                                        {{ s.code }}
+                                    </span>
+                                    <span class="px-2 py-0.5 rounded-md bg-white/20 backdrop-blur-md border border-white/20 text-white text-[10px] font-semibold">
+                                        {{ s.credits or 4 }} Credits
+                                    </span>
+                                </div>
+                            </a>
 
-                            <!-- Course Title -->
-                            <h3 class="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
-                                {{ s.name }}
-                            </h3>
-
-                            <!-- Faculty & Syllabus Coverage -->
-                            <div class="space-y-1.5 pt-1">
-                                <div class="flex items-center gap-1.5 text-[11px] text-slate-500">
-                                    <svg class="w-3.5 h-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
-                                    <span class="truncate">{{ s.faculty.name if s.faculty else 'Assigned Faculty' }}</span>
+                            <!-- Card Content Body -->
+                            <div class="p-4 space-y-2.5">
+                                <div class="flex items-center justify-between text-slate-400">
+                                    <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">{{ current_user.course_code or 'UCA' }} &bull; Sem {{ s.semester or current_user.semester }}</span>
+                                    <div class="text-slate-400 group-hover:text-slate-600 transition-colors">
+                                        <span class="text-xs font-bold tracking-widest leading-none">&bull;&bull;&bull;</span>
+                                    </div>
                                 </div>
 
-                                <!-- Syllabus Progress Bar -->
-                                <div class="space-y-0.5">
+                                <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="block">
+                                    <h3 class="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1">
+                                        {{ s.name }}
+                                    </h3>
+                                </a>
+
+                                <div class="flex items-center gap-1.5 text-xs text-slate-500 font-medium">
+                                    <svg class="w-3.5 h-3.5 text-slate-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                                    </svg>
+                                    <span class="truncate">Teacher: <strong class="text-slate-700 font-semibold">{{ s.faculty.name if s.faculty else 'Assigned Faculty' }}</strong></span>
+                                </div>
+
+                                <!-- Syllabus Progress Bar with matching color -->
+                                <div class="space-y-1 pt-1">
                                     <div class="flex items-center justify-between text-[10px] text-slate-500">
                                         <span>Syllabus Covered</span>
-                                        <span class="font-semibold text-slate-700">{{ (s.completion_percentage or 75)|int }}%</span>
+                                        <span class="font-bold text-slate-700">{{ (s.completion_percentage or 75)|int }}%</span>
                                     </div>
-                                    <div class="w-full h-1.5 rounded-full bg-slate-200 overflow-hidden">
-                                        <div class="h-full rounded-full bg-indigo-500 dynamic-progress-bar" data-progress="{{ (s.completion_percentage or 75)|int }}"></div>
+                                    <div class="w-full h-1.5 rounded-full bg-slate-100 overflow-hidden">
+                                        <div class="h-full rounded-full transition-all duration-500 dynamic-progress-bar
+                                            {% if theme_idx == 1 %} bg-indigo-500
+                                            {% elif theme_idx == 2 %} bg-rose-500
+                                            {% elif theme_idx == 3 %} bg-sky-500
+                                            {% elif theme_idx == 4 %} bg-teal-500
+                                            {% elif theme_idx == 5 %} bg-amber-500
+                                            {% else %} bg-indigo-600 {% endif %}" data-progress="{{ (s.completion_percentage or 75)|int }}"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Action Button: Vault Link -->
-                        <div class="mt-3.5 pt-2.5 border-t border-slate-200/60 flex items-center justify-end">
-                            <a href="{{ url_for('student.course_detail', subject_id=s.id) }}"
-                               class="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-800 py-1 px-2.5 rounded-lg bg-indigo-50/70 hover:bg-indigo-100 transition-colors">
-                                <span>Vault &amp; Notes</span>
-                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
+                        <!-- Card Footer -->
+                        <div class="px-4 py-2.5 border-t border-slate-100 bg-slate-50/60 flex items-center justify-between text-xs font-semibold text-slate-600">
+                            <span class="text-[11px] text-slate-500">{{ s.modules|length if s.modules else 5 }} Modules Syllabus</span>
+                            <a href="{{ url_for('student.course_detail', subject_id=s.id) }}" class="inline-flex items-center gap-1 font-bold text-xs text-blue-600 hover:text-blue-800 transition-colors">
+                                <span>Open Course</span>
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                                 </svg>
                             </a>
                         </div>
                     </div>
                     {% else %}
-                    <div class="col-span-2 p-8 text-center bg-slate-50 rounded-lg border border-dashed border-slate-200 text-slate-400 text-xs">
+                    <div class="col-span-2 p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
                         No registered courses found for current semester.
                     </div>
                     {% endfor %}
