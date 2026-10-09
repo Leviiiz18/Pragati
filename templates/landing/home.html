@@ -24,6 +24,9 @@
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- React Bits SpecularButton Component Stylesheet (Exclusive to Hero Page CTAs) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/specular-button.css') }}">
 </head>
 <body class="bg-white text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
 
@@ -57,13 +60,31 @@
                 <a href="#evaluation" class="hover:text-slate-900 transition-colors">Evaluation Process</a>
             </nav>
 
-            <!-- Actions -->
+            <!-- Actions (SpecularButton CTAs) -->
             <div class="flex items-center gap-2.5">
-                <a href="{{ url_for('landing.activate') }}" class="px-3.5 py-2 rounded-lg text-xs font-semibold text-slate-700 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition">
-                    Activate Access
+                <a href="{{ url_for('landing.activate') }}" 
+                   class="specular-button specular-button--sm"
+                   style="--sb-radius: 10px; --sb-tint: #ffffff; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #ffffff; border: 1px solid #e2e8f0;"
+                   data-radius="10"
+                   data-line-color="#6366f1"
+                   data-base-color="#cbd5e1"
+                   data-intensity="1.1"
+                   data-thickness="1.2"
+                   data-proximity="200">
+                    <span class="specular-button__fx" aria-hidden="true"></span>
+                    <span class="specular-button__label text-xs font-semibold text-slate-700">Activate Access</span>
                 </a>
-                <a href="{{ url_for('landing.request_access') }}" class="px-4 py-2 rounded-lg text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 transition shadow-sm">
-                    Request Campus Key
+                <a href="{{ url_for('landing.request_access') }}" 
+                   class="specular-button specular-button--sm"
+                   style="--sb-radius: 10px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a;"
+                   data-radius="10"
+                   data-line-color="#ffffff"
+                   data-base-color="#475569"
+                   data-intensity="1.2"
+                   data-thickness="1.2"
+                   data-proximity="200">
+                    <span class="specular-button__fx" aria-hidden="true"></span>
+                    <span class="specular-button__label text-xs font-bold text-white">Request Campus Key</span>
                 </a>
             </div>
         </div>
@@ -73,7 +94,7 @@
     <main class="flex-1">
 
         <!-- =====================================================================
-             1. HERO SECTION (CLEAN, DIRECT, INSTITUTIONAL)
+             1. HERO SECTION (CLEAN, DIRECT, INSTITUTIONAL WITH SPECULAR BUTTONS)
              ===================================================================== -->
         <section id="overview" class="py-16 sm:py-24 border-b border-slate-200 bg-slate-50/50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 text-center">
@@ -90,14 +111,46 @@
                     Pragati integrates curriculum management, timetable scheduling, real-time attendance compliance, internal assessment tracking, and departmental records into a single structured portal.
                 </p>
 
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
-                    <a href="{{ url_for('landing.request_access') }}" class="w-full sm:w-auto px-6 py-3 rounded-lg font-bold text-xs sm:text-sm text-white bg-indigo-600 hover:bg-indigo-700 transition shadow-sm flex items-center justify-center gap-2">
-                        <span>Request Institutional Access</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                <!-- Hero CTAs integrated with SpecularButton -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-9">
+                    <a href="{{ url_for('landing.request_access') }}" 
+                       class="specular-button specular-button--lg w-full sm:w-auto"
+                       style="--sb-radius: 14px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
+                       data-radius="14"
+                       data-line-color="#ffffff"
+                       data-base-color="#3730a3"
+                       data-intensity="1.35"
+                       data-shine-size="12"
+                       data-shine-fade="40"
+                       data-thickness="1.6"
+                       data-speed="0.35"
+                       data-follow-mouse="true"
+                       data-proximity="280">
+                        <span class="specular-button__fx" aria-hidden="true"></span>
+                        <span class="specular-button__label font-bold text-xs sm:text-sm text-white">
+                            <span>Request Institutional Access</span>
+                            <i class="fa-solid fa-arrow-right text-xs"></i>
+                        </span>
                     </a>
-                    <a href="{{ url_for('landing.activate') }}" class="w-full sm:w-auto px-6 py-3 rounded-lg font-semibold text-xs sm:text-sm text-slate-700 hover:text-slate-900 bg-white hover:bg-slate-100 border border-slate-300 transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-key text-slate-400"></i>
-                        <span>Enter Activation Key</span>
+                    
+                    <a href="{{ url_for('landing.activate') }}" 
+                       class="specular-button specular-button--lg w-full sm:w-auto"
+                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 1; --sb-text-color: #0f172a; background: #ffffff; border: 1px solid #cbd5e1;"
+                       data-radius="14"
+                       data-line-color="#6366f1"
+                       data-base-color="#94a3b8"
+                       data-intensity="1.25"
+                       data-shine-size="12"
+                       data-shine-fade="40"
+                       data-thickness="1.6"
+                       data-speed="0.35"
+                       data-follow-mouse="true"
+                       data-proximity="280">
+                        <span class="specular-button__fx" aria-hidden="true"></span>
+                        <span class="specular-button__label font-semibold text-xs sm:text-sm text-slate-800">
+                            <i class="fa-solid fa-key text-slate-400"></i>
+                            <span>Enter Activation Key</span>
+                        </span>
                     </a>
                 </div>
 
@@ -163,7 +216,7 @@
         </section>
 
         <!-- =====================================================================
-             3. PILOT EVALUATION & ACCESS PROTOCOL
+             3. PILOT EVALUATION & ACCESS PROTOCOL (SPECULAR CTA BUTTONS)
              ===================================================================== -->
         <section id="evaluation" class="py-16 bg-slate-50/50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6">
@@ -191,11 +244,27 @@
                         </div>
 
                         <div class="mt-8 flex flex-wrap items-center gap-3">
-                            <a href="{{ url_for('landing.request_access') }}" class="px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition">
-                                Open Request Form &rarr;
+                            <a href="{{ url_for('landing.request_access') }}" 
+                               class="specular-button specular-button--md"
+                               style="--sb-radius: 12px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a;"
+                               data-radius="12"
+                               data-line-color="#ffffff"
+                               data-base-color="#475569"
+                               data-intensity="1.2"
+                               data-proximity="250">
+                                <span class="specular-button__fx" aria-hidden="true"></span>
+                                <span class="specular-button__label text-xs font-bold text-white">Open Request Form &rarr;</span>
                             </a>
-                            <a href="{{ url_for('landing.activate') }}" class="px-5 py-2.5 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs border border-slate-200 transition">
-                                Enter Existing Key
+                            <a href="{{ url_for('landing.activate') }}" 
+                               class="specular-button specular-button--md"
+                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #e2e8f0;"
+                               data-radius="12"
+                               data-line-color="#6366f1"
+                               data-base-color="#cbd5e1"
+                               data-intensity="1.1"
+                               data-proximity="250">
+                                <span class="specular-button__fx" aria-hidden="true"></span>
+                                <span class="specular-button__label text-xs font-semibold text-slate-700">Enter Existing Key</span>
                             </a>
                         </div>
                     </div>
@@ -222,5 +291,7 @@
         </div>
     </footer>
 
+    <!-- SpecularButton WebGL2 Engine (React Bits Port) -->
+    <script src="{{ url_for('static', filename='js/specular-button.js') }}"></script>
 </body>
 </html>
