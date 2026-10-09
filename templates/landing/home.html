@@ -37,18 +37,18 @@
          FLOATING PILL NAVBAR (KALPKRAFTS DESIGN)
          ===================================================================== -->
     <header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-6 lg:px-8 pointer-events-auto">
+        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-5 lg:px-8 pointer-events-auto">
             
             <!-- Left: Floating Brand Logo Pill -->
             <a href="{{ url_for('landing.home') }}" 
-               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/75 backdrop-blur-md border border-white/50 shadow-sm hover:bg-white/95 transition-all duration-300">
+               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/85 backdrop-blur-md border border-white/60 shadow-sm hover:bg-white transition-all duration-300">
                 <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" 
                      alt="Pragati by KalpKrafts" 
                      class="h-7 sm:h-8 lg:h-9 w-auto object-contain">
             </a>
 
             <!-- Right: Floating Nav Pill -->
-            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/75 backdrop-blur-md border border-white/50 shadow-sm transition-all duration-300">
+            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/85 backdrop-blur-md border border-white/60 shadow-sm transition-all duration-300">
                 <nav class="hidden md:flex items-center gap-1 px-2">
                     <a href="#overview" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Overview</a>
                     <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Modules</a>
@@ -65,7 +65,7 @@
                    data-thickness="1.2"
                    data-proximity="200">
                     <span class="specular-button__fx" aria-hidden="true"></span>
-                    <span class="specular-button__label text-[11px] font-bold uppercase tracking-wider text-white px-3 py-1.5">Request Access</span>
+                    <span class="specular-button__label text-[11px] font-bold uppercase tracking-wider text-white px-3.5 py-1.5">Request Access</span>
                 </a>
             </div>
         </div>
@@ -75,20 +75,20 @@
     <main class="flex-1">
 
         <!-- =====================================================================
-             1. HERO SECTION (FULL-BLEED KALPKRAFTS HALFTONE COVERAGE)
+             1. HERO SECTION (BOTTOM-ANCHORED KALPKRAFTS EDITORIAL COMPOSITION)
              ===================================================================== -->
-        <section id="overview" class="relative min-h-[92vh] sm:min-h-screen flex flex-col justify-end items-center pb-16 sm:pb-24 pt-24 overflow-hidden bg-[#0A0C10] text-white">
+        <section id="overview" class="relative min-h-screen flex flex-col justify-end items-center pb-14 sm:pb-20 pt-[42vh] sm:pt-[48vh] overflow-hidden bg-[#0A0C10] text-white">
             
             <!-- Full-Bleed CMYK Halftone Screen Canvas -->
             <div class="absolute inset-0 z-0 pointer-events-none" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
-                <div class="halftone-reveal w-full h-full opacity-100"
+                <div class="halftone-reveal w-full h-full opacity-90 saturate-[1.15]"
                      data-src="{{ url_for('static', filename='images/college_life.png') }}"
                      data-ink-color="#1D222D"
                      data-paper-color="#F5FBFD"
                      data-mode="color"
                      data-dot-density="160"
                      data-angle="45"
-                     data-contrast="1.15"
+                     data-contrast="1.2"
                      data-reveal-radius="0"
                      data-edge="0.8"
                      data-follow="0.37"
@@ -96,25 +96,25 @@
                      data-trigger="off">
                 </div>
                 
-                <!-- Bottom Gradient Shadow for crystal-clear readability -->
-                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[65vh] bg-gradient-to-t from-[#0A0C10] via-[#0A0C10]/65 to-transparent"></div>
-                <!-- Top Vignette -->
-                <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0A0C10]/80 to-transparent"></div>
+                <!-- Deep Bottom Gradient Vignette to ground text with 100% sharp contrast -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[75vh] bg-gradient-to-t from-[#0A0C10] via-[#0A0C10]/90 via-50% to-transparent"></div>
+                <!-- Top Vignette for Navbar -->
+                <div class="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[#0A0C10]/75 to-transparent"></div>
             </div>
 
-            <!-- Typography & CTA Overlay (relative z-10) -->
+            <!-- Typography & CTA Overlay (Grounded in bottom half) -->
             <div class="relative z-10 w-full max-w-5xl px-6 lg:px-8 text-center flex flex-col items-center">
                 
-                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] max-w-4xl">
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08] drop-shadow-[0_16px_32px_rgba(0,0,0,0.95)] max-w-4xl">
                     Unified Academic Operations &amp; Student Workspace
                 </h1>
 
-                <p class="text-base sm:text-lg text-slate-200 font-medium max-w-2xl mx-auto mt-6 leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
+                <p class="text-base sm:text-lg text-slate-200 font-medium max-w-2xl mx-auto mt-5 leading-relaxed drop-shadow-[0_6px_14px_rgba(0,0,0,0.9)]">
                     Pragati integrates curriculum management, timetable scheduling, real-time attendance compliance, internal assessment tracking, and departmental records into a single structured portal.
                 </p>
 
                 <!-- Hero CTAs integrated with SpecularButton -->
-                <div class="mt-9 flex flex-wrap items-center justify-center gap-4 drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]">
+                <div class="mt-8 flex flex-wrap items-center justify-center gap-4 drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]">
                     <a href="{{ url_for('landing.request_access') }}" 
                        class="specular-button specular-button--lg"
                        style="--sb-radius: 14px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
@@ -137,7 +137,7 @@
                     
                     <a href="{{ url_for('landing.activate') }}" 
                        class="specular-button specular-button--lg"
-                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 12px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);"
+                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 14px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);"
                        data-radius="14"
                        data-line-color="#ffffff"
                        data-base-color="#cbd5e1"
@@ -257,7 +257,7 @@
                             </a>
                             <a href="{{ url_for('landing.activate') }}" 
                                class="specular-button specular-button--md"
-                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #cbd5e1;"
+                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #e2e8f0;"
                                data-radius="12"
                                data-line-color="#6366f1"
                                data-base-color="#cbd5e1"
