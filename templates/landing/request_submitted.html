@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request Received — Pragati by KalpKrafts</title>
+    <title>Request Received — Pragati</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,107 +15,78 @@
             theme: {
                 extend: {
                     fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        display: ['Outfit', 'sans-serif'],
+                        sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        mono: ['JetBrains Mono', 'monospace'],
                     }
                 }
             }
         }
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        .glass-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-        }
-    </style>
 </head>
-<body class="bg-[#0b0f19] text-slate-100 font-sans antialiased min-h-screen relative overflow-x-hidden flex flex-col justify-between selection:bg-indigo-500 selection:text-white">
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
 
-    <!-- Ambient Glowing Orbs -->
-    <div class="fixed top-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-tr from-emerald-600/20 via-teal-500/20 to-indigo-500/20 rounded-full blur-[120px] pointer-events-none -z-10"></div>
-
-    <header class="border-b border-white/10 backdrop-blur-md bg-[#0b0f19]/80">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-            <a href="{{ url_for('landing.home') }}" class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/30">
-                    <div class="w-full h-full bg-[#0b0f19] rounded-[10px] flex items-center justify-center">
-                        <img src="{{ url_for('static', filename='images/pragati_logo.svg') }}" alt="Pragati Logo" class="w-6 h-6">
-                    </div>
-                </div>
-                <span class="font-display font-black text-xl tracking-tight text-white">Pragati</span>
+    <header class="border-b border-slate-200 bg-white">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+            <a href="{{ url_for('landing.home') }}" class="flex items-center gap-2.5">
+                <img src="{{ url_for('static', filename='images/pragati_logo.svg') }}" alt="Pragati" class="w-7 h-7">
+                <span class="font-bold text-sm text-slate-900">Pragati</span>
             </a>
-            <a href="{{ url_for('landing.home') }}" class="text-xs font-semibold text-slate-400 hover:text-white">
-                &larr; Back to Overview
+            <a href="{{ url_for('landing.home') }}" class="text-xs font-semibold text-slate-600 hover:text-slate-900">
+                &larr; Return to Home
             </a>
         </div>
     </header>
 
-    <main class="py-16 flex-1 flex items-center justify-center px-4 sm:px-6">
-        <div class="max-w-xl w-full text-center">
+    <main class="py-14 flex-1 flex items-center justify-center px-4 sm:px-6">
+        <div class="max-w-md w-full">
             
-            <div class="glass-card rounded-3xl p-8 sm:p-12 shadow-2xl space-y-6">
+            <div class="bg-white rounded-xl border border-slate-200 p-6 sm:p-8 shadow-sm text-center space-y-5">
                 
-                <!-- Success Icon Badge -->
-                <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-500 text-white flex items-center justify-center mx-auto text-2xl shadow-xl shadow-emerald-500/30">
+                <div class="w-12 h-12 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto text-lg font-bold">
                     <i class="fa-solid fa-check"></i>
                 </div>
 
-                <div class="space-y-2">
-                    <span class="text-xs font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-3 py-1 rounded-full">
-                        {% if duplicate %}Request Already Pending{% else %}Request Submitted Successfully{% endif %}
-                    </span>
-                    <h1 class="font-display font-black text-2xl sm:text-3xl text-white">
-                        Thank You, {{ req.full_name }}
+                <div class="space-y-1">
+                    <h1 class="text-xl font-black text-slate-900 tracking-tight">
+                        {% if duplicate %}Request Already on File{% else %}Access Request Logged{% endif %}
                     </h1>
-                    <p class="text-slate-300 text-sm leading-relaxed max-w-md mx-auto">
+                    <p class="text-xs text-slate-500 leading-relaxed">
                         {% if duplicate %}
-                        We already have an active onboarding request under <strong class="text-white">{{ req.email }}</strong>. Our team is currently reviewing it.
+                        An active request under <strong class="text-slate-800">{{ req.email }}</strong> is already awaiting administrative approval.
                         {% else %}
-                        Your request to access the current phase of Pragati has been received and logged for administrative review.
+                        Your request for <strong class="text-slate-800">{{ req.institution }}</strong> has been submitted.
                         {% endif %}
                     </p>
                 </div>
 
-                <!-- Reference ID Card -->
-                <div class="bg-white/5 border border-white/10 rounded-2xl p-4 text-left space-y-2">
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-400 font-medium">Tracking Reference:</span>
-                        <span class="font-mono font-bold text-indigo-400 bg-indigo-500/10 px-2 py-0.5 rounded border border-indigo-500/20">{{ req.reference }}</span>
+                <!-- Reference Card -->
+                <div class="bg-slate-50 rounded-lg border border-slate-200 p-3.5 text-left text-xs space-y-1.5 font-medium">
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Tracking Reference:</span>
+                        <span class="font-mono font-bold text-indigo-700">{{ req.reference }}</span>
                     </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-400 font-medium">Target Institution:</span>
-                        <span class="font-bold text-white truncate max-w-[200px]">{{ req.institution }}</span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Applicant:</span>
+                        <span class="text-slate-800 font-semibold truncate max-w-[200px]">{{ req.full_name }}</span>
                     </div>
-                    <div class="flex items-center justify-between text-xs">
-                        <span class="text-slate-400 font-medium">Current Status:</span>
-                        <span class="font-bold uppercase tracking-wider text-amber-400 flex items-center gap-1.5">
-                            <span class="w-2 h-2 rounded-full bg-amber-400 animate-pulse"></span>
-                            Under Review
-                        </span>
+                    <div class="flex items-center justify-between">
+                        <span class="text-slate-500">Status:</span>
+                        <span class="font-bold text-amber-600 uppercase text-[10px] tracking-wider">Pending Review</span>
                     </div>
                 </div>
 
-                <!-- Next Steps Info -->
-                <div class="text-xs text-slate-400 text-left bg-indigo-950/40 border border-indigo-500/20 rounded-xl p-4 space-y-1.5">
-                    <p class="font-bold text-slate-200 flex items-center gap-1.5">
-                        <i class="fa-solid fa-circle-info text-indigo-400"></i>
-                        What happens next?
-                    </p>
-                    <p>
-                        Once approved in the Super Admin console, your unique <strong>Activation Key</strong> (e.g. <code class="text-indigo-300 font-mono">PRG-XXXX-XXXX-XXXX</code>) will be issued. You can then enter it on the <a href="{{ url_for('landing.activate') }}" class="text-indigo-400 underline font-bold">activation portal</a> to unlock direct platform sign-in.
-                    </p>
+                <div class="text-xs text-slate-500 text-left bg-blue-50/70 border border-blue-100 rounded-lg p-3 space-y-1">
+                    <p class="font-bold text-slate-800">Next Step:</p>
+                    <p>Once verified by the administrator, your activation key will be issued. Enter it on the activation page to proceed to login.</p>
                 </div>
 
-                <div class="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
-                    <a href="{{ url_for('landing.activate') }}" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-indigo-600 hover:bg-indigo-500 transition-all flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-key"></i>
-                        <span>Go to Activation Page</span>
+                <div class="pt-2 flex flex-col gap-2">
+                    <a href="{{ url_for('landing.activate') }}" class="w-full py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition">
+                        Proceed to Activation Page
                     </a>
-                    <a href="{{ url_for('landing.home') }}" class="w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs sm:text-sm text-slate-300 hover:text-white bg-white/5 hover:bg-white/10 transition-all">
-                        <span>Return to Overview</span>
+                    <a href="{{ url_for('landing.home') }}" class="w-full py-2 rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold text-xs transition">
+                        Return to Overview
                     </a>
                 </div>
 
@@ -124,8 +95,8 @@
         </div>
     </main>
 
-    <footer class="border-t border-white/10 bg-[#070b14] py-8 text-slate-400 text-xs text-center">
-        <p>&copy; 2026 Pragati by KalpKrafts. All rights reserved.</p>
+    <footer class="border-t border-slate-200 bg-white py-4 text-xs text-slate-500 text-center">
+        <p>&copy; 2026 Pragati Academic Workspace</p>
     </footer>
 
 </body>
