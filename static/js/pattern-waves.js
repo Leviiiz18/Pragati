@@ -122,7 +122,7 @@
   }
   `;
 
-  // Ripple simulation fragment shader (Wave Equation Ping-Pong)
+  // Wave Equation Simulation Pass
   const rippleFragment = `#version 300 es
   precision highp float;
   precision highp int;
@@ -161,7 +161,7 @@
   }
   `;
 
-  // Procedural 3D surface generator with wave dynamics + cursor ripple injection
+  // Procedural 3D surface generator with wave dynamics + direct cursor deflection + propagating ripples
   const fieldFragment = `#version 300 es
   precision highp float;
   precision highp int;
@@ -185,6 +185,9 @@
   uniform float uAppear;
   uniform sampler2D tRipple;
   uniform float uRipple;
+  uniform vec2 uCursorCss;
+  uniform float uCursorRadius;
+  uniform float uCursorDirect;
   out vec4 fragColor;
 
   const float FOLDS = 5.5;
@@ -251,6 +254,15 @@
 
   float heightAt(vec2 css) {
     float h = surface((css - 0.5 * uSize) / uUnit, uTime) * uAmp;
+
+    // Direct cursor proximity bulge/deflection
+    if (uCursorDirect > 0.0001) {
+      float cdist = length(css - uCursorCss);
+      float direct = exp(-cdist * cdist / (2.0 * uCursorRadius * uCursorRadius)) * uCursorDirect;
+      h += direct;
+    }
+
+    // Propagating fluid ripple simulation
     if (uRipple > 0.0001) {
       vec2 ripUv = clamp(css / uSize, 0.0, 1.0);
       float rip = texture(tRipple, ripUv).r;
@@ -416,8 +428,8 @@
     const fadeSize = ds.fadeSize ? parseFloat(ds.fadeSize) : 0.6;
     const intro = ds.intro !== 'false';
     const isInteractive = ds.interactive !== 'false';
-    const cursorSize = ds.cursorSize ? parseFloat(ds.cursorSize) : 48;
-    const cursorStrength = ds.cursorStrength ? parseFloat(ds.cursorStrength) : 0.65;
+    const cursorSize = ds.cursorSize ? parseFloat(ds.cursorSize) : 55;
+    const cursorStrength = ds.cursorStrength ? parseFloat(ds.cursorStrength) : 0.75;
 
     const color = parseColor(colorStr, [0.15, 0.53, 0.91, 1]);
     const background = parseColor(bgStr, [0.04, 0.05, 0.06, 1]);
@@ -462,6 +474,9 @@
       gl.attachShader(prog, vs);
       gl.attachShader(prog, fs);
       gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+        console.error('Link Error:', gl.getProgramInfoLog(prog));
+      }
       return prog;
     }
 
@@ -566,7 +581,10 @@
       uFadeSize: gl.getUniformLocation(fieldProg, 'uFadeSize'),
       uAppear: gl.getUniformLocation(fieldProg, 'uAppear'),
       tRipple: gl.getUniformLocation(fieldProg, 'tRipple'),
-      uRipple: gl.getUniformLocation(fieldProg, 'uRipple')
+      uRipple: gl.getUniformLocation(fieldProg, 'uRipple'),
+      uCursorCss: gl.getUniformLocation(fieldProg, 'uCursorCss'),
+      uCursorRadius: gl.getUniformLocation(fieldProg, 'uCursorRadius'),
+      uCursorDirect: gl.getUniformLocation(fieldProg, 'uCursorDirect')
     };
 
     // Mark uniforms
@@ -596,6 +614,7 @@
     let lastPointerY = -1000;
     let isPointerInside = false;
     let impulse = 0;
+    let directWeight = 0;
     let isMouseDown = false;
 
     if (isInteractive) {
@@ -604,7 +623,7 @@
         const x = e.clientX - rect.left;
         const y = e.clientY - rect.top;
 
-        if (x >= -60 && x <= rect.width + 60 && y >= -60 && y <= rect.height + 60) {
+        if (x >= -80 && x <= rect.width + 80 && y >= -80 && y <= rect.height + 80) {
           isPointerInside = true;
           const clampedX = clamp(x, 0, rect.width);
           const clampedY = clamp(y, 0, rect.height);
@@ -620,8 +639,9 @@
           pointerX = clampedX;
           pointerY = clampedY;
 
-          impulse += Math.min(dist / 6.0, 1.8) * 0.55 * cursorStrength;
-          if (isMouseDown) impulse += 0.45 * cursorStrength;
+          impulse += Math.min(dist / 5.0, 2.0) * 0.65 * cursorStrength;
+          if (isMouseDown) impulse += 0.5 * cursorStrength;
+          directWeight = Math.min(1.0, directWeight + 0.2);
         } else {
           isPointerInside = false;
         }
@@ -637,7 +657,8 @@
           pointerY = y;
           lastPointerX = x;
           lastPointerY = y;
-          impulse += 1.4 * cursorStrength;
+          impulse += 1.6 * cursorStrength;
+          directWeight = 1.0;
         }
       };
 
@@ -684,9 +705,12 @@
       const rise = clamp((introClock - 0.1) / 0.9, 0, 1);
       const amp = rise * rise * (3 - 2 * rise);
 
-      // Add ambient gentle movement under pointer if resting
+      // Smooth direct cursor fade
       if (isPointerInside) {
-        impulse += 0.025 * cursorStrength;
+        directWeight = Math.min(1.0, directWeight + dt * 3.0);
+        impulse += 0.02 * cursorStrength;
+      } else {
+        directWeight = Math.max(0.0, directWeight - dt * 2.0);
       }
 
       // PASS 0: Interactive Ripple Simulation Pass (Ping-Pong FBO)
@@ -763,11 +787,18 @@
       gl.uniform1f(uField.uFadeSize, clamp(fadeSize, 0.05, 1));
       gl.uniform1f(uField.uAppear, appear);
 
+      // Direct cursor deflection uniforms
+      const cursorCssX = pointerX;
+      const cursorCssY = height - pointerY;
+      gl.uniform2f(uField.uCursorCss, cursorCssX, cursorCssY);
+      gl.uniform1f(uField.uCursorRadius, cursorSize * 1.2);
+      gl.uniform1f(uField.uCursorDirect, 0.55 * cursorStrength * directWeight);
+
       if (currentRippleTex) {
         gl.activeTexture(gl.TEXTURE1);
         gl.bindTexture(gl.TEXTURE_2D, currentRippleTex);
         gl.uniform1i(uField.tRipple, 1);
-        gl.uniform1f(uField.uRipple, 0.48 * cursorStrength);
+        gl.uniform1f(uField.uRipple, 0.52 * cursorStrength);
       } else {
         gl.uniform1f(uField.uRipple, 0.0);
       }
@@ -786,7 +817,7 @@
 
       gl.uniform2f(uMark.uOrigin, origin[0], origin[1]);
       gl.uniform2f(uMark.uPitch, pitchX, pitchY);
-      gl.uniform2f(uMark.uGrid, cols, rows);
+      gl.uniform2f(uGrid, cols, rows);
       gl.uniform1i(uMark.uPattern, patternIndex);
       gl.uniform1f(uMark.uMarkSize, clamp(markSize, 0.05, 1));
       gl.uniform1f(uMark.uStroke, patternIndex === 3 ? 0.9 * dpr : Math.max(1.1 * dpr, pitchY * 0.08));
@@ -819,4 +850,3 @@
 
   window.initPatternWaves = initAllPatternWaves;
 })();
-
