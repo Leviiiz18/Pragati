@@ -80,6 +80,7 @@
                     <a href="#hero" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Overview</a>
                     <a href="#about" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Platform</a>
                     <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Modules</a>
+                    <a href="{{ url_for('landing.pricing') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Pricing</a>
                     <a href="#evaluation" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Access Protocol</a>
                 </nav>
 
@@ -113,24 +114,22 @@
                      data-preset="silk"
                      data-pattern="dot"
                      data-wave="silk"
-                     data-color="#38BDF8"
+                     data-color="#2687E8"
                      data-background-color="#0A0C10"
                      data-spacing="10"
                      data-mark-size="0.95"
-                     data-depth="1.0"
-                     data-shine="1.2"
-                     data-contrast="1.3"
-                     data-speed="0.4"
+                     data-depth="0.95"
+                     data-shine="0.8"
+                     data-contrast="1.2"
+                     data-speed="0.35"
                      data-scale="1"
-                     data-direction="25"
-                     data-fade="edges"
-                     data-fade-size="0.3"
-                     data-interactive="true"
-                     data-cursor-size="65"
-                     data-cursor-strength="0.85">
+                     data-direction="20"
+                     data-fade="bottom"
+                     data-fade-size="0.65"
+                     data-interactive="true">
                 </div>
-                <!-- Subtle Bottom Seamless Blend -->
-                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0A0C10] to-transparent"></div>
+                <!-- Bottom Gradient Shadow -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[60vh] bg-gradient-to-t from-[#0A0C10]/95 via-[#0A0C10]/55 to-transparent"></div>
             </div>
 
             <!-- Typography Overlay (pushed to bottom by justify-end) -->

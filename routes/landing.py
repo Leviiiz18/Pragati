@@ -66,6 +66,12 @@ def home():
     return render_template('landing/home.html', has_access=has_platform_access())
 
 
+@landing_bp.route('/pricing')
+def pricing():
+    return render_template('landing/pricing.html', has_access=has_platform_access())
+
+
+
 @landing_bp.route('/request-access', methods=['GET', 'POST'])
 def request_access():
     form = {}

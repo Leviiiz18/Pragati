@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Plans — Pragati by KalpKrafts</title>
+    
+    <!-- Google Fonts: Plus Jakarta Sans, Manrope, DM Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+                        display: ['Manrope', 'sans-serif'],
+                        mono: ['DM Mono', 'monospace'],
+                    },
+                    colors: {
+                        ink: '#1D222D',
+                        brandBlue: '#2687E8',
+                        brandSky: '#65C4EC',
+                        brandCyan: '#B9E7F1',
+                        bgPage: '#F8FAFC',
+                        bgSoft: '#EDF8FB',
+                        bgDark: '#151A23',
+                        borderDefault: '#E2E8F0',
+                        textSec: '#64748B',
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- SpecularButton CSS (React Bits) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/specular-button.css') }}">
+
+    <style>
+        body {
+            background-color: #F8FAFC;
+            color: #1D222D;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: -0.025em;
+        }
+        
+        /* Pro Card Iridescent Gradient Banner */
+        .pro-gradient-header {
+            background: linear-gradient(90deg, #F43F5E 0%, #D946EF 30%, #8B5CF6 65%, #3B82F6 100%);
+            border-top-left-radius: 1.75rem;
+            border-top-right-radius: 1.75rem;
+        }
+
+        /* Subtle pill shadow for monthly/yearly toggle */
+        .toggle-container {
+            background-color: #F1F5F9;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.04);
+        }
+        
+        .toggle-btn.active {
+            background-color: #FFFFFF;
+            color: #0F172A;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        /* Checkmark icon pill styling */
+        .check-icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 20px;
+            height: 20px;
+            background-color: #1D222D;
+            color: #ffffff;
+            border-radius: 9999px;
+            font-size: 10px;
+            flex-shrink: 0;
+        }
+
+        /* Button deep drop shadow matching inspiration */
+        .dark-cta-button {
+            background: #1D222D;
+            color: #ffffff;
+            box-shadow: 0 14px 28px -6px rgba(29, 34, 45, 0.35), 0 8px 16px -6px rgba(29, 34, 45, 0.25);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .dark-cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 20px 34px -6px rgba(29, 34, 45, 0.45), 0 10px 20px -6px rgba(29, 34, 45, 0.3);
+            background: #11151D;
+        }
+    </style>
+</head>
+<body class="selection:bg-brandBlue/20 selection:text-ink min-h-screen flex flex-col justify-between">
+
+    <!-- =====================================================================
+         FLOATING NAVBAR (KALPKRAFTS DESIGN SYSTEM)
+         ===================================================================== -->
+    <header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-6 lg:px-8 pointer-events-auto">
+            
+            <!-- Left: Floating Brand Logo Pill -->
+            <a href="{{ url_for('landing.home') }}" 
+               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/90 backdrop-blur-xl border border-borderDefault shadow-lg shadow-black/[0.03] hover:bg-white transition-all duration-300">
+                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" 
+                     alt="Pragati by KalpKrafts" 
+                     class="h-7 sm:h-8 lg:h-9 w-auto object-contain">
+            </a>
+
+            <!-- Right: Floating Nav Pill -->
+            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/90 backdrop-blur-xl border border-borderDefault shadow-lg shadow-black/[0.03] transition-all duration-300">
+                <nav class="hidden md:flex items-center gap-1 px-2">
+                    <a href="{{ url_for('landing.home') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-slate-100 hover:text-ink">Home</a>
+                    <a href="{{ url_for('landing.home') }}#about" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-slate-100 hover:text-ink">Platform</a>
+                    <a href="{{ url_for('landing.home') }}#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-slate-100 hover:text-ink">Modules</a>
+                    <a href="{{ url_for('landing.pricing') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest bg-slate-100 text-ink transition-colors duration-200">Pricing</a>
+                    <a href="{{ url_for('landing.activate') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-slate-100 hover:text-ink">Activate Key</a>
+                </nav>
+
+                <a href="{{ url_for('auth.login') }}" 
+                   class="rounded-full px-5 py-2 text-[11px] font-bold uppercase tracking-wider text-ink bg-slate-100 hover:bg-slate-200 transition-all duration-200">
+                    Sign In
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- =====================================================================
+         MAIN PRICING SECTION
+         ===================================================================== -->
+    <main class="relative z-10 pt-32 pb-24 lg:pt-36 lg:pb-32 px-6">
+        <div class="mx-auto max-w-5xl">
+            
+            <!-- Centered Header Badge & Headlines -->
+            <div class="flex flex-col items-center text-center">
+                
+                <!-- Lightning Badge Pill -->
+                <div class="inline-flex items-center gap-2 rounded-full bg-[#1D222D] px-4 py-1.5 text-xs font-semibold text-white shadow-md mb-6">
+                    <i class="fa-solid fa-bolt text-yellow-400 text-xs"></i>
+                    <span>Pricing Plans</span>
+                </div>
+
+                <!-- Main Display Title -->
+                <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-ink max-w-3xl leading-[1.12]">
+                    Simple pricing. No surprises.
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="mt-4 text-sm sm:text-base text-textSec max-w-xl font-normal leading-relaxed">
+                    Start free with our department evaluation pilot. Upgrade when you're ready to streamline accreditation, student progress, and campus governance.
+                </p>
+
+                <!-- Interactive Monthly / Yearly Toggle Pill -->
+                <div class="mt-8 inline-flex items-center rounded-full toggle-container p-1.5 border border-slate-200">
+                    <button id="toggle-monthly" 
+                            type="button" 
+                            onclick="setBillingCycle('monthly')"
+                            class="toggle-btn active rounded-full px-6 py-2 text-xs font-bold text-ink transition-all duration-200">
+                        Pay monthly
+                    </button>
+                    <button id="toggle-yearly" 
+                            type="button" 
+                            onclick="setBillingCycle('yearly')"
+                            class="toggle-btn relative rounded-full px-6 py-2 text-xs font-bold text-textSec hover:text-ink transition-all duration-200 flex items-center gap-2">
+                        <span>Pay yearly</span>
+                        <span class="inline-block w-2 h-2 rounded-full bg-emerald-500 ring-2 ring-emerald-500/20"></span>
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- =====================================================================
+                 TWO PRICING CARDS (FREE PILOT & PRO ENTERPRISE)
+                 ===================================================================== -->
+            <div class="mt-14 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+                
+                <!-- -------------------------------------------------------------
+                     CARD 1: FREE / DEPARTMENT PILOT
+                     ------------------------------------------------------------- -->
+                <div class="relative flex flex-col justify-between rounded-[2rem] bg-white border border-borderDefault p-8 sm:p-10 shadow-lg shadow-black/[0.02] hover:border-slate-300 transition-all duration-300">
+                    
+                    <div>
+                        <!-- Header Title -->
+                        <div class="flex items-center justify-between">
+                            <span class="text-base font-bold text-ink font-display">Free</span>
+                        </div>
+
+                        <!-- Dark Icon Box -->
+                        <div class="mt-6 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1D222D] shadow-sm">
+                            <i class="fa-solid fa-rocket text-white text-lg"></i>
+                        </div>
+
+                        <!-- Tagline -->
+                        <p class="mt-6 text-sm font-medium text-textSec">
+                            Perfect for single department evaluation
+                        </p>
+
+                        <!-- Price Section -->
+                        <div class="mt-4 flex items-baseline gap-1.5">
+                            <span class="font-display text-5xl font-extrabold text-ink tracking-tight">$0</span>
+                            <span class="text-xs font-medium text-textSec">/ user / month</span>
+                        </div>
+
+                        <!-- CTA Button -->
+                        <div class="mt-7">
+                            <a href="{{ url_for('landing.request_access') }}" 
+                               class="dark-cta-button w-full flex items-center justify-center rounded-2xl py-3.5 px-6 text-sm font-bold tracking-wide">
+                                Start for Free
+                            </a>
+                        </div>
+
+                        <!-- Feature Checklist -->
+                        <div class="mt-8 space-y-4">
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>50 Faculty &amp; Staff profiles included</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>Core Outcome &amp; Attendance Tracking</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>Basic NBA &amp; NAAC criteria templates</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>In-browser marksheets &amp; gradebooks</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>Works inside your modern web browser</span>
+                            </div>
+                            <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                <span>Community &amp; email support</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-textSec">
+                        <span>No credit card required</span>
+                        <span class="font-semibold text-ink">Instant Key Activation</span>
+                    </div>
+
+                </div>
+
+                <!-- -------------------------------------------------------------
+                     CARD 2: PRO / CAMPUS ENTERPRISE (FEATURING IRIDESCENT TOP)
+                     ------------------------------------------------------------- -->
+                <div class="relative flex flex-col justify-between rounded-[2rem] bg-white border border-borderDefault shadow-xl shadow-black/[0.04] hover:shadow-2xl hover:shadow-black/[0.08] transition-all duration-300 overflow-hidden">
+                    
+                    <!-- Iridescent Gradient Header Top Banner -->
+                    <div class="pro-gradient-header pt-4 pb-3 px-8 sm:px-10">
+                        <div class="flex items-center justify-between">
+                            <span class="text-base font-bold text-ink font-display">Pro</span>
+                            <span class="rounded-full bg-white/30 backdrop-blur-md px-3 py-0.5 text-[10px] font-extrabold uppercase tracking-widest text-ink">
+                                Recommended
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="p-8 sm:p-10 pt-6 flex flex-col justify-between flex-1">
+                        <div>
+                            <!-- Dark Icon Box -->
+                            <div class="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1D222D] shadow-sm">
+                                <i class="fa-solid fa-feather-pointed text-white text-lg"></i>
+                            </div>
+
+                            <!-- Tagline -->
+                            <p class="mt-6 text-sm font-medium text-textSec">
+                                For professionals &amp; institutions ready to scale
+                            </p>
+
+                            <!-- Price Section -->
+                            <div class="mt-4 flex items-baseline gap-1.5">
+                                <span id="pro-price-amount" class="font-display text-5xl font-extrabold text-ink tracking-tight transition-all duration-300">$12</span>
+                                <span class="text-xs font-medium text-textSec">/ user / month</span>
+                            </div>
+                            <div id="yearly-discount-label" class="text-[11px] font-semibold text-emerald-600 mt-1 hidden">
+                                Billed annually ($115/year &bull; Save 20%)
+                            </div>
+
+                            <!-- CTA Button with Specular Engine -->
+                            <div class="mt-7">
+                                <a href="{{ url_for('landing.request_access') }}" 
+                                   class="dark-cta-button w-full flex items-center justify-center rounded-2xl py-3.5 px-6 text-sm font-bold tracking-wide">
+                                    Upgrade to Pro
+                                </a>
+                            </div>
+
+                            <!-- Feature Checklist -->
+                            <div class="mt-8 space-y-4">
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Unlimited AI-assisted writing &amp; report generation</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Advanced multi-department governance &amp; role controls</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Real-time NBA &amp; NAAC live audit scorecards (1–10)</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Custom outcome-based curriculum templates</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Priority accreditation &amp; report processing</span>
+                                </div>
+                                <div class="flex items-center gap-3 text-xs sm:text-[13px] font-medium text-slate-700">
+                                    <span class="check-icon-badge"><i class="fa-solid fa-check"></i></span>
+                                    <span>Early access to upcoming institutional modules</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 pt-4 border-t border-slate-100 flex items-center justify-between text-[11px] text-textSec">
+                            <span>Includes 30-day money-back guarantee</span>
+                            <span class="font-semibold text-ink">Dedicated SLA</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- =====================================================================
+                 INSTITUTIONAL TRUST & FAQ MINI-SECTION
+                 ===================================================================== -->
+            <div class="mt-20 border-t border-slate-200 pt-16">
+                <div class="text-center max-w-2xl mx-auto">
+                    <h2 class="font-display text-2xl font-bold text-ink">Frequently Asked Questions</h2>
+                    <p class="mt-2 text-xs sm:text-sm text-textSec">Everything you need to know about Pragati's institutional access and plans.</p>
+                </div>
+
+                <div class="mt-10 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto text-left">
+                    <div class="rounded-2xl bg-white border border-borderDefault p-6 shadow-sm">
+                        <h3 class="font-bold text-ink text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-circle-question text-brandBlue"></i>
+                            Can we evaluate Pragati with a single department first?
+                        </h3>
+                        <p class="mt-2 text-xs leading-relaxed text-textSec">
+                            Yes! Choose the Free Department Pilot to test marks entry, attendance, and NBA matrix calculation with up to 50 faculty seats at zero cost.
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white border border-borderDefault p-6 shadow-sm">
+                        <h3 class="font-bold text-ink text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-key text-brandBlue"></i>
+                            How do activation keys work?
+                        </h3>
+                        <p class="mt-2 text-xs leading-relaxed text-textSec">
+                            Once your request is approved by the KalpKrafts team, you receive a unique key (e.g. PRG-XXXX) to unlock instant platform access for your campus.
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white border border-borderDefault p-6 shadow-sm">
+                        <h3 class="font-bold text-ink text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-brandBlue"></i>
+                            Where is institutional student data hosted?
+                        </h3>
+                        <p class="mt-2 text-xs leading-relaxed text-textSec">
+                            All institutional data is strictly hosted within sovereign Indian cloud infrastructure with automated daily backups and AES-256 encryption at rest.
+                        </p>
+                    </div>
+
+                    <div class="rounded-2xl bg-white border border-borderDefault p-6 shadow-sm">
+                        <h3 class="font-bold text-ink text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-file-invoice-dollar text-brandBlue"></i>
+                            Do you support institutional purchase orders (PO)?
+                        </h3>
+                        <p class="mt-2 text-xs leading-relaxed text-textSec">
+                            Yes, we support formal institutional Net 30 purchase orders, GST invoices, wire transfers, and campus-wide enterprise licensing agreements.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- =====================================================================
+         FOOTER
+         ===================================================================== -->
+    <footer class="border-t border-borderDefault bg-white py-10 text-xs text-textSec">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
+            <div class="flex items-center gap-3">
+                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-7 w-auto object-contain">
+                <span class="text-borderDefault font-bold">&bull;</span>
+                <span class="font-medium">Institutional Academic Management Platform</span>
+            </div>
+            <div class="flex items-center gap-6 font-bold text-[11px] uppercase tracking-wider">
+                <a href="{{ url_for('landing.home') }}" class="hover:text-ink transition">Home</a>
+                <a href="{{ url_for('landing.pricing') }}" class="hover:text-ink transition">Pricing</a>
+                <a href="{{ url_for('landing.request_access') }}" class="hover:text-ink transition">Request Access</a>
+                <a href="{{ url_for('landing.activate') }}" class="hover:text-ink transition">Activate Key</a>
+                <a href="{{ url_for('auth.login') }}" class="hover:text-ink transition">Sign In</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Interactive Toggle Engine -->
+    <script>
+        function setBillingCycle(cycle) {
+            const monthlyBtn = document.getElementById('toggle-monthly');
+            const yearlyBtn = document.getElementById('toggle-yearly');
+            const proPrice = document.getElementById('pro-price-amount');
+            const yearlyLabel = document.getElementById('yearly-discount-label');
+
+            if (cycle === 'yearly') {
+                monthlyBtn.classList.remove('active');
+                yearlyBtn.classList.add('active');
+                proPrice.textContent = '$9.60';
+                yearlyLabel.classList.remove('hidden');
+            } else {
+                yearlyBtn.classList.remove('active');
+                monthlyBtn.classList.add('active');
+                proPrice.textContent = '$12';
+                yearlyLabel.classList.add('hidden');
+            }
+        }
+    </script>
+</body>
+</html>
