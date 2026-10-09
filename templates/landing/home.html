@@ -53,10 +53,9 @@
                     <a href="#overview" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Overview</a>
                     <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Modules</a>
                     <a href="#evaluation" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Evaluation</a>
-                    <a href="{{ url_for('landing.request_access') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Request Access</a>
                 </nav>
 
-                <a href="{{ url_for('landing.activate') }}" 
+                <a href="{{ url_for('landing.request_access') }}" 
                    class="specular-button specular-button--sm"
                    style="--sb-radius: 9999px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a; border-radius: 9999px;"
                    data-radius="20"
@@ -66,7 +65,7 @@
                    data-thickness="1.2"
                    data-proximity="200">
                     <span class="specular-button__fx" aria-hidden="true"></span>
-                    <span class="specular-button__label text-[11px] font-bold uppercase tracking-wider text-white px-3 py-1.5">Activate Key</span>
+                    <span class="specular-button__label text-[11px] font-bold uppercase tracking-wider text-white px-3 py-1.5">Request Access</span>
                 </a>
             </div>
         </div>
