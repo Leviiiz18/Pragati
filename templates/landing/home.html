@@ -213,27 +213,42 @@
                         </p>
                     </div>
 
-                    <!-- Right: Stat / Metric Cards -->
-                    <div class="lg:col-span-5 grid grid-cols-1 gap-4">
-                        
-                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
-                            <div class="text-3xl font-extrabold text-ink font-display">100%</div>
-                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Compliance Reliability</div>
-                            <div class="text-xs text-textSec mt-2">Continuous automated 75% cutoff monitoring with live class deficit computation.</div>
-                        </div>
+                    <!-- Right: Platform Architecture Card with Pattern Motif -->
+                    <div class="lg:col-span-5">
+                        <div class="relative overflow-hidden rounded-3xl border border-borderDefault bg-white shadow-lg p-6 sm:p-8 group">
+                            <!-- Ambient Heritage Pattern Motif Backdrop -->
+                            <div class="absolute inset-0 bg-cover bg-center opacity-25 mix-blend-multiply transition-transform duration-700 ease-out group-hover:scale-105"
+                                 style="background-image: url('{{ url_for('static', filename='images/pattern.png') }}');"></div>
+                            <div class="absolute inset-0 bg-gradient-to-t from-white via-white/85 to-transparent"></div>
+                            
+                            <div class="relative z-10 space-y-4">
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brandBlue/10 border border-brandBlue/20 text-brandBlue text-[11px] font-bold font-mono-tag">
+                                    <i class="fa-solid fa-shapes text-brandBlue"></i>
+                                    <span>PRAGATI SYSTEM ARCHITECTURE</span>
+                                </div>
+                                <h3 class="font-display text-xl font-extrabold text-ink">Engineered for absolute accuracy.</h3>
+                                
+                                <div class="space-y-3 pt-2">
+                                    <div class="p-4 rounded-xl bg-white/95 backdrop-blur-sm border border-borderDefault shadow-xs hover:border-brandSky transition-colors">
+                                        <div class="text-2xl font-extrabold text-ink font-display">100%</div>
+                                        <div class="text-[11px] font-bold uppercase tracking-wider text-brandBlue font-mono-tag">Compliance Reliability</div>
+                                        <div class="text-xs text-textSec mt-1">Continuous automated 75% cutoff monitoring with live deficit computation.</div>
+                                    </div>
 
-                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
-                            <div class="text-3xl font-extrabold text-ink font-display">3-Tier</div>
-                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Role Architecture</div>
-                            <div class="text-xs text-textSec mt-2">Segregated dashboards with fine-grained authority for Super Admin, Faculty, and Students.</div>
-                        </div>
+                                    <div class="p-4 rounded-xl bg-white/95 backdrop-blur-sm border border-borderDefault shadow-xs hover:border-brandSky transition-colors">
+                                        <div class="text-2xl font-extrabold text-ink font-display">3-Tier Hierarchy</div>
+                                        <div class="text-[11px] font-bold uppercase tracking-wider text-brandBlue font-mono-tag">Role-Gated Portals</div>
+                                        <div class="text-xs text-textSec mt-1">Segregated, high-security dashboards for Super Admin, Faculty, and Students.</div>
+                                    </div>
 
-                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
-                            <div class="text-3xl font-extrabold text-ink font-display">Zero Friction</div>
-                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Curriculum Vaults</div>
-                            <div class="text-xs text-textSec mt-2">Instant unit notes, semester syllabi, and assignment tracking with resume-reading marks.</div>
+                                    <div class="p-4 rounded-xl bg-white/95 backdrop-blur-sm border border-borderDefault shadow-xs hover:border-brandSky transition-colors">
+                                        <div class="text-2xl font-extrabold text-ink font-display">Zero Latency</div>
+                                        <div class="text-[11px] font-bold uppercase tracking-wider text-brandBlue font-mono-tag">Curriculum Vaults</div>
+                                        <div class="text-xs text-textSec mt-1">Unit documentation, assignment submissions, and resume-reading checkpoints.</div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-
                     </div>
 
                 </div>
@@ -305,8 +320,12 @@
         <section id="evaluation" class="py-24 lg:py-32 bg-bgPage border-t border-borderDefault">
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 
-                <div class="rounded-3xl border border-borderDefault bg-white p-8 sm:p-14 shadow-sm">
-                    <div class="max-w-3xl">
+                <div class="relative overflow-hidden rounded-3xl border border-borderDefault bg-white p-8 sm:p-14 shadow-sm">
+                    <!-- Subtle Heritage Pattern Watermark in Background -->
+                    <div class="absolute -right-16 -bottom-16 w-96 h-96 opacity-15 pointer-events-none rounded-full bg-cover bg-center [mask-image:radial-gradient(circle,black_40%,transparent_75%)]"
+                         style="background-image: url('{{ url_for('static', filename='images/pattern.png') }}');"></div>
+
+                    <div class="relative z-10 max-w-3xl">
                         <span class="font-mono-tag text-[12px] font-extrabold tracking-widest text-brandBlue uppercase">
                             CONTROLLED ONBOARDING
                         </span>
