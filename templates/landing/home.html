@@ -33,61 +33,40 @@
 </head>
 <body class="bg-white text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
 
-    <!-- Top Notice Banner -->
-    <div class="bg-slate-950 text-white text-xs py-2 px-4 border-b border-white/10 relative z-50">
-        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
-            <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded bg-indigo-500/30 text-indigo-300 font-semibold text-[11px] uppercase tracking-wider">Pilot Phase</span>
-                <span class="text-slate-300 text-xs">Currently in controlled institutional evaluation. Activation key required for campus access.</span>
-            </div>
-            <a href="{{ url_for('landing.activate') }}" class="text-xs text-indigo-300 hover:text-white font-semibold flex items-center gap-1">
-                <span>Enter Activation Key</span>
-                <i class="fa-solid fa-arrow-right text-[10px]"></i>
-            </a>
-        </div>
-    </div>
-
-    <!-- Floating Navigation Header -->
-    <header class="bg-slate-950/70 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40 text-white">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+    <!-- =====================================================================
+         FLOATING PILL NAVBAR (KALPKRAFTS DESIGN)
+         ===================================================================== -->
+    <header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
+        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-6 lg:px-8 pointer-events-auto">
             
-            <!-- Brand Logo with Clean Container -->
-            <a href="{{ url_for('landing.home') }}" class="flex items-center bg-white/95 px-3 py-1.5 rounded-xl shadow-sm hover:opacity-95 transition">
-                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-7 sm:h-8 w-auto object-contain">
+            <!-- Left: Floating Brand Logo Pill -->
+            <a href="{{ url_for('landing.home') }}" 
+               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/75 backdrop-blur-md border border-white/50 shadow-sm hover:bg-white/95 transition-all duration-300">
+                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" 
+                     alt="Pragati by KalpKrafts" 
+                     class="h-7 sm:h-8 lg:h-9 w-auto object-contain">
             </a>
 
-            <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
-                <a href="#overview" class="hover:text-white transition-colors">Overview</a>
-                <a href="#modules" class="hover:text-white transition-colors">System Modules</a>
-                <a href="#evaluation" class="hover:text-white transition-colors">Evaluation Process</a>
-            </nav>
+            <!-- Right: Floating Nav Pill -->
+            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/75 backdrop-blur-md border border-white/50 shadow-sm transition-all duration-300">
+                <nav class="hidden md:flex items-center gap-1 px-2">
+                    <a href="#overview" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Overview</a>
+                    <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Modules</a>
+                    <a href="#evaluation" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Evaluation</a>
+                    <a href="{{ url_for('landing.activate') }}" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-indigo-600 transition-colors duration-200 hover:bg-indigo-50">Activate Key</a>
+                </nav>
 
-            <!-- Actions (SpecularButton CTAs) -->
-            <div class="flex items-center gap-2.5">
-                <a href="{{ url_for('landing.activate') }}" 
-                   class="specular-button specular-button--sm"
-                   style="--sb-radius: 10px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 10px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);"
-                   data-radius="10"
-                   data-line-color="#ffffff"
-                   data-base-color="#cbd5e1"
-                   data-intensity="1.1"
-                   data-thickness="1.2"
-                   data-proximity="200">
-                    <span class="specular-button__fx" aria-hidden="true"></span>
-                    <span class="specular-button__label text-xs font-semibold text-white">Activate Access</span>
-                </a>
                 <a href="{{ url_for('landing.request_access') }}" 
                    class="specular-button specular-button--sm"
-                   style="--sb-radius: 10px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
-                   data-radius="10"
+                   style="--sb-radius: 9999px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a; border-radius: 9999px;"
+                   data-radius="20"
                    data-line-color="#ffffff"
-                   data-base-color="#3730a3"
+                   data-base-color="#475569"
                    data-intensity="1.2"
                    data-thickness="1.2"
                    data-proximity="200">
                     <span class="specular-button__fx" aria-hidden="true"></span>
-                    <span class="specular-button__label text-xs font-bold text-white">Request Campus Key</span>
+                    <span class="specular-button__label text-[11px] font-bold uppercase tracking-wider text-white px-3 py-1.5">Partner With Us</span>
                 </a>
             </div>
         </div>
@@ -99,7 +78,7 @@
         <!-- =====================================================================
              1. HERO SECTION (FULL-BLEED KALPKRAFTS HALFTONE COVERAGE)
              ===================================================================== -->
-        <section id="overview" class="relative min-h-[92vh] sm:min-h-screen flex flex-col justify-end items-center pb-16 sm:pb-24 pt-20 overflow-hidden bg-[#0A0C10] text-white">
+        <section id="overview" class="relative min-h-[92vh] sm:min-h-screen flex flex-col justify-end items-center pb-16 sm:pb-24 pt-24 overflow-hidden bg-[#0A0C10] text-white">
             
             <!-- Full-Bleed CMYK Halftone Screen Canvas -->
             <div class="absolute inset-0 z-0 pointer-events-none" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
@@ -127,7 +106,7 @@
             <!-- Typography & CTA Overlay (relative z-10) -->
             <div class="relative z-10 w-full max-w-5xl px-6 lg:px-8 text-center flex flex-col items-center">
                 
-                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6 shadow-lg">
+                <div class="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6 shadow-lg">
                     <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
                     <span>Institutional Academic Platform &bull; Pilot Phase</span>
                 </div>
