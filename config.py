@@ -24,3 +24,8 @@ class Config:
     REMEMBER_COOKIE_SECURE = os.environ.get('SESSION_COOKIE_SECURE', '').lower() in ('true', '1')
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16 MB max payload
+
+    # Early-access gate: visitors must activate with a key before reaching the login
+    ACCESS_GATE_ENABLED = os.environ.get('ACCESS_GATE_ENABLED', 'true').lower() in ('true', '1')
+    # Internal team key that always unlocks the gate (override in production via env var)
+    MASTER_ACTIVATION_KEY = os.environ.get('MASTER_ACTIVATION_KEY', 'PRG-TEAM-CORE-2026')

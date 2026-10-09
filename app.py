@@ -55,6 +55,7 @@ def create_app():
     from routes.student import student_bp
     from routes.events import events_bp
     from routes.ai_api import ai_api_bp
+    from routes.landing import landing_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(super_admin_bp, url_prefix='/super_admin')
@@ -63,19 +64,8 @@ def create_app():
     app.register_blueprint(student_bp, url_prefix='/student')
     app.register_blueprint(events_bp)
     app.register_blueprint(ai_api_bp)
-
-    @app.route('/')
-    def index():
-        if current_user.is_authenticated:
-            if current_user.role in ['super_admin', 'principal']:
-                return redirect(url_for('super_admin.dashboard'))
-            elif current_user.role == 'hod':
-                return redirect(url_for('hod.dashboard'))
-            elif current_user.role == 'faculty':
-                return redirect(url_for('faculty.dashboard'))
-            else:
-                return redirect(url_for('student.dashboard'))
-        return redirect(url_for('auth.login'))
+    # Public hero page lives at "/" (logged-in users are sent to their dashboard)
+    app.register_blueprint(landing_bp)
 
     if not os.path.exists(app.config.get('UPLOAD_FOLDER', 'uploads')):
         os.makedirs(app.config.get('UPLOAD_FOLDER', 'uploads'))

@@ -42,6 +42,12 @@ def get_role_redirect(role):
 
 @auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
+    # Early-access gate: an activation key must be unlocked in this browser first
+    from routes.landing import has_platform_access
+    if not has_platform_access():
+        flash('Pragati is in early access. Enter your activation key to continue.', 'info')
+        return redirect(url_for('landing.activate'))
+
     if request.method == 'POST':
         # If user is already authenticated and submits a new login, log out previous session
         if current_user.is_authenticated:
@@ -150,6 +156,10 @@ def login():
 def register():
     if current_user.is_authenticated:
         return redirect(get_role_redirect(current_user.role))
+
+    from routes.landing import has_platform_access
+    if not has_platform_access():
+        return redirect(url_for('landing.activate'))
         
     if request.method == 'POST':
         name = (request.form.get('name') or '').strip()
@@ -206,5 +216,5 @@ def register():
 @auth_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('landing.home'))
 

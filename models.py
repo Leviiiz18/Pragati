@@ -353,3 +353,26 @@ class Notification(BaseModel):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     user = db.relationship('User', backref=db.backref('notifications', lazy=True, cascade="all, delete-orphan"))
+
+class AccessRequest(BaseModel):
+    """Early-access onboarding request submitted from the public landing page."""
+    __tablename__ = 'access_request'
+    id = db.Column(db.Integer, primary_key=True)
+    full_name = db.Column(db.String(150), nullable=False)
+    email = db.Column(db.String(150), nullable=False, index=True)
+    institution = db.Column(db.String(200), nullable=False)
+    role = db.Column(db.String(50), nullable=False)  # Student, Faculty, HOD, Administrator, Other
+    phone = db.Column(db.String(30), nullable=True)
+    purpose = db.Column(db.Text, nullable=True)
+    status = db.Column(db.String(20), default='pending')  # pending, approved, rejected, revoked
+    activation_key = db.Column(db.String(40), unique=True, nullable=True, index=True)
+    review_note = db.Column(db.String(300), nullable=True)
+    reviewed_by = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    reviewed_at = db.Column(db.DateTime, nullable=True)
+    first_activated_at = db.Column(db.DateTime, nullable=True)
+    activation_count = db.Column(db.Integer, default=0)
+
+    @property
+    def reference(self):
+        return f"REQ-{self.id:05d}"
