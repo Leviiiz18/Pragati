@@ -4,7 +4,7 @@
   height: 100%;
   overflow: hidden;
   touch-action: none;
-  cursor: crosshair;
+  cursor: default;
   background-color: #0A0C10;
   border-radius: inherit;
 }

@@ -152,6 +152,11 @@
       print = mix(uPaper, uInk, cov);
     }
 
+    if (uTrigger == 0) {
+      fragColor = vec4(print, 1.0);
+      return;
+    }
+
     float t = clamp(dist / radius, 0.0, 1.0);
     float bend = t * t * t * t;
     vec2 dir = dist > 1e-5 ? duv / dist : vec2(0.0);
