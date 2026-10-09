@@ -1,14 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pragati — Institutional Academic Management Platform</title>
+    <title>Pragati — Institutional Academic Operating System by KalpKrafts</title>
     
-    <!-- Google Fonts: Plus Jakarta Sans -->
+    <!-- Google Fonts: Plus Jakarta Sans, Manrope, DM Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,7 +17,19 @@
                 extend: {
                     fontFamily: {
                         sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
-                        mono: ['JetBrains Mono', 'monospace'],
+                        display: ['Manrope', 'sans-serif'],
+                        mono: ['DM Mono', 'monospace'],
+                    },
+                    colors: {
+                        ink: '#1D222D',
+                        brandBlue: '#2687E8',
+                        brandSky: '#65C4EC',
+                        brandCyan: '#B9E7F1',
+                        bgPage: '#F5FBFD',
+                        bgSoft: '#EDF8FB',
+                        bgDark: '#151A23',
+                        borderDefault: '#D8EAF1',
+                        textSec: '#526579',
                     }
                 }
             }
@@ -25,42 +37,58 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- React Bits SpecularButton Component Stylesheet (Exclusive to Hero Page CTAs) -->
+    <!-- SpecularButton & Halftone CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/specular-button.css') }}">
-    
-    <!-- Halftone Reveal Component Stylesheet (KalpKrafts Full Bleed Engine) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/halftone-reveal.css') }}">
+
+    <style>
+        body {
+            background-color: #F5FBFD;
+            color: #1D222D;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-display {
+            font-family: 'Manrope', sans-serif;
+            letter-spacing: -0.025em;
+        }
+        .font-mono-tag {
+            font-family: 'DM Mono', monospace;
+            letter-spacing: 0.12em;
+        }
+    </style>
 </head>
-<body class="bg-white text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
+<body class="selection:bg-brandBlue/20 selection:text-ink">
 
     <!-- =====================================================================
-         FLOATING PILL NAVBAR (KALPKRAFTS DESIGN)
+         FLOATING PILL NAVBAR (KALPKRAFTS DESIGN SYSTEM)
          ===================================================================== -->
     <header class="fixed top-0 left-0 right-0 z-50 pointer-events-none">
-        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-5 lg:px-8 pointer-events-auto">
+        <div class="mx-auto flex w-full max-w-[90rem] items-center justify-between px-6 py-6 lg:px-8 pointer-events-auto">
             
             <!-- Left: Floating Brand Logo Pill -->
             <a href="{{ url_for('landing.home') }}" 
-               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/85 backdrop-blur-md border border-white/60 shadow-sm hover:bg-white transition-all duration-300">
+               class="shrink-0 flex items-center rounded-full px-4 py-2 bg-white/90 backdrop-blur-xl border border-borderDefault shadow-lg shadow-borderDefault/40 hover:bg-white transition-all duration-300">
                 <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" 
                      alt="Pragati by KalpKrafts" 
                      class="h-7 sm:h-8 lg:h-9 w-auto object-contain">
             </a>
 
             <!-- Right: Floating Nav Pill -->
-            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/85 backdrop-blur-md border border-white/60 shadow-sm transition-all duration-300">
+            <div class="flex items-center gap-2 rounded-full p-1.5 bg-white/90 backdrop-blur-xl border border-borderDefault shadow-lg shadow-borderDefault/40 transition-all duration-300">
                 <nav class="hidden md:flex items-center gap-1 px-2">
-                    <a href="#overview" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Overview</a>
-                    <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Modules</a>
-                    <a href="#evaluation" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-[#526579] transition-colors duration-200 hover:bg-[#EDF8FB] hover:text-[#1D222D]">Evaluation</a>
+                    <a href="#hero" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Overview</a>
+                    <a href="#about" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Platform</a>
+                    <a href="#modules" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Modules</a>
+                    <a href="#evaluation" class="rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-widest text-textSec transition-colors duration-200 hover:bg-bgSoft hover:text-ink">Access Protocol</a>
                 </nav>
 
                 <a href="{{ url_for('landing.request_access') }}" 
                    class="specular-button specular-button--sm"
-                   style="--sb-radius: 9999px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a; border-radius: 9999px;"
+                   style="--sb-radius: 9999px; --sb-tint: #1D222D; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #1D222D; border-radius: 9999px;"
                    data-radius="20"
                    data-line-color="#ffffff"
-                   data-base-color="#475569"
+                   data-base-color="#526579"
                    data-intensity="1.2"
                    data-thickness="1.2"
                    data-proximity="200">
@@ -72,139 +100,211 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1">
+    <main class="relative z-10">
 
         <!-- =====================================================================
-             1. HERO SECTION (BOTTOM-ANCHORED KALPKRAFTS EDITORIAL COMPOSITION)
+             01. HERO (KALPKRAFTS FULL-PAGE HALFTONE & BOTTOM-ANCHORED TYPOGRAPHY)
              ===================================================================== -->
-        <section id="overview" class="relative min-h-screen flex flex-col justify-end items-center pb-14 sm:pb-20 pt-[42vh] sm:pt-[48vh] overflow-hidden bg-[#0A0C10] text-white">
+        <section id="hero" class="relative flex min-h-screen flex-col items-center justify-end pb-12 sm:pb-16 overflow-hidden bg-bgPage">
             
-            <!-- Full-Bleed CMYK Halftone Screen Canvas -->
-            <div class="absolute inset-0 z-0 pointer-events-none" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
-                <div class="halftone-reveal w-full h-full opacity-90 saturate-[1.15]"
+            <!-- Full-Page Halftone Pattern (Static CMYK) -->
+            <div class="absolute inset-0 z-0" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
+                <div class="halftone-reveal w-full h-full opacity-100 saturate-[1.2]"
                      data-src="{{ url_for('static', filename='images/college_life.png') }}"
                      data-ink-color="#1D222D"
                      data-paper-color="#F5FBFD"
                      data-mode="color"
                      data-dot-density="160"
                      data-angle="45"
-                     data-contrast="1.2"
+                     data-contrast="1.15"
                      data-reveal-radius="0"
-                     data-edge="0.8"
-                     data-follow="0.37"
-                     data-idle-reveal="0"
                      data-trigger="off">
                 </div>
-                
-                <!-- Deep Bottom Gradient Vignette to ground text with 100% sharp contrast -->
-                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[75vh] bg-gradient-to-t from-[#0A0C10] via-[#0A0C10]/90 via-50% to-transparent"></div>
-                <!-- Top Vignette for Navbar -->
-                <div class="pointer-events-none absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-[#0A0C10]/75 to-transparent"></div>
+                <!-- Bottom Gradient Shadow -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[60vh] bg-gradient-to-t from-[#0A0C10]/95 via-[#0A0C10]/55 to-transparent"></div>
             </div>
 
-            <!-- Typography & CTA Overlay (Grounded in bottom half) -->
-            <div class="relative z-10 w-full max-w-5xl px-6 lg:px-8 text-center flex flex-col items-center">
-                
-                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08] drop-shadow-[0_16px_32px_rgba(0,0,0,0.95)] max-w-4xl">
-                    Unified Academic Operations &amp; Student Workspace
-                </h1>
-
-                <p class="text-base sm:text-lg text-slate-200 font-medium max-w-2xl mx-auto mt-5 leading-relaxed drop-shadow-[0_6px_14px_rgba(0,0,0,0.9)]">
-                    Pragati integrates curriculum management, timetable scheduling, real-time attendance compliance, internal assessment tracking, and departmental records into a single structured portal.
-                </p>
-
-                <!-- Hero CTAs integrated with SpecularButton -->
-                <div class="mt-8 flex flex-wrap items-center justify-center gap-4 drop-shadow-[0_10px_20px_rgba(0,0,0,0.7)]">
-                    <a href="{{ url_for('landing.request_access') }}" 
-                       class="specular-button specular-button--lg"
-                       style="--sb-radius: 14px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
-                       data-radius="14"
-                       data-line-color="#ffffff"
-                       data-base-color="#3730a3"
-                       data-intensity="1.35"
-                       data-shine-size="12"
-                       data-shine-fade="40"
-                       data-thickness="1.6"
-                       data-speed="0.35"
-                       data-follow-mouse="true"
-                       data-proximity="280">
-                        <span class="specular-button__fx" aria-hidden="true"></span>
-                        <span class="specular-button__label font-bold text-sm text-white">
-                            <span>Request Institutional Access</span>
-                            <i class="fa-solid fa-arrow-right text-xs"></i>
-                        </span>
-                    </a>
+            <!-- Typography Overlay (pushed to bottom by justify-end) -->
+            <div class="relative z-10 w-full max-w-[90rem] px-6 lg:px-12 text-left sm:text-center">
+                <div class="flex flex-col items-start sm:items-center">
                     
-                    <a href="{{ url_for('landing.activate') }}" 
-                       class="specular-button specular-button--lg"
-                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 14px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);"
-                       data-radius="14"
-                       data-line-color="#ffffff"
-                       data-base-color="#cbd5e1"
-                       data-intensity="1.25"
-                       data-shine-size="12"
-                       data-shine-fade="40"
-                       data-thickness="1.6"
-                       data-speed="0.35"
-                       data-follow-mouse="true"
-                       data-proximity="280">
-                        <span class="specular-button__fx" aria-hidden="true"></span>
-                        <span class="specular-button__label font-semibold text-sm text-white">
-                            <i class="fa-solid fa-key text-indigo-300"></i>
-                            <span>Enter Activation Key</span>
-                        </span>
-                    </a>
-                </div>
+                    <h1 class="font-display text-[clamp(2.75rem,7vw,6.25rem)] font-extrabold tracking-tight text-white leading-[1.05] drop-shadow-[0_12px_24px_rgba(0,0,0,0.65)] max-w-5xl">
+                        Engineering the future of academic operations.
+                    </h1>
 
+                    <p class="-mt-1 sm:mt-3 max-w-2xl text-[1.05rem] sm:text-[1.18rem] leading-[1.6] text-white font-medium sm:mx-auto drop-shadow-[0_6px_10px_rgba(0,0,0,0.6)]">
+                        Building intelligent educational platforms, automated attendance compliance engines, and structured departmental workspaces for modern institutions.
+                    </p>
+
+                    <!-- Hero Specular CTA Buttons -->
+                    <div class="mt-8 flex flex-wrap items-center sm:justify-center gap-4 drop-shadow-[0_6px_10px_rgba(0,0,0,0.4)]">
+                        <a href="{{ url_for('landing.request_access') }}" 
+                           class="specular-button specular-button--lg"
+                           style="--sb-radius: 9999px; --sb-tint: #2687E8; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #2687E8; border-radius: 9999px;"
+                           data-radius="22"
+                           data-line-color="#ffffff"
+                           data-base-color="#1963ad"
+                           data-intensity="1.3"
+                           data-shine-size="12"
+                           data-shine-fade="40"
+                           data-thickness="1.5"
+                           data-speed="0.35"
+                           data-follow-mouse="true"
+                           data-proximity="280">
+                            <span class="specular-button__fx" aria-hidden="true"></span>
+                            <span class="specular-button__label font-bold text-sm text-white px-4">
+                                <span>Request Institutional Access</span>
+                                <i class="fa-solid fa-arrow-right text-xs ml-1"></i>
+                            </span>
+                        </a>
+                        
+                        <a href="{{ url_for('landing.activate') }}" 
+                           class="specular-button specular-button--lg"
+                           style="--sb-radius: 9999px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 12px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 9999px;"
+                           data-radius="22"
+                           data-line-color="#ffffff"
+                           data-base-color="#D8EAF1"
+                           data-intensity="1.25"
+                           data-shine-size="12"
+                           data-shine-fade="40"
+                           data-thickness="1.5"
+                           data-speed="0.35"
+                           data-follow-mouse="true"
+                           data-proximity="280">
+                            <span class="specular-button__fx" aria-hidden="true"></span>
+                            <span class="specular-button__label font-semibold text-sm text-white px-4">
+                                <i class="fa-solid fa-key text-brandSky mr-1"></i>
+                                <span>Enter Activation Key</span>
+                            </span>
+                        </a>
+                    </div>
+
+                </div>
             </div>
         </section>
 
         <!-- =====================================================================
-             2. CORE MODULES (CLEAN WHITE CARDS WITH CRISP SLATE BORDERS)
+             02. INSTITUTIONAL RECOGNITION STRIP
              ===================================================================== -->
-        <section id="modules" class="py-20 border-b border-slate-200 bg-white">
-            <div class="max-w-6xl mx-auto px-4 sm:px-6">
-                
-                <div class="mb-12 text-center max-w-2xl mx-auto">
-                    <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider mb-3">
-                        Pragati Capabilities
+        <section class="border-y border-borderDefault bg-white">
+            <div class="mx-auto max-w-7xl px-6 py-5 lg:px-8">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12">
+                    <span class="font-mono-tag text-[12px] font-extrabold tracking-widest text-textSec uppercase">
+                        Enterprise Academic Infrastructure
                     </span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Core System Modules</h2>
-                    <p class="text-slate-500 text-xs sm:text-sm mt-2">Built to support university administration, teaching faculty, and students with zero friction.</p>
+                    <div class="h-6 w-px bg-borderDefault hidden md:block"></div>
+                    <div class="flex flex-wrap items-center justify-center gap-8 text-xs font-bold text-textSec">
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-graduation-cap text-brandBlue"></i> Autonomous Universities</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-certificate text-brandBlue"></i> NAAC &amp; NBA Compliant</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved text-brandBlue"></i> Role-Gated Security</span>
+                        <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-brandBlue"></i> Real-time Evaluation</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             03. MANIFESTO / ABOUT PRAGATI
+             ===================================================================== -->
+        <section id="about" class="py-24 lg:py-32 bg-bgPage">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                <div class="grid grid-cols-1 gap-16 lg:grid-cols-12 items-center">
+                    
+                    <!-- Left: Manifesto Text -->
+                    <div class="lg:col-span-7 space-y-6">
+                        <span class="font-mono-tag text-[12px] font-extrabold tracking-widest text-brandBlue uppercase">
+                            ABOUT PRAGATI
+                        </span>
+                        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink leading-tight">
+                            The unified academic operating system designed for modern campuses.
+                        </h2>
+                        <p class="text-base sm:text-lg text-textSec leading-relaxed">
+                            Universities frequently struggle with fragmented portals: timetables on paper, attendance in separate registers, exam marks in spreadsheets, and study notes scattered across drives.
+                        </p>
+                        <p class="text-base sm:text-lg text-textSec leading-relaxed">
+                            Pragati unites faculty management, student tracking, attendance compliance engines, and departmental curriculum vaults into one responsive, high-precision environment.
+                        </p>
+                    </div>
+
+                    <!-- Right: Stat / Metric Cards -->
+                    <div class="lg:col-span-5 grid grid-cols-1 gap-4">
+                        
+                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
+                            <div class="text-3xl font-extrabold text-ink font-display">100%</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Compliance Reliability</div>
+                            <div class="text-xs text-textSec mt-2">Continuous automated 75% cutoff monitoring with live class deficit computation.</div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
+                            <div class="text-3xl font-extrabold text-ink font-display">3-Tier</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Role Architecture</div>
+                            <div class="text-xs text-textSec mt-2">Segregated dashboards with fine-grained authority for Super Admin, Faculty, and Students.</div>
+                        </div>
+
+                        <div class="p-6 rounded-2xl border border-borderDefault bg-white shadow-sm hover:border-brandSky transition-all">
+                            <div class="text-3xl font-extrabold text-ink font-display">Zero Friction</div>
+                            <div class="text-xs font-bold uppercase tracking-wider text-brandBlue mt-1 font-mono-tag">Curriculum Vaults</div>
+                            <div class="text-xs text-textSec mt-2">Instant unit notes, semester syllabi, and assignment tracking with resume-reading marks.</div>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             04. SYSTEM MODULES (DARK CAPABILITIES STRIP)
+             ===================================================================== -->
+        <section id="modules" class="bg-ink py-24 lg:py-32 text-white">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
+                
+                <div class="mb-16 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                    <div>
+                        <span class="font-mono-tag text-[12px] font-extrabold tracking-widest text-brandSky uppercase">
+                            CORE CAPABILITIES
+                        </span>
+                        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mt-3">
+                            Built for complete institutional orchestration.
+                        </h2>
+                    </div>
+                    <p class="text-sm text-slate-400 max-w-md leading-relaxed">
+                        Every module is engineered with low latency, clear typography, and deterministic validation rules.
+                    </p>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     
-                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center text-base font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-700/60 bg-bgDark hover:border-brandSky/60 transition-all duration-300 space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-brandBlue/20 border border-brandBlue/40 text-brandSky flex items-center justify-center text-lg">
                             <i class="fa-solid fa-calendar-days"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Dynamic Timetable &amp; Schedule</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Weekly lecture schedules, laboratory sessions, room allocations, and daily roster views.</p>
+                        <h3 class="font-display text-lg font-bold text-white">Dynamic Timetable &amp; Roster</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Weekly lecture schedules, laboratory sessions, room allocations, and daily roster updates.</p>
                     </div>
 
-                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-base font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-700/60 bg-bgDark hover:border-brandSky/60 transition-all duration-300 space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 flex items-center justify-center text-lg">
                             <i class="fa-solid fa-clipboard-user"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Attendance Compliance</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Live percentage computation, mandatory 75% cutoff monitoring, and class recovery tracking.</p>
+                        <h3 class="font-display text-lg font-bold text-white">Attendance Engine</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Automated percentage tracking, mandatory 75% cutoff threshold alerts, and recovery metrics.</p>
                     </div>
 
-                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-base font-bold">
-                            <i class="fa-solid fa-book-open"></i>
+                    <div class="p-6 rounded-2xl border border-slate-700/60 bg-bgDark hover:border-brandSky/60 transition-all duration-300 space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-book-bookmark"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Course Vaults &amp; Notes</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">Unit materials, lecture documentation, assignment submissions, and resume-reading checkpoints.</p>
+                        <h3 class="font-display text-lg font-bold text-white">Course Vaults &amp; Notes</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">Unit materials, lecture documentation, assignment submissions, and resume-reading checkpoints.</p>
                     </div>
 
-                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
-                        <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center text-base font-bold">
-                            <i class="fa-solid fa-chart-simple"></i>
+                    <div class="p-6 rounded-2xl border border-slate-700/60 bg-bgDark hover:border-brandSky/60 transition-all duration-300 space-y-4">
+                        <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 flex items-center justify-center text-lg">
+                            <i class="fa-solid fa-chart-line"></i>
                         </div>
-                        <h3 class="text-sm font-bold text-slate-900">Assessments &amp; Transcripts</h3>
-                        <p class="text-xs text-slate-500 leading-relaxed">CIA continuous evaluations, mid-term records, GPA transcripts, and performance analytics.</p>
+                        <h3 class="font-display text-lg font-bold text-white">Assessments &amp; GPA</h3>
+                        <p class="text-xs text-slate-400 leading-relaxed">CIA continuous internal assessments, mid-term grades, GPA transcripts, and performance analytics.</p>
                     </div>
 
                 </div>
@@ -213,58 +313,60 @@
         </section>
 
         <!-- =====================================================================
-             3. PILOT EVALUATION & ACCESS PROTOCOL (SPECULAR CTA BUTTONS)
+             05. ONBOARDING & ACCESS PROTOCOL
              ===================================================================== -->
-        <section id="evaluation" class="py-20 bg-slate-50/50">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6">
+        <section id="evaluation" class="py-24 lg:py-32 bg-bgPage border-t border-borderDefault">
+            <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 
-                <div class="rounded-3xl border border-slate-200 bg-white p-8 sm:p-12 shadow-sm">
-                    <div class="max-w-2xl">
-                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider mb-3">
-                            Verification Workflow
+                <div class="rounded-3xl border border-borderDefault bg-white p-8 sm:p-14 shadow-sm">
+                    <div class="max-w-3xl">
+                        <span class="font-mono-tag text-[12px] font-extrabold tracking-widest text-brandBlue uppercase">
+                            CONTROLLED ONBOARDING
                         </span>
-                        <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Accessing the Current Phase</h2>
-                        <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
-                            Pragati is currently deployed under a managed access protocol for accredited departments and participating academic teams. To evaluate or participate in this phase:
+                        <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-ink leading-tight mt-3">
+                            Accessing the current evaluation phase.
+                        </h2>
+                        <p class="text-base text-textSec mt-3 leading-relaxed">
+                            Pragati is currently deployed under a managed access protocol for accredited institutions and academic departments.
                         </p>
 
-                        <div class="mt-8 space-y-4 text-xs text-slate-700">
-                            <div class="flex items-start gap-3.5">
-                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">1</span>
-                                <div><strong class="text-slate-900">Submit an Onboarding Request:</strong> Fill in your institution, department, and evaluation scope.</div>
+                        <div class="mt-8 space-y-4 text-xs text-ink font-medium">
+                            <div class="flex items-start gap-4">
+                                <span class="w-7 h-7 rounded-full bg-ink text-white font-bold flex items-center justify-center flex-shrink-0 text-xs font-mono">1</span>
+                                <div><strong class="text-ink font-bold">Submit Department Details:</strong> Fill out the institution evaluation form with your department and scope.</div>
                             </div>
-                            <div class="flex items-start gap-3.5">
-                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">2</span>
-                                <div><strong class="text-slate-900">Administrative Review:</strong> The system administrator verifies the department details and issues a license key.</div>
+                            <div class="flex items-start gap-4">
+                                <span class="w-7 h-7 rounded-full bg-ink text-white font-bold flex items-center justify-center flex-shrink-0 text-xs font-mono">2</span>
+                                <div><strong class="text-ink font-bold">Administrative Review:</strong> The system administrator reviews the onboarding request and issues a cryptographic activation key.</div>
                             </div>
-                            <div class="flex items-start gap-3.5">
-                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">3</span>
-                                <div><strong class="text-slate-900">Activate &amp; Sign In:</strong> Enter the issued key on the activation page to unlock the workspace for your session.</div>
+                            <div class="flex items-start gap-4">
+                                <span class="w-7 h-7 rounded-full bg-ink text-white font-bold flex items-center justify-center flex-shrink-0 text-xs font-mono">3</span>
+                                <div><strong class="text-ink font-bold">Activate &amp; Sign In:</strong> Enter the issued key on the activation page to unlock the workspace for your session.</div>
                             </div>
                         </div>
 
-                        <div class="mt-9 flex flex-wrap items-center gap-3.5">
+                        <div class="mt-10 flex flex-wrap items-center gap-4">
                             <a href="{{ url_for('landing.request_access') }}" 
                                class="specular-button specular-button--md"
-                               style="--sb-radius: 12px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a;"
-                               data-radius="12"
+                               style="--sb-radius: 9999px; --sb-tint: #1D222D; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #1D222D; border-radius: 9999px;"
+                               data-radius="20"
                                data-line-color="#ffffff"
-                               data-base-color="#475569"
+                               data-base-color="#526579"
                                data-intensity="1.2"
                                data-proximity="250">
                                 <span class="specular-button__fx" aria-hidden="true"></span>
-                                <span class="specular-button__label text-xs font-bold text-white">Open Request Form &rarr;</span>
+                                <span class="specular-button__label text-xs font-bold uppercase tracking-wider text-white px-4">Request Campus Key &rarr;</span>
                             </a>
                             <a href="{{ url_for('landing.activate') }}" 
                                class="specular-button specular-button--md"
-                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #e2e8f0;"
-                               data-radius="12"
-                               data-line-color="#6366f1"
-                               data-base-color="#cbd5e1"
+                               style="--sb-radius: 9999px; --sb-tint: #EDF8FB; --sb-tint-opacity: 1; --sb-text-color: #1D222D; background: #EDF8FB; border: 1px solid #D8EAF1; border-radius: 9999px;"
+                               data-radius="20"
+                               data-line-color="#2687E8"
+                               data-base-color="#D8EAF1"
                                data-intensity="1.1"
                                data-proximity="250">
                                 <span class="specular-button__fx" aria-hidden="true"></span>
-                                <span class="specular-button__label text-xs font-semibold text-slate-700">Enter Existing Key</span>
+                                <span class="specular-button__label text-xs font-bold uppercase tracking-wider text-ink px-4">Enter Activation Key</span>
                             </a>
                         </div>
                     </div>
@@ -275,18 +377,20 @@
 
     </main>
 
-    <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white py-8 text-xs text-slate-500">
-        <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <!-- =====================================================================
+         06. FOOTER (CLEAN BRAND LOCKUP & SITEMAP)
+         ===================================================================== -->
+    <footer class="border-t border-borderDefault bg-white py-12 text-xs text-textSec">
+        <div class="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
             <div class="flex items-center gap-3">
-                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-7 w-auto object-contain">
-                <span class="text-slate-300">&bull;</span>
-                <span class="font-medium">Academic Management Workspace</span>
+                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-8 w-auto object-contain">
+                <span class="text-borderDefault font-bold">&bull;</span>
+                <span class="font-medium">Institutional Academic Management Platform</span>
             </div>
-            <div class="flex items-center gap-5 font-semibold text-slate-600">
-                <a href="{{ url_for('landing.request_access') }}" class="hover:text-slate-900 transition">Request Access</a>
-                <a href="{{ url_for('landing.activate') }}" class="hover:text-slate-900 transition">Activate Key</a>
-                <a href="{{ url_for('auth.login') }}" class="hover:text-slate-900 transition">Sign In</a>
+            <div class="flex items-center gap-6 font-bold text-[11px] uppercase tracking-wider">
+                <a href="{{ url_for('landing.request_access') }}" class="hover:text-ink transition">Request Access</a>
+                <a href="{{ url_for('landing.activate') }}" class="hover:text-ink transition">Activate Key</a>
+                <a href="{{ url_for('auth.login') }}" class="hover:text-ink transition">Sign In</a>
             </div>
         </div>
     </footer>
