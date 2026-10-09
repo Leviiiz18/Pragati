@@ -334,17 +334,18 @@
     const mouse = { x: 0.5, y: 0.5, sx: 0.5, sy: 0.5, active: 0, target: 0 };
     const onMove = (e) => {
       const rect = container.getBoundingClientRect();
-      mouse.x = (e.clientX - rect.left) / rect.width;
-      mouse.y = 1 - (e.clientY - rect.top) / rect.height;
-      mouse.target = 1;
-    };
-    const onLeave = () => {
-      mouse.target = 0;
+      const withinX = e.clientX >= rect.left && e.clientX <= rect.right;
+      const withinY = e.clientY >= rect.top && e.clientY <= rect.bottom;
+      if (withinX && withinY) {
+        mouse.x = (e.clientX - rect.left) / rect.width;
+        mouse.y = 1 - (e.clientY - rect.top) / rect.height;
+        mouse.target = 1;
+      } else {
+        mouse.target = 0;
+      }
     };
 
-    container.addEventListener('pointermove', onMove, { passive: true });
-    container.addEventListener('pointerenter', onMove, { passive: true });
-    container.addEventListener('pointerleave', onLeave, { passive: true });
+    window.addEventListener('pointermove', onMove, { passive: true });
 
     let prev = performance.now();
     let raf = 0;

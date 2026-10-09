@@ -8,7 +8,7 @@
     <!-- Google Fonts: Plus Jakarta Sans -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -28,13 +28,13 @@
     <!-- React Bits SpecularButton Component Stylesheet (Exclusive to Hero Page CTAs) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/specular-button.css') }}">
     
-    <!-- Halftone Reveal Component Stylesheet (KalpKrafts Design) -->
+    <!-- Halftone Reveal Component Stylesheet (KalpKrafts Full Bleed Engine) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/halftone-reveal.css') }}">
 </head>
 <body class="bg-white text-slate-900 font-sans antialiased min-h-screen flex flex-col justify-between selection:bg-indigo-600 selection:text-white">
 
     <!-- Top Notice Banner -->
-    <div class="bg-slate-900 text-white text-xs py-2 px-4">
+    <div class="bg-slate-950 text-white text-xs py-2 px-4 border-b border-white/10 relative z-50">
         <div class="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <div class="flex items-center gap-2">
                 <span class="px-2 py-0.5 rounded bg-indigo-500/30 text-indigo-300 font-semibold text-[11px] uppercase tracking-wider">Pilot Phase</span>
@@ -47,43 +47,42 @@
         </div>
     </div>
 
-    <!-- Navigation Header -->
-    <header class="border-b border-slate-200 bg-white sticky top-0 z-40">
+    <!-- Floating Navigation Header -->
+    <header class="bg-slate-950/70 backdrop-blur-xl border-b border-white/10 sticky top-0 z-40 text-white">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
             
-            <!-- Brand Logo -->
-            <a href="{{ url_for('landing.home') }}" class="flex items-center">
-                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-9 sm:h-10 w-auto object-contain">
+            <!-- Brand Logo with Clean Container -->
+            <a href="{{ url_for('landing.home') }}" class="flex items-center bg-white/95 px-3 py-1.5 rounded-xl shadow-sm hover:opacity-95 transition">
+                <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-7 sm:h-8 w-auto object-contain">
             </a>
 
             <!-- Navigation Links -->
-            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-600">
-                <a href="#overview" class="hover:text-slate-900 transition-colors">Overview</a>
-                <a href="#showcase" class="hover:text-slate-900 transition-colors">Campus Sphere</a>
-                <a href="#modules" class="hover:text-slate-900 transition-colors">System Modules</a>
-                <a href="#evaluation" class="hover:text-slate-900 transition-colors">Evaluation Process</a>
+            <nav class="hidden md:flex items-center gap-6 text-xs font-semibold text-slate-300">
+                <a href="#overview" class="hover:text-white transition-colors">Overview</a>
+                <a href="#modules" class="hover:text-white transition-colors">System Modules</a>
+                <a href="#evaluation" class="hover:text-white transition-colors">Evaluation Process</a>
             </nav>
 
             <!-- Actions (SpecularButton CTAs) -->
             <div class="flex items-center gap-2.5">
                 <a href="{{ url_for('landing.activate') }}" 
                    class="specular-button specular-button--sm"
-                   style="--sb-radius: 10px; --sb-tint: #ffffff; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #ffffff; border: 1px solid #e2e8f0;"
+                   style="--sb-radius: 10px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 10px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.1); border: 1px solid rgba(255, 255, 255, 0.2);"
                    data-radius="10"
-                   data-line-color="#6366f1"
+                   data-line-color="#ffffff"
                    data-base-color="#cbd5e1"
                    data-intensity="1.1"
                    data-thickness="1.2"
                    data-proximity="200">
                     <span class="specular-button__fx" aria-hidden="true"></span>
-                    <span class="specular-button__label text-xs font-semibold text-slate-700">Activate Access</span>
+                    <span class="specular-button__label text-xs font-semibold text-white">Activate Access</span>
                 </a>
                 <a href="{{ url_for('landing.request_access') }}" 
                    class="specular-button specular-button--sm"
-                   style="--sb-radius: 10px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a;"
+                   style="--sb-radius: 10px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
                    data-radius="10"
                    data-line-color="#ffffff"
-                   data-base-color="#475569"
+                   data-base-color="#3730a3"
                    data-intensity="1.2"
                    data-thickness="1.2"
                    data-proximity="200">
@@ -98,27 +97,53 @@
     <main class="flex-1">
 
         <!-- =====================================================================
-             1. HERO SECTION (CLEAN, DIRECT, INSTITUTIONAL WITH SPECULAR CTAS & HALFTONE)
+             1. HERO SECTION (FULL-BLEED KALPKRAFTS HALFTONE COVERAGE)
              ===================================================================== -->
-        <section id="overview" class="pt-16 pb-20 sm:pt-20 sm:pb-24 border-b border-slate-200 bg-slate-50/50">
-            <div class="max-w-5xl mx-auto px-4 sm:px-6 text-center">
+        <section id="overview" class="relative min-h-[92vh] sm:min-h-screen flex flex-col justify-end items-center pb-16 sm:pb-24 pt-20 overflow-hidden bg-[#0A0C10] text-white">
+            
+            <!-- Full-Bleed CMYK Halftone Screen Canvas -->
+            <div class="absolute inset-0 z-0 pointer-events-auto" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
+                <div class="halftone-reveal w-full h-full opacity-100"
+                     data-src="{{ url_for('static', filename='images/college_life.png') }}"
+                     data-ink-color="#1D222D"
+                     data-paper-color="#F5FBFD"
+                     data-mode="color"
+                     data-dot-density="160"
+                     data-angle="45"
+                     data-contrast="1.15"
+                     data-reveal-radius="0.36"
+                     data-edge="0.8"
+                     data-follow="0.37"
+                     data-idle-reveal="0"
+                     data-trigger="hover">
+                </div>
                 
-                <span class="inline-block px-3 py-1 rounded-full bg-slate-200/80 text-slate-700 text-xs font-bold uppercase tracking-wider mb-6">
-                    Institutional Academic Platform
-                </span>
+                <!-- Bottom Gradient Shadow for crystal-clear readability -->
+                <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[65vh] bg-gradient-to-t from-[#0A0C10] via-[#0A0C10]/65 to-transparent"></div>
+                <!-- Top Vignette -->
+                <div class="pointer-events-none absolute inset-x-0 top-0 h-32 bg-gradient-to-b from-[#0A0C10]/80 to-transparent"></div>
+            </div>
 
-                <h1 class="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-slate-900 leading-tight">
-                    Unified Academic Operations &amp; Student Information Workspace
+            <!-- Typography & CTA Overlay (relative z-10) -->
+            <div class="relative z-10 w-full max-w-5xl px-6 lg:px-8 text-center flex flex-col items-center">
+                
+                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-indigo-300 text-xs font-bold uppercase tracking-wider mb-6 shadow-lg">
+                    <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                    <span>Institutional Academic Platform &bull; Pilot Phase</span>
+                </div>
+
+                <h1 class="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.1] drop-shadow-[0_12px_24px_rgba(0,0,0,0.85)] max-w-4xl">
+                    Unified Academic Operations &amp; Student Workspace
                 </h1>
 
-                <p class="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto mt-5 leading-relaxed">
+                <p class="text-base sm:text-lg text-slate-200 font-medium max-w-2xl mx-auto mt-6 leading-relaxed drop-shadow-[0_4px_12px_rgba(0,0,0,0.9)]">
                     Pragati integrates curriculum management, timetable scheduling, real-time attendance compliance, internal assessment tracking, and departmental records into a single structured portal.
                 </p>
 
                 <!-- Hero CTAs integrated with SpecularButton -->
-                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8">
+                <div class="mt-9 flex flex-wrap items-center justify-center gap-4 drop-shadow-[0_8px_16px_rgba(0,0,0,0.6)]">
                     <a href="{{ url_for('landing.request_access') }}" 
-                       class="specular-button specular-button--lg w-full sm:w-auto"
+                       class="specular-button specular-button--lg"
                        style="--sb-radius: 14px; --sb-tint: #4f46e5; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #4f46e5;"
                        data-radius="14"
                        data-line-color="#ffffff"
@@ -131,18 +156,18 @@
                        data-follow-mouse="true"
                        data-proximity="280">
                         <span class="specular-button__fx" aria-hidden="true"></span>
-                        <span class="specular-button__label font-bold text-xs sm:text-sm text-white">
+                        <span class="specular-button__label font-bold text-sm text-white">
                             <span>Request Institutional Access</span>
                             <i class="fa-solid fa-arrow-right text-xs"></i>
                         </span>
                     </a>
                     
                     <a href="{{ url_for('landing.activate') }}" 
-                       class="specular-button specular-button--lg w-full sm:w-auto"
-                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 1; --sb-text-color: #0f172a; background: #ffffff; border: 1px solid #cbd5e1;"
+                       class="specular-button specular-button--lg"
+                       style="--sb-radius: 14px; --sb-tint: #ffffff; --sb-tint-opacity: 0.15; --sb-blur: 12px; --sb-text-color: #ffffff; background: rgba(255, 255, 255, 0.12); border: 1px solid rgba(255, 255, 255, 0.25);"
                        data-radius="14"
-                       data-line-color="#6366f1"
-                       data-base-color="#94a3b8"
+                       data-line-color="#ffffff"
+                       data-base-color="#cbd5e1"
                        data-intensity="1.25"
                        data-shine-size="12"
                        data-shine-fade="40"
@@ -151,61 +176,19 @@
                        data-follow-mouse="true"
                        data-proximity="280">
                         <span class="specular-button__fx" aria-hidden="true"></span>
-                        <span class="specular-button__label font-semibold text-xs sm:text-sm text-slate-800">
-                            <i class="fa-solid fa-key text-slate-400"></i>
+                        <span class="specular-button__label font-semibold text-sm text-white">
+                            <i class="fa-solid fa-key text-indigo-300"></i>
                             <span>Enter Activation Key</span>
                         </span>
                     </a>
                 </div>
 
-                <!-- Structured Metadata Line -->
-                <div class="pt-8 flex flex-wrap items-center justify-center gap-6 text-xs text-slate-500 font-medium">
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Role-Based Dashboards</span>
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Attendance Compliance Engine</span>
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> CIA Marks &amp; Exam Rosters</span>
-                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-check text-emerald-600"></i> Direct Vault Notes</span>
-                </div>
-
-                <!-- =============================================================
-                     KALPKRAFTS HALFTONE REVEAL SHOWCASE (college life.png)
-                     ============================================================= -->
-                <div id="showcase" class="mt-12 text-left">
-                    <div class="halftone-hero-frame">
-                        <div class="halftone-hero-inner relative">
-                            <span class="halftone-badge">
-                                <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                                <span>Hover &amp; Move Cursor to Reveal Photo</span>
-                            </span>
-                            
-                            <!-- Interactive WebGL2 Halftone Screen -->
-                            <div class="halftone-reveal"
-                                 data-src="{{ url_for('static', filename='images/college_life.png') }}"
-                                 data-ink-color="#1D222D"
-                                 data-paper-color="#F5FBFD"
-                                 data-mode="color"
-                                 data-dot-density="150"
-                                 data-angle="45"
-                                 data-contrast="1.15"
-                                 data-reveal-radius="0.32"
-                                 data-edge="0.8"
-                                 data-follow="0.35"
-                                 data-trigger="hover">
-                            </div>
-                        </div>
-                        
-                        <!-- Showcase Metadata Footbar -->
-                        <div class="px-4 py-2.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500 bg-white/80 rounded-b-xl border-t border-slate-200/80 mt-1">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                                <span class="font-semibold text-slate-800">Campus Experience &amp; Academic Life</span>
-                            </div>
-                            <div class="flex items-center gap-3 text-[11px] text-slate-400 font-mono">
-                                <span>CMYK HALFTONE ENGINE</span>
-                                <span>&bull;</span>
-                                <span>KALPKRAFTS DESIGN SYSTEM</span>
-                            </div>
-                        </div>
-                    </div>
+                <!-- Structured Metadata Pills -->
+                <div class="mt-10 flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs text-slate-300 font-medium">
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/70 backdrop-blur-md border border-white/10"><i class="fa-solid fa-check text-emerald-400"></i> Role-Based Dashboards</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/70 backdrop-blur-md border border-white/10"><i class="fa-solid fa-check text-emerald-400"></i> Attendance Compliance Engine</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/70 backdrop-blur-md border border-white/10"><i class="fa-solid fa-check text-emerald-400"></i> CIA Marks &amp; Exam Rosters</span>
+                    <span class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-900/70 backdrop-blur-md border border-white/10"><i class="fa-solid fa-check text-emerald-400"></i> Direct Vault Notes</span>
                 </div>
 
             </div>
@@ -214,42 +197,45 @@
         <!-- =====================================================================
              2. CORE MODULES (CLEAN WHITE CARDS WITH CRISP SLATE BORDERS)
              ===================================================================== -->
-        <section id="modules" class="py-16 border-b border-slate-200">
+        <section id="modules" class="py-20 border-b border-slate-200 bg-white">
             <div class="max-w-6xl mx-auto px-4 sm:px-6">
                 
-                <div class="mb-10">
-                    <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Core System Modules</h2>
-                    <p class="text-slate-500 text-xs sm:text-sm mt-1">Built to support university administration, teaching faculty, and students with zero friction.</p>
+                <div class="mb-12 text-center max-w-2xl mx-auto">
+                    <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider mb-3">
+                        Pragati Capabilities
+                    </span>
+                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Core System Modules</h2>
+                    <p class="text-slate-500 text-xs sm:text-sm mt-2">Built to support university administration, teaching faculty, and students with zero friction.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     
-                    <div class="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center text-sm font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 border border-blue-100 text-blue-600 flex items-center justify-center text-base font-bold">
                             <i class="fa-solid fa-calendar-days"></i>
                         </div>
                         <h3 class="text-sm font-bold text-slate-900">Dynamic Timetable &amp; Schedule</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">Weekly lecture schedules, laboratory sessions, room allocations, and daily roster views.</p>
                     </div>
 
-                    <div class="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-sm font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 border border-emerald-100 text-emerald-600 flex items-center justify-center text-base font-bold">
                             <i class="fa-solid fa-clipboard-user"></i>
                         </div>
                         <h3 class="text-sm font-bold text-slate-900">Attendance Compliance</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">Live percentage computation, mandatory 75% cutoff monitoring, and class recovery tracking.</p>
                     </div>
 
-                    <div class="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-sm font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-base font-bold">
                             <i class="fa-solid fa-book-open"></i>
                         </div>
                         <h3 class="text-sm font-bold text-slate-900">Course Vaults &amp; Notes</h3>
                         <p class="text-xs text-slate-500 leading-relaxed">Unit materials, lecture documentation, assignment submissions, and resume-reading checkpoints.</p>
                     </div>
 
-                    <div class="p-5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-2.5">
-                        <div class="w-8 h-8 rounded-lg bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center text-sm font-bold">
+                    <div class="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-all duration-300 shadow-2xs space-y-3">
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center text-base font-bold">
                             <i class="fa-solid fa-chart-simple"></i>
                         </div>
                         <h3 class="text-sm font-bold text-slate-900">Assessments &amp; Transcripts</h3>
@@ -264,32 +250,35 @@
         <!-- =====================================================================
              3. PILOT EVALUATION & ACCESS PROTOCOL (SPECULAR CTA BUTTONS)
              ===================================================================== -->
-        <section id="evaluation" class="py-16 bg-slate-50/50">
+        <section id="evaluation" class="py-20 bg-slate-50/50">
             <div class="max-w-4xl mx-auto px-4 sm:px-6">
                 
-                <div class="rounded-2xl border border-slate-200 bg-white p-6 sm:p-10 shadow-sm">
+                <div class="rounded-3xl border border-slate-200 bg-white p-8 sm:p-12 shadow-sm">
                     <div class="max-w-2xl">
+                        <span class="inline-block px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-xs font-bold uppercase tracking-wider mb-3">
+                            Verification Workflow
+                        </span>
                         <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Accessing the Current Phase</h2>
                         <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed">
                             Pragati is currently deployed under a managed access protocol for accredited departments and participating academic teams. To evaluate or participate in this phase:
                         </p>
 
-                        <div class="mt-6 space-y-3 text-xs text-slate-700">
-                            <div class="flex items-start gap-3">
-                                <span class="w-6 h-6 rounded bg-slate-100 text-slate-800 font-bold flex items-center justify-center flex-shrink-0">1</span>
+                        <div class="mt-8 space-y-4 text-xs text-slate-700">
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">1</span>
                                 <div><strong class="text-slate-900">Submit an Onboarding Request:</strong> Fill in your institution, department, and evaluation scope.</div>
                             </div>
-                            <div class="flex items-start gap-3">
-                                <span class="w-6 h-6 rounded bg-slate-100 text-slate-800 font-bold flex items-center justify-center flex-shrink-0">2</span>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">2</span>
                                 <div><strong class="text-slate-900">Administrative Review:</strong> The system administrator verifies the department details and issues a license key.</div>
                             </div>
-                            <div class="flex items-start gap-3">
-                                <span class="w-6 h-6 rounded bg-slate-100 text-slate-800 font-bold flex items-center justify-center flex-shrink-0">3</span>
+                            <div class="flex items-start gap-3.5">
+                                <span class="w-6 h-6 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center flex-shrink-0 text-[11px]">3</span>
                                 <div><strong class="text-slate-900">Activate &amp; Sign In:</strong> Enter the issued key on the activation page to unlock the workspace for your session.</div>
                             </div>
                         </div>
 
-                        <div class="mt-8 flex flex-wrap items-center gap-3">
+                        <div class="mt-9 flex flex-wrap items-center gap-3.5">
                             <a href="{{ url_for('landing.request_access') }}" 
                                class="specular-button specular-button--md"
                                style="--sb-radius: 12px; --sb-tint: #0f172a; --sb-tint-opacity: 1; --sb-text-color: #ffffff; background: #0f172a;"
@@ -303,7 +292,7 @@
                             </a>
                             <a href="{{ url_for('landing.activate') }}" 
                                class="specular-button specular-button--md"
-                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #e2e8f0;"
+                               style="--sb-radius: 12px; --sb-tint: #f8fafc; --sb-tint-opacity: 1; --sb-text-color: #334155; background: #f8fafc; border: 1px solid #cbd5e1;"
                                data-radius="12"
                                data-line-color="#6366f1"
                                data-base-color="#cbd5e1"
@@ -322,14 +311,14 @@
     </main>
 
     <!-- Footer -->
-    <footer class="border-t border-slate-200 bg-white py-6 text-xs text-slate-500">
+    <footer class="border-t border-slate-200 bg-white py-8 text-xs text-slate-500">
         <div class="max-w-6xl mx-auto px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div class="flex items-center gap-3">
                 <img src="{{ url_for('static', filename='images/pragati-by-kk-photoroom.png') }}" alt="Pragati by KalpKrafts" class="h-7 w-auto object-contain">
-                <span class="text-slate-400">&bull;</span>
-                <span>Academic Workspace</span>
+                <span class="text-slate-300">&bull;</span>
+                <span class="font-medium">Academic Management Workspace</span>
             </div>
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-5 font-semibold text-slate-600">
                 <a href="{{ url_for('landing.request_access') }}" class="hover:text-slate-900 transition">Request Access</a>
                 <a href="{{ url_for('landing.activate') }}" class="hover:text-slate-900 transition">Activate Key</a>
                 <a href="{{ url_for('auth.login') }}" class="hover:text-slate-900 transition">Sign In</a>
