@@ -37,9 +37,9 @@
     </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- SpecularButton & Halftone CSS -->
+    <!-- SpecularButton & PatternWaves CSS (React Bits) -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/specular-button.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/halftone-reveal.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/pattern-waves.css') }}">
 
     <style>
         body {
@@ -103,22 +103,29 @@
     <main class="relative z-10">
 
         <!-- =====================================================================
-             01. HERO (KALPKRAFTS FULL-PAGE HALFTONE & BOTTOM-ANCHORED TYPOGRAPHY)
+             01. HERO (REACT BITS PATTERNWAVES BACKGROUND & EDITORIAL TYPOGRAPHY)
              ===================================================================== -->
         <section id="hero" class="relative flex min-h-screen flex-col items-center justify-end pb-12 sm:pb-16 overflow-hidden bg-bgPage">
             
-            <!-- Full-Page Halftone Pattern (Static CMYK) -->
-            <div class="absolute inset-0 z-0" style="background: linear-gradient(160deg, #1a1f2e 0%, #0d1117 60%, #0A0C10 100%);">
-                <div class="halftone-reveal w-full h-full opacity-100 saturate-[1.2]"
-                     data-src="{{ url_for('static', filename='images/college_life.png') }}"
-                     data-ink-color="#1D222D"
-                     data-paper-color="#F5FBFD"
-                     data-mode="color"
-                     data-dot-density="160"
-                     data-angle="45"
-                     data-contrast="1.15"
-                     data-reveal-radius="0"
-                     data-trigger="off">
+            <!-- PatternWaves Dynamic Procedural Canvas (React Bits) -->
+            <div class="absolute inset-0 z-0 bg-[#0A0C10]">
+                <div class="pattern-waves w-full h-full"
+                     data-preset="silk"
+                     data-pattern="dot"
+                     data-wave="silk"
+                     data-color="#2687E8"
+                     data-background-color="#0A0C10"
+                     data-spacing="10"
+                     data-mark-size="0.95"
+                     data-depth="0.95"
+                     data-shine="0.8"
+                     data-contrast="1.2"
+                     data-speed="0.35"
+                     data-scale="1"
+                     data-direction="20"
+                     data-fade="bottom"
+                     data-fade-size="0.65"
+                     data-interactive="true">
                 </div>
                 <!-- Bottom Gradient Shadow -->
                 <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[60vh] bg-gradient-to-t from-[#0A0C10]/95 via-[#0A0C10]/55 to-transparent"></div>
@@ -395,8 +402,8 @@
         </div>
     </footer>
 
-    <!-- Interactive Component Engines -->
+    <!-- Interactive Component Engines (React Bits) -->
     <script src="{{ url_for('static', filename='js/specular-button.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/halftone-reveal.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/pattern-waves.js') }}"></script>
 </body>
 </html>
