@@ -163,6 +163,25 @@ def dashboard():
         if resume_module and resume_module.subject_id not in subj_ids:
             resume_module = None
 
+    # Dynamic attendance map for interactive calendar
+    att_records = AttendanceRecord.query.filter_by(student_id=current_user.id).all()
+    attendance_map = {}
+    for r in att_records:
+        if r.date:
+            attendance_map[r.date.strftime('%Y-%m-%d')] = r.status.lower()
+
+    # Dynamic events map for interactive calendar
+    events_map = {}
+    for ev in events:
+        if ev.date:
+            d_str = ev.date.strftime('%Y-%m-%d')
+            events_map.setdefault(d_str, []).append(ev.title)
+
+    for ex in upcoming_exams:
+        if ex.date:
+            d_str = ex.date.strftime('%Y-%m-%d')
+            events_map.setdefault(d_str, []).append(f"Exam: {ex.title}")
+
     return render_template('student/dashboard.html',
                            subjects=subjects,
                            classes_needed=classes_needed,
@@ -175,6 +194,8 @@ def dashboard():
                            day_name=day_name,
                            daily_quote=random.choice(STUDENT_QUOTES),
                            resume_module=resume_module,
+                           attendance_map=attendance_map,
+                           events_map=events_map,
                            upcoming_assignments=assignments)
 
 @student_bp.route('/courses')
