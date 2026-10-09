@@ -1,6 +1,6 @@
 /**
  * PatternWaves Component (React Bits Vanilla WebGL2 Engine)
- * Dynamic Procedural Fabric & Wave Surface Renderer
+ * Dynamic Procedural Fabric & Interactive Cursor Ripple Wave Surface Renderer
  */
 
 (function () {
@@ -88,11 +88,9 @@
   const PATTERNS = { dot: 0, square: 1, plus: 2, line: 3, glyph: 4 };
   const WAVES = { silk: 0, swell: 1, ripple: 2 };
   const FADES = { none: 0, edges: 1, center: 2, bottom: 3, top: 4 };
-  const DEFAULT_CHARACTERS = '.:-=+*#%@';
-  const GLYPH_FONT = 'ui-monospace, SFMono-Regular, Menlo, Consolas, monospace';
-  const ATLAS_TILE = 128;
   const WAVE_UNIT = 520;
   const INTRO_SECONDS = 2;
+  const RIPPLE_CELL = 8;
 
   const clamp = (val, min, max) => Math.min(Math.max(val, min), max);
   const luminance = (rgba) => 0.2126 * rgba[0] + 0.7152 * rgba[1] + 0.0722 * rgba[2];
@@ -124,6 +122,46 @@
   }
   `;
 
+  // Ripple simulation fragment shader (Wave Equation Ping-Pong)
+  const rippleFragment = `#version 300 es
+  precision highp float;
+  precision highp int;
+
+  uniform sampler2D tRipple;
+  uniform vec2 uResolution;
+  uniform vec2 uPointer;
+  uniform float uImpulse;
+  uniform float uRadius;
+  uniform float uDamping;
+
+  out vec4 fragColor;
+
+  void main() {
+    vec2 uv = gl_FragCoord.xy / uResolution;
+    vec2 step = 1.0 / uResolution;
+
+    float p10 = texture(tRipple, uv + vec2(step.x, 0.0)).r;
+    float p_10 = texture(tRipple, uv - vec2(step.x, 0.0)).r;
+    float p01 = texture(tRipple, uv + vec2(0.0, step.y)).r;
+    float p0_1 = texture(tRipple, uv - vec2(0.0, step.y)).r;
+
+    vec4 cur = texture(tRipple, uv);
+    float next = ((p10 + p_10 + p01 + p0_1) * 0.5 - cur.g) * uDamping;
+
+    if (uImpulse > 0.0001) {
+      vec2 diff = (uv - uPointer) * uResolution;
+      float dist = length(diff);
+      if (dist < uRadius) {
+        float impact = smoothstep(uRadius, 0.0, dist) * uImpulse;
+        next += impact;
+      }
+    }
+
+    fragColor = vec4(next, cur.r, 0.0, 1.0);
+  }
+  `;
+
+  // Procedural 3D surface generator with wave dynamics + cursor ripple injection
   const fieldFragment = `#version 300 es
   precision highp float;
   precision highp int;
@@ -145,6 +183,8 @@
   uniform int uFade;
   uniform float uFadeSize;
   uniform float uAppear;
+  uniform sampler2D tRipple;
+  uniform float uRipple;
   out vec4 fragColor;
 
   const float FOLDS = 5.5;
@@ -210,7 +250,13 @@
   }
 
   float heightAt(vec2 css) {
-    return surface((css - 0.5 * uSize) / uUnit, uTime) * uAmp;
+    float h = surface((css - 0.5 * uSize) / uUnit, uTime) * uAmp;
+    if (uRipple > 0.0001) {
+      vec2 ripUv = clamp(css / uSize, 0.0, 1.0);
+      float rip = texture(tRipple, ripUv).r;
+      h += rip * uRipple;
+    }
+    return h;
   }
 
   void main() {
@@ -256,6 +302,7 @@
   }
   `;
 
+  // Pattern Mark Rendering
   const markFragment = `#version 300 es
   precision highp float;
   precision highp int;
@@ -368,6 +415,9 @@
     const fade = ds.fade || 'bottom';
     const fadeSize = ds.fadeSize ? parseFloat(ds.fadeSize) : 0.6;
     const intro = ds.intro !== 'false';
+    const isInteractive = ds.interactive !== 'false';
+    const cursorSize = ds.cursorSize ? parseFloat(ds.cursorSize) : 48;
+    const cursorStrength = ds.cursorStrength ? parseFloat(ds.cursorStrength) : 0.65;
 
     const color = parseColor(colorStr, [0.15, 0.53, 0.91, 1]);
     const background = parseColor(bgStr, [0.04, 0.05, 0.06, 1]);
@@ -390,15 +440,23 @@
       return;
     }
 
+    const extFloat = gl.getExtension('EXT_color_buffer_float');
+
     // Helper to create shader program
     function createProg(vsSrc, fsSrc) {
       const vs = gl.createShader(gl.VERTEX_SHADER);
       gl.shaderSource(vs, vsSrc);
       gl.compileShader(vs);
+      if (!gl.getShaderParameter(vs, gl.COMPILE_STATUS)) {
+        console.error('VS Error:', gl.getShaderInfoLog(vs));
+      }
 
       const fs = gl.createShader(gl.FRAGMENT_SHADER);
       gl.shaderSource(fs, fsSrc);
       gl.compileShader(fs);
+      if (!gl.getShaderParameter(fs, gl.COMPILE_STATUS)) {
+        console.error('FS Error:', gl.getShaderInfoLog(fs));
+      }
 
       const prog = gl.createProgram();
       gl.attachShader(prog, vs);
@@ -407,6 +465,7 @@
       return prog;
     }
 
+    const rippleProg = createProg(passVertex, rippleFragment);
     const fieldProg = createProg(passVertex, fieldFragment);
     const markProg = createProg(passVertex, markFragment);
 
@@ -422,6 +481,54 @@
     );
     gl.enableVertexAttribArray(0);
     gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+    // Ripple Ping-Pong Textures & FBOs
+    let ripWidth = 0;
+    let ripHeight = 0;
+    const ripTexA = gl.createTexture();
+    const ripTexB = gl.createTexture();
+    const ripFboA = gl.createFramebuffer();
+    const ripFboB = gl.createFramebuffer();
+    const ripTexs = [ripTexA, ripTexB];
+    const ripFbos = [ripFboA, ripFboB];
+    let ripReadIdx = 0;
+    let ripWriteIdx = 1;
+
+    function setupRippleTextures(w, h) {
+      if (ripWidth === w && ripHeight === h) return;
+      ripWidth = w;
+      ripHeight = h;
+
+      for (let i = 0; i < 2; i++) {
+        gl.bindTexture(gl.TEXTURE_2D, ripTexs[i]);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+
+        if (extFloat) {
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA16F, w, h, 0, gl.RGBA, gl.HALF_FLOAT, null);
+        } else {
+          gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, w, h, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+        }
+
+        gl.bindFramebuffer(gl.FRAMEBUFFER, ripFbos[i]);
+        gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, ripTexs[i], 0);
+        gl.clearColor(0, 0, 0, 1);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+      }
+      gl.bindFramebuffer(gl.FRAMEBUFFER, null);
+    }
+
+    // Ripple uniforms
+    const uRippleUni = {
+      tRipple: gl.getUniformLocation(rippleProg, 'tRipple'),
+      uResolution: gl.getUniformLocation(rippleProg, 'uResolution'),
+      uPointer: gl.getUniformLocation(rippleProg, 'uPointer'),
+      uImpulse: gl.getUniformLocation(rippleProg, 'uImpulse'),
+      uRadius: gl.getUniformLocation(rippleProg, 'uRadius'),
+      uDamping: gl.getUniformLocation(rippleProg, 'uDamping')
+    };
 
     // Field Target FBO
     let fboWidth = 1;
@@ -457,7 +564,9 @@
       uOpacity: gl.getUniformLocation(fieldProg, 'uOpacity'),
       uFade: gl.getUniformLocation(fieldProg, 'uFade'),
       uFadeSize: gl.getUniformLocation(fieldProg, 'uFadeSize'),
-      uAppear: gl.getUniformLocation(fieldProg, 'uAppear')
+      uAppear: gl.getUniformLocation(fieldProg, 'uAppear'),
+      tRipple: gl.getUniformLocation(fieldProg, 'tRipple'),
+      uRipple: gl.getUniformLocation(fieldProg, 'uRipple')
     };
 
     // Mark uniforms
@@ -480,12 +589,77 @@
     let introClock = 0;
     let last = performance.now();
 
+    // Cursor tracking state
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let lastPointerX = -1000;
+    let lastPointerY = -1000;
+    let isPointerInside = false;
+    let impulse = 0;
+    let isMouseDown = false;
+
+    if (isInteractive) {
+      const onPointerMove = (e) => {
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        if (x >= -60 && x <= rect.width + 60 && y >= -60 && y <= rect.height + 60) {
+          isPointerInside = true;
+          const clampedX = clamp(x, 0, rect.width);
+          const clampedY = clamp(y, 0, rect.height);
+
+          if (lastPointerX < 0) {
+            lastPointerX = clampedX;
+            lastPointerY = clampedY;
+          }
+
+          const dist = Math.hypot(clampedX - lastPointerX, clampedY - lastPointerY);
+          lastPointerX = clampedX;
+          lastPointerY = clampedY;
+          pointerX = clampedX;
+          pointerY = clampedY;
+
+          impulse += Math.min(dist / 6.0, 1.8) * 0.55 * cursorStrength;
+          if (isMouseDown) impulse += 0.45 * cursorStrength;
+        } else {
+          isPointerInside = false;
+        }
+      };
+
+      const onPointerDown = (e) => {
+        isMouseDown = true;
+        const rect = container.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        if (x >= 0 && x <= rect.width && y >= 0 && y <= rect.height) {
+          pointerX = x;
+          pointerY = y;
+          lastPointerX = x;
+          lastPointerY = y;
+          impulse += 1.4 * cursorStrength;
+        }
+      };
+
+      const onPointerUp = () => {
+        isMouseDown = false;
+      };
+
+      window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('pointerdown', onPointerDown, { passive: true });
+      window.addEventListener('pointerup', onPointerUp, { passive: true });
+    }
+
     const resize = () => {
       width = Math.max(1, container.clientWidth);
       height = Math.max(1, container.clientHeight);
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
+
+      const rw = Math.max(16, Math.floor(width / RIPPLE_CELL));
+      const rh = Math.max(16, Math.floor(height / RIPPLE_CELL));
+      setupRippleTextures(rw, rh);
     };
 
     const ro = new ResizeObserver(resize);
@@ -510,6 +684,45 @@
       const rise = clamp((introClock - 0.1) / 0.9, 0, 1);
       const amp = rise * rise * (3 - 2 * rise);
 
+      // Add ambient gentle movement under pointer if resting
+      if (isPointerInside) {
+        impulse += 0.025 * cursorStrength;
+      }
+
+      // PASS 0: Interactive Ripple Simulation Pass (Ping-Pong FBO)
+      let currentRippleTex = null;
+      if (isInteractive && ripWidth > 0 && ripHeight > 0) {
+        gl.bindFramebuffer(gl.FRAMEBUFFER, ripFbos[ripWriteIdx]);
+        gl.viewport(0, 0, ripWidth, ripHeight);
+        gl.useProgram(rippleProg);
+
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, ripTexs[ripReadIdx]);
+        gl.uniform1i(uRippleUni.tRipple, 0);
+
+        gl.uniform2f(uRippleUni.uResolution, ripWidth, ripHeight);
+        
+        const pxUv = clamp(pointerX / width, 0, 1);
+        const pyUv = clamp((height - pointerY) / height, 0, 1);
+        gl.uniform2f(uRippleUni.uPointer, pxUv, pyUv);
+
+        gl.uniform1f(uRippleUni.uImpulse, impulse);
+        gl.uniform1f(uRippleUni.uRadius, Math.max(3.0, cursorSize / RIPPLE_CELL));
+        gl.uniform1f(uRippleUni.uDamping, 0.985);
+
+        gl.bindVertexArray(vao);
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+        impulse = Math.max(0, impulse * 0.65);
+
+        currentRippleTex = ripTexs[ripWriteIdx];
+
+        // Swap ping-pong indices
+        const temp = ripReadIdx;
+        ripReadIdx = ripWriteIdx;
+        ripWriteIdx = temp;
+      }
+
       const canvasW = canvas.width;
       const canvasH = canvas.height;
       const dpr = canvasW / width;
@@ -526,7 +739,7 @@
         gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, cols, rows, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
       }
 
-      // PASS 1: Render Field to FBO
+      // PASS 1: Render 3D Surface Field to FBO
       gl.bindFramebuffer(gl.FRAMEBUFFER, fbo);
       gl.viewport(0, 0, cols, rows);
       gl.useProgram(fieldProg);
@@ -550,10 +763,19 @@
       gl.uniform1f(uField.uFadeSize, clamp(fadeSize, 0.05, 1));
       gl.uniform1f(uField.uAppear, appear);
 
+      if (currentRippleTex) {
+        gl.activeTexture(gl.TEXTURE1);
+        gl.bindTexture(gl.TEXTURE_2D, currentRippleTex);
+        gl.uniform1i(uField.tRipple, 1);
+        gl.uniform1f(uField.uRipple, 0.48 * cursorStrength);
+      } else {
+        gl.uniform1f(uField.uRipple, 0.0);
+      }
+
       gl.bindVertexArray(vao);
       gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-      // PASS 2: Render Marks to Screen
+      // PASS 2: Render Pattern Marks to Screen Canvas
       gl.bindFramebuffer(gl.FRAMEBUFFER, null);
       gl.viewport(0, 0, canvasW, canvasH);
       gl.useProgram(markProg);
@@ -597,3 +819,4 @@
 
   window.initPatternWaves = initAllPatternWaves;
 })();
+
