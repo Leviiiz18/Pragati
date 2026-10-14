@@ -212,120 +212,47 @@
              ================================================================= -->
         <div class="lg:col-span-8 space-y-6">
 
-            <!-- MAIN CARD: Student Registry & Governance -->
+            <!-- MAIN CARD: Student Registry Overview (Top 10 Preview) -->
             <div id="studentRegistryCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 space-y-4">
                 
-                <!-- Card Header (Exact style as "Enrolled Courses & Modules" in screenshot) -->
+                <!-- Card Header -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
                         <span class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
-                            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
+                            <i class="fa-solid fa-user-graduate text-sm"></i>
                         </span>
                         <div>
-                            <h2 class="text-sm font-bold text-slate-900">Student Registry &amp; Academic Governance</h2>
-                            <p class="text-[11px] text-slate-500">Enrol students, track attendance, edit records, and oversee progression</p>
+                            <h2 class="text-sm font-bold text-slate-900">Student Registry Overview</h2>
+                            <p class="text-[11px] text-slate-500">Showing top 10 enrolled students &amp; academic standing</p>
                         </div>
                     </div>
 
-                    <!-- Search Input & Enrol Action -->
-                    <div class="flex items-center gap-2">
-                        <div class="relative">
-                            <input type="text" id="studentSearchInput" placeholder="Search students..."
-                                   class="px-3 py-1.5 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500 w-36 sm:w-48 placeholder:text-slate-400">
-                        </div>
-                        <button type="button" data-modal-target="addStudentModal"
-                                class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-2xs cursor-pointer whitespace-nowrap">
-                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                            <span>Enrol Student</span>
-                        </button>
-                    </div>
+                    <!-- Direct Redirect CTA -->
+                    <a href="{{ url_for('super_admin.students') }}" 
+                       class="px-3.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1.5 transition">
+                        <span>View All Students ({{ total_students }})</span>
+                        <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                    </a>
                 </div>
 
-                <!-- Filters Row: Dropdowns + Semester Tabs -->
-                <div class="space-y-3 pt-1">
-                    <div class="flex flex-wrap items-center gap-2.5 text-xs">
-                        <!-- Department Filter -->
-                        <div class="flex items-center gap-1.5">
-                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dept:</label>
-                            <select id="deptFilter"
-                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                                <option value="all">All Departments</option>
-                                {% for d in departments %}
-                                <option value="{{ d.name }}">{{ d.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Program Filter -->
-                        <div class="flex items-center gap-1.5">
-                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Program:</label>
-                            <select id="courseFilter"
-                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                                <option value="all">All Programs</option>
-                                {% for c in courses %}
-                                <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <!-- Status Filter -->
-                        <div class="flex items-center gap-1.5">
-                            <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status:</label>
-                            <select id="statusFilter"
-                                    class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                                <option value="all">All Status</option>
-                                <option value="active">Active Only</option>
-                                <option value="suspended">Suspended Only</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Semester Pill Bar -->
-                    <div class="flex items-center gap-1.5 overflow-x-auto pb-1 pt-1 border-t border-slate-100">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mr-1 flex-shrink-0">Semester:</span>
-                        <button type="button" data-sem-filter="all" id="studentSemTab-all"
-                                class="student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-2xs transition whitespace-nowrap cursor-pointer">
-                            All ({{ students|length }})
-                        </button>
-                        {% for sem_num in range(1, 9) %}
-                        {% set sem_count = students|selectattr('semester', 'equalto', sem_num)|list|length %}
-                        <button type="button" data-sem-filter="{{ sem_num }}" id="studentSemTab-{{ sem_num }}"
-                                class="student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap cursor-pointer">
-                            Sem {{ sem_num }} ({{ sem_count }})
-                        </button>
-                        {% endfor %}
-                    </div>
-                </div>
-
-                <!-- Table Component -->
+                <!-- Table Component (No row actions, read-only dashboard overview) -->
                 <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[760px]">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[700px]">
                         <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
                             <tr>
                                 <th class="py-3 px-3.5">Student ID</th>
                                 <th class="py-3 px-3.5">Name &amp; Contact</th>
-                                <th class="py-3 px-3.5">Program</th>
+                                <th class="py-3 px-3.5">Program &amp; Dept</th>
                                 <th class="py-3 px-3.5">Semester</th>
                                 <th class="py-3 px-3.5">Attendance</th>
                                 <th class="py-3 px-3.5">CGPA</th>
-                                <th class="py-3 px-3.5">Status</th>
-                                <th class="py-3 px-3.5 text-right">Actions</th>
+                                <th class="py-3 px-3.5 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody id="studentTableBody" class="divide-y divide-slate-100">
-                            {% for s in students %}
+                        <tbody class="divide-y divide-slate-100">
+                            {% for s in students[:10] %}
                             {% set att_val = (s.attendance_percentage or 85.0)|round|int %}
-                            <tr class="student-row hover:bg-slate-50/70 transition-colors"
-                                data-name="{{ s.name|lower }}"
-                                data-reg="{{ (s.registration_id or '')|lower }}"
-                                data-email="{{ s.email|lower }}"
-                                data-dept="{{ s.department or '' }}"
-                                data-course="{{ s.course_code or 'UCA' }}"
-                                data-semester="{{ s.semester or 1 }}"
-                                data-status="{{ s.status or 'active' }}">
-                                
+                            <tr class="hover:bg-slate-50/70 transition-colors">
                                 <td class="py-3 px-3.5">
                                     <span class="font-mono font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded text-[11px]">
                                         {{ s.registration_id }}
@@ -340,9 +267,6 @@
                                         <div>
                                             <div class="font-bold text-slate-900 text-xs">{{ s.name }}</div>
                                             <div class="text-[10px] text-slate-400 truncate max-w-[150px]">{{ s.email }}</div>
-                                            {% if s.student_phone or s.phone %}
-                                            <div class="text-[10px] text-slate-500 font-mono">{{ s.student_phone or s.phone }}</div>
-                                            {% endif %}
                                         </div>
                                     </div>
                                 </td>
@@ -364,7 +288,7 @@
                                             {{ att_val }}%
                                         </span>
                                         <div class="w-10 bg-slate-100 rounded-full h-1.5 overflow-hidden">
-                                            <div class="progress-bar-fill h-1.5 rounded-full {% if att_val < 75 %}bg-rose-500{% else %}bg-emerald-500{% endif %}" data-width="{{ att_val }}"></div>
+                                            <div class="h-1.5 rounded-full {% if att_val < 75 %}bg-rose-500{% else %}bg-emerald-500{% endif %}" style="width: {{ att_val }}%;"></div>
                                         </div>
                                     </div>
                                 </td>
@@ -375,7 +299,7 @@
                                     </span>
                                 </td>
 
-                                <td class="py-3 px-3.5">
+                                <td class="py-3 px-3.5 text-right">
                                     {% if s.status == 'suspended' %}
                                     <span class="px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold">
                                         Suspended
@@ -386,106 +310,60 @@
                                     </span>
                                     {% endif %}
                                 </td>
-
-                                <td class="py-3 px-3.5 text-right">
-                                    <div class="flex items-center justify-end gap-1">
-                                        <!-- Edit Button with Dataset -->
-                                        <button type="button" class="edit-student-trigger p-1.5 rounded-lg bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 transition cursor-pointer"
-                                                data-id="{{ s.id }}"
-                                                data-name="{{ s.name }}"
-                                                data-email="{{ s.email }}"
-                                                data-dept="{{ s.department or '' }}"
-                                                data-course="{{ s.course_code or 'UCA' }}"
-                                                data-sem="{{ s.semester or 1 }}"
-                                                data-cgpa="{{ s.cgpa or '' }}"
-                                                data-phone="{{ s.student_phone or '' }}"
-                                                data-status="{{ s.status or 'active' }}"
-                                                title="Edit Record">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
-                                            </svg>
-                                        </button>
-
-                                        <!-- Promote Button -->
-                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Promote this student to the next semester?">
-                                            <input type="hidden" name="action" value="promote_student">
-                                            <input type="hidden" name="student_id" value="{{ s.id }}">
-                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-emerald-50 hover:text-emerald-600 text-slate-600 transition cursor-pointer" title="Promote Semester">
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 10.5L12 3m0 0l7.5 7.5M12 3v18"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-
-                                        <!-- Suspend Button -->
-                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader">
-                                            <input type="hidden" name="action" value="suspend_student">
-                                            <input type="hidden" name="student_id" value="{{ s.id }}">
-                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-50 hover:text-amber-600 text-slate-600 transition cursor-pointer" title="Toggle Active/Suspended">
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-
-                                        <!-- Delete Button -->
-                                        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Permanently remove this student record?">
-                                            <input type="hidden" name="action" value="delete_student">
-                                            <input type="hidden" name="student_id" value="{{ s.id }}">
-                                            <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-600 transition cursor-pointer" title="Delete Student">
-                                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
                             </tr>
                             {% else %}
                             <tr>
-                                <td colspan="8" class="p-8 text-center text-slate-400">No students found.</td>
+                                <td colspan="7" class="p-8 text-center text-slate-400">No students enrolled yet.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Footer Redirect CTA -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+                    <span>Showing top <strong>{{ [students|length, 10]|min }}</strong> of <strong>{{ total_students }}</strong> students</span>
+                    <a href="{{ url_for('super_admin.students') }}" class="font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <span>Go to Student Management &amp; Actions</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
+                </div>
             </div>
 
-            <!-- SECONDARY CARD: Faculty & HOD Roster -->
+            <!-- SECONDARY CARD: Faculty & HOD Roster Overview (Top 10 Preview) -->
             <div id="facultyCard" class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 space-y-4">
-                <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-slate-100">
                     <div class="flex items-center gap-2.5">
                         <span class="w-8 h-8 rounded-lg bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center font-bold">
-                            <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
-                            </svg>
+                            <i class="fa-solid fa-chalkboard-user text-sm"></i>
                         </span>
                         <div>
-                            <h2 class="text-sm font-bold text-slate-900">Academic Staff &amp; Faculty Roster</h2>
-                            <p class="text-[11px] text-slate-500">Department Heads, teaching faculty, and designations</p>
+                            <h2 class="text-sm font-bold text-slate-900">Academic Staff &amp; Faculty Roster Overview</h2>
+                            <p class="text-[11px] text-slate-500">Showing top 10 department heads &amp; teaching faculty</p>
                         </div>
                     </div>
-                    <button type="button" data-modal-target="addFacultyModal"
-                            class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-1.5 transition shadow-2xs cursor-pointer">
-                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/></svg>
-                        <span>Onboard Staff</span>
-                    </button>
+                    
+                    <!-- Direct Redirect CTA -->
+                    <a href="{{ url_for('super_admin.faculty') }}" 
+                       class="px-3.5 py-1.5 rounded-lg bg-indigo-50 hover:bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center gap-1.5 transition">
+                        <span>View All Staff ({{ total_faculty + total_hods }})</span>
+                        <i class="fa-solid fa-arrow-right text-[11px]"></i>
+                    </a>
                 </div>
 
                 <div class="overflow-x-auto border border-slate-200 rounded-xl">
-                    <table class="w-full text-left text-xs text-slate-700 min-w-[700px]">
+                    <table class="w-full text-left text-xs text-slate-700 min-w-[650px]">
                         <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
                             <tr>
                                 <th class="py-3 px-3.5">Staff ID</th>
                                 <th class="py-3 px-3.5">Faculty Member</th>
                                 <th class="py-3 px-3.5">Department &amp; Role</th>
                                 <th class="py-3 px-3.5">Designation</th>
-                                <th class="py-3 px-3.5">Status</th>
-                                <th class="py-3 px-3.5 text-right">Actions</th>
+                                <th class="py-3 px-3.5 text-right">Status</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-slate-100">
-                            {% for f in faculties %}
+                            {% for f in faculties[:10] %}
                             <tr class="hover:bg-slate-50/70 transition-colors">
                                 <td class="py-3 px-3.5 font-mono font-bold text-slate-800 text-[11px]">
                                     {{ f.employee_id }}
@@ -498,37 +376,40 @@
                                         <div>
                                             <div class="font-bold text-slate-900 text-xs">{{ f.name }}</div>
                                             <div class="text-[10px] text-slate-400">{{ f.email }}</div>
-                                            {% if f.phone %}
-                                            <div class="text-[10px] text-slate-500 font-mono">{{ f.phone }}</div>
-                                            {% endif %}
                                         </div>
                                     </div>
                                 </td>
                                 <td class="py-3 px-3.5">
                                     <span class="font-bold text-slate-800">{{ f.department or 'Computer Science' }}</span>
                                     {% if f.role == 'hod' %}
-                                    <span class="ml-1 px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 text-[9px] font-bold">HOD</span>
+                                    <span class="ml-1.5 px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[9px] font-black uppercase tracking-wider">HOD</span>
+                                    {% else %}
+                                    <span class="ml-1.5 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[9px] font-semibold">Faculty</span>
                                     {% endif %}
                                 </td>
                                 <td class="py-3 px-3.5 text-slate-600">{{ f.designation or 'Professor' }}</td>
-                                <td class="py-3 px-3.5">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if f.status == 'suspended' %}bg-rose-50 text-rose-700{% else %}bg-emerald-50 text-emerald-700{% endif %}">
+                                <td class="py-3 px-3.5 text-right">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if f.status == 'suspended' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">
                                         {{ (f.status or 'active')|capitalize }}
                                     </span>
                                 </td>
-                                <td class="py-3 px-3.5 text-right">
-                                    <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="inline no-loader js-confirm-form" data-confirm="Remove this faculty member from the institution?">
-                                        <input type="hidden" name="action" value="delete_faculty">
-                                        <input type="hidden" name="faculty_id" value="{{ f.id }}">
-                                        <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 transition cursor-pointer" title="Delete">
-                                            <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/></svg>
-                                        </button>
-                                    </form>
-                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-slate-400">No faculty members found.</td>
                             </tr>
                             {% endfor %}
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Footer Redirect CTA -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-slate-100 text-xs text-slate-500">
+                    <span>Showing top <strong>{{ [faculties|length, 10]|min }}</strong> of <strong>{{ total_faculty + total_hods }}</strong> staff</span>
+                    <a href="{{ url_for('super_admin.faculty') }}" class="font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+                        <span>Go to Faculty Management &amp; Onboarding</span>
+                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                    </a>
                 </div>
             </div>
         </div>
@@ -647,14 +528,14 @@
                 </div>
 
                 <div class="grid grid-cols-2 gap-2 text-xs">
-                    <button type="button" data-modal-target="addStudentModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
-                        <div class="font-bold text-slate-900">Enrol Student</div>
-                        <div class="text-[10px] text-slate-400">Add to roster</div>
-                    </button>
-                    <button type="button" data-modal-target="addFacultyModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
-                        <div class="font-bold text-slate-900">Onboard Staff</div>
-                        <div class="text-[10px] text-slate-400">Faculty &amp; HODs</div>
-                    </button>
+                    <a href="{{ url_for('super_admin.students') }}" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left">
+                        <div class="font-bold text-slate-900">Students Portal</div>
+                        <div class="text-[10px] text-slate-400">Manage &amp; enrol &rarr;</div>
+                    </a>
+                    <a href="{{ url_for('super_admin.faculty') }}" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left">
+                        <div class="font-bold text-slate-900">Faculty Portal</div>
+                        <div class="text-[10px] text-slate-400">Manage &amp; staff &rarr;</div>
+                    </a>
                     <button type="button" data-modal-target="noticeModal" class="p-2.5 rounded-lg bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 transition text-left cursor-pointer">
                         <div class="font-bold text-slate-900">Broadcast</div>
                         <div class="text-[10px] text-slate-400">Publish notice</div>
@@ -670,290 +551,7 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- MODAL 1: ENROL NEW STUDENT                                      -->
-<!-- ============================================================= -->
-<div id="addStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-xl w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19 7.5v3m0 0v3m0-3h3m-3 0h-3m-2.25-4.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM4 19.235v-.11a6.375 6.375 0 0112.75 0v.109A12.318 12.318 0 0110.374 21c-2.331 0-4.512-.645-6.374-1.765z"/>
-                    </svg>
-                </span>
-                <div>
-                    <h3 class="text-base font-bold text-slate-900">Enrol New Student</h3>
-                    <p class="text-xs text-slate-500">Auto-generates student account &amp; university Registration ID</p>
-                </div>
-            </div>
-            <button type="button" data-modal-close="addStudentModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
-            <input type="hidden" name="action" value="add_student">
-            
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">First Name</label>
-                    <input type="text" name="first_name" required placeholder="John" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Last Name</label>
-                    <input type="text" name="last_name" placeholder="Doe" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for d in departments %}
-                        <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% else %}
-                        <option value="Computer Science">Computer Science</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Degree Program</label>
-                    <select name="course_code" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for c in courses %}
-                        <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
-                        {% else %}
-                        <option value="UCA">UCA - BCA</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Semester</label>
-                    <select name="semester" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for s_num in range(1, 9) %}
-                        <option value="{{ s_num }}">Sem {{ s_num }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Gender</label>
-                    <select name="gender" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Admission Year</label>
-                    <input type="number" name="admission_year" value="2026" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Contact Email</label>
-                    <input type="email" name="personal_email" placeholder="john.personal@gmail.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Student Phone</label>
-                    <input type="text" name="student_phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-            </div>
-
-            <div class="p-3 rounded-xl bg-indigo-50/80 border border-indigo-100 flex items-center gap-2 text-indigo-900 font-medium">
-                <svg class="w-4 h-4 text-indigo-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z"/>
-                </svg>
-                <span>Initial password defaulted to <strong class="font-mono">password123</strong>.</span>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" data-modal-close="addStudentModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
-                    Enrol Student
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ============================================================= -->
-<!-- MODAL 2: EDIT STUDENT RECORD                                   -->
-<!-- ============================================================= -->
-<div id="editStudentModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10"/>
-                    </svg>
-                </span>
-                <div>
-                    <h3 class="text-base font-bold text-slate-900">Edit Student Record</h3>
-                    <p class="text-xs text-slate-500">Update academic assignment and contact details</p>
-                </div>
-            </div>
-            <button type="button" data-modal-close="editStudentModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
-            <input type="hidden" name="action" value="edit_student">
-            <input type="hidden" name="student_id" id="editStudentId">
-            
-            <div>
-                <label class="block font-bold text-slate-700 mb-1">Full Name</label>
-                <input type="text" name="name" id="editStudentName" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Institutional Email</label>
-                    <input type="email" name="email" id="editStudentEmail" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
-                    <input type="text" name="student_phone" id="editStudentPhone" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" id="editStudentDept" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for d in departments %}
-                        <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Degree Program</label>
-                    <select name="course_code" id="editStudentCourse" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for c in courses %}
-                        <option value="{{ c.code }}">{{ c.code }} - {{ c.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-3 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Semester</label>
-                    <select name="semester" id="editStudentSem" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for s_num in range(1, 9) %}
-                        <option value="{{ s_num }}">Sem {{ s_num }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">CGPA</label>
-                    <input type="number" step="0.01" min="0" max="10" name="cgpa" id="editStudentCgpa" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Status</label>
-                    <select name="status" id="editStudentStatus" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        <option value="active">Active</option>
-                        <option value="suspended">Suspended</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" data-modal-close="editStudentModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
-                    Save Changes
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ============================================================= -->
-<!-- MODAL 3: ONBOARD FACULTY MEMBER                                -->
-<!-- ============================================================= -->
-<div id="addFacultyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto custom-scroll">
-        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
-            <div class="flex items-center gap-2.5">
-                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
-                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm8.25 2.25a2.625 2.625 0 11-5.25 0 2.625 2.625 0 015.25 0z"/>
-                    </svg>
-                </span>
-                <div>
-                    <h3 class="text-base font-bold text-slate-900">Onboard Academic Staff</h3>
-                    <p class="text-xs text-slate-500">Auto-generates staff account &amp; Employee ID</p>
-                </div>
-            </div>
-            <button type="button" data-modal-close="addFacultyModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
-                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-        </div>
-
-        <form action="{{ url_for('super_admin.dashboard') }}" method="POST" class="space-y-3.5 text-xs no-loader">
-            <input type="hidden" name="action" value="add_faculty">
-
-            <div>
-                <label class="block font-bold text-slate-700 mb-1">Full Name &amp; Academic Title</label>
-                <input type="text" name="name" required placeholder="Dr. Alan Turing" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Role Classification</label>
-                    <select name="role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        <option value="faculty">Teaching Faculty</option>
-                        <option value="hod">Head of Department (HOD)</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Department</label>
-                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        {% for d in departments %}
-                        <option value="{{ d.name }}">{{ d.name }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Official / Work Email</label>
-                    <input type="email" name="email" placeholder="Optional (auto-generated if empty)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
-                </div>
-                <div>
-                    <label class="block font-bold text-slate-700 mb-1">Designation</label>
-                    <select name="designation" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
-                        <option value="Assistant Professor">Assistant Professor</option>
-                        <option value="Associate Professor">Associate Professor</option>
-                        <option value="Professor">Professor</option>
-                        <option value="Head of Department">Head of Department</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
-                <button type="button" data-modal-close="addFacultyModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
-                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
-                    Onboard Staff
-                </button>
-            </div>
-        </form>
-    </div>
-</div>
-
-<!-- ============================================================= -->
-<!-- MODAL 4: BROADCAST NOTICE                                      -->
+<!-- MODAL: BROADCAST NOTICE (Quick Super Admin Action)             -->
 <!-- ============================================================= -->
 <div id="noticeModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
     <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4">
@@ -1018,125 +616,17 @@
     }
 
     // -----------------------------------------------------------------
-    // 2. Student Registry Filters
+    // 2. Broadcast Notice Modal Controls
     // -----------------------------------------------------------------
-    let currentStudentSem = 'all';
-
-    function setStudentSemFilter(sem) {
-        currentStudentSem = String(sem);
-        document.querySelectorAll('.student-sem-tab').forEach(btn => {
-            btn.className = 'student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-slate-100 text-slate-600 hover:bg-slate-200 transition whitespace-nowrap cursor-pointer';
-        });
-        const activeBtn = document.getElementById('studentSemTab-' + sem);
-        if (activeBtn) {
-            activeBtn.className = 'student-sem-tab px-3 py-1 rounded-lg text-xs font-semibold bg-indigo-600 text-white shadow-2xs transition whitespace-nowrap cursor-pointer';
-        }
-        applyStudentFilters();
-    }
-
-    function applyStudentFilters() {
-        const query = (document.getElementById('studentSearchInput')?.value || '').toLowerCase().trim();
-        const dept = document.getElementById('deptFilter')?.value || 'all';
-        const course = document.getElementById('courseFilter')?.value || 'all';
-        const status = document.getElementById('statusFilter')?.value || 'all';
-
-        const rows = document.querySelectorAll('.student-row');
-        rows.forEach(row => {
-            const rName = row.getAttribute('data-name') || '';
-            const rReg = row.getAttribute('data-reg') || '';
-            const rEmail = row.getAttribute('data-email') || '';
-            const rDept = row.getAttribute('data-dept') || '';
-            const rCourse = row.getAttribute('data-course') || '';
-            const rSem = row.getAttribute('data-semester') || '';
-            const rStatus = row.getAttribute('data-status') || '';
-
-            const matchesSearch = !query || rName.includes(query) || rReg.includes(query) || rEmail.includes(query);
-            const matchesDept = (dept === 'all') || (rDept === dept);
-            const matchesCourse = (course === 'all') || (rCourse === course);
-            const matchesStatus = (status === 'all') || (rStatus === status);
-            const matchesSem = (currentStudentSem === 'all') || (rSem === currentStudentSem);
-
-            if (matchesSearch && matchesDept && matchesCourse && matchesStatus && matchesSem) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        });
-    }
-
-    // -----------------------------------------------------------------
-    // 3. Modal Triggers & Event Delegation (Clean JS, No Template Inlining)
-    // -----------------------------------------------------------------
-    function openAddStudentModal() {
-        document.getElementById('addStudentModal').classList.remove('hidden');
-    }
-    function closeAddStudentModal() {
-        document.getElementById('addStudentModal').classList.add('hidden');
-    }
-
-    function openAddFacultyModal() {
-        document.getElementById('addFacultyModal').classList.remove('hidden');
-    }
-    function closeAddFacultyModal() {
-        document.getElementById('addFacultyModal').classList.add('hidden');
-    }
-
     function openNoticeModal() {
-        document.getElementById('noticeModal').classList.remove('hidden');
+        document.getElementById('noticeModal')?.classList.remove('hidden');
     }
     function closeNoticeModal() {
-        document.getElementById('noticeModal').classList.add('hidden');
+        document.getElementById('noticeModal')?.classList.add('hidden');
     }
 
-    function closeEditStudentModal() {
-        document.getElementById('editStudentModal').classList.add('hidden');
-    }
-
-    // Unobtrusive Edit Button listener via dataset
+    // Unobtrusive Event Listeners
     document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.edit-student-trigger').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const d = btn.dataset;
-                document.getElementById('editStudentId').value = d.id || '';
-                document.getElementById('editStudentName').value = d.name || '';
-                document.getElementById('editStudentEmail').value = d.email || '';
-                document.getElementById('editStudentDept').value = d.dept || '';
-                document.getElementById('editStudentCourse').value = d.course || 'UCA';
-                document.getElementById('editStudentSem').value = d.sem || '1';
-                document.getElementById('editStudentCgpa').value = d.cgpa || '';
-                document.getElementById('editStudentPhone').value = d.phone || '';
-                document.getElementById('editStudentStatus').value = d.status || 'active';
-                document.getElementById('editStudentModal').classList.remove('hidden');
-            });
-        });
-
-        // Dynamic progress bar width initialization
-        document.querySelectorAll('.progress-bar-fill[data-width]').forEach(el => {
-            const w = el.getAttribute('data-width');
-            if (w !== null && w !== '') {
-                el.style.width = Math.min(100, Math.max(0, parseInt(w, 10) || 0)) + '%';
-            }
-        });
-
-        // Form confirmation handlers
-        document.querySelectorAll('.js-confirm-form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const msg = this.getAttribute('data-confirm') || 'Are you sure you want to proceed?';
-                if (!confirm(msg)) {
-                    e.preventDefault();
-                }
-            });
-        });
-
-        // Modal Open Handlers
-        document.querySelectorAll('[data-modal-target]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const mId = btn.getAttribute('data-modal-target');
-                const m = document.getElementById(mId);
-                if (m) m.classList.remove('hidden');
-            });
-        });
-
         // Modal Close Handlers
         document.querySelectorAll('[data-modal-close]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1146,32 +636,9 @@
             });
         });
 
-        // Scroll To Section Handlers
-        document.querySelectorAll('[data-scroll-to]').forEach(el => {
-            el.addEventListener('click', () => {
-                const targetId = el.getAttribute('data-scroll-to');
-                const target = document.getElementById(targetId);
-                if (target) target.scrollIntoView({ behavior: 'smooth' });
-            });
-        });
-
-        // Semester Filter Tabs
-        document.querySelectorAll('[data-sem-filter]').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const sem = btn.getAttribute('data-sem-filter');
-                setStudentSemFilter(sem);
-            });
-        });
-
         // Calendar Month Controls
         document.getElementById('calPrevBtn')?.addEventListener('click', prevCalMonth);
         document.getElementById('calNextBtn')?.addEventListener('click', nextCalMonth);
-
-        // Student Filters Input & Select Event Listeners
-        document.getElementById('studentSearchInput')?.addEventListener('input', applyStudentFilters);
-        document.getElementById('deptFilter')?.addEventListener('change', applyStudentFilters);
-        document.getElementById('courseFilter')?.addEventListener('change', applyStudentFilters);
-        document.getElementById('statusFilter')?.addEventListener('change', applyStudentFilters);
 
         // Initialize Calendar
         renderMiniCalendar();

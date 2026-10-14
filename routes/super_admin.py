@@ -110,176 +110,9 @@ def dashboard():
         action = request.form.get('action')
 
         # -----------------------------------------------------------------
-        # STUDENT MANAGEMENT: ADD STUDENT
-        # -----------------------------------------------------------------
-        if action == 'add_student':
-            first_name = (request.form.get('first_name') or '').strip()
-            last_name = (request.form.get('last_name') or '').strip()
-            full_name = f"{first_name} {last_name}".strip() or request.form.get('name', 'Student')
-
-            dept = request.form.get('department', 'Computer Science')
-            course_code = request.form.get('course_code', 'UCA').upper()
-            sem = int(request.form.get('semester', 1))
-            adm_year = int(request.form.get('admission_year', 2026))
-
-            reg_id = generate_registration_id(course_code=course_code, admission_year=adm_year)
-            inst_email = (request.form.get('email') or f"{reg_id.lower()}@studysync.pro").strip().lower()
-
-            # Check duplicate email
-            if User.query.filter_by(email=inst_email).first():
-                inst_email = f"{reg_id.lower()}.student@studysync.pro"
-
-            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
-            cgpa_val = None if sem == 1 else request.form.get('cgpa', type=float, default=None)
-
-            new_student = User(
-                name=full_name,
-                first_name=first_name,
-                last_name=last_name,
-                email=inst_email,
-                password=hashed_pw,
-                role='student',
-                department=dept,
-                semester=sem,
-                cgpa=cgpa_val,
-                registration_id=reg_id,
-                course_code=course_code,
-                admission_year=adm_year,
-                gender=request.form.get('gender', 'Male'),
-                dob=request.form.get('dob'),
-                student_phone=request.form.get('student_phone'),
-                parent_phone=request.form.get('parent_phone'),
-                personal_email=request.form.get('personal_email'),
-                permanent_address=request.form.get('permanent_address'),
-                current_address=request.form.get('current_address'),
-                category=request.form.get('category', 'General'),
-                status='active'
-            )
-            db.session.add(new_student)
-            db.session.commit()
-            flash(f'Student {full_name} enrolled successfully! System Generated Registration ID: {reg_id}', 'success')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # STUDENT MANAGEMENT: EDIT STUDENT
-        # -----------------------------------------------------------------
-        elif action == 'edit_student':
-            student_id = request.form.get('student_id') or request.form.get('user_id')
-            student = User.query.get(student_id)
-            if student and student.role == 'student':
-                student.name = request.form.get('name', student.name).strip()
-                student.email = request.form.get('email', student.email).strip().lower()
-                student.department = request.form.get('department', student.department)
-                student.course_code = request.form.get('course_code', student.course_code or 'UCA').upper()
-                student.semester = int(request.form.get('semester', student.semester or 1))
-                if request.form.get('cgpa'):
-                    student.cgpa = float(request.form.get('cgpa'))
-                student.student_phone = request.form.get('student_phone', student.student_phone)
-                student.status = request.form.get('status', student.status)
-                db.session.commit()
-                flash(f'Student records for {student.name} ({student.registration_id}) updated successfully.', 'success')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # STUDENT MANAGEMENT: DELETE STUDENT
-        # -----------------------------------------------------------------
-        elif action == 'delete_student':
-            student_id = request.form.get('student_id') or request.form.get('user_id')
-            success, msg = delete_user_cascading(student_id)
-            flash(msg, 'warning' if success else 'danger')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # STUDENT MANAGEMENT: SUSPEND / ACTIVATE
-        # -----------------------------------------------------------------
-        elif action == 'suspend_student':
-            student_id = request.form.get('student_id') or request.form.get('user_id')
-            student = User.query.get(student_id)
-            if student and student.role == 'student':
-                student.status = 'suspended' if student.status == 'active' else 'active'
-                db.session.commit()
-                flash(f'Student {student.name} status updated to {student.status.upper()}.', 'info')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # STUDENT MANAGEMENT: PROMOTE SEMESTER
-        # -----------------------------------------------------------------
-        elif action == 'promote_student':
-            student_id = request.form.get('student_id') or request.form.get('user_id')
-            student = User.query.get(student_id)
-            if student and student.role == 'student':
-                student.semester = min(8, (student.semester or 1) + 1)
-                db.session.commit()
-                flash(f'Student {student.name} promoted to Semester {student.semester}.', 'success')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # FACULTY MANAGEMENT: ADD FACULTY / HOD
-        # -----------------------------------------------------------------
-        elif action == 'add_faculty':
-            name = (request.form.get('name') or 'Faculty Member').strip()
-            role = request.form.get('role', 'faculty').lower()
-            dept = request.form.get('department', 'Computer Science')
-            email = (request.form.get('email') or '').strip().lower()
-            phone = request.form.get('phone', '')
-            spec = request.form.get('specialization', '')
-
-            emp_id = generate_employee_id(dept_code="FAC", joining_year=2026, role=role)
-            if not email:
-                email = f"{emp_id.lower()}@studysync.pro"
-
-            default_pw = 'admin123' if role == 'hod' else 'password123'
-            hashed_pw = bcrypt.generate_password_hash(default_pw).decode('utf-8')
-
-            new_fac = User(
-                name=name,
-                email=email,
-                password=hashed_pw,
-                role=role,
-                department=dept,
-                employee_id=emp_id,
-                phone=phone,
-                specialization=spec,
-                status='active'
-            )
-            db.session.add(new_fac)
-            db.session.commit()
-
-            # If new HOD, associate with Department
-            if role == 'hod':
-                d_obj = Department.query.filter_by(name=dept).first()
-                if d_obj:
-                    d_obj.hod_id = new_fac.id
-                    db.session.commit()
-
-            flash(f'{role.upper()} {name} onboarded! Employee ID: {emp_id}', 'success')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # FACULTY MANAGEMENT: DELETE FACULTY
-        # -----------------------------------------------------------------
-        elif action == 'delete_faculty':
-            faculty_id = request.form.get('faculty_id') or request.form.get('user_id')
-            success, msg = delete_user_cascading(faculty_id)
-            flash(msg, 'warning' if success else 'danger')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
-        # FACULTY MANAGEMENT: SUSPEND FACULTY
-        # -----------------------------------------------------------------
-        elif action == 'suspend_faculty':
-            faculty_id = request.form.get('faculty_id') or request.form.get('user_id')
-            fac = User.query.get(faculty_id)
-            if fac:
-                fac.status = 'suspended' if fac.status == 'active' else 'active'
-                db.session.commit()
-                flash(f'Faculty member {fac.name} status updated to {fac.status.upper()}.', 'info')
-            return redirect(url_for('super_admin.dashboard'))
-
-        # -----------------------------------------------------------------
         # INSTITUTION & COURSE MANAGEMENT
         # -----------------------------------------------------------------
-        elif action == 'update_institution':
+        if action == 'update_institution':
             inst.name = request.form.get('name', inst.name)
             inst.code = request.form.get('code', inst.code).upper()
             inst.address = request.form.get('address', inst.address)
@@ -356,13 +189,200 @@ def dashboard():
         total_subjects=total_subjects
     )
 
-@super_admin_bp.route('/students')
-def students_redirect():
-    return redirect(url_for('super_admin.dashboard'))
+# ---------------------------------------------------------------------------
+# Dedicated Full Management Pages: Students and Faculty
+# ---------------------------------------------------------------------------
+@super_admin_bp.route('/students', methods=['GET', 'POST'])
+def students():
+    if request.method == 'POST':
+        action = request.form.get('action')
 
-@super_admin_bp.route('/faculty')
-def faculty_redirect():
-    return redirect(url_for('super_admin.dashboard'))
+        if action == 'add_student':
+            first_name = (request.form.get('first_name') or '').strip()
+            last_name = (request.form.get('last_name') or '').strip()
+            full_name = f"{first_name} {last_name}".strip() or request.form.get('name', 'Student')
+
+            dept = request.form.get('department', 'Computer Science')
+            course_code = request.form.get('course_code', 'UCA').upper()
+            sem = int(request.form.get('semester', 1))
+            adm_year = int(request.form.get('admission_year', 2026))
+
+            reg_id = generate_registration_id(course_code=course_code, admission_year=adm_year)
+            inst_email = (request.form.get('email') or f"{reg_id.lower()}@studysync.pro").strip().lower()
+
+            if User.query.filter_by(email=inst_email).first():
+                inst_email = f"{reg_id.lower()}.student@studysync.pro"
+
+            hashed_pw = bcrypt.generate_password_hash('password123').decode('utf-8')
+            cgpa_val = None if sem == 1 else request.form.get('cgpa', type=float, default=None)
+
+            new_student = User(
+                name=full_name,
+                first_name=first_name,
+                last_name=last_name,
+                email=inst_email,
+                password=hashed_pw,
+                role='student',
+                department=dept,
+                semester=sem,
+                cgpa=cgpa_val,
+                registration_id=reg_id,
+                course_code=course_code,
+                admission_year=adm_year,
+                gender=request.form.get('gender', 'Male'),
+                dob=request.form.get('dob'),
+                student_phone=request.form.get('student_phone'),
+                parent_phone=request.form.get('parent_phone'),
+                personal_email=request.form.get('personal_email'),
+                permanent_address=request.form.get('permanent_address'),
+                current_address=request.form.get('current_address'),
+                category=request.form.get('category', 'General'),
+                status='active'
+            )
+            db.session.add(new_student)
+            db.session.commit()
+            flash(f'Student {full_name} enrolled successfully! System Generated Registration ID: {reg_id}', 'success')
+            return redirect(url_for('super_admin.students'))
+
+        elif action == 'edit_student':
+            student_id = request.form.get('student_id') or request.form.get('user_id')
+            student = User.query.get(student_id)
+            if student and student.role == 'student':
+                student.name = request.form.get('name', student.name).strip()
+                student.email = request.form.get('email', student.email).strip().lower()
+                student.department = request.form.get('department', student.department)
+                student.course_code = request.form.get('course_code', student.course_code or 'UCA').upper()
+                student.semester = int(request.form.get('semester', student.semester or 1))
+                if request.form.get('cgpa'):
+                    student.cgpa = float(request.form.get('cgpa'))
+                student.student_phone = request.form.get('student_phone', student.student_phone)
+                student.status = request.form.get('status', student.status)
+                db.session.commit()
+                flash(f'Student records for {student.name} ({student.registration_id}) updated successfully.', 'success')
+            return redirect(url_for('super_admin.students'))
+
+        elif action == 'delete_student':
+            student_id = request.form.get('student_id') or request.form.get('user_id')
+            success, msg = delete_user_cascading(student_id)
+            flash(msg, 'warning' if success else 'danger')
+            return redirect(url_for('super_admin.students'))
+
+        elif action == 'suspend_student':
+            student_id = request.form.get('student_id') or request.form.get('user_id')
+            student = User.query.get(student_id)
+            if student and student.role == 'student':
+                student.status = 'suspended' if student.status == 'active' else 'active'
+                db.session.commit()
+                flash(f'Student {student.name} status updated to {student.status.upper()}.', 'info')
+            return redirect(url_for('super_admin.students'))
+
+        elif action == 'promote_student':
+            student_id = request.form.get('student_id') or request.form.get('user_id')
+            student = User.query.get(student_id)
+            if student and student.role == 'student':
+                student.semester = min(8, (student.semester or 1) + 1)
+                db.session.commit()
+                flash(f'Student {student.name} promoted to Semester {student.semester}.', 'success')
+            return redirect(url_for('super_admin.students'))
+
+    # GET
+    all_students = User.query.filter_by(role='student').order_by(User.id.desc()).all()
+    departments = Department.query.all()
+    courses = Course.query.all()
+
+    total_students = len(all_students)
+    active_students = sum(1 for s in all_students if (s.status or 'active') == 'active')
+    suspended_students = sum(1 for s in all_students if s.status == 'suspended')
+    avg_attendance = round(sum((s.attendance_percentage or 85.0) for s in all_students) / len(all_students), 1) if all_students else 88.5
+
+    return render_template(
+        'super_admin/students.html',
+        students=all_students,
+        departments=departments,
+        courses=courses,
+        total_students=total_students,
+        active_students=active_students,
+        suspended_students=suspended_students,
+        avg_attendance=avg_attendance
+    )
+
+
+@super_admin_bp.route('/faculty', methods=['GET', 'POST'])
+def faculty():
+    if request.method == 'POST':
+        action = request.form.get('action')
+
+        if action == 'add_faculty':
+            name = (request.form.get('name') or 'Faculty Member').strip()
+            role = request.form.get('role', 'faculty').lower()
+            dept = request.form.get('department', 'Computer Science')
+            email = (request.form.get('email') or '').strip().lower()
+            phone = request.form.get('phone', '')
+            spec = request.form.get('specialization', '')
+            designation = request.form.get('designation', 'Professor')
+
+            emp_id = generate_employee_id(dept_code="FAC", joining_year=2026, role=role)
+            if not email:
+                email = f"{emp_id.lower()}@studysync.pro"
+
+            default_pw = 'admin123' if role == 'hod' else 'password123'
+            hashed_pw = bcrypt.generate_password_hash(default_pw).decode('utf-8')
+
+            new_fac = User(
+                name=name,
+                email=email,
+                password=hashed_pw,
+                role=role,
+                department=dept,
+                employee_id=emp_id,
+                phone=phone,
+                specialization=spec,
+                designation=designation,
+                status='active'
+            )
+            db.session.add(new_fac)
+            db.session.commit()
+
+            if role == 'hod':
+                d_obj = Department.query.filter_by(name=dept).first()
+                if d_obj:
+                    d_obj.hod_id = new_fac.id
+                    db.session.commit()
+
+            flash(f'{role.upper()} {name} onboarded! Employee ID: {emp_id}', 'success')
+            return redirect(url_for('super_admin.faculty'))
+
+        elif action == 'delete_faculty':
+            faculty_id = request.form.get('faculty_id') or request.form.get('user_id')
+            success, msg = delete_user_cascading(faculty_id)
+            flash(msg, 'warning' if success else 'danger')
+            return redirect(url_for('super_admin.faculty'))
+
+        elif action == 'suspend_faculty':
+            faculty_id = request.form.get('faculty_id') or request.form.get('user_id')
+            fac = User.query.get(faculty_id)
+            if fac:
+                fac.status = 'suspended' if fac.status == 'active' else 'active'
+                db.session.commit()
+                flash(f'Faculty member {fac.name} status updated to {fac.status.upper()}.', 'info')
+            return redirect(url_for('super_admin.faculty'))
+
+    # GET
+    all_faculties = User.query.filter(User.role.in_(['faculty', 'hod'])).order_by(User.name.asc()).all()
+    departments = Department.query.all()
+
+    total_faculty = sum(1 for f in all_faculties if f.role == 'faculty')
+    total_hods = sum(1 for f in all_faculties if f.role == 'hod')
+    active_staff = sum(1 for f in all_faculties if (f.status or 'active') == 'active')
+
+    return render_template(
+        'super_admin/faculty.html',
+        faculties=all_faculties,
+        departments=departments,
+        total_faculty=total_faculty,
+        total_hods=total_hods,
+        active_staff=active_staff
+    )
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,402 @@
+{% extends "base.html" %}
+{% block title %}Academic Staff & Faculty Roster — Pragati by Kalpkrats{% endblock %}
+
+{% block content %}
+<div class="w-full space-y-6 pb-12 antialiased">
+
+    <!-- =====================================================================
+         1. BREADCRUMB & HEADER WITH PRIMARY ACTION
+         ===================================================================== -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-slate-200/80">
+        <div>
+            <!-- Breadcrumb -->
+            <nav class="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-1" aria-label="Breadcrumb">
+                <a href="{{ url_for('super_admin.dashboard') }}" class="hover:text-indigo-600 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-compass text-[11px]"></i>
+                    <span>Dashboard</span>
+                </a>
+                <i class="fa-solid fa-chevron-right text-[8px] text-slate-300"></i>
+                <span class="text-slate-800 font-bold">Faculty &amp; HODs</span>
+            </nav>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Academic Staff &amp; Faculty Roster
+            </h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-500 mt-1">
+                Department Heads, teaching faculty, designations, appointments, and institutional teaching staff.
+            </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button type="button" data-modal-target="addFacultyModal"
+                    class="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 transition shadow-sm cursor-pointer whitespace-nowrap">
+                <i class="fa-solid fa-user-plus text-xs"></i>
+                <span>Onboard Staff</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- =====================================================================
+         2. TELEMETRY STAT CARDS
+         ===================================================================== -->
+    <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Total Faculty -->
+        <div class="stat-card-glass stat-glow-purple p-4 rounded-xl border border-slate-200/90 bg-white flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Teaching Faculty</span>
+                    <div class="text-2xl sm:text-3xl font-black text-slate-900 font-mono mt-1">
+                        {{ total_faculty }}
+                    </div>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center">
+                    <i class="fa-solid fa-chalkboard-user text-sm"></i>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-400 font-medium mt-3">Professors &amp; Instructors</div>
+        </div>
+
+        <!-- Total HODs -->
+        <div class="stat-card-glass stat-glow-emerald p-4 rounded-xl border border-slate-200/90 bg-white flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Department Heads</span>
+                    <div class="text-2xl sm:text-3xl font-black text-indigo-600 font-mono mt-1">
+                        {{ total_hods }}
+                    </div>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center">
+                    <i class="fa-solid fa-shield text-sm"></i>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-400 font-medium mt-3">Active Department HODs</div>
+        </div>
+
+        <!-- Active Staff -->
+        <div class="stat-card-glass p-4 rounded-xl border border-slate-200/90 bg-white flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Active Staff</span>
+                    <div class="text-2xl sm:text-3xl font-black text-emerald-600 font-mono mt-1">
+                        {{ active_staff }}
+                    </div>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center">
+                    <i class="fa-solid fa-circle-check text-sm"></i>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-400 font-medium mt-3">Full institutional access</div>
+        </div>
+
+        <!-- Departments Covered -->
+        <div class="stat-card-glass p-4 rounded-xl border border-slate-200/90 bg-white flex flex-col justify-between">
+            <div class="flex items-start justify-between">
+                <div>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400">Departments</span>
+                    <div class="text-2xl sm:text-3xl font-black text-blue-600 font-mono mt-1">
+                        {{ departments|length }}
+                    </div>
+                </div>
+                <div class="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
+                    <i class="fa-solid fa-building-columns text-sm"></i>
+                </div>
+            </div>
+            <div class="text-[11px] text-slate-400 font-medium mt-3">Academic branches covered</div>
+        </div>
+    </section>
+
+    <!-- =====================================================================
+         3. MAIN FACULTY ROSTER TABLE CARD
+         ===================================================================== -->
+    <div class="bg-white rounded-xl border border-slate-200/90 shadow-xs p-5 space-y-4">
+        
+        <!-- Search & Filter Controls -->
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b border-slate-100">
+            <!-- Search -->
+            <div class="relative w-full lg:w-72">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs"></i>
+                <input type="text" id="facultySearchInput" placeholder="Search by name, ID, or email..."
+                       class="w-full pl-8 pr-3 py-2 text-xs rounded-lg border border-slate-200 focus:outline-none focus:border-indigo-500 bg-slate-50 placeholder:text-slate-400">
+            </div>
+
+            <!-- Filters -->
+            <div class="flex flex-wrap items-center gap-2.5 text-xs">
+                <!-- Department Filter -->
+                <div class="flex items-center gap-1.5">
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Dept:</label>
+                    <select id="facultyDeptFilter"
+                            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="all">All Departments</option>
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Role Filter -->
+                <div class="flex items-center gap-1.5">
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Role:</label>
+                    <select id="facultyRoleFilter"
+                            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="all">All Roles</option>
+                        <option value="hod">HODs Only</option>
+                        <option value="faculty">Teaching Faculty Only</option>
+                    </select>
+                </div>
+
+                <!-- Status Filter -->
+                <div class="flex items-center gap-1.5">
+                    <label class="text-[11px] font-bold text-slate-400 uppercase tracking-wider">Status:</label>
+                    <select id="facultyStatusFilter"
+                            class="px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="all">All Status</option>
+                        <option value="active">Active Only</option>
+                        <option value="suspended">Suspended Only</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Table -->
+        <div class="overflow-x-auto border border-slate-200 rounded-xl">
+            <table class="w-full text-left text-xs text-slate-700 min-w-[780px]">
+                <thead class="text-[10px] uppercase bg-slate-50 text-slate-500 border-b border-slate-200 font-bold tracking-wider">
+                    <tr>
+                        <th class="py-3 px-3.5">Staff ID</th>
+                        <th class="py-3 px-3.5">Faculty Member</th>
+                        <th class="py-3 px-3.5">Department &amp; Role</th>
+                        <th class="py-3 px-3.5">Designation</th>
+                        <th class="py-3 px-3.5">Status</th>
+                        <th class="py-3 px-3.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="facultyTableBody" class="divide-y divide-slate-100">
+                    {% for f in faculties %}
+                    <tr class="faculty-row hover:bg-slate-50/70 transition-colors"
+                        data-name="{{ f.name|lower }}"
+                        data-id="{{ (f.employee_id or '')|lower }}"
+                        data-email="{{ f.email|lower }}"
+                        data-dept="{{ f.department or '' }}"
+                        data-role="{{ f.role }}"
+                        data-status="{{ f.status or 'active' }}">
+                        
+                        <td class="py-3 px-3.5 font-mono font-bold text-slate-800 text-[11px]">
+                            {{ f.employee_id }}
+                        </td>
+
+                        <td class="py-3 px-3.5">
+                            <div class="flex items-center gap-2">
+                                <div class="w-7 h-7 rounded-full {% if f.role == 'hod' %}bg-purple-100 text-purple-700 border border-purple-200{% else %}bg-indigo-50 text-indigo-700 border border-indigo-200{% endif %} font-bold flex items-center justify-center text-[10px] flex-shrink-0">
+                                    {{ f.name[:2]|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-xs">{{ f.name }}</div>
+                                    <div class="text-[10px] text-slate-400">{{ f.email }}</div>
+                                    {% if f.phone %}
+                                    <div class="text-[10px] text-slate-500 font-mono">{{ f.phone }}</div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </td>
+
+                        <td class="py-3 px-3.5">
+                            <span class="font-bold text-slate-800">{{ f.department or 'Computer Science' }}</span>
+                            {% if f.role == 'hod' %}
+                            <span class="ml-1.5 px-2 py-0.5 rounded-full bg-purple-50 text-purple-700 border border-purple-200 text-[9px] font-black uppercase tracking-wider">HOD</span>
+                            {% else %}
+                            <span class="ml-1.5 px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[9px] font-semibold">Faculty</span>
+                            {% endif %}
+                        </td>
+
+                        <td class="py-3 px-3.5 text-slate-600">{{ f.designation or 'Professor' }}</td>
+
+                        <td class="py-3 px-3.5">
+                            <span class="px-2 py-0.5 rounded-full text-[10px] font-bold {% if f.status == 'suspended' %}bg-rose-50 text-rose-700 border border-rose-200{% else %}bg-emerald-50 text-emerald-700 border border-emerald-200{% endif %}">
+                                {{ (f.status or 'active')|capitalize }}
+                            </span>
+                        </td>
+
+                        <!-- ACTIONS: Exclusively available on this page -->
+                        <td class="py-3 px-3.5 text-right">
+                            <div class="flex items-center justify-end gap-1">
+                                <!-- Suspend / Activate Toggle -->
+                                <form action="{{ url_for('super_admin.faculty') }}" method="POST" class="inline no-loader">
+                                    <input type="hidden" name="action" value="suspend_faculty">
+                                    <input type="hidden" name="faculty_id" value="{{ f.id }}">
+                                    <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-amber-50 hover:text-amber-600 text-slate-600 transition cursor-pointer" title="Toggle Active/Suspended">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+                                        </svg>
+                                    </button>
+                                </form>
+
+                                <!-- Delete Faculty Member -->
+                                <form action="{{ url_for('super_admin.faculty') }}" method="POST" class="inline no-loader" onsubmit="return confirm('Remove this faculty member from the institution? This will unassign any associated subjects.');">
+                                    <input type="hidden" name="action" value="delete_faculty">
+                                    <input type="hidden" name="faculty_id" value="{{ f.id }}">
+                                    <button type="submit" class="p-1.5 rounded-lg bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-500 transition cursor-pointer" title="Remove Faculty Member">
+                                        <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"/>
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="p-8 text-center text-slate-400">No faculty members found matching your filters.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="text-xs text-slate-400 pt-2 flex items-center justify-between">
+            <span>Showing all <strong class="text-slate-700">{{ faculties|length }}</strong> academic staff</span>
+            <span>Pragati Institutional Staff Directory</span>
+        </div>
+    </div>
+</div>
+
+<!-- =====================================================================
+     MODAL: ONBOARD FACULTY / HOD
+     ===================================================================== -->
+<div id="addFacultyModal" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-lg w-full p-6 space-y-4 max-h-[92vh] overflow-y-auto">
+        <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+            <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-lg bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs">
+                    <i class="fa-solid fa-user-plus"></i>
+                </span>
+                <div>
+                    <h3 class="text-base font-bold text-slate-900">Onboard Academic Staff</h3>
+                    <p class="text-xs text-slate-500">Auto-generates staff account &amp; Employee ID</p>
+                </div>
+            </div>
+            <button type="button" data-modal-close="addFacultyModal" class="w-7 h-7 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-700 flex items-center justify-center cursor-pointer">
+                <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+
+        <form action="{{ url_for('super_admin.faculty') }}" method="POST" class="space-y-3.5 text-xs no-loader">
+            <input type="hidden" name="action" value="add_faculty">
+
+            <div>
+                <label class="block font-bold text-slate-700 mb-1">Full Name &amp; Academic Title</label>
+                <input type="text" name="name" required placeholder="Dr. Alan Turing" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Role Classification</label>
+                    <select name="role" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-bold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="faculty">Teaching Faculty</option>
+                        <option value="hod">Head of Department (HOD)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Department</label>
+                    <select name="department" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        {% for d in departments %}
+                        <option value="{{ d.name }}">{{ d.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Official / Work Email</label>
+                    <input type="email" name="email" placeholder="Optional (auto-generated if empty)" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-mono text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Designation</label>
+                    <select name="designation" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-semibold text-slate-800 focus:outline-none focus:border-indigo-400">
+                        <option value="Assistant Professor">Assistant Professor</option>
+                        <option value="Associate Professor">Associate Professor</option>
+                        <option value="Professor">Professor</option>
+                        <option value="Head of Department">Head of Department</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Phone Number</label>
+                    <input type="text" name="phone" placeholder="+91 9876543210" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Academic Specialization</label>
+                    <input type="text" name="specialization" placeholder="e.g. Machine Learning, Cloud Systems" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl font-medium text-slate-900 focus:bg-white focus:outline-none focus:border-indigo-400">
+                </div>
+            </div>
+
+            <div class="p-3 rounded-xl bg-indigo-50/80 border border-indigo-100 flex items-center gap-2 text-indigo-900 font-medium">
+                <i class="fa-solid fa-circle-info text-indigo-600"></i>
+                <span>Initial password defaults to <strong class="font-mono">admin123</strong> for HODs and <strong class="font-mono">password123</strong> for faculty.</span>
+            </div>
+
+            <div class="flex items-center justify-end gap-2 pt-2 border-t border-slate-100">
+                <button type="button" data-modal-close="addFacultyModal" class="px-4 py-2 rounded-xl text-slate-600 font-semibold hover:bg-slate-100 transition cursor-pointer">Cancel</button>
+                <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold shadow-xs transition cursor-pointer">
+                    Onboard Staff
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- =====================================================================
+     INTERACTIVE JAVASCRIPT ENGINE
+     ===================================================================== -->
+<script>
+    function openModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('hidden');
+    }
+    function closeModal(id) {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    }
+
+    document.querySelectorAll('[data-modal-target]').forEach(btn => {
+        btn.addEventListener('click', () => openModal(btn.getAttribute('data-modal-target')));
+    });
+    document.querySelectorAll('[data-modal-close]').forEach(btn => {
+        btn.addEventListener('click', () => closeModal(btn.getAttribute('data-modal-close')));
+    });
+
+    // Client Filter
+    function applyFacultyFilters() {
+        const query = (document.getElementById('facultySearchInput')?.value || '').toLowerCase().trim();
+        const dept = document.getElementById('facultyDeptFilter')?.value || 'all';
+        const role = document.getElementById('facultyRoleFilter')?.value || 'all';
+        const status = document.getElementById('facultyStatusFilter')?.value || 'all';
+
+        document.querySelectorAll('.faculty-row').forEach(row => {
+            const name = row.dataset.name || '';
+            const id = row.dataset.id || '';
+            const email = row.dataset.email || '';
+            const rowDept = row.dataset.dept || '';
+            const rowRole = row.dataset.role || '';
+            const rowStatus = row.dataset.status || 'active';
+
+            const matchesQuery = !query || name.includes(query) || id.includes(query) || email.includes(query);
+            const matchesDept = (dept === 'all') || (rowDept === dept);
+            const matchesRole = (role === 'all') || (rowRole === role);
+            const matchesStatus = (status === 'all') || (rowStatus === status);
+
+            if (matchesQuery && matchesDept && matchesRole && matchesStatus) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+    document.getElementById('facultySearchInput')?.addEventListener('input', applyFacultyFilters);
+    document.getElementById('facultyDeptFilter')?.addEventListener('change', applyFacultyFilters);
+    document.getElementById('facultyRoleFilter')?.addEventListener('change', applyFacultyFilters);
+    document.getElementById('facultyStatusFilter')?.addEventListener('change', applyFacultyFilters);
+</script>
+{% endblock %}

@@ -98,11 +98,11 @@
                             <i class="fa-solid fa-compass text-slate-400"></i>
                             <span>Dashboard</span>
                         </a>
-                        <a href="{{ url_for('super_admin.dashboard') }}#studentRegistryCard" onclick="if(window.scrollToSection){scrollToSection('studentRegistryCard');return false;}" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                        <a href="{{ url_for('super_admin.students') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-user-graduate text-slate-400"></i>
                             <span>Students</span>
                         </a>
-                        <a href="{{ url_for('super_admin.dashboard') }}#facultyCard" onclick="if(window.scrollToSection){scrollToSection('facultyCard');return false;}" class="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                        <a href="{{ url_for('super_admin.faculty') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
                             <i class="fa-solid fa-chalkboard-user text-slate-400"></i>
                             <span>Faculty &amp; HODs</span>
                         </a>
@@ -124,18 +124,18 @@
                                     <div class="grid grid-cols-2 gap-4">
                                         <!-- Column 1: Institutional Operations -->
                                         <div>
-                                            <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
-                                                Institutional Operations
-                                            </div>
-                                            <div class="space-y-1">
-                                                <a href="{{ url_for('super_admin.dashboard') }}#studentRegistryCard" onclick="closeNavModules(); if(window.scrollToSection){scrollToSection('studentRegistryCard');}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                                    <i class="fa-solid fa-user-graduate text-indigo-500 w-4 text-center"></i>
-                                                    <span>Student Registry</span>
-                                                </a>
-                                                <a href="{{ url_for('super_admin.dashboard') }}#facultyCard" onclick="closeNavModules(); if(window.scrollToSection){scrollToSection('facultyCard');}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                                    <i class="fa-solid fa-chalkboard-user text-indigo-500 w-4 text-center"></i>
-                                                    <span>Faculty &amp; HODs</span>
-                                                </a>
+                                             <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
+                                                 Institutional Operations
+                                             </div>
+                                             <div class="space-y-1">
+                                                 <a href="{{ url_for('super_admin.students') }}" onclick="closeNavModules();" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                     <i class="fa-solid fa-user-graduate text-indigo-500 w-4 text-center"></i>
+                                                     <span>Student Registry</span>
+                                                 </a>
+                                                 <a href="{{ url_for('super_admin.faculty') }}" onclick="closeNavModules();" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                     <i class="fa-solid fa-chalkboard-user text-indigo-500 w-4 text-center"></i>
+                                                     <span>Faculty &amp; HODs</span>
+                                                 </a>
                                                 <a href="{{ url_for('super_admin.dashboard') }}#setupCard" onclick="closeNavModules(); if(window.scrollToSection){scrollToSection('setupCard');}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
                                                     <i class="fa-solid fa-building-columns text-indigo-500 w-4 text-center"></i>
                                                     <span>Campus Setup</span>
@@ -508,11 +508,11 @@
                     <i class="fa-solid fa-compass text-slate-400"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ url_for('super_admin.dashboard') }}#studentRegistryCard" onclick="if(window.scrollToSection){scrollToSection('studentRegistryCard');}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                <a href="{{ url_for('super_admin.students') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
                     <i class="fa-solid fa-user-graduate text-slate-400"></i>
                     <span>Student Registry</span>
                 </a>
-                <a href="{{ url_for('super_admin.dashboard') }}#facultyCard" onclick="if(window.scrollToSection){scrollToSection('facultyCard');}" class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
+                <a href="{{ url_for('super_admin.faculty') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
                     <i class="fa-solid fa-chalkboard-user text-slate-400"></i>
                     <span>Faculty &amp; HODs</span>
                 </a>
