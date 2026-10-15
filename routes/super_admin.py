@@ -386,59 +386,17 @@ def faculty():
 
 
 # ---------------------------------------------------------------------------
-# Early-access onboarding: review requests and issue activation keys
+# Platform Access Requests & Key Issuing (Reserved for Platform Master Admin)
+# Institutional Super Admins cannot issue or approve platform keys.
 # ---------------------------------------------------------------------------
 @super_admin_bp.route('/access-requests')
 def access_requests():
-    from models import AccessRequest
-    status_filter = request.args.get('status', 'pending')
-    query = AccessRequest.query
-    if status_filter in ['pending', 'approved', 'rejected', 'revoked']:
-        query = query.filter_by(status=status_filter)
-    requests_list = query.order_by(AccessRequest.created_at.desc()).all()
-
-    counts = {s: AccessRequest.query.filter_by(status=s).count()
-              for s in ['pending', 'approved', 'rejected', 'revoked']}
-    counts['all'] = sum(counts.values())
-
-    return render_template('super_admin/access_requests.html',
-                           requests_list=requests_list,
-                           status_filter=status_filter,
-                           counts=counts)
+    flash('Platform activation key management is reserved for Platform Master Administrators, not institutional administrators.', 'info')
+    return redirect(url_for('super_admin.dashboard'))
 
 
 @super_admin_bp.route('/access-requests/<int:req_id>/<action>', methods=['POST'])
 def access_request_action(req_id, action):
-    from datetime import datetime
-    from models import AccessRequest
-    from routes.landing import generate_activation_key
-
-    req = AccessRequest.query.get_or_404(req_id)
-    note = (request.form.get('note') or '').strip()[:300] or None
-    back_to = request.form.get('back', 'pending')
-
-    if action == 'approve':
-        if not req.activation_key:
-            req.activation_key = generate_activation_key()
-        req.status = 'approved'
-        flash(f'{req.full_name} approved. Activation key: {req.activation_key}', 'success')
-    elif action == 'regenerate':
-        req.activation_key = generate_activation_key()
-        req.status = 'approved'
-        flash(f'New key issued for {req.full_name}: {req.activation_key}. The old key no longer works.', 'success')
-    elif action == 'reject':
-        req.status = 'rejected'
-        flash(f'Request from {req.full_name} rejected.', 'info')
-    elif action == 'revoke':
-        req.status = 'revoked'
-        flash(f'Access revoked for {req.full_name}. Their key stops working immediately.', 'info')
-    else:
-        flash('Unknown action.', 'danger')
-        return redirect(url_for('super_admin.access_requests', status=back_to))
-
-    req.review_note = note or req.review_note
-    req.reviewed_by = current_user.id
-    req.reviewed_at = datetime.utcnow()
-    db.session.commit()
-    return redirect(url_for('super_admin.access_requests', status=back_to))
+    flash('Institutional administrators cannot issue or approve platform keys.', 'warning')
+    return redirect(url_for('super_admin.dashboard'))
 

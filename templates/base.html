@@ -106,9 +106,9 @@
                             <i class="fa-solid fa-chalkboard-user text-slate-400"></i>
                             <span>Faculty &amp; HODs</span>
                         </a>
-                        <a href="{{ url_for('super_admin.access_requests') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
-                            <i class="fa-solid fa-key text-slate-400"></i>
-                            <span>Access Requests</span>
+                        <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-transparent whitespace-nowrap flex-shrink-0">
+                            <i class="fa-solid fa-building-columns text-slate-400"></i>
+                            <span>Campus Profile</span>
                         </a>
 
                         <!-- Super Admin All Modules Menu (100% Solid White 2-Column Clean Layout, Identical to HOD/Faculty/Student) -->
@@ -137,25 +137,25 @@
                                                      <span>Faculty &amp; HODs</span>
                                                  </a>
                                                 <a href="{{ url_for('super_admin.dashboard') }}#setupCard" onclick="closeNavModules(); if(window.scrollToSection){scrollToSection('setupCard');}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                                    <i class="fa-solid fa-building-columns text-indigo-500 w-4 text-center"></i>
+                                                    <i class="fa-solid fa-landmark text-indigo-500 w-4 text-center"></i>
                                                     <span>Campus Setup</span>
                                                 </a>
                                             </div>
                                         </div>
 
-                                        <!-- Column 2: Governance & Access -->
+                                        <!-- Column 2: Governance & Settings -->
                                         <div>
                                             <div class="text-[10px] font-black uppercase tracking-wider text-slate-400 px-2 pb-1.5 border-b border-slate-100 mb-2">
-                                                Governance &amp; Access
+                                                Governance &amp; Settings
                                             </div>
                                             <div class="space-y-1">
-                                                <a href="{{ url_for('super_admin.access_requests') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                                    <i class="fa-solid fa-key text-indigo-500 w-4 text-center"></i>
-                                                    <span>Access Requests</span>
+                                                <a href="{{ url_for('super_admin.profile') }}" onclick="closeNavModules();" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
+                                                    <i class="fa-solid fa-building-columns text-indigo-500 w-4 text-center"></i>
+                                                    <span>Campus Profile &amp; Records</span>
                                                 </a>
-                                                <a href="{{ url_for('super_admin.profile') }}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition">
-                                                    <i class="fa-solid fa-id-card text-indigo-500 w-4 text-center"></i>
-                                                    <span>Executive Profile &amp; ID</span>
+                                                <a href="{{ url_for('super_admin.dashboard') }}#noticeModal" onclick="closeNavModules(); if(window.openNoticeModal){openNoticeModal();}" class="flex items-center gap-2.5 px-2.5 py-2 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100 hover:text-indigo-600 transition cursor-pointer">
+                                                    <i class="fa-solid fa-bullhorn text-indigo-500 w-4 text-center"></i>
+                                                    <span>Broadcast Notice</span>
                                                 </a>
                                             </div>
                                         </div>
@@ -520,13 +520,9 @@
                     <i class="fa-solid fa-building-columns text-slate-400"></i>
                     <span>Campus Setup</span>
                 </a>
-                <a href="{{ url_for('super_admin.access_requests') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-key text-slate-400"></i>
-                    <span>Access Requests</span>
-                </a>
                 <a href="{{ url_for('super_admin.profile') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">
-                    <i class="fa-solid fa-id-card text-slate-400"></i>
-                    <span>Executive ID &amp; Profile</span>
+                    <i class="fa-solid fa-building-columns text-slate-400"></i>
+                    <span>Campus Profile &amp; Settings</span>
                 </a>
                 {% elif current_user.role == 'hod' %}
                 <a href="{{ url_for('hod.dashboard') }}" class="top-nav-link flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-slate-100">

@@ -1,267 +1,219 @@
 {% extends "base.html" %}
-{% block title %}Executive Administration Profile & Digital ID - Pragati by Kalpkrats{% endblock %}
+{% block title %}Campus Profile & Institutional Administration — Pragati by Kalpkrats{% endblock %}
+
 {% block content %}
-<div class="space-y-8">
-    <!-- Header Section -->
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+<div class="w-full space-y-6 pb-12 antialiased">
+    
+    <!-- =====================================================================
+         1. PAGE HEADER
+         ===================================================================== -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-2 border-b border-slate-200/80">
         <div>
-            <div class="flex items-center gap-2 text-xs font-bold text-purple-600 uppercase tracking-widest mb-1">
-                <i class="fa-solid fa-id-card"></i> Pragati Digital Identity System
+            <div class="flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase tracking-widest mb-1">
+                <i class="fa-solid fa-building-columns"></i>
+                <span>Institutional Governance Portal</span>
             </div>
-            <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Executive Administrator Profile & Digital ID</h1>
-            <p class="text-sm font-medium text-slate-600 mt-1">Institutional executive authority credentials, university chancellor/principal ID, and administration records.</p>
+            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+                Campus Profile &amp; Executive Administration
+            </h1>
+            <p class="text-xs sm:text-sm font-medium text-slate-500 mt-0.5">
+                Central university credentials, accredited governance authority, and administrative records.
+            </p>
         </div>
-        <div class="flex items-center gap-3">
-            <button onclick="printIdCard()" class="px-4 py-2.5 rounded-2xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-xs font-bold flex items-center gap-2 shadow-sm transition active:scale-95">
-                <i class="fa-solid fa-print text-purple-600"></i> Print / Save ID
-            </button>
-            <button onclick="flipAdminIdCard()" class="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-xs font-bold flex items-center gap-2 shadow-md shadow-purple-200 transition active:scale-95">
-                <i class="fa-solid fa-rotate text-xs"></i> Flip ID Card (Front / Back)
-            </button>
+        <div class="flex items-center gap-2">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold shadow-2xs">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                <span>Active University Authority</span>
+            </span>
         </div>
     </div>
 
-    <!-- Main Two-Column Layout -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- =====================================================================
+         2. MAIN TWO-COLUMN WORKSPACE
+         ===================================================================== -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         
-        <!-- LEFT COLUMN: EXECUTIVE ID CARD (Col-Span 5) -->
+        <!-- =================================================================
+             LEFT COLUMN: INSTITUTIONAL CAMPUS DOSSIER (5 Cols)
+             ================================================================= -->
         <div class="lg:col-span-5 space-y-6">
-            <div class="flex items-center justify-between">
-                <span class="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-purple-500 animate-ping"></span>
-                    Verified Supreme Administrator Card
-                </span>
-                <span class="text-[11px] font-bold px-2.5 py-1 rounded-full bg-purple-50 text-purple-700 border border-purple-200">
-                    <i class="fa-solid fa-crown text-[10px]"></i> Executive Clearance
-                </span>
-            </div>
 
-            <!-- 3D Perspective Card Container -->
-            <div class="id-card-perspective mx-auto w-full max-w-sm" id="printableIdCard">
-                <div class="id-card-flipper" id="adminCardFlipper">
-                    
-                    <!-- ================= FRONT OF ADMIN ID CARD ================= -->
-                    <div class="id-card-face w-full rounded-3xl bg-white border border-slate-200/90 shadow-2xl overflow-hidden relative transition-all text-slate-800">
-                        <div class="id-hologram absolute inset-0 z-20 pointer-events-none rounded-3xl"></div>
-                        
-                        <!-- Top Banner -->
-                        <div class="bg-gradient-to-r from-slate-950 via-purple-950 to-indigo-950 text-white p-4 relative overflow-hidden">
-                            <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-purple-500/20 rounded-full blur-xl"></div>
-                            <div class="flex items-center justify-between relative z-10">
-                                <div class="flex items-center gap-2.5">
-                                    <div class="w-9 h-9 rounded-xl bg-white/10 backdrop-blur-md p-1.5 flex items-center justify-center border border-white/20">
-                                        <img src="{{ url_for('static', filename='images/pragati_p_mark.svg') }}" alt="NU" class="w-full h-full object-contain">
-                                    </div>
-                                    <div>
-                                        <h3 class="text-xs font-black tracking-wide leading-tight uppercase text-white">{{ institution.name if institution else 'Nitte University' }}</h3>
-                                        <span class="text-[9px] font-semibold text-purple-200 block uppercase tracking-wider">Office of Chancellor &amp; Principal</span>
-                                    </div>
-                                </div>
-                                <div class="text-right">
-                                    <span class="px-2 py-0.5 rounded-md bg-purple-400 text-slate-950 font-black text-[9px] uppercase tracking-wider shadow-xs">EXECUTIVE</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Card Body -->
-                        <div class="p-5 space-y-4 relative z-10 bg-white">
-                            <div class="flex items-center justify-between">
-                                <div class="flex items-center gap-2">
-                                    <div class="id-smart-chip" title="EMV Smart Microchip"></div>
-                                    <i class="fa-solid fa-wifi text-slate-400 text-sm rotate-90" title="Contactless Pass"></i>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase tracking-widest block">AUTHORIZATION</span>
-                                    <span class="text-xs font-extrabold text-purple-700 font-mono">Supreme Admin</span>
-                                </div>
-                            </div>
-
-                            <div class="flex items-center gap-4">
-                                <div class="relative flex-shrink-0">
-                                    <div class="w-24 h-28 rounded-2xl bg-gradient-to-tr from-purple-100 to-indigo-100 border-2 border-purple-200 p-1 shadow-md flex items-center justify-center overflow-hidden">
-                                        <img src="https://api.dicebear.com/7.x/bottts/svg?seed={{ current_user.email }}" alt="{{ current_user.name }}" class="w-full h-full object-cover rounded-xl">
-                                    </div>
-                                    <span class="absolute -bottom-1.5 -right-1.5 w-6 h-6 rounded-full bg-purple-600 border-2 border-white flex items-center justify-center text-white text-[10px] shadow-sm">
-                                        <i class="fa-solid fa-shield-halved"></i>
-                                    </span>
-                                </div>
-                                <div class="space-y-1 min-w-0 flex-1">
-                                    <span class="text-[10px] font-extrabold text-purple-700 uppercase tracking-wider block">INSTITUTIONAL HEAD</span>
-                                    <h2 class="text-base font-black text-slate-900 leading-tight uppercase truncate" title="{{ current_user.name }}">{{ current_user.name }}</h2>
-                                    
-                                    <div class="bg-slate-50 border border-slate-200 rounded-xl px-2.5 py-1 mt-1">
-                                        <span class="text-[9px] text-slate-400 font-bold block uppercase">ADMIN IDENTIFIER</span>
-                                        <span class="text-xs font-black text-slate-900 font-mono tracking-wider">
-                                            NU-ADMIN-001
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-2 bg-slate-50/80 border border-slate-200/80 rounded-2xl p-3 text-xs">
-                                <div>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">ROLE / OFFICE</span>
-                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">Executive Principal</span>
-                                </div>
-                                <div>
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">UNIVERSITY CODE</span>
-                                    <span class="font-extrabold text-slate-800 text-[11px]">{{ institution.code if institution else 'NU' }}</span>
-                                </div>
-                                <div class="pt-1.5 border-t border-slate-200/60">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">CAMPUS</span>
-                                    <span class="font-extrabold text-slate-800 text-[11px] truncate block">Mangaluru, India</span>
-                                </div>
-                                <div class="pt-1.5 border-t border-slate-200/60">
-                                    <span class="text-[9px] font-bold text-slate-400 uppercase block">SYSTEM PASS</span>
-                                    <span class="font-extrabold text-purple-700 text-[11px]">Active Unlimited</span>
-                                </div>
-                            </div>
-
-                            <div class="pt-2 border-t border-slate-100 flex items-center justify-between">
-                                <div>
-                                    <div class="id-barcode-pattern w-36 h-7 rounded"></div>
-                                    <span class="text-[8px] font-mono text-slate-400 tracking-widest mt-0.5 block">NU-SUPREME-TOKEN-001</span>
-                                </div>
-                                <div class="text-right flex items-center gap-2">
-                                    <div class="w-8 h-8 rounded-full border border-purple-200 bg-purple-50 flex items-center justify-center text-purple-700 text-[10px] font-black">
-                                        <i class="fa-solid fa-stamp"></i>
-                                    </div>
-                                    <div>
-                                        <span class="text-[8px] text-slate-400 uppercase block font-bold">BOARD OF TRUSTEES</span>
-                                        <span class="text-[9px] font-serif italic font-bold text-purple-950">NU Seal</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <!-- Card 1: University Identity -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-5">
+                <div class="flex items-center gap-3.5 pb-4 border-b border-slate-100">
+                    <div class="w-12 h-12 rounded-2xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center text-xl flex-shrink-0 shadow-2xs">
+                        <i class="fa-solid fa-landmark"></i>
                     </div>
-
-                    <!-- ================= BACK OF ADMIN ID CARD ================= -->
-                    <div class="id-card-face id-card-back absolute inset-0 w-full rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden text-slate-200 p-5 flex flex-col justify-between">
-                        <div>
-                            <div class="w-full h-8 bg-black -mx-5 -mt-5 mb-4 shadow-inner"></div>
-                            
-                            <div class="space-y-3 text-xs">
-                                <div class="flex items-center justify-between border-b border-slate-800 pb-2">
-                                    <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">OFFICE OF THE CHANCELLOR</span>
-                                    <span class="text-[9px] font-mono text-purple-400">NU-EXEC-2026</span>
-                                </div>
-
-                                <div class="space-y-1.5 bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60">
-                                    <div class="flex justify-between text-[11px]">
-                                        <span class="text-slate-400">Executive Secretariat:</span>
-                                        <span class="font-mono font-bold text-slate-100">{{ current_user.email }}</span>
-                                    </div>
-                                    <div class="flex justify-between text-[11px]">
-                                        <span class="text-slate-400">Direct Office Ext:</span>
-                                        <span class="font-mono font-bold text-amber-300">Ext. 100 (Direct Line)</span>
-                                    </div>
-                                </div>
-
-                                <div class="bg-slate-800/80 rounded-xl p-2.5 border border-slate-700/60 text-[10px] space-y-1">
-                                    <span class="text-slate-400 font-bold uppercase block">CAMPUS ADDRESS</span>
-                                    <p class="text-slate-200 line-clamp-2 leading-tight font-medium">
-                                        Office of the Principal, Administrative Block 1, {{ institution.name if institution else 'Nitte University' }}, Mangaluru
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pt-3 border-t border-slate-800 text-center space-y-1">
-                            <p class="text-[8px] text-slate-400 leading-tight">
-                                Supreme Institutional Identity Card. Authorized for all Campus Facilities and Governance Operations.
-                            </p>
-                            <span class="text-[9px] font-mono text-purple-400 font-bold block">Pragati Campus OS &bull; by Kalpkrats</span>
-                        </div>
+                    <div>
+                        <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Accredited Institution</span>
+                        <h2 class="text-lg font-black text-slate-900 leading-tight">
+                            {{ institution.name if institution else 'Nitte University' }}
+                        </h2>
+                        <span class="text-xs font-mono font-bold text-indigo-600">
+                            Campus Code: {{ institution.code if institution else 'NU' }}
+                        </span>
                     </div>
+                </div>
 
+                <!-- Campus Facts Grid -->
+                <div class="grid grid-cols-2 gap-3 text-xs">
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block">Governance Level</span>
+                        <span class="font-extrabold text-slate-900">Autonomous University</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block">Campus Region</span>
+                        <span class="font-extrabold text-slate-900 truncate block">Mangaluru, India</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block">Academic Framework</span>
+                        <span class="font-extrabold text-slate-900">Semester &bull; CBCS</span>
+                    </div>
+                    <div class="p-3 rounded-xl bg-slate-50 border border-slate-200/70 space-y-0.5">
+                        <span class="text-[10px] font-bold uppercase text-slate-400 block">SaaS Platform</span>
+                        <span class="font-extrabold text-indigo-600">Pragati Campus OS</span>
+                    </div>
+                </div>
+
+                <!-- Institutional Address -->
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1">
+                    <div class="flex items-center gap-1.5 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
+                        <i class="fa-solid fa-location-dot text-indigo-500"></i>
+                        <span>Campus Location</span>
+                    </div>
+                    <p class="text-xs font-medium text-slate-700 leading-relaxed">
+                        {{ institution.address if institution and institution.address else 'Central Administrative Complex, University Campus, Mangaluru, Karnataka - 575018, India' }}
+                    </p>
                 </div>
             </div>
 
-            <!-- Quick Action Buttons -->
-            <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex items-center justify-around gap-2 text-xs font-bold text-slate-700">
-                <button onclick="flipAdminIdCard()" class="flex items-center gap-1.5 hover:text-purple-600 transition">
-                    <i class="fa-solid fa-rotate text-purple-600"></i> Turn Over
-                </button>
-                <span class="text-slate-300">|</span>
-                <button onclick="window.print()" class="flex items-center gap-1.5 hover:text-emerald-600 transition">
-                    <i class="fa-solid fa-download text-emerald-600"></i> Download
-                </button>
+            <!-- Card 2: Institutional Authority Scope -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-3.5">
+                <div class="flex items-center gap-2 pb-3 border-b border-slate-100">
+                    <span class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center text-xs font-bold">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </span>
+                    <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">
+                        Executive Scope of Authority
+                    </h3>
+                </div>
+                
+                <ul class="space-y-2 text-xs text-slate-600 font-medium">
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                        <span>Institutional oversight of all academic departments and curricula.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                        <span>Student enrollment, admission registers, and academic standing policies.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                        <span>Faculty appointment, department head nominations, and faculty roster governance.</span>
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <i class="fa-solid fa-check text-emerald-500 mt-0.5"></i>
+                        <span>Campus-wide broadcasting for administrative circulars and urgent notices.</span>
+                    </li>
+                </ul>
+
+                <div class="pt-2 text-[11px] text-slate-400 border-t border-slate-100">
+                    <span class="font-bold text-slate-600">Note:</span> Institutional Super Administrators manage their individual campus operations. Global platform licensing &amp; early access provisioning are handled by Kalpkrats Platform Masters.
+                </div>
             </div>
         </div>
 
-        <!-- RIGHT COLUMN: OFFICIAL ADMIN RECORDS & INSTITUTIONAL DOSSIER ENTITY (Col-Span 7) -->
+        <!-- =================================================================
+             RIGHT COLUMN: ADMINISTRATOR PROFILE & CONTACT DOSSIER (7 Cols)
+             ================================================================= -->
         <div class="lg:col-span-7 space-y-6">
-            <div class="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
-                <div class="border-b border-slate-100 pb-4">
-                    <span class="text-xs font-extrabold text-purple-600 uppercase tracking-widest">Executive Authority Registry</span>
-                    <h2 class="text-xl font-extrabold text-slate-900 mt-0.5">Principal Administrator Records Dossier</h2>
+            
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-6 space-y-6">
+                
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-100">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#4757F0] to-[#7B8CFA] text-white font-black text-base flex items-center justify-center shadow-xs flex-shrink-0">
+                            {{ current_user.name[:2]|upper }}
+                        </div>
+                        <div>
+                            <span class="text-[10px] font-black uppercase tracking-wider text-indigo-600 block">Principal Administrator</span>
+                            <h2 class="text-lg font-black text-slate-900 leading-tight">{{ current_user.name }}</h2>
+                            <span class="text-xs text-slate-400 font-mono">{{ current_user.email }}</span>
+                        </div>
+                    </div>
+                    <span class="px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 text-[11px] font-bold self-start sm:self-auto">
+                        Super Administrator
+                    </span>
                 </div>
 
-                <div class="space-y-5">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Institution Name</span>
-                            <div class="text-sm font-black text-slate-900">{{ institution.name if institution else 'Nitte University' }}</div>
-                            <span class="text-xs text-slate-500 font-medium">Code: {{ institution.code if institution else 'NU' }}</span>
-                        </div>
+                <!-- Executive Contact Form -->
+                <form method="POST" action="{{ url_for('super_admin.profile') }}" class="space-y-4 no-loader">
+                    <input type="hidden" name="action" value="update_profile">
+                    
+                    <div>
+                        <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-1">
+                            Administrator Contact Records
+                        </h3>
+                        <p class="text-xs text-slate-500">
+                            Official institutional contact details recorded for university administration and campus governance.
+                        </p>
+                    </div>
 
-                        <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                            <span class="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Executive Role</span>
-                            <div class="text-sm font-bold text-slate-800">Super Administrator &bull; Principal</div>
-                            <span class="text-xs text-purple-600 font-bold">Unrestricted Access</span>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Direct Mobile Phone</label>
+                            <input type="text" name="phone" value="{{ current_user.phone or '' }}" placeholder="+91 98450 00001" 
+                                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-700 mb-1">Personal / Alternate Email</label>
+                            <input type="email" name="personal_email" value="{{ current_user.personal_email or '' }}" placeholder="principal.nitte@gmail.com" 
+                                   class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white transition">
                         </div>
                     </div>
 
-                    <form method="POST" action="{{ url_for('super_admin.profile') }}" class="space-y-4 pt-2 border-t border-slate-100">
-                        <input type="hidden" name="action" value="update_profile">
-                        <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-wider">Update Executive Contact Details</h4>
-                        
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Direct Mobile Contact</label>
-                                <input type="text" name="phone" value="{{ current_user.phone or '' }}" placeholder="+91 98450 00001" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
-                            </div>
-                            <div>
-                                <label class="block text-xs font-bold text-slate-700 mb-1">Alternate / Personal Email</label>
-                                <input type="email" name="personal_email" value="{{ current_user.personal_email or '' }}" placeholder="principal.nitte@gmail.com" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">
-                            </div>
-                        </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">Office / Residential Campus Address</label>
+                        <textarea name="current_address" rows="3" 
+                                  placeholder="Office of the Principal, Administrative Block 1, University Campus..."
+                                  class="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-indigo-500 focus:bg-white transition">{{ current_user.current_address or '' }}</textarea>
+                    </div>
 
-                        <div>
-                            <label class="block text-xs font-bold text-slate-700 mb-1">Office / Residential Address</label>
-                            <textarea name="current_address" rows="2" class="w-full px-3.5 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-medium text-slate-900 focus:outline-none focus:border-purple-500 focus:bg-white">{{ current_user.current_address or '' }}</textarea>
-                        </div>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between">
+                        <span class="text-[11px] text-slate-400">
+                            Last updated via Super Admin Executive Session
+                        </span>
+                        <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-xs transition active:scale-95 cursor-pointer">
+                            <i class="fa-solid fa-floppy-disk mr-1.5"></i>
+                            Save Profile Records
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-                        <div class="pt-3 border-t border-slate-100 flex justify-end">
-                            <button type="submit" class="px-5 py-2.5 rounded-2xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md shadow-purple-200 transition">
-                                <i class="fa-solid fa-save mr-1.5"></i> Save &amp; Update Records
-                            </button>
+            <!-- Card 4: Quick Navigation to Core Modules -->
+            <div class="bg-white rounded-2xl border border-slate-200/90 shadow-xs p-5 space-y-3">
+                <span class="text-[10px] font-black uppercase tracking-wider text-slate-400 block">Institutional Workspaces</span>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                    <a href="{{ url_for('super_admin.students') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200/80 transition flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-user-graduate text-indigo-500"></i>
+                            <span class="font-bold text-slate-900">Student Registry</span>
                         </div>
-                    </form>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                    </a>
+                    <a href="{{ url_for('super_admin.faculty') }}" class="p-3 rounded-xl bg-slate-50 hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200/80 transition flex items-center justify-between">
+                        <div class="flex items-center gap-2.5">
+                            <i class="fa-solid fa-chalkboard-user text-indigo-500"></i>
+                            <span class="font-bold text-slate-900">Faculty &amp; HODs</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                    </a>
                 </div>
             </div>
+
         </div>
 
     </div>
 </div>
-
-<script>
-    function printIdCard() {
-        document.body.classList.add('print-id-card-only');
-        window.print();
-        setTimeout(() => {
-            document.body.classList.remove('print-id-card-only');
-        }, 1000);
-    }
-    window.addEventListener('afterprint', () => {
-        document.body.classList.remove('print-id-card-only');
-    });
-
-    function flipAdminIdCard() {
-        const flipper = document.getElementById('adminCardFlipper');
-        if (flipper) {
-            flipper.classList.toggle('is-flipped');
-        }
-    }
-</script>
 {% endblock %}
