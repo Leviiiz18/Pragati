@@ -1,7 +1,7 @@
 import random
 import time
 from collections import defaultdict
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, session
 from flask_login import login_user, logout_user, current_user, login_required
 from models import db, User
 from flask_bcrypt import Bcrypt
@@ -131,6 +131,7 @@ def login():
 
             remember = bool(request.form.get('remember'))
             login_user(user, remember=remember)
+            session['access_granted'] = True
             next_page = request.args.get('next')
             if next_page and next_page.startswith('/') and not next_page.startswith('/login'):
                 return redirect(next_page)
@@ -220,6 +221,11 @@ def register():
 
 @auth_bp.route('/logout')
 def logout():
+    access_key = session.get('access_key')
     logout_user()
-    return redirect(url_for('landing.home'))
+    if access_key:
+        session['access_key'] = access_key
+    session['access_granted'] = True
+    flash('You have been signed out successfully.', 'info')
+    return redirect(url_for('auth.login'))
 

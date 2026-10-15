@@ -37,6 +37,8 @@ def has_platform_access():
         return True
     if current_user.is_authenticated:
         return True
+    if session.get('access_granted'):
+        return True
     key = session.get('access_key')
     if not key:
         return False
